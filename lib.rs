@@ -1,12 +1,12 @@
 //! Rust idiomatic wrapper for the Pepper API.
 #![crate_id = "ppapi#0.1"]
 #![crate_type = "rlib"]
-
+#![experimental]
 #![feature(globs)]
 #![feature(macro_rules)]
 #![feature(phase)]
 #![feature(default_type_params, struct_variant)]
-#![warn(missing_doc)]
+//#![warn(missing_doc)]
 
 #![allow(dead_code)]
 
@@ -19,10 +19,14 @@ extern crate sync;
 extern crate rand;
 extern crate serialize;
 extern crate http;
-extern crate url;
+extern crate iurl = "url";
 extern crate libc;
+extern crate core;
+extern crate alloc;
+extern crate native;
 
-use std::{cast, slice, cmp, io, hash, num};
+use core::mem;
+use std::{slice, cmp, io, hash, num};
 use std::ptr;
 use std::to_str;
 use std::intrinsics;
@@ -41,10 +45,6 @@ use log::LogRecord;
 
 use sync::mutex::Mutex;
 
-use native;
-use log;
-use libc;
-
 #[allow(missing_doc)] pub mod ffi;
 pub mod ppp;
 pub mod pp;
@@ -58,6 +58,8 @@ pub mod url;
 
 #[cfg(target_os = "nacl")]
 #[link(name = "ppapi_stub", kind = "static")]
+extern {}
+#[link(name = "helper", kind = "static")]
 extern {}
 
 pub type Result<T> = result::Result<T, Code>;
@@ -318,7 +320,7 @@ impl Size {
     // if Self && ffi::PP_Size aren't the same size rustc will refuse
     // to compile this mod, though with a not very helpful message.
     fn to_ffi(self) -> ffi::PP_Size {
-        use std::cast::transmute;
+        use core::mem::transmute;
         unsafe { transmute(self) }
     }
 }
@@ -397,7 +399,7 @@ macro_rules! impl_resource_for(
         impl Resource for $ty {
             #[inline]
             fn unwrap(&self) -> ffi::PP_Resource {
-                unsafe { cast::transmute_copy(self) }
+                unsafe { mem::transmute_copy(self) }
             }
             #[inline]
             fn type_of(&self) -> ResourceType {
@@ -407,7 +409,7 @@ macro_rules! impl_resource_for(
         impl $ty {
             pub fn new(res: ffi::PP_Resource) -> $ty {
                 unsafe {
-                    cast::transmute_copy(&res)
+                    mem::transmute_copy(&res)
                 }
             }
         }
@@ -417,7 +419,7 @@ macro_rules! impl_resource_for(
                     None
                 } else {
                     Some(unsafe {
-                        cast::transmute_copy(from)
+                        mem::transmute_copy(from)
                     })
                 }
             }
@@ -430,7 +432,7 @@ macro_rules! impl_clone_drop_for(
             fn clone(&self) -> $ty {
                 (ppb::get_core().AddRefResource.unwrap())(self.unwrap());
                 unsafe {
-                    cast::transmute_copy(self)
+                    mem::transmute_copy(self)
                 }
             }
         }
@@ -546,7 +548,7 @@ impl MessageLoop {
     }
     pub fn is_attached() -> bool {
         unsafe {
-            (ppb::get_message_loop().GetCurrent.unwrap())() == cast::transmute(0i32)
+            (ppb::get_message_loop().GetCurrent.unwrap())() == mem::transmute(0i32)
         }
     }
     pub fn current() -> MessageLoop {
@@ -559,9 +561,9 @@ impl MessageLoop {
     pub fn run_loop(&self) -> Code {
         Code::from_i32((ppb::get_message_loop().Run.unwrap())(self.unwrap()))
     }
-    pub fn post_work(&self, work: ~proc(), delay: i64) -> Code {
+    pub fn post_work(&self, work: Box<proc()>, delay: i64) -> Code {
         extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
-            let work: ~proc() = unsafe { cast::transmute(user) };
+            let work: Box<proc()> = unsafe { mem::transmute(user) };
             if status != ffi::PP_OK {
                 warn!("work_callback called without status == ffi::PP_OK");
                 return;
@@ -571,7 +573,7 @@ impl MessageLoop {
 
         let comp_cb = unsafe {
             ffi::make_completion_callback(work_callback,
-                                          cast::transmute(work))
+                                          mem::transmute(work))
         };
         match (ppb::get_message_loop().PostWork.unwrap())(self.unwrap(), comp_cb, delay) {
             ffi::PP_ERROR_BADARGUMENT => fail!("internal error: completion callback was null?"),
@@ -722,7 +724,7 @@ macro_rules! impl_clone_drop_for(
             fn clone(&self) -> $ty {
                 (ppb::get_var().AddRef.unwrap())(self.to_var());
                 unsafe {
-                    cast::transmute_copy(self)
+                    mem::transmute_copy(self)
                 }
             }
         }
@@ -732,7 +734,7 @@ macro_rules! impl_clone_drop_for(
         impl<'a> Var for &'a $ty {
             #[inline] fn $is_true_name(&self) -> bool { true }
         }
-        impl Var for ~$ty {
+        impl Var for Box<$ty> {
             #[inline] fn $is_true_name(&self) -> bool { true }
         }
         impl FromVar for $ty {
@@ -760,7 +762,7 @@ macro_rules! impl_var_for(
         impl<'a> Var for &'a $ty {
             #[inline] fn $is_true_name(&self) -> bool { true }
         }
-        impl Var for ~$ty {
+        impl Var for Box<$ty> {
             #[inline] fn $is_true_name(&self) -> bool { true }
         }
         impl FromVar for $ty {
@@ -951,7 +953,7 @@ macro_rules! impl_by_ref_var(
     ($ty:ty) => (
         impl ByRefVar for $ty {
             fn get_id(&self) -> i64 {
-                unsafe { cast::transmute_copy(self) }
+                unsafe { mem::transmute_copy(self) }
             }
         }
     )
@@ -974,7 +976,7 @@ macro_rules! impl_to_var_int(
                 return unsafe { ffi::i32_to_var(*self as i32) };
             }
         }
-        impl ToVar for ~$ty {
+        impl ToVar for Box<$ty> {
             fn to_var(&self) -> ffi::PP_Var {
                 return unsafe { ffi::i32_to_var(**self as i32) };
             }
@@ -997,7 +999,7 @@ macro_rules! impl_to_var_float(
                 return unsafe { ffi::f64_to_var(*self as f64) };
             }
         }
-        impl ToVar for ~$ty {
+        impl ToVar for Box<$ty> {
             fn to_var(&self) -> ffi::PP_Var {
                 return unsafe { ffi::f64_to_var(**self as f64) };
             }
@@ -1021,7 +1023,7 @@ impl ToVar for bool {
         }
     }
 }
-impl ToVar for ~bool {
+impl ToVar for Box<bool> {
     fn to_var(&self) -> ffi::PP_Var {
         unsafe {
             ffi::bool_to_var(**self as i32)
@@ -1076,7 +1078,7 @@ impl AnyVar {
     fn new_bumped(var: ffi::PP_Var) -> AnyVar {
         let v = AnyVar::new(var);
         // bump the ref count:
-        unsafe { cast::forget(v.clone()) };
+        unsafe { mem::forget(v.clone()) };
         v
     }
     #[inline] #[allow(dead_code)]
@@ -1205,7 +1207,7 @@ struct CompletionCallbackWithoutCode<TData> {
 }
 impl<TData: Send> CompletionCallback for CompletionCallbackWithoutCode<TData> {
     fn call(~self, code: Code) {
-        let ~CompletionCallbackWithoutCode {
+        let box CompletionCallbackWithoutCode {
             name: name,
             instance: instance,
             data: data,
@@ -1222,7 +1224,7 @@ impl<TData: Send> CompletionCallback for CompletionCallbackWithoutCode<TData> {
 }
 impl<TData: Send> CompletionCallback for CompletionCallbackWithCode<TData> {
     fn call(~self, code: Code) {
-        let ~CompletionCallbackWithCode {
+        let box CompletionCallbackWithCode {
             name: name,
             instance: instance,
             data: data,
@@ -1243,7 +1245,7 @@ impl<TData: Send> Callback<TData> for proc(Instance, TData) {
             data: take,
             callback: self,
         };
-        new_ffi_callback(~callback)
+        new_ffi_callback(box callback)
     }
     fn sync_call(self,
                  instance: Instance,
@@ -1270,7 +1272,7 @@ impl<TData: Send> Callback<TData> for proc(Instance, Code, Option<TData>) {
             data: take,
             callback: self,
         };
-        new_ffi_callback(~callback as ~CompletionCallback)
+        new_ffi_callback(box callback)
     }
     fn sync_call(self,
                  instance: Instance,
@@ -1281,17 +1283,17 @@ impl<TData: Send> Callback<TData> for proc(Instance, Code, Option<TData>) {
         self(instance, code, take.and_then(|take| code.map(take) ))
     }
 }
-struct CallbackBox(~CompletionCallback);
-fn new_ffi_callback(callback: ~CompletionCallback) -> ffi::Struct_PP_CompletionCallback {
+type CallbackBox = Box<CompletionCallback>;
+fn new_ffi_callback(callback: CallbackBox) -> ffi::Struct_PP_CompletionCallback {
     extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
-        let ~CallbackBox(callback): ~CallbackBox =
-            unsafe { cast::transmute(user) };
+        let callback: Box<CallbackBox> =
+            unsafe { mem::transmute(user) };
         callback.call(Code::from_i32(status))
     }
-    let callback = ~CallbackBox(callback);
+    let callback = box callback;
     unsafe {
         ffi::make_completion_callback(work_callback,
-                                      cast::transmute(callback))
+                                      mem::transmute(box callback)) // :(
     }
 }
 impl ffi::Struct_PP_CompletionCallback {
@@ -1306,7 +1308,7 @@ impl log::Logger for CurrentInstanceLogger {
         use self::ppb::ConsoleInterface;
         let console = Instance::current().console();
         let str = record.to_str();
-        console.log_to_browser(unsafe { cast::transmute(record.level) },
+        console.log_to_browser(unsafe { mem::transmute(record.level) },
                                str.to_var());
     }
 }
@@ -1315,27 +1317,23 @@ pub struct CurrentInstanceStdErr;
 impl Writer for CurrentInstanceStdOut {
     fn write(&mut self, buf: &[u8]) -> io::IoResult<()> {
         use libc::STDOUT_FILENO;
-        local_data::get(current_instance, |instance| {
-            send_to_console_or_terminal(instance,
-                                        buf,
-                                        ffi::PP_LOGLEVEL_LOG,
-                                        STDOUT_FILENO)
-        })
+        send_to_console_or_terminal(current_instance.get(),
+                                    buf,
+                                    ffi::PP_LOGLEVEL_LOG,
+                                    STDOUT_FILENO)
     }
 }
 impl Writer for CurrentInstanceStdErr {
     fn write(&mut self, buf: &[u8]) -> io::IoResult<()> {
         use libc::STDERR_FILENO;
-        local_data::get(current_instance, |instance| {
-            send_to_console_or_terminal(instance,
-                                        buf,
-                                        ffi::PP_LOGLEVEL_ERROR,
-                                        STDERR_FILENO)
-        })
+        send_to_console_or_terminal(current_instance.get(),
+                                    buf,
+                                    ffi::PP_LOGLEVEL_ERROR,
+                                    STDERR_FILENO)
     }
 }
 #[no_mangle] #[inline(never)]
-fn send_to_console_or_terminal(instance: Option<&Instance>,
+fn send_to_console_or_terminal(instance: Option<local_data::Ref<Instance>>,
                                buf: &[u8],
                                lvl: ffi::PP_LogLevel,
                                fd: i32) -> io::IoResult<()> {
@@ -1363,7 +1361,7 @@ fn send_to_console_or_terminal(instance: Option<&Instance>,
 
     match instance {
         Some(instance) => {
-            let console = instance.console();
+            let console = (*instance).console();
             match str::from_utf8(buf) {
                 Some(s) => {
                     console.log(lvl, s);
@@ -1396,15 +1394,15 @@ impl Instance {
         Instance::opt_current().expect("instance not set in task local storage!")
     }
     pub fn opt_current() -> Option<Instance> {
-        local_data::get(current_instance, |instance| {
-            instance.map(|inst| inst.clone() )
+        current_instance.get().map(|instance| {
+            (*instance).clone()
         })
     }
     fn set_current(&self) {
-        local_data::set(current_instance, self.clone());
+        current_instance.replace(Some(self.clone()));
     }
     fn unset_current() {
-        local_data::pop(current_instance);
+        current_instance.replace(None);
     }
     fn unwrap(&self) -> ffi::PP_Instance {
         self.instance
@@ -1436,7 +1434,7 @@ impl Instance {
              let a = a;
              let share_with = share_with.unwrap_or_else(|| {
                  unsafe {
-                     Context3d(cast::transmute(0i32))
+                     Context3d(mem::transmute(0i32))
                  }
              });
              let graphics = ppb::get_graphics_3d();
@@ -1445,7 +1443,7 @@ impl Instance {
                                                        share_with.unwrap(),
                                                        a.as_ptr());
 
-             if raw_cxt == unsafe { cast::transmute(0i32) } {
+             if raw_cxt == unsafe { mem::transmute(0i32) } {
                  result::Err(Failed)
              } else {
                  result::Ok(Context3d(raw_cxt))
@@ -1484,7 +1482,7 @@ impl Instance {
                         format: Option<imagedata::Format>, // uses native format if None
                         size: Size,
                         init_to_zero: bool) -> Option<ImageData> {
-        use std::cast::transmute;
+        use core::mem::transmute;
         let interface = ppb::get_image_data();
         let format = format.unwrap_or_else(|| {
             imagedata::native_image_data_format()
@@ -1536,10 +1534,10 @@ pub trait InstanceCallback {
 struct InstanceStore {
     instance: Instance,
     mxt: Mutex,
-    callbacks: ~InstanceCallback,
+    callbacks: Box<InstanceCallback>,
 }
 impl InstanceStore {
-    fn new(inst: Instance, callbacks: ~InstanceCallback) -> InstanceStore {
+    fn new(inst: Instance, callbacks: Box<InstanceCallback>) -> InstanceStore {
         InstanceStore {
             instance: inst,
             mxt: Mutex::new(),
@@ -1631,8 +1629,8 @@ fn deinitialize_instances() {
 
 fn expect_instances() -> &'static mut InstancesType {
     use std::hash::sip::SipHasher;
-    use std::mem;
-    use std::rt::global_heap;
+    use core::mem;
+    use alloc::libc_heap::malloc_raw;
     unsafe {
         if INSTANCES.is_null() {
             //let crypto = ppb::get_crypto();
@@ -1642,13 +1640,13 @@ fn expect_instances() -> &'static mut InstancesType {
             //let hasher = SipHasher::new_with_keys(rand_buf[0], rand_buf[1]);
             let hasher = SipHasher::new();
             let instances: InstancesType = HashMap::with_hasher(hasher);
-            INSTANCES = global_heap::malloc_raw(mem::size_of::<InstancesType>())
+            INSTANCES = malloc_raw(mem::size_of::<InstancesType>())
                 as *mut InstancesType;
             if INSTANCES.is_null() {
                 // PANIC!
                 fail!("couldn't allocate instances map!");
             }
-            mem::move_val_init(cast::transmute(INSTANCES),
+            mem::move_val_init(mem::transmute(INSTANCES),
                                instances);
             expect_instances()
         } else {
@@ -1671,11 +1669,10 @@ fn find_instance<U, Take>(instance: Instance,
 }
 
 pub mod entry {
-    use ppapi;
-    use ppapi::{expect_instances, find_instance};
-    use ppapi::{InstanceCallback, InstanceStore, Instance};
-    use ppapi::AnyVar;
-    use ppapi::{View, UrlLoader};
+    use super::{expect_instances, find_instance};
+    use super::{InstanceCallback, InstanceStore, Instance};
+    use super::AnyVar;
+    use super::{View, UrlLoader};
     use super::ToFFIBool;
     use libc::c_char;
     use std::any::Any;
@@ -1685,7 +1682,7 @@ pub mod entry {
     use std::task::{TaskResult};
     use std::rt::local::{Local};
 
-    use ppapi::ffi;
+    use super::ffi;
 
     // We need to catch all failures in our callbacks,
     // lest an exception (failure) in one instance terminates all
@@ -1716,7 +1713,7 @@ pub mod entry {
         }
         result
     }
-    pub fn try_block_with_ret<U>(f: || -> U) -> result::Result<U, ~Any:Send> {
+    pub fn try_block_with_ret<U>(f: || -> U) -> result::Result<U, Box<Any:Send>> {
         let mut ret: Option<U> = None;
         try_block(|| {
             ret = Some(f());
@@ -1733,8 +1730,8 @@ pub mod entry {
             instance.initialize_nacl_io();
 
             let callbacks = unsafe {
-                ppapi::ppapi_instance_created(instance.clone(),
-                                              || ppapi::parse_args(argc, argk, argv) )
+                super::ppapi_instance_created(instance.clone(),
+                                              || super::parse_args(argc, argk, argv) )
             };
 
             if !expect_instances().insert(instance, InstanceStore::new(instance, callbacks)) {
@@ -1799,8 +1796,8 @@ pub mod entry {
     }
     pub extern "C" fn handle_input_event(inst: ffi::PP_Instance,
                                          event: ffi::PP_Resource) -> ffi::PP_Bool {
-        use ppapi::ppb;
-        use ppapi::{MouseInputEvent, KeyboardInputEvent, WheelInputEvent,
+        use super::ppb;
+        use super::{MouseInputEvent, KeyboardInputEvent, WheelInputEvent,
                     TouchInputEvent, IMEInputEvent};
         let instance = Instance::new(inst);
         instance.set_current();
@@ -1860,7 +1857,7 @@ extern {
     #[no_mangle]
     fn ppapi_instance_created(instance: Instance,
                               args: || -> HashMap<~str, ~str>)
-                              -> ~InstanceCallback;
+                              -> Box<InstanceCallback>;
 }
 
 // The true entry point of any module.
@@ -1868,7 +1865,7 @@ extern {
 #[inline(never)]
 pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
                                        gbi: ffi::PPB_GetInterface) -> libc::int32_t {
-    use log::{Logger, set_logger};
+    use log::set_logger;
     use std::rt;
     use std::str::Slice;
     use std::io::Writer;
@@ -1882,11 +1879,11 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
         // for now, stack bounds don't matter.
         let mut task = native::task::new((0, 0));
         task.name = Some(Slice(MAIN_TASK_NAME));
-        task.stdout = Some(~CurrentInstanceStdOut as ~Writer:Send);
-        task.stderr = Some(~CurrentInstanceStdErr as ~Writer:Send);
+        task.stdout = Some(box CurrentInstanceStdOut as Box<Writer:Send>);
+        task.stderr = Some(box CurrentInstanceStdErr as Box<Writer:Send>);
         Local::put(task);
     }
-    set_logger(~CurrentInstanceLogger as ~Logger:Send);
+    set_logger(box CurrentInstanceLogger);
 
     // We can't fail! before this point!
     let initialized = try_block(|| {
@@ -1905,5 +1902,5 @@ pub extern "C" fn PPP_ShutdownModule() {
     let _ = try_block(|| {
         deinitialize_instances();
     });
-    let _: ~Task = Local::take();
+    let _: Box<Task> = Local::take();
 }

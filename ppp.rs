@@ -1,6 +1,5 @@
 use std::c_str;
 use std::ptr;
-use std::cast;
 use libc::{c_char, c_void};
 
 mod consts {
@@ -34,17 +33,18 @@ mod globals {
 #[allow(dead_code)]
 #[doc(hidden)]
 pub extern "C" fn PPP_GetInterface(interface_name: *c_char) -> *c_void {
+    use core::mem::transmute;
     unsafe {
         let c_name = c_str::CString::new(interface_name, false);
         let name = c_name.as_str().expect("Naughty browser");
         if name == consts::INSTANCE {
-            cast::transmute(&globals::INSTANCE)
+            transmute(&globals::INSTANCE)
         } else if name == consts::MESSAGING {
-            cast::transmute(&globals::MESSAGING)
+            transmute(&globals::MESSAGING)
         } else if name == consts::INPUTEVENT {
-            cast::transmute(&globals::INPUTEVENT)
+            transmute(&globals::INPUTEVENT)
         } else if name == consts::GRAPHICS {
-            cast::transmute(&globals::GRAPHICS)
+            transmute(&globals::GRAPHICS)
         } else {
             ptr::null()
         }

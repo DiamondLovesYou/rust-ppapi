@@ -2,15 +2,14 @@
 //! of the verbose-ness of the originals.
 
 #![allow(missing_doc)]
-use std::cast;
+use core::mem;
+use core::mem::uninit;
 use libc;
 use std::ptr::RawPtr;
 use std::{intrinsics, str};
-use std::mem::uninit;
 
-use ppapi;
-use ppapi::ffi;
-use ppapi::ffi::{Struct_PP_Var, PP_Instance, PP_LogLevel, PP_Resource,
+use super::ffi;
+use super::ffi::{Struct_PP_Var, PP_Instance, PP_LogLevel, PP_Resource,
                  Struct_PP_CompletionCallback, PP_Var};
 use super::{Ticks, Time, ToFFIBool, Code, Result, ToVar};
 
@@ -31,7 +30,6 @@ pub type OpenGLES2 = ffi::PPB_OpenGLES2;
 pub type WheelInputEvent = ffi::PPB_WheelInputEvent;
 pub type Font = ffi::PPB_Font_Dev;
 pub type ImageData = ffi::PPB_ImageData;
-pub type Crypto = ffi::PPB_Crypto_Dev;
 pub type UrlLoader = ffi::PPB_URLLoader;
 pub type UrlRequestInfo = ffi::PPB_URLRequestInfo;
 pub type UrlResponseInfo = ffi::PPB_URLResponseInfo;
@@ -55,7 +53,6 @@ mod consts {
     pub static GLES2:    &'static str         = "PPB_OpenGLES2;1.0";
     pub static FONTDEV:  &'static str         = "PPB_Font(Dev);0.6";
     pub static IMAGEDATA:&'static str         = "PPB_ImageData;1.0";
-    pub static CRYPTO:   &'static str         = "PPB_Crypto(Dev);0.1";
     pub static URL_LOADER: &'static str       = "PPB_URLLoader;1.0";
     pub static URL_REQUEST: &'static str      = "PPB_URLRequestInfo;1.0";
     pub static URL_RESPONSE: &'static str     = "PPB_URLResponseInfo;1.0";
@@ -81,7 +78,6 @@ mod globals {
     pub static mut GLES2:        Option<&'static super::OpenGLES2> = None;
     pub static mut FONTDEV:      Option<&'static super::Font> = None;
     pub static mut IMAGEDATA:    Option<&'static super::ImageData> = None;
-    pub static mut CRYPTO:       Option<&'static super::Crypto> = None;
     pub static mut URL_LOADER:   Option<&'static super::UrlLoader> = None;
     pub static mut URL_REQUEST:  Option<&'static super::UrlRequestInfo> = None;
     pub static mut URL_RESPONSE: Option<&'static super::UrlResponseInfo> = None;
@@ -108,7 +104,6 @@ pub fn initialize_globals(b: ffi::PPB_GetInterface) {
         globals::GLES2         = get_interface(consts::GLES2);
         globals::FONTDEV       = get_interface(consts::FONTDEV);
         globals::IMAGEDATA     = get_interface(consts::IMAGEDATA);
-        globals::CRYPTO        = get_interface(consts::CRYPTO);
         globals::URL_LOADER    = get_interface(consts::URL_LOADER);
         globals::URL_REQUEST   = get_interface(consts::URL_REQUEST);
         globals::URL_RESPONSE  = get_interface(consts::URL_RESPONSE);
@@ -128,7 +123,7 @@ fn get_interface<T>(name: &'static str) -> Option<&'static T> {
             });
 
         if ptr.is_null() { None }
-        else             { Some(cast::transmute(ptr)) }
+        else             { Some(mem::transmute(ptr)) }
     }
 }
 macro_rules! get_fun(
@@ -187,8 +182,6 @@ get_fun!    (pub fn get_font() -> Font { FONTDEV })
 get_fun_opt!(pub fn get_font_opt() -> Font { FONTDEV })
 get_fun!    (pub fn get_image_data() -> ImageData { IMAGEDATA })
 get_fun_opt!(pub fn get_image_data_opt() -> ImageData { IMAGEDATA })
-get_fun!    (pub fn get_crypto() -> Crypto { CRYPTO })
-get_fun_opt!(pub fn get_crypto_opt() -> Crypto { CRYPTO })
 get_fun!    (pub fn get_url_loader() -> UrlLoader { URL_LOADER })
 get_fun_opt!(pub fn get_url_loader_opt() -> UrlLoader { URL_LOADER })
 get_fun!    (pub fn get_url_request() -> UrlRequestInfo { URL_REQUEST })
@@ -637,7 +630,7 @@ pub trait ConsoleInterface {
     fn log_to_browser(&self, lvl: ffi::PP_LogLevel, value: ffi::PP_Var);
     fn log_with_source<ST: ToVar, VT: ToVar>(&self, lvl: ffi::PP_LogLevel, source: ST, value: VT);
 }
-impl ConsoleInterface for ppapi::Console {
+impl ConsoleInterface for super::Console {
     fn log_to_browser(&self, lvl: ffi::PP_LogLevel, value: ffi::PP_Var) {
         (get_console().Log.unwrap())(self.unwrap(), lvl, value)
     }

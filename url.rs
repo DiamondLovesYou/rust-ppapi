@@ -9,7 +9,7 @@ use collections::enum_set::{CLike, EnumSet};
 use http::headers::request;
 use super::ffi;
 use super::ffi::bool_to_var;
-use url;
+use iurl::Url;
 
 impl super::Instance {
     pub fn create_url_loader(&self) -> Option<UrlLoader> {
@@ -89,7 +89,7 @@ impl default::Default for Method {
 }
 #[deriving(Clone)]
 pub struct RequestInfo {
-    pub url: url::Url,
+    pub url: Url,
 
     pub method: Method,
     

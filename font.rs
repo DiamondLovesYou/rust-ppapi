@@ -3,12 +3,11 @@ use std::result::{Ok};
 use std::ptr::RawPtr;
 use collections::hashmap::HashSet;
 
-use ppapi;
-use ppapi::{ppb, ffi};
-use ppapi::{ToVar, Resource, ToFFIBool};
-use ppapi::ffi::{Struct_PP_FontMetrics_Dev, Struct_PP_TextRun_Dev,
+use super::{ppb, ffi};
+use super::{ToVar, Resource, ToFFIBool};
+use super::ffi::{Struct_PP_FontMetrics_Dev, Struct_PP_TextRun_Dev,
                  Struct_PP_FontDescription_Dev, PP_FontFamily_Dev};
-use ppapi::StringVar;
+use super::StringVar;
 
 
 #[deriving(Eq, Clone, Hash)]
@@ -79,7 +78,7 @@ impl Weight {
 pub type Metrics = ffi::Struct_PP_FontMetrics_Dev;
 impl Clone for super::ffi::Struct_PP_FontMetrics_Dev {
     fn clone(&self) -> Metrics {
-        use std::cast::transmute_copy;
+        use core::mem::transmute_copy;
         unsafe {
             transmute_copy(self)
         }
@@ -140,10 +139,10 @@ impl Description {
     }
 }
 
-impl ppapi::Font {
+impl super::Font {
     pub fn describe(&self) -> Option<(Description, Metrics)> {
         let mut desc: Struct_PP_FontDescription_Dev = Struct_PP_FontDescription_Dev {
-            face: {ppapi::NullVar}.to_var(),
+            face: {super::NullVar}.to_var(),
             .. unsafe { uninit() }
         };
         let mut metr: Struct_PP_FontMetrics_Dev     = unsafe { uninit() };
@@ -158,8 +157,8 @@ impl ppapi::Font {
         }
     }
 
-    pub fn measure_text<T: ppapi::ToStringVar +
-        ppapi::ToVar>(&self,
+    pub fn measure_text<T: super::ToStringVar +
+        super::ToVar>(&self,
                       text: &T,
                       rtl: bool,
                       override_direction: bool) -> Option<i32> {
@@ -193,16 +192,16 @@ impl ppapi::Font {
      * grayscale antialiasing will be used instead (assuming the user has
      *      antialiasing enabled at all).
      */
-    pub fn draw_text<TStr: ppapi::ToStringVar +
-        ppapi::ToVar>(&self,
-                      image: &ppapi::ImageData,
+    pub fn draw_text<TStr: super::ToStringVar +
+        super::ToVar>(&self,
+                      image: &super::ImageData,
                       text: &TStr,
                       rtl: bool,
                       override_direction: bool,
-                      pos: ppapi::Point,
+                      pos: super::Point,
                       color: u32,
-                      clip: Option<ppapi::Rect>,
-                      image_data_is_opaque: bool) -> ppapi::Code {
+                      clip: Option<super::Rect>,
+                      image_data_is_opaque: bool) -> super::Code {
             let font_res = self.unwrap();
             let image_res = image.unwrap();
             let text_run = Struct_PP_TextRun_Dev {
@@ -210,8 +209,8 @@ impl ppapi::Font {
                 rtl: rtl as u32,
                 override_direction: override_direction as u32,
             };
-            let pos_ptr = &pos as *ppapi::Point;
-            let clip_ptr = if clip.is_some() { clip.get_ref() as *ppapi::Rect}
+            let pos_ptr = &pos as *super::Point;
+            let clip_ptr = if clip.is_some() { clip.get_ref() as *super::Rect}
                            else              { RawPtr::null() };
             if (ppb::get_font().DrawTextAt.unwrap())
                 (font_res,
@@ -221,12 +220,12 @@ impl ppapi::Font {
                  color,
                  clip_ptr,
                  image_data_is_opaque as ffi::PP_Bool) != -1 as u32 {
-                ppapi::Ok
-            } else { ppapi::Failed }
+                super::Ok
+            } else { super::Failed }
         }
 
-    pub fn char_offset_for_pixel<TStr: ppapi::ToStringVar +
-        ppapi::ToVar>(&self,
+    pub fn char_offset_for_pixel<TStr: super::ToStringVar +
+        super::ToVar>(&self,
                       text: &TStr,
                       rtl: bool,
                       override_direction: bool,
@@ -247,8 +246,8 @@ impl ppapi::Font {
         }
     }
 
-    pub fn pixel_offset_for_character<TStr: ppapi::ToStringVar +
-        ppapi::ToVar>(&self,
+    pub fn pixel_offset_for_character<TStr: super::ToStringVar +
+        super::ToVar>(&self,
                       text: &TStr,
                       rtl: bool,
                       override_direction: bool,
@@ -267,7 +266,7 @@ impl ppapi::Font {
     }
 }
 
-impl ppapi::Instance {
+impl super::Instance {
     pub fn get_font_families(&self) -> HashSet<~str> {
         let mut dest = HashSet::new();
         let fam_str = (ppb::get_font().GetFontFamilies.unwrap())(self.instance);

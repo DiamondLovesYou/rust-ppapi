@@ -1,7 +1,7 @@
-use ppapi::ffi;
+use super::ffi;
 
 mod globals {
-    use ppapi::ffi;
+    use super::super::ffi;
 
     pub static mut MODULE: ffi::PP_Module = 0 as ffi::PP_Module;
 }

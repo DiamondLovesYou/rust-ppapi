@@ -36,8 +36,8 @@ impl Class {
         // on value types (which fails when the types aren't the same
         // size).
         fn cast_to_expected<T: 'static, U: 'static>(mut res: T) -> U {
-            use std::mem::{replace, uninit};
-            use std::cast::transmute;
+            use core::mem::{replace, uninit};
+            use core::mem::transmute;
             use std::intrinsics::type_id;
             unsafe {                            
                 // This *should* never fail, but it's here just in case:
@@ -144,9 +144,9 @@ impl Class {
                 })
             }
             ffi::PP_INPUTEVENT_TYPE_CHAR => {
-                let char_var = StringVar(unsafe {
+                let char_var = StringVar((unsafe {
                     ffi::id_from_var(kb_event.text(&res.unwrap()))
-                });
+                }) as i64);
                 let str = char_var.to_str();
                 if str.len() != 1 {
                     warn!("character input event does not have a length of one: \

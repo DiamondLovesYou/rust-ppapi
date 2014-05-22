@@ -2,10 +2,9 @@ use libc::c_void;
 use std::ops;
 use std::rc::Rc;
 
-use ppapi;
-use ppapi::ffi;
-use ppapi::{ImageData, Resource};
-use ppapi::ppb;
+use super::ffi;
+use super::{ImageData, Resource};
+use super::ppb;
 
 #[deriving(Eq, TotalEq, Hash, Clone)]
 pub enum Format {
@@ -35,7 +34,7 @@ impl Format {
 #[deriving(Clone)]
 pub struct Description {
     pub format: Format,
-    pub size: ppapi::Size,
+    pub size: super::Size,
 
     /** Taken from the Google PPAPI docs
      * This value represents the row width in bytes. This may be different than
@@ -45,7 +44,7 @@ pub struct Description {
 }
 impl Description {
     pub fn from_ffi(desc: ffi::Struct_PP_ImageDataDesc) -> Description {
-        use std::cast::transmute;
+        use core::mem::transmute;
         Description {
             format: Format::from_ffi(desc.format),
             size:   unsafe { transmute(desc.size) },
@@ -55,7 +54,7 @@ impl Description {
 }
 
 pub struct Map_ {
-    pub img: ppapi::ImageData,
+    pub img: super::ImageData,
     pub desc: Description,
     ptr: *mut c_void,
 }
@@ -65,7 +64,7 @@ pub trait MapImpl {
 }
 impl MapImpl for Rc<Map_> {
     fn with_imm_vec<U>(&self, f: |&Vec<u8>, &Description| -> U) -> U {
-        use std::cast::forget;
+        use core::mem::forget;
         let size = ((**self).desc.size.height * (**self).desc.line_stride) as uint;
         let v = unsafe { Vec::from_raw_parts(size,
                                              size,
@@ -88,7 +87,7 @@ pub fn native_image_data_format() -> Format {
     Format::from_ffi(ppb::get_image_data().native_image_data_format())
 }
 
-impl ppapi::ImageData {
+impl super::ImageData {
     pub fn describe(&self) -> Option<Description> {
         ppb::get_image_data()
             .describe(self.unwrap())

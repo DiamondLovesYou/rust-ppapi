@@ -3,20 +3,19 @@
 #![allow(missing_doc)]
 
 use std::mem::{size_of, uninit};
-use std::cast::transmute;
+use core::mem::transmute;
 use std::{clone, ptr};
 use std::default::Default;
 use std::str::MaybeOwned;
 use std::c_str::CString;
 use libc;
 use libc::c_void;
-use ppapi;
 use super::{Context3d, Resource, Callback};
 use super::ppb;
 use super::ppb::get_gles2;
 
 #[allow(missing_doc)] pub mod types {
-    use ppapi::ffi;
+    use super::super::ffi;
     pub type Enum    = ffi::GLenum;
     pub type UInt    = ffi::GLuint;
     pub type Int     = ffi::GLint;
@@ -339,7 +338,7 @@ macro_rules! call_gl_fun(
 pub mod traits {
     use super::super::{Context3d, Resource};
     use super::{types, consts};
-    use ppapi::ppb::get_gles2;
+    use super::super::ppb::get_gles2;
     use super::{BufferType, BoundBuffer, Ctor,    BufferObject,
                 VertexBuffer,  VertexBufferType,  VertBufObject,
                 IndexBuffer,   IndexBufferType,   IdxBufObject,
@@ -1029,7 +1028,8 @@ impl<T: Clone> CompilingShader<T> {
 pub type CompilingVertexShader = CompilingShader<VertexShader>;
 pub type CompilingFragmentShader = CompilingShader<FragmentShader>;
 impl<T: traits::CompileShader + Clone + ShaderUnwrap + Send> CompilingShader<T> {
-    pub fn results(&self, ctxt: &Context3d) -> Result<T, proc(&Context3d) -> ~str> {
+    pub fn results(&self, ctxt: &Context3d) -> Result<T, proc(&Context3d) -> StrBuf> {
+        use core::iter::FromIterator;
         use std::str;
         let status = ctxt.get_shader_param(self, consts::COMPILE_STATUS);
         if status == consts::TRUE as i32 {
@@ -1037,7 +1037,7 @@ impl<T: traits::CompileShader + Clone + ShaderUnwrap + Send> CompilingShader<T> 
             Ok(inner.clone())
         } else {
             let this = self.clone();
-            Err(proc(ctxt: &Context3d) -> ~str {
+            Err(proc(ctxt: &Context3d) -> StrBuf {
                 let info_len = ctxt.get_shader_param(&this, consts::INFO_LOG_LENGTH);
                 let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as uint);
                 let mut actual_len: types::Size = unsafe { uninit() };
@@ -1047,7 +1047,7 @@ impl<T: traits::CompileShader + Clone + ShaderUnwrap + Send> CompilingShader<T> 
                                  info_buf.capacity() as types::Size,
                                  &mut actual_len as *mut types::Size,
                                  info_buf.as_mut_ptr() as *mut i8));
-                str::from_utf8_owned(info_buf.move_iter().collect()).unwrap()
+                str::from_utf8(info_buf.as_slice()).unwrap().to_strbuf()
             })
         }
     }
@@ -1079,14 +1079,15 @@ impl LinkingShaderProgram {
     }
 
     pub fn results(&self,
-                   ctxt: &Context3d) -> Result<ShaderProgram, proc(ctxt: &Context3d) -> ~str> {
+                   ctxt: &Context3d) -> Result<ShaderProgram, proc(ctxt: &Context3d) -> StrBuf> {
+        use core::iter::FromIterator;
         use std::str;
         let status = ctxt.get_program_param(self, consts::LINK_STATUS);
         if status == consts::TRUE as i32 {
             Ok(self.inner().clone())
         } else {
             let this = self.clone();
-            Err(proc(ctxt: &Context3d) -> ~str {
+            Err(proc(ctxt: &Context3d) -> StrBuf {
                 let info_len = ctxt.get_program_param(&this, consts::INFO_LOG_LENGTH);
                 let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as uint);
                 let mut actual_len: types::Size = unsafe { uninit() };
@@ -1096,7 +1097,7 @@ impl LinkingShaderProgram {
                                  info_buf.capacity() as types::Size,
                                  &mut actual_len as *mut types::Size,
                                  info_buf.as_mut_ptr() as *mut i8));
-                str::from_utf8_owned(info_buf.move_iter().collect()).unwrap()
+                str::from_utf8(info_buf.as_slice()).unwrap().to_strbuf()
             })
         }
     }
@@ -1325,7 +1326,7 @@ impl GetQueryType for MaybeOwned<'static> {
     fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> MaybeOwned<'static> {
         use std::c_str::CString;
         use std::str::from_utf8_lossy;
-        use std::cast::transmute;
+        use core::mem::transmute;
         let str_ptr = call_gl_fun!(get_gles2() -> GetString => (ctxt,
                                                                 pname));
         if str_ptr.is_null() {
@@ -1342,7 +1343,7 @@ impl GetQueryType for Vec<MaybeOwned<'static>> {
     fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> Vec<MaybeOwned<'static>> {
         use std::c_str::{from_c_multistring, CString};
         use std::str::from_utf8_lossy;
-        use std::cast::transmute;
+        use core::mem::transmute;
         let str_ptr = call_gl_fun!(get_gles2() -> GetString => (ctxt,
                                                                 pname));
         if str_ptr.is_null() {
@@ -1402,7 +1403,7 @@ impl_get_query_ret_type!(Version                => consts::VERSION -> MaybeOwned
 impl_get_query_ret_type!(ShadingLanguageVersion => consts::SHADING_LANGUAGE_VERSION -> MaybeOwned<'static>)
 
 
-impl ppapi::Context3d {
+impl super::Context3d {
     fn gen_vert_shader(&self) -> VertexShader {
         let handle = call_gl_fun!(get_gles2() -> CreateShader => (self, consts::VERTEX_SHADER));
         VertexShader(handle)
