@@ -1,23 +1,11 @@
-ifneq ($(MAKECMDGOALS),clean)
-ifeq ($(SYSROOT),)
-$(error I need the sysroot to your Rust build)
-endif
-endif
 
-RUSTC ?= $(shell readlink -f $(SYSROOT)/bin/rustc)
-NACL_SDK  ?= $(shell readlink -f ~/workspace/tools/nacl-sdk/pepper_canary)
-
-USE_DEBUG ?= 0
-RUSTFLAGS += -C cross-path=$(NACL_SDK) -C nacl-flavor=pnacl --target=le32-unknown-nacl -L $(RUST_HTTP) --sysroot=$(shell readlink -f $(SYSROOT))
-TOOLCHAIN ?= $(NACL_SDK)/toolchain/linux_pnacl
-CC  := $(TOOLCHAIN)/bin/pnacl-clang
-CXX := $(TOOLCHAIN)/bin/pnacl-clang++
-CFLAGS += -I$(NACL_SDK)/include -I$(NACL_SDK)/include/pnacl -MMD
-CXXFLAGS += -I$(NACL_SDK)/include -I$(NACL_SDK)/include/pnacl -MMD
+RUSTC ?= $(shell which rustc)
+RUSTDOC ?= $(shell which rustdoc)
 
 # deps
 RUST_HTTP    ?= $(shell readlink -f deps/rust-http)
 RUST_OPENSSL ?= $(shell readlink -f deps/rust-openssl)
+RUST_PPAPI   ?= $(shell readlink -f deps/rust-ppapi)
 
 ifeq ($(USE_DEBUG),0)
 RUSTFLAGS += -O --cfg ndebug
@@ -38,14 +26,8 @@ all: build/ppapi.stamp
 clean:
 	touch Makefile
 
-build/libhelper.a: helper.cpp Makefile
-	mkdir -p build/obj
-	$(CXX) $(CXXFLAGS) $< -c -o build/obj/helper.o
-	$(AR) cr $@ build/obj/helper.o
--include helper.d
-
-build/ppapi.stamp: lib.rs build/libhelper.a Makefile deps/http.stamp
-	$(RUSTC) $(RUSTFLAGS) lib.rs -C link-args="--pnacl-driver-verbose" --out-dir=build -L $(RUST_HTTP)/build -L $(TOOLCHAIN)/sdk/lib -L build
+build/ppapi.stamp: $(RUST_PPAPI)/lib.rs Makefile deps/http.stamp
+	$(RUSTDOC) $(RUST_PPAPI)/lib.rs -L $(RUST_HTTP)/build -o .
 	touch build/ppapi.stamp
 
 

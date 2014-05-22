@@ -1,8 +1,5 @@
-rust-ppapi
+PpAPI
 ==========
 
-Rust idiomatic bindings to the Pepper API.
+You most likely don't want to use this branch. I suggest using [master](https://github.com/DiamondLovesYou/rust-ppapi/tree/master).
 
-# Build
-
-Just run ```make``` or ```remake``` if you're kool. *Don't run ```build.sh```.* It is used to update FFI bindings.

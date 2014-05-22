@@ -4,3 +4,6 @@
 [submodule "deps/rust-openssl"]
 	path = deps/rust-openssl
 	url = https://github.com/sfackler/rust-openssl.git
+[submodule "deps/rust-ppapi"]
+	path = deps/rust-ppapi
+	url = https://github.com/DiamondLovesYou/rust-ppapi.git

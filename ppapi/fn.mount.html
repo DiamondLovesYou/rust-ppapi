@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The ppapi library documentation.">
+
+    <title>ppapi::mount - Rust</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,600'
+          rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+</head>
+<body>
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    <section class="sidebar">
+        
+
+        <p class='location'><a href='index.html'>ppapi</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='entry/index.html'>entry</a><br/><a class='mod ' href='ffi/index.html'>ffi</a><br/><a class='mod ' href='font/index.html'>font</a><br/><a class='mod ' href='gles/index.html'>gles</a><br/><a class='mod ' href='imagedata/index.html'>imagedata</a><br/><a class='mod ' href='input/index.html'>input</a><br/><a class='mod ' href='pp/index.html'>pp</a><br/><a class='mod ' href='ppb/index.html'>ppb</a><br/><a class='mod ' href='url/index.html'>url</a><br/></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.ArrayBufferVar.html'>ArrayBufferVar</a><br/><a class='struct ' href='struct.ArrayVar.html'>ArrayVar</a><br/><a class='struct ' href='struct.Console.html'>Console</a><br/><a class='struct ' href='struct.Context2d.html'>Context2d</a><br/><a class='struct ' href='struct.Context3d.html'>Context3d</a><br/><a class='struct ' href='struct.CurrentInstanceLogger.html'>CurrentInstanceLogger</a><br/><a class='struct ' href='struct.CurrentInstanceStdErr.html'>CurrentInstanceStdErr</a><br/><a class='struct ' href='struct.CurrentInstanceStdOut.html'>CurrentInstanceStdOut</a><br/><a class='struct ' href='struct.DictionaryVar.html'>DictionaryVar</a><br/><a class='struct ' href='struct.FileIo.html'>FileIo</a><br/><a class='struct ' href='struct.FileRef.html'>FileRef</a><br/><a class='struct ' href='struct.FileSliceRef.html'>FileSliceRef</a><br/><a class='struct ' href='struct.Filesystem.html'>Filesystem</a><br/><a class='struct ' href='struct.Font.html'>Font</a><br/><a class='struct ' href='struct.IMEInputEvent.html'>IMEInputEvent</a><br/><a class='struct ' href='struct.ImageData.html'>ImageData</a><br/><a class='struct ' href='struct.Instance.html'>Instance</a><br/><a class='struct ' href='struct.KeyboardInputEvent.html'>KeyboardInputEvent</a><br/><a class='struct ' href='struct.MessageLoop.html'>MessageLoop</a><br/><a class='struct ' href='struct.MouseInputEvent.html'>MouseInputEvent</a><br/><a class='struct ' href='struct.NullVar.html'>NullVar</a><br/><a class='struct ' href='struct.ObjectVar.html'>ObjectVar</a><br/><a class='struct ' href='struct.Size.html'>Size</a><br/><a class='struct ' href='struct.StringVar.html'>StringVar</a><br/><a class='struct ' href='struct.TouchInputEvent.html'>TouchInputEvent</a><br/><a class='struct ' href='struct.UndefinedVar.html'>UndefinedVar</a><br/><a class='struct ' href='struct.UrlLoader.html'>UrlLoader</a><br/><a class='struct ' href='struct.UrlRequestInfo.html'>UrlRequestInfo</a><br/><a class='struct ' href='struct.UrlResponseInfo.html'>UrlResponseInfo</a><br/><a class='struct ' href='struct.View.html'>View</a><br/><a class='struct ' href='struct.WheelInputEvent.html'>WheelInputEvent</a><br/></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='trait.ByRefVar.html'>ByRefVar</a><br/><a class='trait ' href='trait.Callback.html'>Callback</a><br/><a class='trait ' href='trait.CompletionCallback.html'>CompletionCallback</a><br/><a class='trait ' href='trait.ContextResource.html'>ContextResource</a><br/><a class='trait ' href='trait.FromVar.html'>FromVar</a><br/><a class='trait ' href='trait.InstanceCallback.html'>InstanceCallback</a><br/><a class='trait ' href='trait.Resource.html'>Resource</a><br/><a class='trait ' href='trait.ToFFIBool.html'>ToFFIBool</a><br/><a class='trait ' href='trait.ToOption.html'>ToOption</a><br/><a class='trait ' href='trait.ToStringVar.html'>ToStringVar</a><br/><a class='trait ' href='trait.ToVar.html'>ToVar</a><br/><a class='trait ' href='trait.Var.html'>Var</a><br/><a class='trait ' href='trait.VarCtor.html'>VarCtor</a><br/></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.PPP_InitializeModule.html'>PPP_InitializeModule</a><br/><a class='fn ' href='fn.PPP_ShutdownModule.html'>PPP_ShutdownModule</a><br/><a class='fn current' href='fn.mount.html'>mount</a><br/></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Search documentation..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content fn">
+<h1 class='fqn'>Function <a href='index.html'>ppapi</a>::<a class='fn' href=''>mount</a><a class='source' href='../src/ppapi/home/dick/workspace/src/hahbee/engine/ppapi-gh-pages/deps/rust-ppapi/lib.rs.html#67-98'>[src]</a></h1>
+<pre class='rust fn'>pub fn mount&lt;'s, 't, 'f, 'd&gt;(source: &amp;'s str, target: &amp;'t str, filesystem_type: &amp;'f str, data: &amp;'d str) -&gt; <a class='type' href='../ppapi/type.Code.html' title='ppapi::Code'>Code</a></pre></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&uarr;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&darr;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    <script>
+        var rootPath = "../";
+        var currentCrate = "ppapi";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    <script async src="../search-index.js"></script>
+</body>
+</html>

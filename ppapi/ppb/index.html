@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The ppapi library documentation.">
+
+    <title>ppapi::ppb - Rust</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,600'
+          rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+</head>
+<body>
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    <section class="sidebar">
+        
+
+        <p class='location'><a href='../index.html'>ppapi</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='../entry/index.html'>entry</a><br/><a class='mod ' href='../ffi/index.html'>ffi</a><br/><a class='mod ' href='../font/index.html'>font</a><br/><a class='mod ' href='../gles/index.html'>gles</a><br/><a class='mod ' href='../imagedata/index.html'>imagedata</a><br/><a class='mod ' href='../input/index.html'>input</a><br/><a class='mod ' href='../pp/index.html'>pp</a><br/><a class='mod current' href='../ppb/index.html'>ppb</a><br/><a class='mod ' href='../url/index.html'>url</a><br/></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='../struct.ArrayBufferVar.html'>ArrayBufferVar</a><br/><a class='struct ' href='../struct.ArrayVar.html'>ArrayVar</a><br/><a class='struct ' href='../struct.Console.html'>Console</a><br/><a class='struct ' href='../struct.Context2d.html'>Context2d</a><br/><a class='struct ' href='../struct.Context3d.html'>Context3d</a><br/><a class='struct ' href='../struct.CurrentInstanceLogger.html'>CurrentInstanceLogger</a><br/><a class='struct ' href='../struct.CurrentInstanceStdErr.html'>CurrentInstanceStdErr</a><br/><a class='struct ' href='../struct.CurrentInstanceStdOut.html'>CurrentInstanceStdOut</a><br/><a class='struct ' href='../struct.DictionaryVar.html'>DictionaryVar</a><br/><a class='struct ' href='../struct.FileIo.html'>FileIo</a><br/><a class='struct ' href='../struct.FileRef.html'>FileRef</a><br/><a class='struct ' href='../struct.FileSliceRef.html'>FileSliceRef</a><br/><a class='struct ' href='../struct.Filesystem.html'>Filesystem</a><br/><a class='struct ' href='../struct.Font.html'>Font</a><br/><a class='struct ' href='../struct.IMEInputEvent.html'>IMEInputEvent</a><br/><a class='struct ' href='../struct.ImageData.html'>ImageData</a><br/><a class='struct ' href='../struct.Instance.html'>Instance</a><br/><a class='struct ' href='../struct.KeyboardInputEvent.html'>KeyboardInputEvent</a><br/><a class='struct ' href='../struct.MessageLoop.html'>MessageLoop</a><br/><a class='struct ' href='../struct.MouseInputEvent.html'>MouseInputEvent</a><br/><a class='struct ' href='../struct.NullVar.html'>NullVar</a><br/><a class='struct ' href='../struct.ObjectVar.html'>ObjectVar</a><br/><a class='struct ' href='../struct.Size.html'>Size</a><br/><a class='struct ' href='../struct.StringVar.html'>StringVar</a><br/><a class='struct ' href='../struct.TouchInputEvent.html'>TouchInputEvent</a><br/><a class='struct ' href='../struct.UndefinedVar.html'>UndefinedVar</a><br/><a class='struct ' href='../struct.UrlLoader.html'>UrlLoader</a><br/><a class='struct ' href='../struct.UrlRequestInfo.html'>UrlRequestInfo</a><br/><a class='struct ' href='../struct.UrlResponseInfo.html'>UrlResponseInfo</a><br/><a class='struct ' href='../struct.View.html'>View</a><br/><a class='struct ' href='../struct.WheelInputEvent.html'>WheelInputEvent</a><br/></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='../trait.ByRefVar.html'>ByRefVar</a><br/><a class='trait ' href='../trait.Callback.html'>Callback</a><br/><a class='trait ' href='../trait.CompletionCallback.html'>CompletionCallback</a><br/><a class='trait ' href='../trait.ContextResource.html'>ContextResource</a><br/><a class='trait ' href='../trait.FromVar.html'>FromVar</a><br/><a class='trait ' href='../trait.InstanceCallback.html'>InstanceCallback</a><br/><a class='trait ' href='../trait.Resource.html'>Resource</a><br/><a class='trait ' href='../trait.ToFFIBool.html'>ToFFIBool</a><br/><a class='trait ' href='../trait.ToOption.html'>ToOption</a><br/><a class='trait ' href='../trait.ToStringVar.html'>ToStringVar</a><br/><a class='trait ' href='../trait.ToVar.html'>ToVar</a><br/><a class='trait ' href='../trait.Var.html'>Var</a><br/><a class='trait ' href='../trait.VarCtor.html'>VarCtor</a><br/></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='../fn.PPP_InitializeModule.html'>PPP_InitializeModule</a><br/><a class='fn ' href='../fn.PPP_ShutdownModule.html'>PPP_ShutdownModule</a><br/><a class='fn ' href='../fn.mount.html'>mount</a><br/></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Search documentation..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'>Module <a href='../index.html'>ppapi</a>::<a class='mod' href=''>ppb</a><a class='source' href='../../src/ppapi/home/dick/workspace/src/hahbee/engine/ppapi-gh-pages/deps/rust-ppapi/ppb.rs.html#1-653'>[src]</a></h1>
+<div class='docblock'><p>PPB related interfaces. Many interfaces have convenience functions to remove much
+of the verbose-ness of the originals.</p>
+</div><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                    <tr>
+                        <td><a class='trait' href='trait.ConsoleInterface.html'
+                               title='ppapi::ppb::ConsoleInterface'>ConsoleInterface</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='trait' href='trait.MessagingInterface.html'
+                               title='ppapi::ppb::MessagingInterface'>MessagingInterface</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='trait' href='trait.TextInputController.html'
+                               title='ppapi::ppb::TextInputController'>TextInputController</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                    <tr>
+                        <td><a class='fn' href='fn.get_actual_browser.html'
+                               title='ppapi::ppb::get_actual_browser'>get_actual_browser</a></td>
+                        <td class='docblock short'><p>Get the PPB_GetInterface function pointer.</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_array_buffer.html'
+                               title='ppapi::ppb::get_array_buffer'>get_array_buffer</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_array_buffer_opt.html'
+                               title='ppapi::ppb::get_array_buffer_opt'>get_array_buffer_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_console.html'
+                               title='ppapi::ppb::get_console'>get_console</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_console_opt.html'
+                               title='ppapi::ppb::get_console_opt'>get_console_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_core.html'
+                               title='ppapi::ppb::get_core'>get_core</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_core_opt.html'
+                               title='ppapi::ppb::get_core_opt'>get_core_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_font.html'
+                               title='ppapi::ppb::get_font'>get_font</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_font_opt.html'
+                               title='ppapi::ppb::get_font_opt'>get_font_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_gles2.html'
+                               title='ppapi::ppb::get_gles2'>get_gles2</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_gles2_opt.html'
+                               title='ppapi::ppb::get_gles2_opt'>get_gles2_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_graphics_3d.html'
+                               title='ppapi::ppb::get_graphics_3d'>get_graphics_3d</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_graphics_3d_opt.html'
+                               title='ppapi::ppb::get_graphics_3d_opt'>get_graphics_3d_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_image_data.html'
+                               title='ppapi::ppb::get_image_data'>get_image_data</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_image_data_opt.html'
+                               title='ppapi::ppb::get_image_data_opt'>get_image_data_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_ime_event.html'
+                               title='ppapi::ppb::get_ime_event'>get_ime_event</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_ime_event_opt.html'
+                               title='ppapi::ppb::get_ime_event_opt'>get_ime_event_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_input_event.html'
+                               title='ppapi::ppb::get_input_event'>get_input_event</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_input_event_opt.html'
+                               title='ppapi::ppb::get_input_event_opt'>get_input_event_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_instance.html'
+                               title='ppapi::ppb::get_instance'>get_instance</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_instance_opt.html'
+                               title='ppapi::ppb::get_instance_opt'>get_instance_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_keyboard_event.html'
+                               title='ppapi::ppb::get_keyboard_event'>get_keyboard_event</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_keyboard_event_opt.html'
+                               title='ppapi::ppb::get_keyboard_event_opt'>get_keyboard_event_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_message_loop.html'
+                               title='ppapi::ppb::get_message_loop'>get_message_loop</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_message_loop_opt.html'
+                               title='ppapi::ppb::get_message_loop_opt'>get_message_loop_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_mouse_event.html'
+                               title='ppapi::ppb::get_mouse_event'>get_mouse_event</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_mouse_event_opt.html'
+                               title='ppapi::ppb::get_mouse_event_opt'>get_mouse_event_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_touch_event.html'
+                               title='ppapi::ppb::get_touch_event'>get_touch_event</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_touch_event_opt.html'
+                               title='ppapi::ppb::get_touch_event_opt'>get_touch_event_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_url_loader.html'
+                               title='ppapi::ppb::get_url_loader'>get_url_loader</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_url_loader_opt.html'
+                               title='ppapi::ppb::get_url_loader_opt'>get_url_loader_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_url_request.html'
+                               title='ppapi::ppb::get_url_request'>get_url_request</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_url_request_opt.html'
+                               title='ppapi::ppb::get_url_request_opt'>get_url_request_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_url_response.html'
+                               title='ppapi::ppb::get_url_response'>get_url_response</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_url_response_opt.html'
+                               title='ppapi::ppb::get_url_response_opt'>get_url_response_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_var.html'
+                               title='ppapi::ppb::get_var'>get_var</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_var_opt.html'
+                               title='ppapi::ppb::get_var_opt'>get_var_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_view.html'
+                               title='ppapi::ppb::get_view'>get_view</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_view_opt.html'
+                               title='ppapi::ppb::get_view_opt'>get_view_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_wheel_event.html'
+                               title='ppapi::ppb::get_wheel_event'>get_wheel_event</a></td>
+                        <td class='docblock short'><p>Returns a static ref to the interface</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='fn' href='fn.get_wheel_event_opt.html'
+                               title='ppapi::ppb::get_wheel_event_opt'>get_wheel_event_opt</a></td>
+                        <td class='docblock short'><p>Returns an optional static ref to the interface</p>
+</td>
+                    </tr>
+                </table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                    <tr>
+                        <td><a class='type' href='type.Console.html'
+                               title='ppapi::ppb::Console'>Console</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.Core.html'
+                               title='ppapi::ppb::Core'>Core</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.Font.html'
+                               title='ppapi::ppb::Font'>Font</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.Graphics3D.html'
+                               title='ppapi::ppb::Graphics3D'>Graphics3D</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.IMEInputEvent.html'
+                               title='ppapi::ppb::IMEInputEvent'>IMEInputEvent</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.ImageData.html'
+                               title='ppapi::ppb::ImageData'>ImageData</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.InputEvent.html'
+                               title='ppapi::ppb::InputEvent'>InputEvent</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.Instance.html'
+                               title='ppapi::ppb::Instance'>Instance</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.KeyboardInputEvent.html'
+                               title='ppapi::ppb::KeyboardInputEvent'>KeyboardInputEvent</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.MessageLoop.html'
+                               title='ppapi::ppb::MessageLoop'>MessageLoop</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.Messaging.html'
+                               title='ppapi::ppb::Messaging'>Messaging</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.MouseInputEvent.html'
+                               title='ppapi::ppb::MouseInputEvent'>MouseInputEvent</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.OpenGLES2.html'
+                               title='ppapi::ppb::OpenGLES2'>OpenGLES2</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.TouchInputEvent.html'
+                               title='ppapi::ppb::TouchInputEvent'>TouchInputEvent</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.UrlLoader.html'
+                               title='ppapi::ppb::UrlLoader'>UrlLoader</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.UrlRequestInfo.html'
+                               title='ppapi::ppb::UrlRequestInfo'>UrlRequestInfo</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.UrlResponseInfo.html'
+                               title='ppapi::ppb::UrlResponseInfo'>UrlResponseInfo</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.Var.html'
+                               title='ppapi::ppb::Var'>Var</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.VarArrayBuffer.html'
+                               title='ppapi::ppb::VarArrayBuffer'>VarArrayBuffer</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.View.html'
+                               title='ppapi::ppb::View'>View</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='type' href='type.WheelInputEvent.html'
+                               title='ppapi::ppb::WheelInputEvent'>WheelInputEvent</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&uarr;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&darr;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    <script>
+        var rootPath = "../../";
+        var currentCrate = "ppapi";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    <script async src="../../search-index.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The ppapi library documentation.">
+
+    <title>ppapi::gles::BoundBuffer - Rust</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,600'
+          rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+</head>
+<body>
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    <section class="sidebar">
+        
+
+        <p class='location'><a href='../index.html'>ppapi</a>&#8203;::<a href='index.html'>gles</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='consts/index.html'>consts</a><br/><a class='mod ' href='traits/index.html'>traits</a><br/><a class='mod ' href='types/index.html'>types</a><br/></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Blending.html'>Blending</a><br/><a class='struct current' href='struct.BoundBuffer.html'>BoundBuffer</a><br/><a class='struct ' href='struct.BoundShaderProgram.html'>BoundShaderProgram</a><br/><a class='struct ' href='struct.BoundTexBuffer.html'>BoundTexBuffer</a><br/><a class='struct ' href='struct.ByteType.html'>ByteType</a><br/><a class='struct ' href='struct.CompilingShader.html'>CompilingShader</a><br/><a class='struct ' href='struct.DynamicBufferUsage.html'>DynamicBufferUsage</a><br/><a class='struct ' href='struct.Extensions.html'>Extensions</a><br/><a class='struct ' href='struct.FloatType.html'>FloatType</a><br/><a class='struct ' href='struct.FragmentShader.html'>FragmentShader</a><br/><a class='struct ' href='struct.FrameBuffer.html'>FrameBuffer</a><br/><a class='struct ' href='struct.IndexBuffer.html'>IndexBuffer</a><br/><a class='struct ' href='struct.LineLoopGeometryMode.html'>LineLoopGeometryMode</a><br/><a class='struct ' href='struct.LineStripGeometryMode.html'>LineStripGeometryMode</a><br/><a class='struct ' href='struct.LinesGeometryMode.html'>LinesGeometryMode</a><br/><a class='struct ' href='struct.LinkingShaderProgram.html'>LinkingShaderProgram</a><br/><a class='struct ' href='struct.MaxColorAttachments.html'>MaxColorAttachments</a><br/><a class='struct ' href='struct.MaxCombinedTextureImageUnits.html'>MaxCombinedTextureImageUnits</a><br/><a class='struct ' href='struct.MaxCubeMapTextureSize.html'>MaxCubeMapTextureSize</a><br/><a class='struct ' href='struct.MaxFragmentUniformVectors.html'>MaxFragmentUniformVectors</a><br/><a class='struct ' href='struct.MaxRenderBufferSize.html'>MaxRenderBufferSize</a><br/><a class='struct ' href='struct.MaxTextureImageUnits.html'>MaxTextureImageUnits</a><br/><a class='struct ' href='struct.MaxTextureSize.html'>MaxTextureSize</a><br/><a class='struct ' href='struct.MaxVaryingVectors.html'>MaxVaryingVectors</a><br/><a class='struct ' href='struct.MaxVertexAttribs.html'>MaxVertexAttribs</a><br/><a class='struct ' href='struct.MaxVertexImageUnits.html'>MaxVertexImageUnits</a><br/><a class='struct ' href='struct.MaxVertexUniformVectors.html'>MaxVertexUniformVectors</a><br/><a class='struct ' href='struct.PointsGeometryMode.html'>PointsGeometryMode</a><br/><a class='struct ' href='struct.RenderBuffer.html'>RenderBuffer</a><br/><a class='struct ' href='struct.Renderer.html'>Renderer</a><br/><a class='struct ' href='struct.ShaderProgram.html'>ShaderProgram</a><br/><a class='struct ' href='struct.ShadingLanguageVersion.html'>ShadingLanguageVersion</a><br/><a class='struct ' href='struct.ShortType.html'>ShortType</a><br/><a class='struct ' href='struct.StaticBufferUsage.html'>StaticBufferUsage</a><br/><a class='struct ' href='struct.StreamBufferUsage.html'>StreamBufferUsage</a><br/><a class='struct ' href='struct.TextureBuffer.html'>TextureBuffer</a><br/><a class='struct ' href='struct.TriangleFanGeometryMode.html'>TriangleFanGeometryMode</a><br/><a class='struct ' href='struct.TriangleStripGeometryMode.html'>TriangleStripGeometryMode</a><br/><a class='struct ' href='struct.TrianglesGeometryMode.html'>TrianglesGeometryMode</a><br/><a class='struct ' href='struct.UByteType.html'>UByteType</a><br/><a class='struct ' href='struct.UShortType.html'>UShortType</a><br/><a class='struct ' href='struct.UnlinkedShaderProgram.html'>UnlinkedShaderProgram</a><br/><a class='struct ' href='struct.Vendor.html'>Vendor</a><br/><a class='struct ' href='struct.Version.html'>Version</a><br/><a class='struct ' href='struct.VertexBuffer.html'>VertexBuffer</a><br/><a class='struct ' href='struct.VertexShader.html'>VertexShader</a><br/></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='trait.Ctor.html'>Ctor</a><br/><a class='trait ' href='trait.GetQuery.html'>GetQuery</a><br/><a class='trait ' href='trait.GetQueryType.html'>GetQueryType</a><br/><a class='trait ' href='trait.InnerProgram.html'>InnerProgram</a><br/><a class='trait ' href='trait.OptPointerOffset.html'>OptPointerOffset</a><br/><a class='trait ' href='trait.ShaderUnwrap.html'>ShaderUnwrap</a><br/><a class='trait ' href='trait.UniformFun.html'>UniformFun</a><br/></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Search documentation..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'>Struct <a href='../index.html'>ppapi</a>::<a href='index.html'>gles</a>::<a class='struct' href=''>BoundBuffer</a><a class='source' href='../../src/ppapi/home/dick/workspace/src/hahbee/engine/ppapi-gh-pages/deps/rust-ppapi/gles.rs.html#727'>[src]</a></h1>
+<pre class='rust struct'>pub struct BoundBuffer&lt;T&gt;(_);</pre><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>&gt;</code></h3><div class='methods'><h4 id='method.buffer_vertex_data' class='method'><code>fn <a href='#method.buffer_vertex_data' class='fnname'>buffer_vertex_data</a>&lt;'a, TUsage: <a class='trait' href='../../ppapi/gles/traits/trait.Usage.html' title='ppapi::gles::traits::Usage'>Usage</a>&gt;(&amp;self, ctxt: &amp;mut <a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>, buf: <a class='type' href='../../ppapi/gles/type.BufferOption.html' title='ppapi::gles::BufferOption'>BufferOption</a>&lt;'a, u8&gt;, usage: TUsage)</code></h4>
+<h4 id='method.vertex_attribute' class='method'><code>fn <a href='#method.vertex_attribute' class='fnname'>vertex_attribute</a>&lt;T: <a class='trait' href='../../ppapi/gles/traits/trait.VertexAttribType.html' title='ppapi::gles::traits::VertexAttribType'>VertexAttribType</a>&gt;(&amp;self, ctxt: &amp;<a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>, index: uint, size: uint, ty: T, normalized: bool, stride: uint, offset: <a class='type' href='http://static.rust-lang.org/doc/master/core/option/type.Option.html' title='core::option::Option'>Option</a>&lt;uint&gt;)</code></h4>
+<h4 id='method.draw_slice' class='method'><code>fn <a href='#method.draw_slice' class='fnname'>draw_slice</a>&lt;T: <a class='trait' href='../../ppapi/gles/traits/trait.GeometryMode.html' title='ppapi::gles::traits::GeometryMode'>GeometryMode</a>&gt;(&amp;self, ctxt: &amp;<a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>, mode: T, slice_start: uint, slice_len: uint)</code></h4>
+</div><h3 class='impl'><code>impl <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;<a class='struct' href='../../ppapi/gles/struct.IndexBuffer.html' title='ppapi::gles::IndexBuffer'>IndexBuffer</a>&gt;</code></h3><div class='methods'><h4 id='method.buffer_index_data' class='method'><code>fn <a href='#method.buffer_index_data' class='fnname'>buffer_index_data</a>&lt;'a, TUsage: <a class='trait' href='../../ppapi/gles/traits/trait.Usage.html' title='ppapi::gles::traits::Usage'>Usage</a>&gt;(&amp;self, ctxt: &amp;mut <a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>, buf: <a class='type' href='../../ppapi/gles/type.BufferOption.html' title='ppapi::gles::BufferOption'>BufferOption</a>&lt;'a, u16&gt;, usage: TUsage)</code></h4>
+<h4 id='method.draw_elements' class='method'><code>fn <a href='#method.draw_elements' class='fnname'>draw_elements</a>&lt;T: <a class='trait' href='../../ppapi/gles/traits/trait.GeometryMode.html' title='ppapi::gles::traits::GeometryMode'>GeometryMode</a>, U: <a class='trait' href='../../ppapi/gles/traits/trait.IndexElementType.html' title='ppapi::gles::traits::IndexElementType'>IndexElementType</a>&gt;(&amp;self, ctxt: &amp;<a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>, mode: T, ty: U, slice_start: uint, slice_len: uint)</code></h4>
+</div><h3 class='impl'><code>impl <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;<a class='struct' href='../../ppapi/gles/struct.FrameBuffer.html' title='ppapi::gles::FrameBuffer'>FrameBuffer</a>&gt;</code></h3><div class='methods'><h4 id='method.attach_tex2d' class='method'><code>fn <a href='#method.attach_tex2d' class='fnname'>attach_tex2d</a>(&amp;mut self, ctxt: &amp;<a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>, attachment: <a class='type' href='../../ppapi/gles/types/type.Enum.html' title='ppapi::gles::types::Enum'>Enum</a>, tex: <a class='struct' href='../../ppapi/gles/struct.TextureBuffer.html' title='ppapi::gles::TextureBuffer'>TextureBuffer</a>, mip_lvl: <a class='type' href='../../ppapi/gles/types/type.Int.html' title='ppapi::gles::types::Int'>Int</a>)</code></h4>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl&lt;T: <a class='trait' href='../../ppapi/gles/traits/trait.Buffer.html' title='ppapi::gles::traits::Buffer'>Buffer</a>&gt; <a class='trait' href='../../ppapi/gles/traits/trait.Buffer.html' title='ppapi::gles::traits::Buffer'>Buffer</a> for <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;</code></h3><div class='methods'><h4 id='method.unwrap' class='method'><code>fn <a href='#method.unwrap' class='fnname'>unwrap</a>(&amp;self) -&gt; <a class='type' href='../../ppapi/gles/types/type.UInt.html' title='ppapi::gles::types::UInt'>UInt</a></code></h4>
+<h4 id='method.get_type' class='method'><code>fn <a href='#method.get_type' class='fnname'>get_type</a>(&amp;self) -&gt; <a class='type' href='../../ppapi/gles/type.BufferType.html' title='ppapi::gles::BufferType'>BufferType</a></code></h4>
+<h4 id='method.to_object' class='method'><code>fn <a href='#method.to_object' class='fnname'>to_object</a>(&amp;self) -&gt; <a class='type' href='../../ppapi/gles/type.BufferObject.html' title='ppapi::gles::BufferObject'>BufferObject</a></code></h4>
+<h4 id='method.is_default' class='method'><code>fn <a href='#method.is_default' class='fnname'>is_default</a>(&amp;self) -&gt; bool</code></h4>
+</div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl&lt;__S: <a class='trait' href='http://static.rust-lang.org/doc/master/std/io/trait.Writer.html' title='std::io::Writer'>Writer</a>, T: <a class='trait' href='http://static.rust-lang.org/doc/master/std/hash/trait.Hash.html' title='std::hash::Hash'>Hash</a>&lt;__S&gt;&gt; <a class='trait' href='http://static.rust-lang.org/doc/master/std/hash/trait.Hash.html' title='std::hash::Hash'>Hash</a>&lt;__S&gt; for <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;</code></h3><div class='methods'><h4 id='method.hash' class='method'><code>fn <a href='#method.hash' class='fnname'>hash</a>(&amp;self, __arg_0: &amp;mut __S)</code></h4>
+</div><h3 class='impl'><code>impl&lt;T: <a class='trait' href='http://static.rust-lang.org/doc/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>&gt; <a class='trait' href='http://static.rust-lang.org/doc/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;</code></h3><div class='methods'><h4 id='method.clone' class='method'><code>fn <a href='#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;</code></h4>
+</div><h3 class='impl'><code>impl&lt;T: <a class='trait' href='http://static.rust-lang.org/doc/master/core/cmp/trait.TotalOrd.html' title='core::cmp::TotalOrd'>TotalOrd</a>&gt; <a class='trait' href='http://static.rust-lang.org/doc/master/core/cmp/trait.TotalOrd.html' title='core::cmp::TotalOrd'>TotalOrd</a> for <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;</code></h3><div class='methods'><h4 id='method.cmp' class='method'><code>fn <a href='#method.cmp' class='fnname'>cmp</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;) -&gt; <a class='type' href='http://static.rust-lang.org/doc/master/core/cmp/type.Ordering.html' title='core::cmp::Ordering'>Ordering</a></code></h4>
+</div><h3 class='impl'><code>impl&lt;T: <a class='trait' href='http://static.rust-lang.org/doc/master/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a>&gt; <a class='trait' href='http://static.rust-lang.org/doc/master/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a> for <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;</code></h3><div class='methods'><h4 id='method.lt' class='method'><code>fn <a href='#method.lt' class='fnname'>lt</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;) -&gt; bool</code></h4>
+<h4 id='method.le' class='method'><code>fn <a href='#method.le' class='fnname'>le</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;) -&gt; bool</code></h4>
+<h4 id='method.gt' class='method'><code>fn <a href='#method.gt' class='fnname'>gt</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;) -&gt; bool</code></h4>
+<h4 id='method.ge' class='method'><code>fn <a href='#method.ge' class='fnname'>ge</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;) -&gt; bool</code></h4>
+</div><h3 class='impl'><code>impl&lt;T: <a class='trait' href='http://static.rust-lang.org/doc/master/core/cmp/trait.TotalEq.html' title='core::cmp::TotalEq'>TotalEq</a>&gt; <a class='trait' href='http://static.rust-lang.org/doc/master/core/cmp/trait.TotalEq.html' title='core::cmp::TotalEq'>TotalEq</a> for <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;</code></h3><div class='methods'></div><h3 class='impl'><code>impl&lt;T: <a class='trait' href='http://static.rust-lang.org/doc/master/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a>&gt; <a class='trait' href='http://static.rust-lang.org/doc/master/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> for <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;</code></h3><div class='methods'><h4 id='method.eq' class='method'><code>fn <a href='#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;) -&gt; bool</code></h4>
+<h4 id='method.ne' class='method'><code>fn <a href='#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;T&gt;) -&gt; bool</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&uarr;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&darr;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    <script>
+        var rootPath = "../../";
+        var currentCrate = "ppapi";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    <script async src="../../search-index.js"></script>
+</body>
+</html>
