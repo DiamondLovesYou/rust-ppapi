@@ -6,10 +6,10 @@ use super::ffi;
 use super::{ImageData, Resource};
 use super::ppb;
 
-#[deriving(Eq, TotalEq, Hash, Clone)]
+#[deriving(Eq, PartialEq, Hash, Clone)]
 pub enum Format {
-    BGRA = ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL,
-    RGBA = ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL,
+    BGRA = ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL as int,
+    RGBA = ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL as int,
 }
 impl Format {
     fn from_ffi(v: ffi::PP_ImageDataFormat) -> Format {

@@ -20,7 +20,7 @@ impl super::Instance {
     }
 }
 pub type RequestProperties = EnumSet<RequestProperties_>;
-#[deriving(Eq, TotalEq, Clone, Hash)]
+#[deriving(Eq, PartialEq, Clone, Hash)]
 pub enum RequestProperties_ {
     AllowCrossOriginRequests,
     AllowCredentials,
@@ -69,7 +69,7 @@ pub enum Body {
     FileBody(FileSliceRef, Option<super::Time>),
     BlobBody(Vec<u8>),
 }
-#[deriving(Clone, Eq, TotalEq, Hash)]
+#[deriving(Clone, Eq, PartialEq, Hash)]
 pub enum Method {
     GetMethod,
     PostMethod,
@@ -186,12 +186,12 @@ impl RequestInfo {
                                        ffi::PP_URLREQUESTPROPERTY_HEADERS,
                                        headers_str.to_var());
 
-        let url = url.to_str().to_string_var();
+        let url = url.to_string().to_string_var();
         let success = success && request.property(res.unwrap(),
                                                   ffi::PP_URLREQUESTPROPERTY_URL,
                                                   url.to_var());
 
-        let method = method.to_str().to_string_var();
+        let method = method.to_string().to_string_var();
         let success = success && request.property(res.unwrap(),
                                                   ffi::PP_URLREQUESTPROPERTY_METHOD,
                                                   method.to_var());
@@ -200,7 +200,7 @@ impl RequestInfo {
     }
 }
 
-#[deriving(Clone, Hash, Eq, TotalEq)]
+#[deriving(Clone, Hash, Eq, PartialEq)]
 pub struct OpenedUrlLoader(UrlLoader);
 impl OpenedUrlLoader {
     fn unwrap_loader<'a>(&'a self) -> &'a UrlLoader {
@@ -209,8 +209,8 @@ impl OpenedUrlLoader {
     }
     pub fn download_progress(&self) -> Option<(i64, i64)> {
         use std::mem;
-        let mut bytes_sent = unsafe { mem::uninit() };
-        let mut total_sent = unsafe { mem::uninit() };
+        let mut bytes_sent = unsafe { mem::uninitialized() };
+        let mut total_sent = unsafe { mem::uninitialized() };
 
         let f = get_url_loader().GetDownloadProgress.unwrap();
         if !f(self.unwrap_loader().unwrap(), &mut bytes_sent, &mut total_sent) != 0 {

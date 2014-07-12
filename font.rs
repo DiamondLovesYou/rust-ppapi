@@ -1,7 +1,7 @@
 use std::intrinsics::uninit;
 use std::result::{Ok};
 use std::ptr::RawPtr;
-use collections::hashmap::HashSet;
+use std::collections::hashmap::HashSet;
 
 use super::{ppb, ffi};
 use super::{ToVar, Resource, ToFFIBool};
@@ -10,7 +10,7 @@ use super::ffi::{Struct_PP_FontMetrics_Dev, Struct_PP_TextRun_Dev,
 use super::StringVar;
 
 
-#[deriving(Eq, Clone, Hash)]
+#[deriving(Eq, PartialEq, Clone, Hash)]
 pub enum Family {
     DefaultFamily,
     SerifFamily,
@@ -37,7 +37,7 @@ impl Family {
     }
 }
 
-#[deriving(Eq, Clone, Hash)]
+#[deriving(Eq, PartialEq, Clone, Hash)]
 pub enum Weight {
     ValueWeight(u16),
     NormalWeight,
@@ -89,7 +89,7 @@ fn new_metrics_from_ffi(metrics: ffi::Struct_PP_FontMetrics_Dev) -> Metrics {
 }
 
 
-#[deriving(Eq, Clone, Hash)]
+#[deriving(Eq, PartialEq, Clone, Hash)]
 pub struct Description {
     face: Option<StringVar>,
     family: Family,
@@ -169,7 +169,7 @@ impl super::Font {
             };
             let result = (ppb::get_font().MeasureText.unwrap())
                 (self.unwrap(),
-                 &text_run as *Struct_PP_TextRun_Dev);
+                 &text_run as *const Struct_PP_TextRun_Dev);
             if result == -1 { None }
             else            { Some(result) }
         }
@@ -209,13 +209,13 @@ impl super::Font {
                 rtl: rtl as u32,
                 override_direction: override_direction as u32,
             };
-            let pos_ptr = &pos as *super::Point;
-            let clip_ptr = if clip.is_some() { clip.get_ref() as *super::Rect}
+            let pos_ptr = &pos as *const super::Point;
+            let clip_ptr = if clip.is_some() { clip.get_ref() as *const super::Rect}
                            else              { RawPtr::null() };
             if (ppb::get_font().DrawTextAt.unwrap())
                 (font_res,
                  image_res,
-                 &text_run as *Struct_PP_TextRun_Dev,
+                 &text_run as *const Struct_PP_TextRun_Dev,
                  pos_ptr,
                  color,
                  clip_ptr,
@@ -237,7 +237,7 @@ impl super::Font {
         };
         let result = (ppb::get_font().CharacterOffsetForPixel.unwrap())
                 (self.unwrap(),
-                 &text_run as *Struct_PP_TextRun_Dev,
+                 &text_run as *const Struct_PP_TextRun_Dev,
                  position);
         if result == -1 as u32 {
             None
@@ -259,7 +259,7 @@ impl super::Font {
         };
         let result = (ppb::get_font().PixelOffsetForCharacter.unwrap())
                 (self.unwrap(),
-                 &text_run as *Struct_PP_TextRun_Dev,
+                 &text_run as *const Struct_PP_TextRun_Dev,
                  char_offset);
         if result == -1 { None }
         else            { Some(result) }
@@ -267,12 +267,12 @@ impl super::Font {
 }
 
 impl super::Instance {
-    pub fn get_font_families(&self) -> HashSet<~str> {
+    pub fn get_font_families(&self) -> HashSet<String> {
         let mut dest = HashSet::new();
         let fam_str = (ppb::get_font().GetFontFamilies.unwrap())(self.instance);
-        let fam_str = StringVar::new_from_var(fam_str).to_str();
-        for font in fam_str.split('\0') {
-            dest.insert(font.to_str());
+        let fam_str = StringVar::new_from_var(fam_str).to_string();
+        for font in fam_str.as_slice().split('\0') {
+            dest.insert(font.to_string());
         }
         dest
     }
