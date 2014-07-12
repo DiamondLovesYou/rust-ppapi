@@ -10,7 +10,7 @@ rm -f $OUT
 echo "#![allow(non_camel_case_types)]" >> $OUT
 echo "#![allow(uppercase_variables)]"  >> $OUT
 
-$BINDGEN_DIR/bindgen ppapi.hpp -I $NACL_INCLUDE_DIR -match ppapi/c -match nacl_io -match sys/mount -match ppapi.hpp -match usr/include/stdint.h -emit-clang-ast -o temp
+$BINDGEN_DIR/bindgen -nostdinc -isystem $NACL_DIR/toolchain/linux_pnacl/host_x86_32/lib/clang/3.4/include -isystem $NACL_DIR/toolchain/linux_pnacl/usr/include/c++/v1 -isystem $NACL_DIR/toolchain/linux_pnacl/usr/include/c++/v1/arm-none-linux-gnueabi -isystem $NACL_DIR/toolchain/linux_pnacl/usr/include/c++/v1/backward -isystem $NACL_DIR/toolchain/linux_pnacl/usr/include -isystem $NACL_DIR/toolchain/linux_pnacl/sdk/include -isystem $NACL_DIR/include/pnacl -target le32-unknown-nacl ppapi.hpp -I $NACL_INCLUDE_DIR -pthread -o temp
 #perl -i -e 's/pub\\sstruct\\sStruct_PP_Dummy_Struct_For_(PP_.*_Dev)\\s\\{\\s*_COMPILE_ASSERT_FAILED_The_type_named_\\g1_is_not_[0-9]+_bytes_wide:\\s\\[c_schar,\\s\\.\\.1u\\],\\s*\\}//' $OUT
 
 cat temp >> $OUT
