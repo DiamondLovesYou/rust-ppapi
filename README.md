@@ -42,6 +42,8 @@ struct NoOpt;
 impl ppapi::InstanceCallback for NoOpt { }
 ```
 
+Compile with: ```rustc --target le32-unknown-nacl -C cross-path=path/to/pepper/sdk -C nacl-flavor=pnacl main.rs```
+
 ## More Docs
 
 [Here](http://diamondlovesyou.github.io/rust-ppapi/ppapi/index.html)
