@@ -45,7 +45,7 @@ build/libhelper.a: helper.cpp Makefile
 -include helper.d
 
 build/ppapi.stamp: lib.rs build/libhelper.a Makefile deps/http.stamp
-	$(RUSTC) $(RUSTFLAGS) lib.rs --out-dir=build -L $(RUST_HTTP)/build -L $(TOOLCHAIN)/sdk/lib -L build
+	$(RUSTC) $(RUSTFLAGS) lib.rs --out-dir=build -L $(RUST_OPENSSL)/target -L $(RUST_HTTP)/target -L $(RUST_HTTP)/build -L $(TOOLCHAIN)/sdk/lib -L build
 	touch build/ppapi.stamp
 
 
