@@ -10,7 +10,8 @@ deps/rust-*
 *.la
 .libs
 deps/libressl-2.0.0/libtool
-deps/libressl-2.0.0/config.*
+deps/libressl-2.0.0/config.log
+deps/libressl-2.0.0/config.status
 deps/libressl-2.0.0/Makefile
 deps/libressl-2.0.0/*/Makefile
 deps/libressl-2.0.0/*/*/Makefile
