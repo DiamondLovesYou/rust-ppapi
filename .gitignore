@@ -3,5 +3,14 @@ deps/rust-*
 *.stamp
 *.Plo
 *.Po
+*.Tpo
+.dirstamp
+*.lo
+*.o
+*.la
+.libs
+deps/libressl-2.0.0/libtool
+deps/libressl-2.0.0/config.*
 deps/libressl-2.0.0/Makefile
 deps/libressl-2.0.0/*/Makefile
+deps/libressl-2.0.0/*/*/Makefile
