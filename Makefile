@@ -5,12 +5,13 @@ endif
 endif
 
 SRC_DIR := $(abspath .)
+BUILD_DIR ?= $(abspath build)
 
 RUSTC ?= $(shell readlink -f $(SYSROOT)/bin/rustc)
 NACL_SDK  ?= $(shell readlink -f ~/workspace/tools/nacl-sdk/pepper_canary)
 
 USE_DEBUG ?= 0
-RUSTFLAGS += -C cross-path=$(NACL_SDK) -C nacl-flavor=pnacl --target=le32-unknown-nacl -L $(RUST_HTTP) --sysroot=$(shell readlink -f $(SYSROOT))
+RUSTFLAGS += -C cross-path=$(NACL_SDK) -C nacl-flavor=pnacl --target=le32-unknown-nacl --sysroot=$(shell readlink -f $(SYSROOT))
 TOOLCHAIN ?= $(NACL_SDK)/toolchain/linux_pnacl
 CC  := $(TOOLCHAIN)/bin/pnacl-clang
 CXX := $(TOOLCHAIN)/bin/pnacl-clang++
@@ -72,9 +73,10 @@ $(RUST_OPENSSL)/Makefile: $(RUST_OPENSSL)/configure $(RUST_OPENSSL)/Makefile.in 
 
 deps/openssl.stamp:	$(RUST_OPENSSL)/Makefile \
 		$(call rwildcard,$(RUST_OPENSSL),*rs) \
-		$(RUSTC)
+		$(RUSTC)                              \
+		deps/libressl.stamp
 	cd $(RUST_OPENSSL); \
-	RUSTC="$(RUSTC)" RUSTFLAGS="$(filter-out -O,$(RUSTFLAGS))" $(MAKE) -C $(RUST_OPENSSL)
+	RUSTC="$(RUSTC)" RUSTFLAGS="$(filter-out -O,$(RUSTFLAGS)) -L $(BUILD_DIR)" $(MAKE) -C $(RUST_OPENSSL)
 	touch $@
 
 deps/libressl.stamp: Makefile                          \
