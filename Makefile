@@ -80,7 +80,7 @@ deps/openssl.stamp:	$(RUST_OPENSSL)/Makefile \
 	touch $@
 
 deps/libressl.stamp: Makefile                          \
-		     $(call rwildcard,$(LIBRESSL),*.c) \
+		     $(call rwildcard,$(LIBRESSL),*.c *.h) \
 		     $(LIBRESSL)/configure             \
 		     $(CC) $(CXX) $(AR)
 	cd $(LIBRESSL); \
