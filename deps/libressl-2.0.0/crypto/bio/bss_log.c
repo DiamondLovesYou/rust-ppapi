@@ -65,7 +65,9 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#ifndef __pnacl__
 #include <syslog.h>
+#endif
 
 #include <openssl/buffer.h>
 #include <openssl/err.h>

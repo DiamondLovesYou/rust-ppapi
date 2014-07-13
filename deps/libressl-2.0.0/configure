@@ -2908,7 +2908,7 @@ AM_BACKSLASH='\'
 
 USER_CFLAGS="-O2 $CFLAGS"
 
-CFLAGS="$CFLAGS -Wall -Werror -std=c99 -g -Wno-pointer-sign"
+CFLAGS="$CFLAGS -Wall -Werror -Wno-pointer-sign"
 
 case $target_os in
 	*darwin*)

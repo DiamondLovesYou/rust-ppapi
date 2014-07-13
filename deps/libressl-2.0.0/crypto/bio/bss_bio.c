@@ -293,6 +293,10 @@ bio_nread0(BIO *bio, char **buf)
 	return num;
 }
 
+#ifdef __pnacl__
+#define SSIZE_MAX LONG_MAX
+#endif
+
 static ssize_t
 bio_nread(BIO *bio, char **buf, size_t num_)
 {

@@ -67,6 +67,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/unistd.h>
 #include <fcntl.h>
 
 #undef BUFSIZE

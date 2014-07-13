@@ -22,4 +22,20 @@ int timingsafe_bcmp(const void *b1, const void *b2, size_t n);
 
 int timingsafe_memcmp(const void *b1, const void *b2, size_t len);
 
+#ifdef __pnacl__
+inline int strncasecmp(const char *str1, const char *str2, size_t n) {
+  size_t i = 0;
+  for(; str1[i] == str2[i] &&
+        str1[i] != '\0' && str2[i] != '\0' &&
+        i < n; ++i) { }
+  return (int)(str1[i] - str2[i]);
+}
+inline int strcasecmp(const char *str1, const char *str2) {
+  size_t i = 0;
+  for(; str1[i] == str2[i] &&
+        str1[i] != '\0' && str2[i] != '\0'; ++i) { }
+  return (int)(str1[i] - str2[i]);
+}
+#endif /* __pnacl__ */
+
 #endif

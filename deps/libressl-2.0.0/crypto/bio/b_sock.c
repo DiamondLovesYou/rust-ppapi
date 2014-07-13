@@ -462,5 +462,8 @@ BIO_set_tcp_ndelay(int s, int on)
 int
 BIO_socket_nbio(int s, int mode)
 {
+#ifdef __pnacl__
+#define FIONBIO		0x5421
+#endif
 	return (BIO_socket_ioctl(s, FIONBIO, &mode) == 0);
 }
