@@ -57,7 +57,7 @@ build/ppapi.stamp: lib.rs build/libhelper.a Makefile deps/http.stamp deps/libres
 
 $(RUST_HTTP)/Makefile: $(RUST_HTTP)/configure $(RUST_HTTP)/Makefile.in Makefile
 	cd $(RUST_HTTP); \
-	./configure
+	WITH_OPENSSL="$(RUST_OPENSSL)" ./configure
 
 deps/http.stamp: 	$(RUST_HTTP)/Makefile deps/openssl.stamp \
 		$(call rwildcard,$(RUST_HTTP),*rs) \
