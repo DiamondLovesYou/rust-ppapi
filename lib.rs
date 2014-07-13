@@ -1,5 +1,5 @@
 //! Rust idiomatic wrapper for the Pepper API.
-#![crate_id = "ppapi#0.1"]
+#![crate_name = "ppapi"]
 #![crate_type = "rlib"]
 #![experimental]
 #![feature(globs)]
@@ -12,7 +12,7 @@
 
 extern crate std;
 extern crate native;
-#[phase(syntax, link)]
+#[phase(plugin, link)]
 extern crate log;
 extern crate collections;
 extern crate sync;
@@ -24,20 +24,19 @@ extern crate libc;
 extern crate core;
 extern crate alloc;
 extern crate native;
+extern crate rustrt;
 
 use core::mem;
-use std::{slice, cmp, io, hash, num};
+use std::{slice, cmp, io, hash, num, collections};
 use std::ptr;
-use std::to_str;
 use std::intrinsics;
-use std::container;
 use std::ops;
 use std::iter;
 use std::clone;
 use std::str;
 use std::str::MaybeOwned;
 use std::result;
-use collections::hashmap::HashMap;
+use std::collections::hashmap::HashMap;
 use std::fmt;
 use std::local_data;
 
@@ -82,7 +81,7 @@ pub fn mount<'s, 't, 'f, 'd>(source: &'s str,
                                                    target, 
                                                    fs_type, 
                                                    0,
-                                                   data as *libc::c_void)
+                                                   data as *const libc::c_void)
                                     }
                                 })
                         })
@@ -110,18 +109,18 @@ impl ToFFIBool for bool {
     }
 }
 
-#[deriving(Clone, Eq, TotalEq)]
+#[deriving(Clone, Eq, PartialEq)]
 pub enum Code {
-    Ok                = ffi::PP_OK,
-    BadResource       = ffi::PP_ERROR_BADRESOURCE,
-    BadArgument       = ffi::PP_ERROR_BADARGUMENT,
-    WrongThread       = ffi::PP_ERROR_WRONG_THREAD,
-    InProgress        = ffi::PP_ERROR_INPROGRESS,
-    Failed            = ffi::PP_ERROR_FAILED,
-    NotSupported      = ffi::PP_ERROR_NOTSUPPORTED,
-    NoMemory          = ffi::PP_ERROR_NOMEMORY,
-    ContextLost       = ffi::PP_ERROR_CONTEXT_LOST,
-    CompletionPending = ffi::PP_OK_COMPLETIONPENDING,
+    Ok                = ffi::PP_OK as int,
+    BadResource       = ffi::PP_ERROR_BADRESOURCE as int,
+    BadArgument       = ffi::PP_ERROR_BADARGUMENT as int,
+    WrongThread       = ffi::PP_ERROR_WRONG_THREAD as int,
+    InProgress        = ffi::PP_ERROR_INPROGRESS as int,
+    Failed            = ffi::PP_ERROR_FAILED as int,
+    NotSupported      = ffi::PP_ERROR_NOTSUPPORTED as int,
+    NoMemory          = ffi::PP_ERROR_NOMEMORY as int,
+    ContextLost       = ffi::PP_ERROR_CONTEXT_LOST as int,
+    CompletionPending = ffi::PP_OK_COMPLETIONPENDING as int,
 }
 impl fmt::Show for Code {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -185,7 +184,7 @@ impl Code {
     pub fn expect(self, msg: &str) {
         if !self.is_ok() {
             fail!("Expected success: Code: {code:s} Message: {msg:s}",
-                  code=self.to_str(), msg=msg)
+                  code=self.to_string(), msg=msg)
         }
     }
     pub fn map<T>(self, take: T) -> Option<T> {
@@ -277,16 +276,19 @@ impl num::Zero for ffi::Struct_PP_Point {
         }
     }
 }
-impl cmp::Eq for ffi::Struct_PP_Point {
+impl cmp::PartialEq for ffi::Struct_PP_Point {
     fn eq(&self, rhs: &ffi::Struct_PP_Point) -> bool {
         self.x == rhs.x && self.y == rhs.y
     }
 }
-impl cmp::Eq for ffi::Struct_PP_FloatPoint {
+impl cmp::Eq for ffi::Struct_PP_Point {}
+
+impl cmp::PartialEq for ffi::Struct_PP_FloatPoint {
     fn eq(&self, rhs: &ffi::Struct_PP_FloatPoint) -> bool {
         self.x == rhs.x && self.y == rhs.y
     }
 }
+impl cmp::Eq for ffi::Struct_PP_FloatPoint {}
 impl clone::Clone for ffi::Struct_PP_FloatPoint {
     fn clone(&self) -> ffi::Struct_PP_FloatPoint {
         ffi::Struct_PP_FloatPoint {
@@ -304,7 +306,7 @@ pub type Ticks = ffi::PP_TimeTicks;
 pub type Time = ffi::PP_Time;
 
 // duplicated here so we don't have such a long name for this.
-#[deriving(Eq, TotalEq, Hash, Clone)]
+#[deriving(Eq, PartialEq, Hash, Clone)]
 pub struct Size {
     pub width:  u32,
     pub height: u32,
@@ -367,32 +369,32 @@ pub trait Resource {
 pub trait ContextResource {
     fn get_device(&self) -> ffi::PP_Resource;
 }
-#[deriving(Hash, Eq, TotalEq)] pub struct Context3d(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct Context2d(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct View(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct MessageLoop(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct KeyboardInputEvent(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct MouseInputEvent(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct WheelInputEvent(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct TouchInputEvent(ffi::PP_Resource);
-#[deriving(TotalEq)]
+#[deriving(Hash, Eq, PartialEq)] pub struct Context3d(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct Context2d(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct View(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct MessageLoop(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct KeyboardInputEvent(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct MouseInputEvent(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct WheelInputEvent(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct TouchInputEvent(ffi::PP_Resource);
+#[deriving(Eq)]
 pub struct IMEInputEvent {
     res: ffi::PP_Resource,
-    pub string: ~str,
+    pub string: String,
     segments_len: uint,
 }
-#[deriving(Hash, Eq, TotalEq)] pub struct UrlLoader(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct UrlRequestInfo(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct UrlResponseInfo(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct Font(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct ImageData(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct FileRef(ffi::PP_Resource);
-#[deriving(Clone, Hash, Eq, TotalEq)]
+#[deriving(Hash, Eq, PartialEq)] pub struct UrlLoader(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct UrlRequestInfo(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct UrlResponseInfo(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct Font(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct ImageData(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct FileRef(ffi::PP_Resource);
+#[deriving(Clone, Hash, Eq, PartialEq)]
 pub struct FileSliceRef(FileRef,
                         Option<i64>,
                         Option<i64>);
-#[deriving(Hash, Eq, TotalEq)] pub struct FileIo(ffi::PP_Resource);
-#[deriving(Hash, Eq, TotalEq)] pub struct Filesystem(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct FileIo(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq)] pub struct Filesystem(ffi::PP_Resource);
 
 macro_rules! impl_resource_for(
     ($ty:ty $type_:ident) => (
@@ -481,7 +483,7 @@ impl Resource for IMEInputEvent {
 impl IMEInputEvent {
     pub fn new(res: ffi::PP_Resource) -> IMEInputEvent {
         let var = (ppb::get_ime_event().GetText.unwrap())(res);
-        let string = StringVar::new_from_var(var).to_str();
+        let string = StringVar::new_from_var(var).to_string();
         let seg_len = (ppb::get_ime_event().GetSegmentNumber.unwrap())(res);
         IMEInputEvent {
             res: res,
@@ -490,12 +492,12 @@ impl IMEInputEvent {
         }
     }
 }
-impl cmp::Eq for IMEInputEvent {
+impl cmp::PartialEq for IMEInputEvent {
     fn eq(&self, rhs: &IMEInputEvent) -> bool {
         self.res == rhs.res
     }
 }
-impl<T: io::Writer> hash::Hash<T> for IMEInputEvent {
+impl<T: std::hash::Writer> hash::Hash<T> for IMEInputEvent {
     fn hash(&self, s: &mut T) {
         self.res.hash(s)
     }
@@ -590,7 +592,7 @@ impl MessageLoop {
     }
 }
 
-#[deriving(Eq, Clone)]
+#[deriving(Clone)]
 pub enum AnyVar {
     Null,
     Undefined,
@@ -603,19 +605,19 @@ pub enum AnyVar {
     Dictionary(DictionaryVar),
     ArrayBuffer(ArrayBufferVar),
 }
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, PartialEq)]
 pub struct NullVar;
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, PartialEq)]
 pub struct UndefinedVar;
-#[deriving(Eq, Hash)]
+#[deriving(Eq, PartialEq, Hash)]
 pub struct StringVar     (i64);
-#[deriving(Eq, Hash)]
+#[deriving(Eq, PartialEq, Hash)]
 pub struct ObjectVar     (i64);
-#[deriving(Eq, Hash)]
+#[deriving(Eq, PartialEq, Hash)]
 pub struct ArrayVar      (i64);
-#[deriving(Eq, Hash)]
+#[deriving(Eq, PartialEq, Hash)]
 pub struct DictionaryVar (i64);
-#[deriving(Eq, Hash)]
+#[deriving(Eq, PartialEq, Hash)]
 pub struct ArrayBufferVar(i64);
 
 pub trait ByRefVar {
@@ -856,12 +858,12 @@ impl ToStringVar for StringVar {
         self.clone()
     }
 }
-impl Var for ~str {
+impl Var for String {
     #[inline] fn is_a_string(&self) -> bool { true }
 }
-impl ToStringVar for ~str {
+impl ToStringVar for String {
     #[inline] fn to_string_var(&self) -> StringVar {
-        StringVar::new_from_str(*self)
+        StringVar::new_from_str(self.as_slice())
     }
 }
 impl<'a, T: ToVar> Var for &'a [T] {
@@ -1094,19 +1096,20 @@ impl AnyVar {
 
 impl fmt::Show for StringVar {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.pad(unsafe {
+        let str = unsafe {
             let mut len: u32 = intrinsics::uninit();
             let buf = (ppb::get_var().VarToUtf8.unwrap())
                 (self.to_var(), 
                  &mut len as *mut u32);
             let len = len;
-            str::raw::from_buf_len(buf as *u8, len as uint)
-        })
+            str::raw::from_buf_len(buf as *const u8, len as uint)
+        };
+        f.pad(str.as_slice())
     }
 }
 impl StringVar {
-    pub fn new<T: to_str::ToStr>(v: &T) -> StringVar {
-        let string = v.to_str();
+    pub fn new<T: Str>(v: &T) -> StringVar {
+        let string = v.as_slice();
         StringVar::new_from_str(string)
     }
     pub fn new_from_str(v: &str) -> StringVar {
@@ -1122,17 +1125,17 @@ impl StringVar {
         StringVar(unsafe { ffi::id_from_var(v) })
     }
 }
-impl ToVar for ~str {
+impl ToVar for String {
     fn to_var(&self) -> ffi::PP_Var {
         (ppb::get_var().VarFromUtf8.unwrap())
-            (self.as_ptr() as *i8,
+            (self.as_slice().as_ptr() as *const i8,
              self.len() as u32)
     }
 }
 impl<'a> ToVar for &'a str {
     fn to_var(&self) -> ffi::PP_Var {
         (ppb::get_var().VarFromUtf8.unwrap())
-            (self.as_ptr() as *i8,
+            (self.as_ptr() as *const i8,
              self.len() as u32)
     }
 }
@@ -1166,13 +1169,13 @@ impl Console {
 }
 
 fn parse_args(argc: u32,
-              argk: *mut *libc::c_char,
-              argv: *mut *libc::c_char) -> HashMap<~str, ~str> {
-    let mut args: HashMap<~str, ~str> = HashMap::new();
+              argk: *mut *const libc::c_char,
+              argv: *mut *const libc::c_char) -> HashMap<String, String> {
+    let mut args: HashMap<String, String> = HashMap::new();
     for i in iter::range(0, argc as int) {
         unsafe {
-            args.swap(str::raw::from_c_str(*argk.offset(i) as *i8),
-                      str::raw::from_c_str(*argv.offset(i) as *i8));
+            args.swap(str::raw::from_c_str(*argk.offset(i) as *const i8),
+                      str::raw::from_c_str(*argv.offset(i) as *const i8));
         }
     }
     return args;
@@ -1307,7 +1310,7 @@ impl log::Logger for CurrentInstanceLogger {
     fn log(&mut self, record: &LogRecord) {
         use self::ppb::ConsoleInterface;
         let console = Instance::current().console();
-        let str = record.to_str();
+        let str = record.to_string();
         console.log_to_browser(unsafe { mem::transmute(record.level) },
                                str.to_var());
     }
@@ -1353,7 +1356,7 @@ fn send_to_console_or_terminal(instance: Option<local_data::Ref<Instance>>,
                     detail: None,
                 })
             } else {
-                fwrite(buf.as_ptr() as *c_void, buf.len() as libc::size_t, 1, fs);
+                fwrite(buf.as_ptr() as *const c_void, buf.len() as libc::size_t, 1, fs);
                 result::Ok(())
             }
         }
@@ -1374,7 +1377,7 @@ fn send_to_console_or_terminal(instance: Option<local_data::Ref<Instance>>,
     }
 }
 
-#[deriving(Clone, Hash, Eq, TotalEq)]
+#[deriving(Clone, Hash, Eq, PartialEq)]
 pub struct Instance {
     instance: ffi::PP_Instance,
 }
@@ -1419,7 +1422,7 @@ impl Instance {
         return Console(self.instance);
     }
 
-    pub fn create_3d_context<AT: slice::Vector<(i32, i32)> + container::Container>
+    pub fn create_3d_context<AT: slice::Vector<(i32, i32)> + collections::Collection>
         (&self,
          share_with: Option<Context3d>,
          attribs: AT)
@@ -1500,7 +1503,7 @@ impl Instance {
                        desc: &font::Description) -> Option<Font> {
         let f = ppb::get_font().Create.unwrap();
         let desc = unsafe { desc.to_ffi() };
-        let res = f(self.instance, &desc as *ffi::Struct_PP_FontDescription_Dev);
+        let res = f(self.instance, &desc as *const ffi::Struct_PP_FontDescription_Dev);
         if res != 0 {
             Some(Font::new(res))
         } else {
@@ -1628,7 +1631,7 @@ fn deinitialize_instances() {
 }
 
 fn expect_instances() -> &'static mut InstancesType {
-    use std::hash::sip::SipHasher;
+    use std::hash::RandomSipHasher;
     use core::mem;
     use alloc::libc_heap::malloc_raw;
     unsafe {
@@ -1638,7 +1641,7 @@ fn expect_instances() -> &'static mut InstancesType {
             //let mut rand_buf: [u64, ..2] = [0u64, 0u64];
             //rand_bytes(rand_buf.as_mut_ptr() as *mut i8, 16);
             //let hasher = SipHasher::new_with_keys(rand_buf[0], rand_buf[1]);
-            let hasher = SipHasher::new();
+            let hasher = RandomSipHasher::new();
             let instances: InstancesType = HashMap::with_hasher(hasher);
             INSTANCES = malloc_raw(mem::size_of::<InstancesType>())
                 as *mut InstancesType;
@@ -1650,7 +1653,7 @@ fn expect_instances() -> &'static mut InstancesType {
                                instances);
             expect_instances()
         } else {
-            &'static mut *INSTANCES
+            mem::transmute(INSTANCES)
         }
     }
 }
@@ -1677,9 +1680,7 @@ pub mod entry {
     use libc::c_char;
     use std::any::Any;
     use std::result;
-    use std::rt::unwind::Unwinder;
-    use std::rt::task::Task;
-    use std::task::{TaskResult};
+    use TaskResult = std::rt::task::Result;
     use std::rt::local::{Local};
 
     use super::ffi;
@@ -1688,18 +1689,9 @@ pub mod entry {
     // lest an exception (failure) in one instance terminates all
     // instances and crashes the whole plugin.
     pub fn try_block(f: ||) -> TaskResult {
-
-        // We need a mut ref to the unwinder so we can call try,
-        // but we can't borrow in case user code needs it (which is likely).
-        // Additionally, the unwinder contained in the task is used when
-        // fail! is invoked, so we must use that unwinder so we may
-        // collect the failure object.
+        use rustrt::unwind::try;
         let result = unsafe {
-            let me: *mut Task = Local::unsafe_borrow();
-            // initialize a new unwinder so 'unwinding' is reset:
-            (*me).unwinder = Unwinder::new();
-            (*me).unwinder.try(f);
-            (*me).unwinder.result()
+            try(f)
         };
         // if we're unwinding, the instance had a failure, and we need
         // to destory the instance.
@@ -1713,7 +1705,7 @@ pub mod entry {
         }
         result
     }
-    pub fn try_block_with_ret<U>(f: || -> U) -> result::Result<U, Box<Any:Send>> {
+    pub fn try_block_with_ret<U>(f: || -> U) -> result::Result<U, Box<Any + Send>> {
         let mut ret: Option<U> = None;
         try_block(|| {
             ret = Some(f());
@@ -1722,8 +1714,8 @@ pub mod entry {
     
     pub extern "C" fn did_create(inst: ffi::PP_Instance,
                                  argc: u32,
-                                 argk: *mut *c_char,
-                                 argv: *mut *c_char) -> ffi::PP_Bool {
+                                 argk: *mut *const c_char,
+                                 argv: *mut *const c_char) -> ffi::PP_Bool {
         let instance = Instance::new(inst);
         instance.set_current();
         try_block(|| {
@@ -1856,19 +1848,21 @@ pub mod entry {
 extern {
     #[no_mangle]
     fn ppapi_instance_created(instance: Instance,
-                              args: || -> HashMap<~str, ~str>)
+                              args: || -> HashMap<String, String>)
                               -> Box<InstanceCallback>;
 }
 
 // The true entry point of any module.
 #[no_mangle]
 #[inline(never)]
+#[allow(non_snake_case_functions)]
 pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
                                        gbi: ffi::PPB_GetInterface) -> libc::int32_t {
     use log::set_logger;
     use std::rt;
     use std::str::Slice;
     use std::io::Writer;
+    use std::io::stdio::{set_stderr, set_stdout};
     use std::rt::local::{Local};
     use self::entry::try_block;
 
@@ -1879,10 +1873,10 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
         // for now, stack bounds don't matter.
         let mut task = native::task::new((0, 0));
         task.name = Some(Slice(MAIN_TASK_NAME));
-        task.stdout = Some(box CurrentInstanceStdOut as Box<Writer:Send>);
-        task.stderr = Some(box CurrentInstanceStdErr as Box<Writer:Send>);
         Local::put(task);
     }
+    set_stdout(box CurrentInstanceStdOut as Box<Writer + Send>);
+    set_stderr(box CurrentInstanceStdErr as Box<Writer + Send>);
     set_logger(box CurrentInstanceLogger);
 
     // We can't fail! before this point!
@@ -1894,6 +1888,7 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
     return initialized.to_ffi_bool() as libc::int32_t;
 }
 #[no_mangle]
+#[allow(non_snake_case_functions)]
 pub extern "C" fn PPP_ShutdownModule() {
     use std::rt::local::{Local};
     use self::entry::try_block;

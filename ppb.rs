@@ -3,7 +3,7 @@
 
 #![allow(missing_doc)]
 use core::mem;
-use core::mem::uninit;
+use core::mem::uninitialized;
 use libc;
 use std::ptr::RawPtr;
 use std::{intrinsics, str};
@@ -112,14 +112,14 @@ pub fn initialize_globals(b: ffi::PPB_GetInterface) {
 }
 /// Get the PPB_GetInterface function pointer.
 #[inline(never)]
-pub unsafe fn get_actual_browser() -> extern "C" fn(*i8) -> *libc::c_void {
+pub unsafe fn get_actual_browser() -> extern "C" fn(*const i8) -> *const libc::c_void {
     globals::BROWSER.expect("Browser GetInterface missing")
 }
 fn get_interface<T>(name: &'static str) -> Option<&'static T> {
     // we actually have to use a null-terminated str here.
     unsafe {
         let ptr = name.with_c_str_unchecked(|p| {
-                get_actual_browser()(p) as *T
+                get_actual_browser()(p) as *const T
             });
 
         if ptr.is_null() { None }
@@ -131,7 +131,7 @@ macro_rules! get_fun(
         #[doc = "Returns a static ref to the interface"]
         pub fn $ident() -> &'static $ty {
             #[inline(never)] fn failure() -> ! {
-                fail!("Missing browser " + stringify!($ty) + " interface")
+                fail!("Missing browser {} interface", stringify!($ty))
             }
             unsafe {
                 globals::$global.unwrap_or_else(failure)
@@ -193,18 +193,18 @@ get_fun_opt!(pub fn get_view_opt() -> View { VIEW })
 
 
 macro_rules! impl_fun(
-    (self.$fun:ident => ( $($arg:expr),* ) ) => ({
+    ($fun:expr => ( $($arg:expr),* ) ) => ({
         #[inline(never)] fn failure() -> ! {
-            fail!("Interface function \"" + stringify!($fun) + "\" missing!")
+            fail!("Interface function \"{}\" missing!", stringify!($fun))
         }
-        let f = self.$fun.unwrap_or_else(failure);
+        let f = $fun.unwrap_or_else(failure);
         f( $($arg),* )
     });
-    (self.$fun:ident) => ({
+    ($fun:expr) => ({
         #[inline(never)] fn failure() -> ! {
-            fail!("Interface function \"" + stringify!($fun) + "\" missing!")
+            fail!("Interface function \"{}\" missing!", stringify!($fun))
         }
-        let f = self.$fun.unwrap_or_else(failure);
+        let f = $fun.unwrap_or_else(failure);
         f()
     })
 )
@@ -226,12 +226,12 @@ impl ffi::Struct_PPB_Var_1_1 {
     }
 
     pub fn var_from_utf8(&self, string: &str) -> Struct_PP_Var {
-        impl_fun!(self.VarFromUtf8 => (string.as_ptr() as *i8, string.len() as u32))
+        impl_fun!(self.VarFromUtf8 => (string.as_ptr() as *const i8, string.len() as u32))
     }
-    pub fn var_to_utf8(&self, string: &Struct_PP_Var) -> ~str {
+    pub fn var_to_utf8(&self, string: &Struct_PP_Var) -> String {
         let mut len: u32 = unsafe { intrinsics::uninit() };
         let buf = impl_fun!(self.VarToUtf8 => (*string, &mut len as *mut u32));
-        unsafe { str::raw::from_buf_len(buf as *u8, len as uint) }
+        unsafe { str::raw::from_buf_len(buf as *const u8, len as uint) }
     }
 }
 impl ffi::Struct_PPB_Console_1_0 {
@@ -313,7 +313,7 @@ impl ffi::Struct_PPB_ImageData_1_0 {
                   init_to_zero: bool) -> Option<PP_Resource> {
         let res = impl_fun!(self.Create => (instance,
                                             format,
-                                            &size as *ffi::PP_Size,
+                                            &size as *const ffi::PP_Size,
                                             init_to_zero.to_ffi_bool()));
         if res != 0 {
             Some(res)
@@ -397,7 +397,7 @@ impl ffi::Struct_PPB_URLRequestInfo_1_0 {
                                data: &Vec<u8>) -> bool {
         let was_appended = impl_fun!
             (self.AppendDataToBody => (res,
-                                       data.as_ptr() as *libc::c_void,
+                                       data.as_ptr() as *const libc::c_void,
                                        data.len() as u32));
         was_appended != 0
     }
@@ -572,7 +572,7 @@ impl ffi::Struct_PPB_Graphics3D_1_0 {
                        ctxt: PP_Resource,
                        mut attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Code {
         attribs.push(ffi::PP_GRAPHICS3DATTRIB_NONE);
-        Code::from_i32(impl_fun!(self.SetAttribs => (ctxt, attribs.as_ptr() as *i32)))
+        Code::from_i32(impl_fun!(self.SetAttribs => (ctxt, attribs.as_ptr() as *const i32)))
     }
     pub fn swap_buffers(&self,
                         ctxt: PP_Resource,
@@ -586,7 +586,7 @@ impl ffi::Struct_PPB_View_1_1 {
         r != 0
     }
     pub fn rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect> {
-        let mut dest = unsafe { uninit() };
+        let mut dest = unsafe { uninitialized() };
         let ok = impl_fun!(self.GetRect => (res, &mut dest as *mut ffi::Struct_PP_Rect));
         if ok != 0 {
             Some(dest)
@@ -604,7 +604,7 @@ impl ffi::Struct_PPB_View_1_1 {
         (impl_fun!(self.IsPageVisible => (res))) != 0
     }
     pub fn clip_rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect> {
-        let mut dest = unsafe { uninit() };
+        let mut dest = unsafe { uninitialized() };
         let ok = impl_fun!(self.GetClipRect => (res, &mut dest as *mut ffi::Struct_PP_Rect));
         if ok != 0 {
             Some(dest)

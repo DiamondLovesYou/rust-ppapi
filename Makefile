@@ -45,7 +45,7 @@ build/libhelper.a: helper.cpp Makefile
 -include helper.d
 
 build/ppapi.stamp: lib.rs build/libhelper.a Makefile deps/http.stamp
-	$(RUSTC) $(RUSTFLAGS) lib.rs -C link-args="--pnacl-driver-verbose" --out-dir=build -L $(RUST_HTTP)/build -L $(TOOLCHAIN)/sdk/lib -L build
+	$(RUSTC) $(RUSTFLAGS) lib.rs --out-dir=build -L $(RUST_OPENSSL)/target -L $(RUST_HTTP)/target -L $(RUST_HTTP)/build -L $(TOOLCHAIN)/sdk/lib -L build
 	touch build/ppapi.stamp
 
 
@@ -58,8 +58,8 @@ $(RUST_HTTP)/Makefile: $(RUST_HTTP)/configure $(RUST_HTTP)/Makefile.in Makefile
 deps/http.stamp: 	$(RUST_HTTP)/Makefile deps/openssl.stamp \
 		$(call rwildcard,$(RUST_HTTP),*rs) \
 		$(RUSTC)
-	make -C $(RUST_HTTP) clean
-	RUSTC="$(RUSTC)" RUSTFLAGS="$(RUSTFLAGS)" make -C $(RUST_HTTP)
+	cd $(RUST_HTTP); \
+	RUSTC="$(RUSTC)" RUSTFLAGS="$(RUSTFLAGS) -L $(RUST_OPENSSL)/target" $(MAKE) SYSROOT=$(shell readlink -f $(SYSROOT))
 	touch $@
 
 $(RUST_OPENSSL)/Makefile: $(RUST_OPENSSL)/configure $(RUST_OPENSSL)/Makefile.in Makefile
@@ -69,5 +69,6 @@ $(RUST_OPENSSL)/Makefile: $(RUST_OPENSSL)/configure $(RUST_OPENSSL)/Makefile.in 
 deps/openssl.stamp:	$(RUST_OPENSSL)/Makefile \
 		$(call rwildcard,$(RUST_OPENSSL),*rs) \
 		$(RUSTC)
-	RUSTC="$(RUSTC)" RUSTFLAGS="$(filter-out -O,$(RUSTFLAGS))" make -C $(RUST_OPENSSL)
+	cd $(RUST_OPENSSL); \
+	RUSTC="$(RUSTC)" RUSTFLAGS="$(filter-out -O,$(RUSTFLAGS))" $(MAKE) -C $(RUST_OPENSSL)
 	touch $@

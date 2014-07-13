@@ -8,9 +8,9 @@ use super::{Resource, ResourceType, Ticks, FloatPoint,
 use super::{ppb, ffi};
 use collections::enum_set;
 use collections::enum_set::{CLike, EnumSet};
-use std::{container, ops, iter, intrinsics, clone};
+use std::{collections, iter, intrinsics, clone};
 
-#[deriving(Clone, Eq)]
+#[deriving(Clone)]
 pub enum Class {
     KeyboardClass(Event<super::KeyboardInputEvent, KeyboardEvent>),
     MouseClass   (Event<super::MouseInputEvent,    MouseEvent>),
@@ -36,14 +36,14 @@ impl Class {
         // on value types (which fails when the types aren't the same
         // size).
         fn cast_to_expected<T: 'static, U: 'static>(mut res: T) -> U {
-            use core::mem::{replace, uninit};
+            use core::mem::{replace, uninitialized};
             use core::mem::transmute;
             use std::intrinsics::type_id;
             unsafe {                            
                 // This *should* never fail, but it's here just in case:
                 assert_eq!(type_id::<T>(), type_id::<U>());
                 let res_ptr: &mut U = transmute(&mut res);
-                replace(res_ptr, uninit())
+                replace(res_ptr, uninitialized())
             }
         }
         
@@ -147,7 +147,7 @@ impl Class {
                 let char_var = StringVar((unsafe {
                     ffi::id_from_var(kb_event.text(&res.unwrap()))
                 }) as i64);
-                let str = char_var.to_str();
+                let str = char_var.to_string();
                 if str.len() != 1 {
                     warn!("character input event does not have a length of one: \
                           \"{}\"", str)
@@ -156,7 +156,7 @@ impl Class {
                     res: cast_to_expected(res),
                     timestamp: ticks,
                     mods: modifiers,
-                    event: KeyChar(str.char_at(0)),
+                    event: KeyChar(str.as_slice().char_at(0)),
                 })
             }
             ffi::PP_INPUTEVENT_TYPE_CONTEXTMENU => {
@@ -217,7 +217,7 @@ impl InputEvent for Class {
         }
     }
 }
-#[deriving(Clone, Eq)]
+#[deriving(Clone)]
 pub struct Event<Res, Class> {
     pub res: Res,
     pub timestamp: Ticks,
@@ -240,7 +240,7 @@ impl<Res: Resource, Class> InputEvent for Event<Res, Class> {
         self.timestamp
     }
 }
-#[deriving(Clone, Hash, Eq, TotalEq)]
+#[deriving(Clone, Hash, Eq, PartialEq)]
 pub enum Modifiers_ {
     ShiftKey,
     ControlKey,
@@ -311,19 +311,19 @@ fn modifiers_from_bitset(set: u32) -> Modifiers {
     if set & 0b1000000000000 != 0 { e.add(IsRight) }
     e
 }
-#[deriving(Clone, Hash, Eq, TotalEq)]
+#[deriving(Clone, Hash, Eq, PartialEq)]
 pub enum Move {
     EnterMove,
     LeaveMove,
     MoveMove,
 }
 
-#[deriving(Clone, Hash, Eq, TotalEq)]
+#[deriving(Clone, Hash, Eq, PartialEq)]
 pub enum Press {
     DownPress,
     UpPress,
 }
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, PartialEq)]
 pub enum MouseEvent {
     MousePress       (Press, MouseClickEvent),
     MouseContextMenu (MouseClickEvent),
@@ -345,7 +345,7 @@ impl MouseEvent {
         }
     }
 }
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, PartialEq)]
 pub enum MouseButton {
     LeftMouseButton,
     MiddleMouseButton,
@@ -361,26 +361,26 @@ impl MouseButton {
         }
     }
 }
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, PartialEq)]
 pub struct MouseClickEvent {
     point: FloatPoint,
     button: MouseButton,
     click_count: i32,
 }
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, PartialEq)]
 pub struct MouseMoveEvent {
     point: FloatPoint,
     delta: FloatPoint,
     click_count: i32,    
 }
 
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, PartialEq)]
 pub enum KeyboardEvent {
     KeyPress(Press, i32),
     KeyChar(char),
 }
 
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, PartialEq)]
 pub struct WheelEvent {
     delta: FloatPoint,
     ticks: FloatPoint,
@@ -446,7 +446,7 @@ impl super::WheelInputEvent {
         (ppb::get_wheel_event().GetScrollByPage.unwrap())(self.unwrap()) != ffi::PP_FALSE
     }
 }
-#[deriving(Clone, Eq, TotalEq, Hash)]
+#[deriving(Clone, Eq, PartialEq, Hash)]
 pub enum TouchListType {
     TouchesTouchListType,
     DeltaTouchListType,
@@ -480,22 +480,20 @@ impl super::TouchInputEvent {
         }
     }
 }
-impl container::Container for TouchList {
+impl collections::Collection for TouchList {
     fn len(&self) -> uint {
         (ppb::get_touch_event().GetTouchCount.unwrap())
             (self.event.unwrap(),
              self.list_type.to_ffi()) as uint
     }
 }
-impl ops::Index<uint, TouchPoint> for TouchList {
-    fn index(&self, index: &uint) -> TouchPoint {
+impl TouchList {
+    pub fn get(&self, index: uint) -> TouchPoint {
         ppb::get_touch_event().by_index
             (&self.event.unwrap(),
              self.list_type.to_ffi(),
-             *index as u32)
+             index as u32)
     }
-}
-impl TouchList {
     pub fn iter(&self) -> TouchListIterator {
         TouchListIterator{
             list: self.clone(),
@@ -518,7 +516,7 @@ impl iter::Iterator<TouchPoint> for TouchListIterator {
     fn next(&mut self) -> Option<TouchPoint> {
         if self.current >= self.size { None }
         else                         { self.current += 1;
-                                       Some(self.list[self.current - 1]) }
+                                       Some(self.list.get(self.current - 1)) }
     }
 }
 impl iter::RandomAccessIterator<TouchPoint> for TouchListIterator {
@@ -526,7 +524,7 @@ impl iter::RandomAccessIterator<TouchPoint> for TouchListIterator {
         self.size
     }
     fn idx(&mut self, index: uint) -> Option<TouchPoint> {
-        if index < self.size { Some(self.list[index]) }
+        if index < self.size { Some(self.list.get(index)) }
         else                 { None }
     }
 }
@@ -552,7 +550,7 @@ impl super::IMEInputEvent {
         if index < self.len() {
             let segment = self.segment_offset(index);
             let (start, end) = segment.expect("WAT. #1");
-            Some(self.string.slice(start, end))
+            Some(self.string.as_slice().slice(start, end))
         } else {
             None
         }
@@ -582,7 +580,7 @@ impl super::IMEInputEvent {
     }
     pub fn selection_str<'a>(&'a self) -> &'a str {
         let (start, end) = self.selection_offset();
-        self.string.slice(start as uint, end as uint)
+        self.string.as_slice().slice(start as uint, end as uint)
     }
     pub fn target_segment_index(&self) -> Option<uint> {
         match (ppb::get_ime_event().GetTargetSegment.unwrap())
@@ -610,7 +608,7 @@ impl<'a> clone::Clone for IMESegmentIterator<'a> {
         }
     }
 }
-impl container::Container for super::IMEInputEvent {
+impl collections::Collection for super::IMEInputEvent {
     fn len(&self) -> uint {
         self.segments_len()
     }

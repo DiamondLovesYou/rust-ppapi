@@ -32,7 +32,8 @@ mod globals {
 #[no_mangle]
 #[allow(dead_code)]
 #[doc(hidden)]
-pub extern "C" fn PPP_GetInterface(interface_name: *c_char) -> *c_void {
+#[allow(non_snake_case_functions)]
+pub extern "C" fn PPP_GetInterface(interface_name: *const c_char) -> *const c_void {
     use core::mem::transmute;
     unsafe {
         let c_name = c_str::CString::new(interface_name, false);

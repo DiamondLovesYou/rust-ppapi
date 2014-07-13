@@ -17,7 +17,7 @@ promises).
 
 Taken from [pnacl-hello-world](https://github.com/DiamondLovesYou/rust-pnacl-hello-world):
 ```rust
-#![crate_id(name = "pnacl-hello-world", vers = "0.0")]
+#![crate_name = "pnacl-hello-world")]
 #![crate_type = "bin"]
 #![no_main]
 
@@ -31,7 +31,7 @@ use collections::hashmap::HashMap;
 // Called when an instance is created. Return a boxed trait for your callbacks.
 pub extern fn ppapi_instance_created
     (instance: ppapi::Instance,
-     _args: || -> HashMap<~str, ~str>) -> Box<ppapi::InstanceCallback> {
+     _args: || -> HashMap<String, String>) -> Box<ppapi::InstanceCallback> {
         use ppapi::ppb::ConsoleInterface;
         let console = instance.console();
         console.log(ppapi::ffi::PP_LOGLEVEL_LOG, "Hello, world!");
@@ -41,6 +41,8 @@ pub extern fn ppapi_instance_created
 struct NoOpt;
 impl ppapi::InstanceCallback for NoOpt { }
 ```
+
+Compile with: ```rustc --target le32-unknown-nacl -C cross-path=path/to/pepper/sdk -C nacl-flavor=pnacl main.rs```
 
 ## More Docs
 
