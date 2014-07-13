@@ -1,2 +1,7 @@
 *~
-deps/
+deps/rust-*
+*.stamp
+*.Plo
+*.Po
+deps/libressl-2.0.0/Makefile
+deps/libressl-2.0.0/*/Makefile
