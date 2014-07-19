@@ -91,7 +91,8 @@ DIST_COMMON = $(top_srcdir)/Makefile.am.common $(srcdir)/Makefile.in \
 @NO_ARC4RANDOM_BUF_TRUE@@NO_GETENTROPY_TRUE@@TARGET_LINUX_TRUE@am__append_7 = compat/getentropy_linux.c
 @NO_ARC4RANDOM_BUF_TRUE@@NO_GETENTROPY_TRUE@@TARGET_DARWIN_TRUE@am__append_8 = compat/getentropy_osx.c
 @NO_ARC4RANDOM_BUF_TRUE@@NO_GETENTROPY_TRUE@@TARGET_SOLARIS_TRUE@am__append_9 = compat/getentropy_solaris.c
-@NO_ISSETUGID_TRUE@am__append_10 = compat/issetugid_linux.c
+@NO_ARC4RANDOM_BUF_TRUE@@NO_GETENTROPY_TRUE@@TARGET_NACL_TRUE@am__append_10 = compat/getentropy_nacl.c
+@NO_ISSETUGID_TRUE@am__append_11 = compat/issetugid_linux.c
 subdir = crypto
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -137,7 +138,8 @@ am__libcompat_la_SOURCES_DIST = compat/strlcat.c compat/strlcpy.c \
 	compat/reallocarray.c compat/timingsafe_memcmp.c \
 	compat/timingsafe_bcmp.c compat/arc4random.c \
 	compat/getentropy_linux.c compat/getentropy_osx.c \
-	compat/getentropy_solaris.c compat/issetugid_linux.c
+	compat/getentropy_solaris.c compat/getentropy_nacl.c \
+	compat/issetugid_linux.c
 am__dirstamp = $(am__leading_dot)dirstamp
 @NO_STRLCAT_TRUE@am__objects_1 = compat/libcompat_la-strlcat.lo
 @NO_STRLCPY_TRUE@am__objects_2 = compat/libcompat_la-strlcpy.lo
@@ -150,12 +152,13 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @NO_ARC4RANDOM_BUF_TRUE@@NO_GETENTROPY_TRUE@@TARGET_LINUX_TRUE@am__objects_7 = compat/libcompat_la-getentropy_linux.lo
 @NO_ARC4RANDOM_BUF_TRUE@@NO_GETENTROPY_TRUE@@TARGET_DARWIN_TRUE@am__objects_8 = compat/libcompat_la-getentropy_osx.lo
 @NO_ARC4RANDOM_BUF_TRUE@@NO_GETENTROPY_TRUE@@TARGET_SOLARIS_TRUE@am__objects_9 = compat/libcompat_la-getentropy_solaris.lo
-@NO_ISSETUGID_TRUE@am__objects_10 =  \
+@NO_ARC4RANDOM_BUF_TRUE@@NO_GETENTROPY_TRUE@@TARGET_NACL_TRUE@am__objects_10 = compat/libcompat_la-getentropy_nacl.lo
+@NO_ISSETUGID_TRUE@am__objects_11 =  \
 @NO_ISSETUGID_TRUE@	compat/libcompat_la-issetugid_linux.lo
 am_libcompat_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
 	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
-	$(am__objects_9) $(am__objects_10)
+	$(am__objects_9) $(am__objects_10) $(am__objects_11)
 libcompat_la_OBJECTS = $(am_libcompat_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -663,7 +666,7 @@ libcompat_la_CFLAGS = $(CFLAGS) $(USER_CFLAGS)
 libcompat_la_SOURCES = $(am__append_1) $(am__append_2) $(am__append_3) \
 	$(am__append_4) $(am__append_5) $(am__append_6) \
 	$(am__append_7) $(am__append_8) $(am__append_9) \
-	$(am__append_10)
+	$(am__append_10) $(am__append_11)
 noinst_HEADERS = des/ncbc_enc.c compat/thread_private.h \
 	compat/chacha_private.h cryptlib.h md32_common.h o_time.h \
 	aes/aes_locl.h asn1/asn1_locl.h asn1/charmap.h bf/bf_locl.h \
@@ -923,6 +926,8 @@ compat/libcompat_la-getentropy_linux.lo: compat/$(am__dirstamp) \
 compat/libcompat_la-getentropy_osx.lo: compat/$(am__dirstamp) \
 	compat/$(DEPDIR)/$(am__dirstamp)
 compat/libcompat_la-getentropy_solaris.lo: compat/$(am__dirstamp) \
+	compat/$(DEPDIR)/$(am__dirstamp)
+compat/libcompat_la-getentropy_nacl.lo: compat/$(am__dirstamp) \
 	compat/$(DEPDIR)/$(am__dirstamp)
 compat/libcompat_la-issetugid_linux.lo: compat/$(am__dirstamp) \
 	compat/$(DEPDIR)/$(am__dirstamp)
@@ -2527,6 +2532,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@comp/$(DEPDIR)/libcrypto_la-comp_lib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@compat/$(DEPDIR)/libcompat_la-arc4random.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@compat/$(DEPDIR)/libcompat_la-getentropy_linux.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@compat/$(DEPDIR)/libcompat_la-getentropy_nacl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@compat/$(DEPDIR)/libcompat_la-getentropy_osx.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@compat/$(DEPDIR)/libcompat_la-getentropy_solaris.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@compat/$(DEPDIR)/libcompat_la-issetugid_linux.Plo@am__quote@
@@ -2983,6 +2989,13 @@ compat/libcompat_la-getentropy_solaris.lo: compat/getentropy_solaris.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='compat/getentropy_solaris.c' object='compat/libcompat_la-getentropy_solaris.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcompat_la_CFLAGS) $(CFLAGS) -c -o compat/libcompat_la-getentropy_solaris.lo `test -f 'compat/getentropy_solaris.c' || echo '$(srcdir)/'`compat/getentropy_solaris.c
+
+compat/libcompat_la-getentropy_nacl.lo: compat/getentropy_nacl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcompat_la_CFLAGS) $(CFLAGS) -MT compat/libcompat_la-getentropy_nacl.lo -MD -MP -MF compat/$(DEPDIR)/libcompat_la-getentropy_nacl.Tpo -c -o compat/libcompat_la-getentropy_nacl.lo `test -f 'compat/getentropy_nacl.c' || echo '$(srcdir)/'`compat/getentropy_nacl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) compat/$(DEPDIR)/libcompat_la-getentropy_nacl.Tpo compat/$(DEPDIR)/libcompat_la-getentropy_nacl.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='compat/getentropy_nacl.c' object='compat/libcompat_la-getentropy_nacl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcompat_la_CFLAGS) $(CFLAGS) -c -o compat/libcompat_la-getentropy_nacl.lo `test -f 'compat/getentropy_nacl.c' || echo '$(srcdir)/'`compat/getentropy_nacl.c
 
 compat/libcompat_la-issetugid_linux.lo: compat/issetugid_linux.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcompat_la_CFLAGS) $(CFLAGS) -MT compat/libcompat_la-issetugid_linux.lo -MD -MP -MF compat/$(DEPDIR)/libcompat_la-issetugid_linux.Tpo -c -o compat/libcompat_la-issetugid_linux.lo `test -f 'compat/issetugid_linux.c' || echo '$(srcdir)/'`compat/issetugid_linux.c

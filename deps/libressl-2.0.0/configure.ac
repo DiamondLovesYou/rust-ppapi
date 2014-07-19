@@ -6,31 +6,37 @@ AC_CONFIG_MACRO_DIR([m4])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_SUBST([USER_CFLAGS], "-O2 $CFLAGS")
-CFLAGS="$CFLAGS -Wall -Werror -std=c99 -g -Wno-pointer-sign"
+CFLAGS="$CFLAGS -Wall -Werror -g -Wno-pointer-sign"
 
 case $target_os in
 	*darwin*)
 		TARGET_OS=darwin;
 		LDFLAGS="$LDFLAGS -Qunused-arguments"
+                CFLAGS="$CFLAGS -std=c99"
 		;;
 	*linux*)
 		TARGET_OS=linux;
-		CFLAGS="$CFLAGS -D_BSD_SOURCE -D_POSIX_SOURCE -D_GNU_SOURCE"
+		CFLAGS="$CFLAGS -D_BSD_SOURCE -D_POSIX_SOURCE -D_GNU_SOURCE -std=c99"
 		;;
 	*solaris*)
 		TARGET_OS=solaris;
-		CFLAGS="$CFLAGS -D__EXTENSIONS__ -D_XOPEN_SOURCE=600 -DBSD_COMP"
+		CFLAGS="$CFLAGS -D__EXTENSIONS__ -D_XOPEN_SOURCE=600 -DBSD_COMP -std=c99"
 		AC_SUBST([PLATFORM_LDADD], ['-lnsl -lsocket'])
 		;;
 	*openbsd*)
+                CFLAGS="$CFLAGS -std=c99"
 		AC_DEFINE([HAVE_ATTRIBUTE__BOUNDED__], [1], [OpenBSD gcc has bounded])
 		;;
+        *nacl*)
+                TARGET_OS=nacl;
+                ;;
 	*) ;;
 esac
 
 AM_CONDITIONAL(TARGET_DARWIN, test x$TARGET_OS = xdarwin)
 AM_CONDITIONAL(TARGET_LINUX, test x$TARGET_OS = xlinux)
 AM_CONDITIONAL(TARGET_SOLARIS, test x$TARGET_OS = xsolaris)
+AM_CONDITIONAL(TARGET_NACL, test x$TARGET_OS = xnacl)
 
 AC_PROG_CC
 AC_PROG_LIBTOOL

@@ -53,6 +53,9 @@ endif
 if TARGET_SOLARIS
 libcompat_la_SOURCES += compat/getentropy_solaris.c
 endif
+if TARGET_NACL
+libcompat_la_SOURCES += compat/getentropy_nacl.c
+endif
 endif
 
 endif

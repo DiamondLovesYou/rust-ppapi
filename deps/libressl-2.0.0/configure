@@ -698,6 +698,8 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
+TARGET_NACL_FALSE
+TARGET_NACL_TRUE
 TARGET_SOLARIS_FALSE
 TARGET_SOLARIS_TRUE
 TARGET_LINUX_FALSE
@@ -2908,28 +2910,33 @@ AM_BACKSLASH='\'
 
 USER_CFLAGS="-O2 $CFLAGS"
 
-CFLAGS="$CFLAGS -Wall -Werror -Wno-pointer-sign"
+CFLAGS="$CFLAGS -Wall -Werror -g -Wno-pointer-sign"
 
 case $target_os in
 	*darwin*)
 		TARGET_OS=darwin;
 		LDFLAGS="$LDFLAGS -Qunused-arguments"
+                CFLAGS="$CFLAGS -std=c99"
 		;;
 	*linux*)
 		TARGET_OS=linux;
-		CFLAGS="$CFLAGS -D_BSD_SOURCE -D_POSIX_SOURCE -D_GNU_SOURCE"
+		CFLAGS="$CFLAGS -D_BSD_SOURCE -D_POSIX_SOURCE -D_GNU_SOURCE -std=c99"
 		;;
 	*solaris*)
 		TARGET_OS=solaris;
-		CFLAGS="$CFLAGS -D__EXTENSIONS__ -D_XOPEN_SOURCE=600 -DBSD_COMP"
+		CFLAGS="$CFLAGS -D__EXTENSIONS__ -D_XOPEN_SOURCE=600 -DBSD_COMP -std=c99"
 		PLATFORM_LDADD='-lnsl -lsocket'
 
 		;;
 	*openbsd*)
+                CFLAGS="$CFLAGS -std=c99"
 
 $as_echo "#define HAVE_ATTRIBUTE__BOUNDED__ 1" >>confdefs.h
 
 		;;
+        *nacl*)
+                TARGET_OS=nacl;
+                ;;
 	*) ;;
 esac
 
@@ -2955,6 +2962,14 @@ fi
 else
   TARGET_SOLARIS_TRUE='#'
   TARGET_SOLARIS_FALSE=
+fi
+
+ if test x$TARGET_OS = xnacl; then
+  TARGET_NACL_TRUE=
+  TARGET_NACL_FALSE='#'
+else
+  TARGET_NACL_TRUE='#'
+  TARGET_NACL_FALSE=
 fi
 
 
@@ -12669,6 +12684,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${TARGET_SOLARIS_TRUE}" && test -z "${TARGET_SOLARIS_FALSE}"; then
   as_fn_error $? "conditional \"TARGET_SOLARIS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${TARGET_NACL_TRUE}" && test -z "${TARGET_NACL_FALSE}"; then
+  as_fn_error $? "conditional \"TARGET_NACL\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
