@@ -72,7 +72,8 @@ $(RUST_OPENSSL)/Makefile: $(RUST_OPENSSL)/configure $(RUST_OPENSSL)/Makefile.in 
 	cd $(RUST_OPENSSL); \
 	./configure
 
-deps/openssl.stamp:	$(RUST_OPENSSL)/Makefile \
+deps/openssl.stamp:	Makefile                      \
+		$(RUST_OPENSSL)/Makefile              \
 		$(call rwildcard,$(RUST_OPENSSL),*rs) \
 		$(RUSTC)                              \
 		deps/libressl.stamp
