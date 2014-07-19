@@ -41,6 +41,7 @@ rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subs
 all: build/ppapi.stamp
 
 clean:
+	$(MAKE) -C $(LIBRESSL) clean
 	touch Makefile
 
 build/libhelper.a: helper.cpp Makefile
