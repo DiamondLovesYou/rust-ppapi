@@ -19,6 +19,8 @@ AR  := $(TOOLCHAIN)/bin/pnacl-ar
 CFLAGS += -I$(NACL_SDK)/include -I$(NACL_SDK)/include/pnacl
 CXXFLAGS += -I$(NACL_SDK)/include -I$(NACL_SDK)/include/pnacl
 
+export LD_LIBRARY_PATH := $(SYSROOT)/lib:$(LD_LIBRARY_PATH)
+
 # deps
 RUST_HTTP    ?= $(shell readlink -f deps/rust-http)
 RUST_OPENSSL ?= $(shell readlink -f deps/rust-openssl)
