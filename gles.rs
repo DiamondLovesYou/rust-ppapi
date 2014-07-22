@@ -1187,16 +1187,14 @@ impl ShaderProgram {
     pub fn uniform_locale(&mut self,
                           ctxt: &Context3d,
                           name: &CString) -> Option<types::Int> {
-        name.with_ref(|p| {
-            let locus = call_gl_fun!(get_gles2() -> GetUniformLocation => (ctxt,
-                                                                           self.unwrap(),
-                                                                           p));
-            if locus == -1 {
-                None
-            } else {
-                Some(locus)
-            }
-        })
+        let locus = call_gl_fun!(get_gles2() -> GetUniformLocation => (ctxt,
+                                                                       self.unwrap(),
+                                                                       name.as_ptr()));
+        if locus == -1 {
+            None
+        } else {
+            Some(locus)
+        }
     }
 
     pub fn use_program<'a>(&'a self, ctxt: &mut Context3d) -> BoundShaderProgram<'a> {
@@ -1252,12 +1250,10 @@ impl UnlinkedShaderProgram {
                               ctxt: &Context3d,
                               index: uint,
                               name: &CString) {
-        name.with_ref(|name| {
-            call_gl_fun!(get_gles2() -> BindAttribLocation => (ctxt,
-                                                               self.inner().unwrap(),
-                                                               index as types::UInt,
-                                                               name));
-        })
+        call_gl_fun!(get_gles2() -> BindAttribLocation => (ctxt,
+                                                           self.inner().unwrap(),
+                                                           index as types::UInt,
+                                                           name.as_ptr()))
     }
     pub fn attach_shader<T: traits::CompileShader + ShaderUnwrap>(&mut self,
                                                                   ctxt: &Context3d,

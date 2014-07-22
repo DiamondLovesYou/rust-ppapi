@@ -72,21 +72,13 @@ pub fn mount<'s, 't, 'f, 'd>(source: &'s str,
     let cfilesystem_type = filesystem_type.to_c_str();
     let cdata = data.to_c_str();
 
-    match csource.with_ref(|source| {
-            ctarget.with_ref(|target| {
-                    cfilesystem_type.with_ref(|fs_type| {
-                            cdata.with_ref(|data| {
-                                    unsafe {
-                                        ffi::mount(source, 
-                                                   target, 
-                                                   fs_type, 
-                                                   0,
-                                                   data as *const libc::c_void)
-                                    }
-                                })
-                        })
-                })
-        }) {
+    match unsafe {
+        ffi::mount(csource.as_ptr(), 
+                   ctarget.as_ptr(), 
+                   cfilesystem_type.as_ptr(), 
+                   0,
+                   cdata.as_ptr() as *const libc::c_void)
+    } {
         c if c >= 0 => Ok,
         -1 => Failed,
         _ => {
@@ -1649,8 +1641,8 @@ fn expect_instances() -> &'static mut InstancesType {
                 // PANIC!
                 fail!("couldn't allocate instances map!");
             }
-            mem::move_val_init(mem::transmute(INSTANCES),
-                               instances);
+            ptr::write(mem::transmute(INSTANCES),
+                       instances);
             expect_instances()
         } else {
             mem::transmute(INSTANCES)
