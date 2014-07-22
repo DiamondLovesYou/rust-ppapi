@@ -66,8 +66,8 @@ $(RUST_HTTP)/Makefile: $(RUST_HTTP)/configure $(RUST_HTTP)/Makefile.in Makefile
 deps/http.stamp: 	$(RUST_HTTP)/Makefile deps/openssl.stamp \
 		$(call rwildcard,$(RUST_HTTP),*rs) \
 		$(RUSTC)
-	cd $(RUST_HTTP); \
-	RUSTC="$(RUSTC)" RUSTFLAGS="$(RUSTFLAGS) -L $(RUST_OPENSSL)/target" $(MAKE) -C $(RUST_HTTP) SYSROOT=$(shell readlink -f $(SYSROOT)) -B
+	$(RM) -f $(RUST_HTTP)/target/.libhttp.timestamp
+	RUSTC="$(RUSTC)" RUSTFLAGS="$(RUSTFLAGS) -L $(RUST_OPENSSL)/target" $(MAKE) -C $(RUST_HTTP) SYSROOT=$(shell readlink -f $(SYSROOT))
 	touch $@
 
 $(RUST_OPENSSL)/Makefile: $(RUST_OPENSSL)/configure $(RUST_OPENSSL)/Makefile.in Makefile
