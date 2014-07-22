@@ -1877,7 +1877,11 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
         ppb::initialize_globals(gbi);
     }).is_ok();
 
-    return initialized.to_ffi_bool() as libc::int32_t;
+    if initialized {
+        ffi::PP_OK
+    } else {
+        1i32
+    }
 }
 #[no_mangle]
 #[allow(non_snake_case_functions)]
