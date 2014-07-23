@@ -1503,7 +1503,7 @@ impl Instance {
         }
     }
 }
-pub trait InstanceCallback {
+pub trait InstanceCallbacks {
     fn on_destroy(&mut self) {}
 
     // You need to impl this function if you want to use OpenGL.
@@ -1529,10 +1529,10 @@ pub trait InstanceCallback {
 struct InstanceStore {
     instance: Instance,
     mxt: Mutex,
-    callbacks: Box<InstanceCallback>,
+    callbacks: Box<InstanceCallbacks>,
 }
 impl InstanceStore {
-    fn new(inst: Instance, callbacks: Box<InstanceCallback>) -> InstanceStore {
+    fn new(inst: Instance, callbacks: Box<InstanceCallbacks>) -> InstanceStore {
         InstanceStore {
             instance: inst,
             mxt: Mutex::new(),
@@ -1665,7 +1665,7 @@ fn find_instance<U, Take>(instance: Instance,
 
 pub mod entry {
     use super::{expect_instances, find_instance};
-    use super::{InstanceCallback, InstanceStore, Instance};
+    use super::{InstanceCallbacks, InstanceStore, Instance};
     use super::AnyVar;
     use super::{View, UrlLoader};
     use super::ToFFIBool;
@@ -1841,7 +1841,7 @@ extern {
     #[no_mangle]
     fn ppapi_instance_created(instance: Instance,
                               args: || -> HashMap<String, String>)
-                              -> Box<InstanceCallback>;
+                              -> Box<InstanceCallbacks>;
 }
 
 // The true entry point of any module.

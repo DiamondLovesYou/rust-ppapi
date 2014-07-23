@@ -31,15 +31,15 @@ use collections::hashmap::HashMap;
 // Called when an instance is created. Return a boxed trait for your callbacks.
 pub extern fn ppapi_instance_created
     (instance: ppapi::Instance,
-     _args: || -> HashMap<String, String>) -> Box<ppapi::InstanceCallback> {
+     _args: || -> HashMap<String, String>) -> Box<ppapi::InstanceCallbacks> {
         use ppapi::ppb::ConsoleInterface;
         let console = instance.console();
         console.log(ppapi::ffi::PP_LOGLEVEL_LOG, "Hello, world!");
-        box NoOpt as Box<ppapi::InstanceCallback>
+        box NoOpt as Box<ppapi::InstanceCallbacks>
     }
 
 struct NoOpt;
-impl ppapi::InstanceCallback for NoOpt { }
+impl ppapi::InstanceCallbacks for NoOpt { }
 ```
 
 Compile with: ```rustc --target le32-unknown-nacl -C cross-path=path/to/pepper/sdk -C nacl-flavor=pnacl main.rs```
