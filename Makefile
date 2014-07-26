@@ -40,21 +40,21 @@ rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subs
 
 .DEFAULT_GOAL := all
 
-all: build/ppapi.stamp
+all: $(BUILD_DIR)/ppapi.stamp
 
 clean:
 	$(MAKE) -C $(LIBRESSL) clean
 	touch Makefile
 
-build/libhelper.a: helper.cpp Makefile
+$(BUILD_DIR)/libhelper.a: helper.cpp Makefile
 	mkdir -p build/obj
 	$(CXX) $(CXXFLAGS) $< -c -o build/obj/helper.o
 	$(AR) cr $@ build/obj/helper.o
 -include helper.d
 
-build/ppapi.stamp: lib.rs build/libhelper.a Makefile deps/http.stamp deps/libressl.stamp
-	$(RUSTC) $(RUSTFLAGS) lib.rs --out-dir=build -L $(RUST_OPENSSL)/target -L $(RUST_HTTP)/target -L $(RUST_HTTP)/build -L $(TOOLCHAIN)/sdk/lib -L build
-	touch build/ppapi.stamp
+$(BUILD_DIR)/ppapi.stamp: lib.rs $(BUILD_DIR)/libhelper.a Makefile deps/http.stamp deps/libressl.stamp
+	$(RUSTC) $(RUSTFLAGS) lib.rs --out-dir=$(BUILD_DIR) -L $(TOOLCHAIN)/sdk/lib -L $(BUILD_DIR)
+	touch $@
 
 
 # deps
@@ -63,11 +63,13 @@ $(RUST_HTTP)/Makefile: $(RUST_HTTP)/configure $(RUST_HTTP)/Makefile.in Makefile
 	cd $(RUST_HTTP); \
 	WITH_OPENSSL="$(RUST_OPENSSL)" ./configure
 
-deps/http.stamp: 	$(RUST_HTTP)/Makefile deps/openssl.stamp \
-		$(call rwildcard,$(RUST_HTTP),*rs) \
-		$(RUSTC)
+deps/http.stamp: $(RUST_HTTP)/Makefile              \
+		 deps/openssl.stamp                 \
+		 $(call rwildcard,$(RUST_HTTP),*rs) \
+		 $(RUSTC)
 	$(RM) -f $(RUST_HTTP)/target/.libhttp.timestamp
 	RUSTC="$(RUSTC)" RUSTFLAGS="$(RUSTFLAGS) -L $(RUST_OPENSSL)/target" $(MAKE) -C $(RUST_HTTP) SYSROOT=$(shell readlink -f $(SYSROOT))
+	cp $(RUST_HTTP)/target/libhttp.rlib $(BUILD_DIR)
 	touch $@
 
 $(RUST_OPENSSL)/Makefile: $(RUST_OPENSSL)/configure $(RUST_OPENSSL)/Makefile.in Makefile
@@ -81,6 +83,7 @@ deps/openssl.stamp:	Makefile                      \
 		deps/libressl.stamp
 	cd $(RUST_OPENSSL); \
 	RUSTC="$(RUSTC)" RUSTFLAGS="$(filter-out -O,$(RUSTFLAGS)) -L $(BUILD_DIR)" $(MAKE) -C $(RUST_OPENSSL) -B
+	cp $(RUST_OPENSSL)/target/libopenssl.rlib $(BUILD_DIR)
 	touch $@
 
 deps/libressl.stamp: Makefile                          \
