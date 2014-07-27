@@ -1184,7 +1184,7 @@ trait Callback<TData: Send> {
                  code: Code);
 }
 trait CompletionCallback {
-    fn call(~self, code: Code);
+    fn call(self, code: Code);
 }
 struct CompletionCallbackWithCode<TData> {
     // a name for debugging; otherwise unused.
@@ -1200,8 +1200,8 @@ struct CompletionCallbackWithoutCode<TData> {
     data: TData,
     callback: proc(Instance, TData),
 }
-impl<TData: Send> CompletionCallback for CompletionCallbackWithoutCode<TData> {
-    fn call(~self, code: Code) {
+impl<TData: Send> CompletionCallback for Box<CompletionCallbackWithoutCode<TData>> {
+    fn call(self, code: Code) {
         let box CompletionCallbackWithoutCode {
             name: name,
             instance: instance,
@@ -1217,8 +1217,8 @@ impl<TData: Send> CompletionCallback for CompletionCallbackWithoutCode<TData> {
         }
     }
 }
-impl<TData: Send> CompletionCallback for CompletionCallbackWithCode<TData> {
-    fn call(~self, code: Code) {
+impl<TData: Send> CompletionCallback for Box<CompletionCallbackWithCode<TData>> {
+    fn call(self, code: Code) {
         let box CompletionCallbackWithCode {
             name: name,
             instance: instance,
@@ -1234,7 +1234,7 @@ impl<TData: Send> Callback<TData> for proc(Instance, TData) {
     fn to_ffi_callback(self,
                        name: OptionalName,
                        take: TData) -> ffi::Struct_PP_CompletionCallback {
-        let callback = CompletionCallbackWithoutCode {
+        let callback = box CompletionCallbackWithoutCode {
             instance: Instance::current(),
             name: name,
             data: take,
@@ -1261,7 +1261,7 @@ impl<TData: Send> Callback<TData> for proc(Instance, Code, Option<TData>) {
     fn to_ffi_callback(self,
                        name: OptionalName,
                        take: TData) -> ffi::Struct_PP_CompletionCallback {
-        let callback = CompletionCallbackWithCode {
+        let callback = box CompletionCallbackWithCode {
             instance: Instance::current(),
             name: name,
             data: take,
