@@ -11,7 +11,7 @@ RUSTC ?= $(shell readlink -f $(SYSROOT)/bin/rustc)
 NACL_SDK  ?= $(shell readlink -f ~/workspace/tools/nacl-sdk/pepper_canary)
 
 USE_DEBUG ?= 0
-RUSTFLAGS += -C cross-path=$(NACL_SDK) -C nacl-flavor=pnacl --target=le32-unknown-nacl --sysroot=$(shell readlink -f $(SYSROOT))
+RUSTFLAGS += -C cross-path=$(NACL_SDK) --target=le32-unknown-nacl --sysroot=$(shell readlink -f $(SYSROOT))
 TOOLCHAIN ?= $(NACL_SDK)/toolchain/linux_pnacl
 CC  := $(TOOLCHAIN)/bin/pnacl-clang
 CXX := $(TOOLCHAIN)/bin/pnacl-clang++
