@@ -5,7 +5,7 @@ Rust idiomatic bindings to the Pepper API.
 
 ## Build
 
-Just run ```make``` or ```remake``` if you're kool. You'll need to pass it two
+Just run ```make```, or ```remake``` if you're kool. You'll need to pass it two
 variables, SYSROOT, pointing to your build of
 [Rust](https://github.com/DiamondLovesYou/rust), and TOOLCHAIN, pointing to
 ```pepper_canary``` within the NaCl SDK (```pepper_35``` *might* work, but no
@@ -17,7 +17,7 @@ promises).
 
 Taken from [pnacl-hello-world](https://github.com/DiamondLovesYou/rust-pnacl-hello-world):
 ```rust
-#![crate_name = "pnacl-hello-world")]
+#![crate_name = "pnacl-hello-world"]
 #![crate_type = "bin"]
 #![no_main]
 
@@ -28,11 +28,9 @@ use std::collections::hashmap::HashMap;
 #[no_mangle]
 #[cfg(target_os = "nacl")]
 // Called when an instance is created. Return a boxed trait for your callbacks.
-pub extern fn ppapi_instance_created(instance: ppapi::Instance,
+pub extern fn ppapi_instance_created(_instance: ppapi::Instance,
                                      _args: || -> HashMap<String, String>) -> Box<ppapi::InstanceCallbacks> {
-    use ppapi::ppb::ConsoleInterface;
-    let console = instance.console();
-    console.log(ppapi::ffi::PP_LOGLEVEL_LOG, "Hello, world!");
+    println!("Hello, world!");
     box NoOpt as Box<ppapi::InstanceCallbacks>
 }
 
