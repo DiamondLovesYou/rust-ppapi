@@ -52,7 +52,8 @@ $(BUILD_DIR)/libhelper.a: helper.cpp Makefile
 	$(AR) cr $@ build/obj/helper.o
 -include helper.d
 
-$(BUILD_DIR)/ppapi.stamp: lib.rs $(BUILD_DIR)/libhelper.a Makefile deps/http.stamp deps/libressl.stamp
+$(BUILD_DIR)/ppapi.stamp: lib.rs $(wildcard *.rs) $(BUILD_DIR)/libhelper.a \
+	 		  Makefile deps/http.stamp deps/libressl.stamp
 	$(RUSTC) $(RUSTFLAGS) lib.rs --out-dir=$(BUILD_DIR) -L $(TOOLCHAIN)/sdk/lib -L $(BUILD_DIR)
 	touch $@
 
