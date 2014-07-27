@@ -1853,7 +1853,7 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
     use log::set_logger;
     use std::rt;
     use std::str::Slice;
-    use std::io::Writer;
+    use std::io::{LineBufferedWriter, Writer};
     use std::io::stdio::{set_stderr, set_stdout};
     use std::rt::local::{Local};
     use self::entry::try_block;
@@ -1867,8 +1867,10 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
         task.name = Some(Slice(MAIN_TASK_NAME));
         Local::put(task);
     }
-    set_stdout(box CurrentInstanceStdOut as Box<Writer + Send>);
-    set_stderr(box CurrentInstanceStdErr as Box<Writer + Send>);
+    let stdout = LineBufferedWriter::new(CurrentInstanceStdOut);
+    let stderr = LineBufferedWriter::new(CurrentInstanceStdErr);
+    set_stdout(box stdout as Box<Writer + Send>);
+    set_stderr(box stderr as Box<Writer + Send>);
     set_logger(box CurrentInstanceLogger);
 
     // We can't fail! before this point!
