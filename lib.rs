@@ -1302,29 +1302,55 @@ impl log::Logger for CurrentInstanceLogger {
     fn log(&mut self, record: &LogRecord) {
         use self::ppb::ConsoleInterface;
         let console = Instance::current().console();
-        let str = record.to_string();
-        console.log_to_browser(unsafe { mem::transmute(record.level) },
+        let level = match record.level {
+            log::LogLevel(log::ERROR) => ffi::PP_LOGLEVEL_ERROR,
+            log::LogLevel(log::WARN)  => ffi::PP_LOGLEVEL_WARNING,
+            log::LogLevel(log::INFO)  => ffi::PP_LOGLEVEL_TIP,
+            log::LogLevel(_)          => ffi::PP_LOGLEVEL_LOG,
+        };
+
+        let str = format!("{} ({}:{}): {}",
+                          record.module_path,
+                          record.file,
+                          record.line,
+                          record.args);
+        console.log_to_browser(level,
                                str.to_var());
     }
 }
-pub struct CurrentInstanceStdOut;
-pub struct CurrentInstanceStdErr;
-impl Writer for CurrentInstanceStdOut {
-    fn write(&mut self, buf: &[u8]) -> io::IoResult<()> {
-        use libc::STDOUT_FILENO;
-        send_to_console_or_terminal(current_instance.get(),
-                                    buf,
-                                    ffi::PP_LOGLEVEL_LOG,
-                                    STDOUT_FILENO)
-    }
+struct CurrentInstanceStdIo {
+    level: ffi::PP_LogLevel,
+    fd:    i32,
+    buffer: Vec<u8>,
 }
-impl Writer for CurrentInstanceStdErr {
-    fn write(&mut self, buf: &[u8]) -> io::IoResult<()> {
-        use libc::STDERR_FILENO;
-        send_to_console_or_terminal(current_instance.get(),
-                                    buf,
-                                    ffi::PP_LOGLEVEL_ERROR,
-                                    STDERR_FILENO)
+impl Writer for CurrentInstanceStdIo {
+    fn write(&mut self, mut buf: &[u8]) -> io::IoResult<()> {
+        // Don't write newlines to the console. Also, don't write anything to the console
+        // until we get a newline.
+        loop {
+            let newline_pos_opt = buf.iter().position(|&c| c == '\n' as u8 );
+            let newline_pos = match newline_pos_opt {
+                Some(pos) => pos,
+                None => {
+                    self.buffer.push_all(buf);
+                    return result::Ok(());
+                }
+            };
+            let rest = buf.slice(0, newline_pos);
+            self.buffer.push_all(rest);
+            let result = send_to_console_or_terminal(current_instance.get(),
+                                                     self.buffer.as_slice(),
+                                                     self.level,
+                                                     self.fd);
+            self.buffer.truncate(0);
+            if buf.len() < newline_pos + 2 {
+                return result;
+            }
+            buf = buf.slice_from(newline_pos + 2);
+            if result.is_err() || buf.len() == 0 {
+                return result;
+            }
+        }
     }
 }
 #[no_mangle] #[inline(never)]
@@ -1857,6 +1883,7 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
     use std::io::stdio::{set_stderr, set_stdout};
     use std::rt::local::{Local};
     use self::entry::try_block;
+    use libc::{STDOUT_FILENO, STDERR_FILENO};
 
     static MAIN_TASK_NAME: &'static str = "main module task";
 
@@ -1867,8 +1894,17 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
         task.name = Some(Slice(MAIN_TASK_NAME));
         Local::put(task);
     }
-    let stdout = LineBufferedWriter::new(CurrentInstanceStdOut);
-    let stderr = LineBufferedWriter::new(CurrentInstanceStdErr);
+
+    let stdout = CurrentInstanceStdIo {
+        level: ffi::PP_LOGLEVEL_LOG,
+        fd:    STDOUT_FILENO,
+        buffer: Vec::new(),
+    };
+    let stderr = CurrentInstanceStdIo {
+        level: ffi::PP_LOGLEVEL_ERROR,
+        fd:    STDERR_FILENO,
+        buffer: Vec::new(),
+    };
     set_stdout(box stdout as Box<Writer + Send>);
     set_stderr(box stderr as Box<Writer + Send>);
     set_logger(box CurrentInstanceLogger);
