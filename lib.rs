@@ -1285,7 +1285,6 @@ fn new_ffi_callback(callback: CallbackBox) -> ffi::Struct_PP_CompletionCallback 
             unsafe { mem::transmute(user) };
         callback.call(Code::from_i32(status))
     }
-    let callback = box callback;
     unsafe {
         ffi::make_completion_callback(work_callback,
                                       mem::transmute(box callback)) // :(
