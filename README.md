@@ -1,7 +1,7 @@
 Rusted Pepper (Make'em Oxidize!)
 ==========
 
-Rust idiomatic bindings to the Pepper API.
+Rust idiomatic bindings to the Pepper API. This API is experimental. Expect it to change somewhat.
 
 ## Build
 
@@ -43,3 +43,13 @@ Compile with: ```rustc --target le32-unknown-nacl -C cross-path=path/to/pepper/s
 ## More Docs
 
 [Here](http://diamondlovesyou.github.io/rust-ppapi/ppapi/index.html)
+
+## The Plan
+
+Thus far I've tried to stay away from creating tasks. My hope has been to utilize [Pepper.js](https://github.com/google/pepper.js) so that Rust projects can have across the board browser support.
+This isn't without it's problems. For example, if an instance were to override the stdout or stderr writers, it wouldn't be contained to just that instance. Additionally, the contortions required of libnative to cut out anything that creates any sort of helper thread are pretty nasty.
+As an aside, the lack of an async API in the Rust runtime is particularly burdensome. PNaCl bans blocking calls on the main thread (for good reasons), so designing for future Pepper.js use (can't create threads) is impossible without an async rt API, which Rust lacks.
+
+I'm losing faith in this wisdom. For example, compiling gles shaders is impossible on the main thread because it requires a possibly blocking call to get the results.
+
+And thus my short term plan is to forsake Pepper.js, and create each instance in its own task hierarchy.
