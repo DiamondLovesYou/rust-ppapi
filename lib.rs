@@ -1213,7 +1213,13 @@ impl<TData: Send> CompletionCallback for Box<CompletionCallbackWithoutCode<TData
             warn!("callback `{}` called with code: `{}`", name, code);
         } else {
             info!("entering callback: `{}`", name);
-            callback(instance, data)
+            let mut callback = Some(callback);
+            let mut data = Some(data);
+            let _ = entry::try_block(|| {
+                let callback = callback.take_unwrap();
+                let data = data.take_unwrap();
+                callback(instance, data)
+            });
         }
     }
 }
@@ -1227,7 +1233,12 @@ impl<TData: Send> CompletionCallback for Box<CompletionCallbackWithCode<TData>> 
         } = self;
         instance.set_current();
         info!("entering callback: `{}` with code: `{}`", name, code);
-        callback(instance, code, code.map(data))
+        let mut callback = Some(callback);
+        let mut data = Some(data);
+        let _ = entry::try_block(|| {
+            let callback = callback.take_unwrap();
+            callback(instance, code, code.map(data.take_unwrap()))
+        });
     }
 }
 impl<TData: Send> Callback<TData> for proc(Instance, TData) {
