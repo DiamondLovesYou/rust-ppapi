@@ -2,10 +2,15 @@
 #include "ppapi.hpp"
 #include "stdio.h"
 
+#include "ppapi/c/pp_completion_callback.h"
+
 extern "C" {
   PP_CompletionCallback make_completion_callback(PP_CompletionCallback_Func func,
                                                  void* user_data) {
     return PP_MakeCompletionCallback(func, user_data);
+  }
+  void run_completion_callback(PP_CompletionCallback func, const int32_t code) {
+    PP_RunCompletionCallback(&func, code);
   }
 
   const PP_Var make_undefined_var() {

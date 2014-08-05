@@ -4021,6 +4021,8 @@ extern "C" {
     pub fn make_completion_callback(func: PP_CompletionCallback_Func,
                                     user_data: *mut ::libc::c_void) ->
      Struct_PP_CompletionCallback;
+    pub fn run_completion_callback(func: Struct_PP_CompletionCallback,
+                                   code: int32_t);
     pub fn make_undefined_var() -> Struct_PP_Var;
     pub fn make_null_var() -> Struct_PP_Var;
     pub fn bool_to_var(value: ::libc::c_int) -> Struct_PP_Var;

@@ -1480,25 +1480,14 @@ impl super::Context3d {
         call_gl_fun!(get_gles2() -> Clear => (self,
                                               mask))
     }
-    pub fn swap_buffers(&self) {
-        use super::{Instance, Code, find_instance};
+    pub fn swap_buffers<T: Callback>(&self, next_frame: T) {
+        use super::Callback;
         let interface = ppb::get_graphics_3d();
-        let internal_cb = proc(inst: Instance,
-                               code: Code,
-                               _: Option<()>) {
-            find_instance(inst,
-                          code,
-                          |store, code| {
-                              store.on_buffers_swapped(code)
-                          });
-        };
-        let cb = internal_cb.to_ffi_callback(None, ());
-        let r = interface.swap_buffers(self.unwrap(),
-                                       cb);
+
+        let cb = next_frame.to_ffi_callback();
+        let r = interface.swap_buffers(self.unwrap(), cb);
         if !r.is_ok() {
-            unsafe {
-                cb.sync_call(r)
-            }
+            cb.post_to_self(r);
         }
     }
 }

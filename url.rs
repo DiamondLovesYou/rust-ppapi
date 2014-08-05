@@ -1,6 +1,5 @@
 use super::{UrlLoader, UrlRequestInfo, UrlResponseInfo, Callback,
-            Resource, FileSliceRef, OptionalName, Instance, ToStringVar,
-            ToVar};
+            Resource, FileSliceRef, Instance, ToStringVar, ToVar};
 use super::ppb::{get_url_loader, get_url_request, get_url_response};
 use std::option::{Option, Some, None};
 use std::{fmt, default, str};
@@ -134,8 +133,9 @@ impl RequestInfo {
         was_set
     }
 
-    fn to_ffi(self, instance: &super::Instance) -> IoResult<UrlRequestInfo> {
+    pub fn to_ffi(self) -> IoResult<UrlRequestInfo> {
         use std::io::MemWriter;
+        let instance = Instance::current();
         let request = get_url_request();
         let res = instance.create_url_request_info().unwrap();
         let set_true = self.set_props.intersection(self.properties);
@@ -230,24 +230,19 @@ impl Resource for OpenedUrlLoader {
 }
 
 impl super::UrlLoader {
-    pub fn open<TCb: Callback<OpenedUrlLoader>>(&self,
-                                                info: RequestInfo,
-                                                callback: TCb,
-                                                name: OptionalName) -> super::Result<OpenedUrlLoader> {
-        let instance = Instance::current();
+    // TODO: this is messy. Do it generically.
+    pub fn open(&self,
+                ffi_info: UrlRequestInfo,
+                callback: proc(OpenedUrlLoader): 'static + Send) -> super::Result<OpenedUrlLoader> {
         let loader = get_url_loader();
-        let info = match info.to_ffi(&instance) {
-            Ok(info) => info,
-            Err(_) => {
-                callback.sync_call(instance, name, None, super::Failed);
-                return Err(super::Failed);
-            }
-        };
         let open_loader = OpenedUrlLoader(self.clone());
+        let open_loader2 = open_loader.clone();
+        let cb = proc() {
+            callback(open_loader2);
+        };
         loader.open(self.unwrap(),
-                    info.unwrap(),
-                    callback.to_ffi_callback(name,
-                                             open_loader.clone()))
+                    ffi_info.unwrap(),
+                    cb.to_ffi_callback())
             .map(|_| open_loader.clone() )
     }
                 

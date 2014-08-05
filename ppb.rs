@@ -217,7 +217,7 @@ impl ffi::Struct_PPB_Core_1_0 {
         impl_fun!(self.GetTime)
     }
 }
-impl ffi::Struct_PPB_Var_1_1 {
+impl ffi::Struct_PPB_Var_1_2 {
     pub fn add_ref(&self, var: &Struct_PP_Var) {
         impl_fun!(self.AddRef => (*var))
     }
@@ -277,8 +277,13 @@ impl ffi::Struct_PPB_MessageLoop_1_0 {
     pub fn get_for_main_thread(&self) -> PP_Resource {
         impl_fun!(self.GetForMainThread)
     }
-    pub fn get_current(&self) -> PP_Resource {
-        impl_fun!(self.GetCurrent)
+    pub fn get_current(&self) -> Option<PP_Resource> {
+        let current = impl_fun!(self.GetCurrent);
+        if current == unsafe { mem::transmute(0i32) } {
+            None
+        } else {
+            Some(current)
+        }
     }
     pub fn attach_to_current_thread(&self, msg_loop: &PP_Resource) -> libc::int32_t {
         impl_fun!(self.AttachToCurrentThread => (*msg_loop))

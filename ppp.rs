@@ -47,6 +47,8 @@ pub extern "C" fn PPP_GetInterface(interface_name: *const c_char) -> *const c_vo
         } else if name == consts::GRAPHICS {
             transmute(&globals::GRAPHICS)
         } else {
+            warn!("PPAPI requested unknown interface: `{}`",
+                  name);
             ptr::null()
         }
     }
