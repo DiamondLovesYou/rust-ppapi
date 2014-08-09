@@ -290,6 +290,12 @@ impl clone::Clone for ffi::Struct_PP_FloatPoint {
     }
 }
 
+impl fmt::Show for ffi::Struct_PP_FloatPoint {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
 pub type Point = ffi::PP_Point;
 pub type FloatPoint = ffi::PP_FloatPoint;
 pub type TouchPoint = ffi::PP_TouchPoint;
