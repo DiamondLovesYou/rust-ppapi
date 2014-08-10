@@ -1979,33 +1979,71 @@ pub mod entry {
 
 extern {
     #[no_mangle]
+    // [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aff2dd72f7aab6335cacf8bc3a66ccbba)
     fn ppapi_instance_created(instance: Instance,
                               args: HashMap<String, String>);
     #[no_mangle]
+    // [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a99edbb91abde255fec3bc3e1f9c8ba82)
     fn ppapi_instance_destroyed();
 
     #[no_mangle]
     #[linkage = "extern_weak"]
+    // Should be a function of form:
+    // ```
+    // #[no_mangle]
+    // pub extern fn ppapi_on_document_loaded(loader: ppapi::UrlLoader) -> bool;
+    // ```
+    // It will be called from the instance's task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a2fba2c9d06044a48e73a649b04398e1d)
     static ppapi_on_document_loaded: *const libc::c_void;
 
     #[no_mangle]
     #[linkage = "extern_weak"]
+    // Should be a function of form:
+    // ```
+    // #[no_mangle]
+    // pub extern fn ppapi_on_change_view(view: ppapi::View);
+    // ```
+    // It will be called from the instance's task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aa028a7b17d62242ac56b6ab4b55dc047)
     static ppapi_on_change_view: *const libc::c_void;
 
     #[no_mangle]
     #[linkage = "extern_weak"]
+    // Should be a function of form:
+    // ```
+    // #[no_mangle]
+    // pub extern fn ppapi_on_change_focus(has_focus: bool);
+    // ```
+    // It will be called from the instance's task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#abf4a481156b605938416bf873bd2c782)
     static ppapi_on_change_focus: *const libc::c_void;
 
     #[no_mangle]
     #[linkage = "extern_weak"]
+    // Should be a function of form:
+    // ```
+    // #[no_mangle]
+    // pub extern fn ppapi_on_message(msg: ppapi::AnyVar);
+    // ```
+    // It will be called from the instance's task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___messaging__1__0.html#a558ca784cf11eaba479ff8621ae2c507)
     static ppapi_on_message: *const libc::c_void;
 
     #[no_mangle]
     #[linkage = "extern_weak"]
+    // Should be a function of form:
+    // ```
+    // #[no_mangle]
+    // pub extern fn ppapi_on_input(event: ppapi::input::Class) -> bool;
+    // ```
+    // It will be called from the instance's task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___input_event__0__1.html#ae684a39a2bf6b58aee0f7420aab43150)
     static ppapi_on_input: *const libc::c_void;
 
     #[no_mangle]
     #[linkage = "extern_weak"]
+    // Should be a function of form:
+    // ```
+    // #[no_mangle]
+    // pub extern fn ppapi_on_graphics_context_lost();
+    // ```
+    // It will be called from the instance's task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___graphics3_d__1__0.html#ae7aba86d10d1b8c4c7a41bac3af64b0a)
     static ppapi_on_graphics_context_lost: *const libc::c_void;
 }
 
