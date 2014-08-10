@@ -1847,7 +1847,6 @@ pub mod entry {
             let _ = try_block(|| {
                 debug!("did_change_view");
                 let view = View::new(view);
-                view.rect().expect("failed to get the view desc");
                 find_instance(instance,
                               view,
                               |store, view| store.on_change_view(view) );
