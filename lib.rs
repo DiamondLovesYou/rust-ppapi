@@ -1843,14 +1843,18 @@ pub mod entry {
         Instance::assert_unset_current();
         instance.set_current();
 
-        let _ = try_block(|| {
-            debug!("did_change_view");
-            let view = View::new(view);
-            view.rect().expect("failed to get the view desc");
-            find_instance(instance,
-                          view,
-                          |store, view| store.on_change_view(view) );
-        });
+        if !super::ppapi_on_change_view.is_null() {
+            let _ = try_block(|| {
+                debug!("did_change_view");
+                let view = View::new(view);
+                view.rect().expect("failed to get the view desc");
+                find_instance(instance,
+                              view,
+                              |store, view| store.on_change_view(view) );
+            });
+        } else {
+            warn!("plugin is missing 'ppapi_on_change_view'");
+        }
 
         Instance::unset_current();
     }
@@ -1859,25 +1863,28 @@ pub mod entry {
         Instance::assert_unset_current();
         instance.set_current();
 
-        let _ = try_block(|| {
-            debug!("did_change_focus");
+        if !super::ppapi_on_change_focus.is_null() {
+            let _ = try_block(|| {
+                debug!("did_change_focus");
 
-            find_instance(instance,
-                          (),
-                          |store, ()| store.on_change_focus(has_focus != ffi::PP_FALSE) );
-        });
+                find_instance(instance,
+                              (),
+                              |store, ()| store.on_change_focus(has_focus != ffi::PP_FALSE) );
+            });
+        } else {
+            warn!("plugin is missing 'ppapi_on_change_focus'");
+        }
 
         Instance::unset_current();
     }
     pub extern "C" fn handle_document_load(inst: ffi::PP_Instance, 
                                            url_loader: ffi::PP_Resource) -> ffi::PP_Bool {
-        use super::ppapi_on_document_loaded;
         let instance = Instance::new(inst);
         Instance::assert_unset_current();
         instance.set_current();
 
-        if ppapi_on_document_loaded.is_null() {
-            warn!("plugin can't handle document loaded events");
+        if super::ppapi_on_document_loaded.is_null() {
+            warn!("plugin is missing 'ppapi_on_document_loaded'");
             return false.to_ffi_bool();
         }
 
@@ -1897,19 +1904,17 @@ pub mod entry {
     }
 
     pub extern "C" fn handle_message(inst: ffi::PP_Instance, msg: ffi::PP_Var) {
-        use super::ppapi_on_message;
         let instance = Instance::new(inst);
         instance.check_current();
 
-        if ppapi_on_message.is_null() {
-            warn!("plugin can't handle messages");
+        if super::ppapi_on_message.is_null() {
+            warn!("plugin is missing 'ppapi_on_message'");
             return;
         }
 
         debug!("handle_message");
         unsafe {
-            assert!(!ppapi_on_message.is_null());
-            let on_message: fn(AnyVar) = transmute(ppapi_on_message);
+            let on_message: fn(AnyVar) = transmute(super::ppapi_on_message);
             on_message(AnyVar::new_bumped(msg));
         }
     }
@@ -1927,7 +1932,7 @@ pub mod entry {
 
         if ppapi_on_input.is_null() {
             warn!("plugin requested input events, but didn't implement \
-                   ppapi_on_input");
+                   'ppapi_on_input'");
             return false.to_ffi_bool();
         }
 
@@ -1952,7 +1957,6 @@ pub mod entry {
             } else {
                 fail!("unknown input event");
             };
-            assert!(!ppapi_on_input.is_null());
             let on_input: fn(Class) -> bool =
                 transmute(ppapi_on_input);
             handled = Some(on_input(e));
@@ -1961,17 +1965,16 @@ pub mod entry {
         handled.unwrap_or(false).to_ffi_bool()
     }
     pub extern "C" fn graphics_context_lost(inst: ffi::PP_Instance) {
-        use super::ppapi_on_graphics_context_lost;
         let instance = Instance::new(inst);
         instance.check_current();
 
-        if ppapi_on_graphics_context_lost.is_null() {
-            warn!("plugin doesn't handle ppapi_on_graphics_context_lost");
+        if super::ppapi_on_graphics_context_lost.is_null() {
+            warn!("plugin is missing 'ppapi_on_graphics_context_lost'");
             return;
         }
 
         unsafe {
-            let on: fn() = transmute(ppapi_on_graphics_context_lost);
+            let on: fn() = transmute(super::ppapi_on_graphics_context_lost);
             on();
         }
     }
