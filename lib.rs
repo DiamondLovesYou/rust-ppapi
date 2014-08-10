@@ -412,6 +412,12 @@ macro_rules! impl_resource_for(
                     mem::transmute_copy(&res)
                 }
             }
+            fn new_bumped(res: ffi::PP_Resource) -> $ty {
+                let v: $ty = unsafe { mem::transmute_copy(&res) };
+                // bump the ref count:
+                unsafe { mem::forget(v.clone()) };
+                v
+            }
         }
         impl ToOption<ffi::PP_Resource> for $ty {
             fn to_option(from: &ffi::PP_Resource) -> Option<$ty> {
@@ -1846,7 +1852,7 @@ pub mod entry {
         if !super::ppapi_on_change_view.is_null() {
             let _ = try_block(|| {
                 debug!("did_change_view");
-                let view = View::new(view);
+                let view = View::new_bumped(view);
                 find_instance(instance,
                               view,
                               |store, view| store.on_change_view(view) );
@@ -1891,7 +1897,7 @@ pub mod entry {
             debug!("handle_document_load");
 
             find_instance(instance,
-                          UrlLoader::new(url_loader),
+                          UrlLoader::new_bumped(url_loader),
                           |store, url_loader| {
                               store.on_document_load(url_loader)
                           }).unwrap_or(false)
