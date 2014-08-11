@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `gles.rs`.">
+    <meta name="description" content="Source to the Rust file `src/gles.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>gles.rs.html -- source</title>
 
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
 
     
     
@@ -1533,6 +1533,8 @@
 <span id='1491'>1491</span>
 <span id='1492'>1492</span>
 <span id='1493'>1493</span>
+<span id='1494'>1494</span>
+<span id='1495'>1495</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module to wrap OpenGLES 2.0 functions from the PPAPI</span>
 
@@ -1860,6 +1862,7 @@
         <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>never</span>)]</span> <span class='kw'>fn</span> <span class='ident'>failure</span>() <span class='op'>-&gt;</span> <span class='op'>!</span> {
             <span class='macro'>fail</span><span class='macro'>!</span>(<span class='string'>&quot;Interface function \&quot;{}\&quot; missing!&quot;</span>, <span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>fun</span>))
         }
+        <span class='macro'>error</span><span class='macro'>!</span>(<span class='string'>&quot;calling {}({})&quot;</span>, <span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>fun</span>), <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ctxt</span>);
         <span class='kw'>let</span> <span class='ident'>f</span> <span class='op'>=</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>expr</span>.<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>fun</span>.<span class='ident'>unwrap_or_else</span>(<span class='ident'>failure</span>);
         <span class='ident'>f</span>( <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ctxt</span>.<span class='ident'>unwrap</span>(), $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>arg</span>),<span class='op'>*</span> )
     });
@@ -1867,6 +1870,7 @@
         <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>never</span>)]</span> <span class='kw'>fn</span> <span class='ident'>failure</span>() <span class='op'>-&gt;</span> <span class='op'>!</span> {
             <span class='macro'>fail</span><span class='macro'>!</span>(<span class='string'>&quot;Interface function \&quot;{}\&quot; missing!&quot;</span>, <span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>fun</span>))
         }
+        <span class='macro'>error</span><span class='macro'>!</span>(<span class='string'>&quot;calling {}({})&quot;</span>, <span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>fun</span>), <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ctxt</span>);
         <span class='kw'>let</span> <span class='ident'>f</span> <span class='op'>=</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>expr</span>.<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>fun</span>.<span class='ident'>unwrap_or_else</span>(<span class='ident'>failure</span>);
         <span class='ident'>f</span>( <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ctxt</span>.<span class='ident'>unwrap</span>() )
     })
@@ -3067,13 +3071,13 @@
     
 
     <script>
-        window.rootPath = "../../";
+        window.rootPath = "../../../";
         window.currentCrate = "ppapi";
         window.playgroundUrl = "";
     </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script async src="../../../search-index.js"></script>
 </body>
 </html>

@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `lib.rs`.">
+    <meta name="description" content="Source to the Rust file `src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
 
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
 
     
     
@@ -2161,8 +2161,72 @@
 <span id='2119'>2119</span>
 <span id='2120'>2120</span>
 <span id='2121'>2121</span>
+<span id='2122'>2122</span>
+<span id='2123'>2123</span>
+<span id='2124'>2124</span>
+<span id='2125'>2125</span>
+<span id='2126'>2126</span>
+<span id='2127'>2127</span>
+<span id='2128'>2128</span>
+<span id='2129'>2129</span>
+<span id='2130'>2130</span>
+<span id='2131'>2131</span>
+<span id='2132'>2132</span>
+<span id='2133'>2133</span>
+<span id='2134'>2134</span>
+<span id='2135'>2135</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Rust idiomatic wrapper for the Pepper API.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! To use, you will need to implement at least these two functions:</span>
+<span class='doccomment'>//! ```rust</span>
+<span class='doccomment'>//! #[no_managle]</span>
+<span class='doccomment'>//! pub extern fn ppapi_instance_created(instance: Instance,</span>
+<span class='doccomment'>//!                                      args: HashMap&lt;String, String&gt;) {</span>
+<span class='doccomment'>//! }</span>
+<span class='doccomment'>//! #[no_managle]</span>
+<span class='doccomment'>//! pub extern fn ppapi_instance_destroyed() {</span>
+<span class='doccomment'>//! }</span>
+<span class='doccomment'>//! ```</span>
+<span class='doccomment'>//! All instances will be created from a new task/thread. The task takes its</span>
+<span class='doccomment'>//! name from the id attribute on the embed object used to create the</span>
+<span class='doccomment'>//! instance. Failing will cause rust-ppapi to cleanup the task, though the</span>
+<span class='doccomment'>//! plugin will continue to run. Currently there is no way to automatically</span>
+<span class='doccomment'>//! restart an instance if it fails.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! The other callbacks consist of:</span>
+<span class='doccomment'>//! ```rust</span>
+<span class='doccomment'>//! #[no_mangle]</span>
+<span class='doccomment'>//! pub extern fn ppapi_on_document_loaded(loader: ppapi::UrlLoader) -&gt; bool {</span>
+<span class='doccomment'>//! }</span>
+<span class='doccomment'>//! #[no_mangle]</span>
+<span class='doccomment'>//! pub extern fn ppapi_on_change_view(view: ppapi::View) {</span>
+<span class='doccomment'>//! }</span>
+<span class='doccomment'>//! #[no_mangle]</span>
+<span class='doccomment'>//! pub extern fn ppapi_on_change_focus(has_focus: bool) {</span>
+<span class='doccomment'>//! }</span>
+<span class='doccomment'>//! #[no_mangle]</span>
+<span class='doccomment'>//! pub extern fn ppapi_on_message(msg: ppapi::AnyVar) {</span>
+<span class='doccomment'>//! }</span>
+<span class='doccomment'>//! #[no_mangle]</span>
+<span class='doccomment'>//! pub extern fn ppapi_on_input(event: ppapi::input::Class) -&gt; bool {</span>
+<span class='doccomment'>//! }</span>
+<span class='doccomment'>//! #[no_mangle]</span>
+<span class='doccomment'>//! pub extern fn ppapi_on_graphics_context_lost() {</span>
+<span class='doccomment'>//! }</span>
+<span class='doccomment'>//! ```</span>
+<span class='doccomment'>//! These are all optional. If implemented, they will be called from the instance&#39;s task.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! More info:</span>
+<span class='doccomment'>//! * [ppapi_instance_created](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aff2dd72f7aab6335cacf8bc3a66ccbba)</span>
+<span class='doccomment'>//! * [ppapi_instance_destroyed](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a99edbb91abde255fec3bc3e1f9c8ba82)</span>
+<span class='doccomment'>//! * [ppapi_on_document_loaded](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a2fba2c9d06044a48e73a649b04398e1d)</span>
+<span class='doccomment'>//! * [ppapi_on_change_view](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aa028a7b17d62242ac56b6ab4b55dc047)</span>
+<span class='doccomment'>//! * [ppapi_on_change_focus](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#abf4a481156b605938416bf873bd2c782)</span>
+<span class='doccomment'>//! * [ppapi_on_message](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___messaging__1__0.html#a558ca784cf11eaba479ff8621ae2c507)</span>
+<span class='doccomment'>//! * [ppapi_on_input](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___input_event__0__1.html#ae684a39a2bf6b58aee0f7420aab43150)</span>
+<span class='doccomment'>//! * [ppapi_on_graphics_context_lost](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___graphics3_d__1__0.html#ae7aba86d10d1b8c4c7a41bac3af64b0a)</span>
+
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>crate_name</span> <span class='op'>=</span> <span class='string'>&quot;ppapi&quot;</span>]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>crate_type</span> <span class='op'>=</span> <span class='string'>&quot;rlib&quot;</span>]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>experimental</span>]</span>
@@ -2600,6 +2664,7 @@
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span>:<span class='ident'>ty</span>) <span class='op'>=&gt;</span> (
         <span class='kw'>impl</span> <span class='ident'>Clone</span> <span class='kw'>for</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span> {
             <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span> {
+                <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;add ref: `{}`&quot;</span>, <span class='self'>self</span>);
                 (<span class='ident'>ppb</span>::<span class='ident'>get_core</span>().<span class='ident'>AddRefResource</span>.<span class='ident'>unwrap</span>())(<span class='self'>self</span>.<span class='ident'>unwrap</span>());
                 <span class='kw'>unsafe</span> {
                     <span class='ident'>mem</span>::<span class='ident'>transmute_copy</span>(<span class='self'>self</span>)
@@ -2608,6 +2673,7 @@
         }
         <span class='kw'>impl</span> <span class='ident'>Drop</span> <span class='kw'>for</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span> {
             <span class='kw'>fn</span> <span class='ident'>drop</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
+                <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;drop ref: `{}`&quot;</span>, <span class='self'>self</span>);
                 (<span class='ident'>ppb</span>::<span class='ident'>get_core</span>().<span class='ident'>ReleaseResource</span>.<span class='ident'>unwrap</span>())(<span class='self'>self</span>.<span class='ident'>unwrap</span>());
             }
         }
@@ -3656,7 +3722,7 @@
              <span class='kw'>if</span> <span class='ident'>raw_cxt</span> <span class='op'>==</span> <span class='kw'>unsafe</span> { <span class='ident'>mem</span>::<span class='ident'>transmute</span>(<span class='number'>0i32</span>) } {
                  <span class='ident'>result</span>::<span class='prelude-val'>Err</span>(<span class='ident'>Failed</span>)
              } <span class='kw'>else</span> {
-                 <span class='ident'>result</span>::<span class='prelude-val'>Ok</span>(<span class='ident'>Context3d</span>(<span class='ident'>raw_cxt</span>))
+                 <span class='ident'>result</span>::<span class='prelude-val'>Ok</span>(<span class='ident'>Context3d</span>::<span class='ident'>new_bumped</span>(<span class='ident'>raw_cxt</span>))
              }
          }
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>bind_context</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>ContextResource</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>cxt</span>: <span class='kw-2'>&amp;</span><span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='ident'>Code</span> {
@@ -3666,7 +3732,7 @@
             <span class='ident'>ffi</span>::<span class='ident'>PP_TRUE</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>,
             <span class='ident'>ffi</span>::<span class='ident'>PP_FALSE</span> <span class='op'>=&gt;</span> <span class='ident'>Failed</span>,
             <span class='ident'>other</span> <span class='op'>=&gt;</span> {
-                <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;unknown truthy value: {:}&quot;</span>, <span class='ident'>other</span>);
+                <span class='macro'>error</span><span class='macro'>!</span>(<span class='string'>&quot;unknown truthy value: {:}&quot;</span>, <span class='ident'>other</span>);
                 <span class='ident'>Failed</span>
             }
         }
@@ -4151,77 +4217,39 @@
 
 <span class='kw'>extern</span> {
     <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
-    <span class='comment'>// [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aff2dd72f7aab6335cacf8bc3a66ccbba)</span>
     <span class='kw'>fn</span> <span class='ident'>ppapi_instance_created</span>(<span class='ident'>instance</span>: <span class='ident'>Instance</span>,
                               <span class='ident'>args</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span>);
     <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
-    <span class='comment'>// [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a99edbb91abde255fec3bc3e1f9c8ba82)</span>
     <span class='kw'>fn</span> <span class='ident'>ppapi_instance_destroyed</span>();
 
     <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
     <span class='attribute'>#[<span class='ident'>linkage</span> <span class='op'>=</span> <span class='string'>&quot;extern_weak&quot;</span>]</span>
-    <span class='comment'>// Should be a function of form:</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// #[no_mangle]</span>
-    <span class='comment'>// pub extern fn ppapi_on_document_loaded(loader: ppapi::UrlLoader) -&gt; bool;</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// It will be called from the instance&#39;s task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a2fba2c9d06044a48e73a649b04398e1d)</span>
     <span class='kw'>static</span> <span class='ident'>ppapi_on_document_loaded</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>libc</span>::<span class='ident'>c_void</span>;
 
     <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
     <span class='attribute'>#[<span class='ident'>linkage</span> <span class='op'>=</span> <span class='string'>&quot;extern_weak&quot;</span>]</span>
-    <span class='comment'>// Should be a function of form:</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// #[no_mangle]</span>
-    <span class='comment'>// pub extern fn ppapi_on_change_view(view: ppapi::View);</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// It will be called from the instance&#39;s task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aa028a7b17d62242ac56b6ab4b55dc047)</span>
     <span class='kw'>static</span> <span class='ident'>ppapi_on_change_view</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>libc</span>::<span class='ident'>c_void</span>;
 
     <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
     <span class='attribute'>#[<span class='ident'>linkage</span> <span class='op'>=</span> <span class='string'>&quot;extern_weak&quot;</span>]</span>
-    <span class='comment'>// Should be a function of form:</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// #[no_mangle]</span>
-    <span class='comment'>// pub extern fn ppapi_on_change_focus(has_focus: bool);</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// It will be called from the instance&#39;s task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#abf4a481156b605938416bf873bd2c782)</span>
     <span class='kw'>static</span> <span class='ident'>ppapi_on_change_focus</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>libc</span>::<span class='ident'>c_void</span>;
 
     <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
     <span class='attribute'>#[<span class='ident'>linkage</span> <span class='op'>=</span> <span class='string'>&quot;extern_weak&quot;</span>]</span>
-    <span class='comment'>// Should be a function of form:</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// #[no_mangle]</span>
-    <span class='comment'>// pub extern fn ppapi_on_message(msg: ppapi::AnyVar);</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// It will be called from the instance&#39;s task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___messaging__1__0.html#a558ca784cf11eaba479ff8621ae2c507)</span>
     <span class='kw'>static</span> <span class='ident'>ppapi_on_message</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>libc</span>::<span class='ident'>c_void</span>;
 
     <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
     <span class='attribute'>#[<span class='ident'>linkage</span> <span class='op'>=</span> <span class='string'>&quot;extern_weak&quot;</span>]</span>
-    <span class='comment'>// Should be a function of form:</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// #[no_mangle]</span>
-    <span class='comment'>// pub extern fn ppapi_on_input(event: ppapi::input::Class) -&gt; bool;</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// It will be called from the instance&#39;s task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___input_event__0__1.html#ae684a39a2bf6b58aee0f7420aab43150)</span>
     <span class='kw'>static</span> <span class='ident'>ppapi_on_input</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>libc</span>::<span class='ident'>c_void</span>;
 
     <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
     <span class='attribute'>#[<span class='ident'>linkage</span> <span class='op'>=</span> <span class='string'>&quot;extern_weak&quot;</span>]</span>
-    <span class='comment'>// Should be a function of form:</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// #[no_mangle]</span>
-    <span class='comment'>// pub extern fn ppapi_on_graphics_context_lost();</span>
-    <span class='comment'>// ```</span>
-    <span class='comment'>// It will be called from the instance&#39;s task. [More info](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___graphics3_d__1__0.html#ae7aba86d10d1b8c4c7a41bac3af64b0a)</span>
     <span class='kw'>static</span> <span class='ident'>ppapi_on_graphics_context_lost</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>libc</span>::<span class='ident'>c_void</span>;
 }
 
-<span class='comment'>// The true entry point of any module.</span>
 <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
 <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>non_snake_case_functions</span>)]</span>
+<span class='comment'>// The true entry point of any module. DO NOT CALL THIS YOURSELF. It is used by Pepper.</span>
 <span class='kw'>pub</span> <span class='kw'>extern</span> <span class='string'>&quot;C&quot;</span> <span class='kw'>fn</span> <span class='ident'>PPP_InitializeModule</span>(<span class='ident'>modu</span>: <span class='ident'>ffi</span>::<span class='ident'>PP_Module</span>,
                                        <span class='ident'>gbi</span>: <span class='ident'>ffi</span>::<span class='ident'>PPB_GetInterface</span>) <span class='op'>-&gt;</span> <span class='ident'>libc</span>::<span class='ident'>int32_t</span> {
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>stdio</span>::{<span class='ident'>set_stderr</span>, <span class='ident'>set_stdout</span>, <span class='ident'>stdout_raw</span>, <span class='ident'>stderr_raw</span>};
@@ -4323,13 +4351,13 @@
     
 
     <script>
-        window.rootPath = "../../";
+        window.rootPath = "../../../";
         window.currentCrate = "ppapi";
         window.playgroundUrl = "";
     </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script async src="../../../search-index.js"></script>
 </body>
 </html>

@@ -44,8 +44,73 @@
 <h1 class='fqn'>Crate <a class='mod' href=''>ppapi</a><a class='stability Experimental' title=''>Experimental</a><span class='out-of-band'><a href='stability.html'>[stability]</a> <span id='render-detail'>
             <a id="collapse-all" href="#">[collapse all]</a>
             <a id="expand-all" href="#">[expand all]</a>
-        </span><a id='src-0' href='../src/ppapi/lib.rs.html#1-2121'>[src]</a></span></h1>
+        </span><a id='src-0' href='../src/ppapi/src/lib.rs.html#1-2135'>[src]</a></span></h1>
 <div class='docblock'><p>Rust idiomatic wrapper for the Pepper API.</p>
+
+<p>To use, you will need to implement at least these two functions:
+```rust</p>
+
+<h1 id="[no_managle]" class='section-header'><a
+                           href="#[no_managle]">[no_managle]</a></h1>
+<p>pub extern fn ppapi_instance_created(instance: Instance,
+                                     args: HashMap<String, String>) {
+}</p>
+
+<h1 id="[no_managle]-1" class='section-header'><a
+                           href="#[no_managle]-1">[no_managle]</a></h1>
+<p>pub extern fn ppapi_instance_destroyed() {
+}
+```
+All instances will be created from a new task/thread. The task takes its
+name from the id attribute on the embed object used to create the
+instance. Failing will cause rust-ppapi to cleanup the task, though the
+plugin will continue to run. Currently there is no way to automatically
+restart an instance if it fails.</p>
+
+<p>The other callbacks consist of:
+```rust</p>
+
+<h1 id="[no_mangle]" class='section-header'><a
+                           href="#[no_mangle]">[no_mangle]</a></h1>
+<p>pub extern fn ppapi_on_document_loaded(loader: ppapi::UrlLoader) -&gt; bool {
+}</p>
+
+<h1 id="[no_mangle]-1" class='section-header'><a
+                           href="#[no_mangle]-1">[no_mangle]</a></h1>
+<p>pub extern fn ppapi_on_change_view(view: ppapi::View) {
+}</p>
+
+<h1 id="[no_mangle]-2" class='section-header'><a
+                           href="#[no_mangle]-2">[no_mangle]</a></h1>
+<p>pub extern fn ppapi_on_change_focus(has_focus: bool) {
+}</p>
+
+<h1 id="[no_mangle]-3" class='section-header'><a
+                           href="#[no_mangle]-3">[no_mangle]</a></h1>
+<p>pub extern fn ppapi_on_message(msg: ppapi::AnyVar) {
+}</p>
+
+<h1 id="[no_mangle]-4" class='section-header'><a
+                           href="#[no_mangle]-4">[no_mangle]</a></h1>
+<p>pub extern fn ppapi_on_input(event: ppapi::input::Class) -&gt; bool {
+}</p>
+
+<h1 id="[no_mangle]-5" class='section-header'><a
+                           href="#[no_mangle]-5">[no_mangle]</a></h1>
+<p>pub extern fn ppapi_on_graphics_context_lost() {
+}
+```
+These are all optional. If implemented, they will be called from the instance&#39;s task.</p>
+
+<p>More info:
+* <a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aff2dd72f7aab6335cacf8bc3a66ccbba">ppapi_instance_created</a>
+* <a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a99edbb91abde255fec3bc3e1f9c8ba82">ppapi_instance_destroyed</a>
+* <a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a2fba2c9d06044a48e73a649b04398e1d">ppapi_on_document_loaded</a>
+* <a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aa028a7b17d62242ac56b6ab4b55dc047">ppapi_on_change_view</a>
+* <a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#abf4a481156b605938416bf873bd2c782">ppapi_on_change_focus</a>
+* <a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___messaging__1__0.html#a558ca784cf11eaba479ff8621ae2c507">ppapi_on_message</a>
+* <a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___input_event__0__1.html#ae684a39a2bf6b58aee0f7420aab43150">ppapi_on_input</a>
+* <a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___graphics3_d__1__0.html#ae7aba86d10d1b8c4c7a41bac3af64b0a">ppapi_on_graphics_context_lost</a></p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                     <tr>
