@@ -44,63 +44,50 @@
 <h1 class='fqn'>Crate <a class='mod' href=''>ppapi</a><a class='stability Experimental' title=''>Experimental</a><span class='out-of-band'><a href='stability.html'>[stability]</a> <span id='render-detail'>
             <a id="collapse-all" href="#">[collapse all]</a>
             <a id="expand-all" href="#">[expand all]</a>
-        </span><a id='src-0' href='../src/ppapi/src/lib.rs.html#1-2135'>[src]</a></span></h1>
+        </span><a id='src-0' href='../src/ppapi/src/lib.rs.html#1-2142'>[src]</a></span></h1>
 <div class='docblock'><p>Rust idiomatic wrapper for the Pepper API.</p>
 
-<p>To use, you will need to implement at least these two functions:
-```rust</p>
-
-<h1 id="[no_managle]" class='section-header'><a
-                           href="#[no_managle]">[no_managle]</a></h1>
-<p>pub extern fn ppapi_instance_created(instance: Instance,
-                                     args: HashMap<String, String>) {
-}</p>
-
-<h1 id="[no_managle]-1" class='section-header'><a
-                           href="#[no_managle]-1">[no_managle]</a></h1>
-<p>pub extern fn ppapi_instance_destroyed() {
+<p>To use, you will need to implement at least these two functions:</p>
+<pre class='rust '>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>no_main</span>]</span>
+<span class='attribute'>#[<span class='ident'>no_managle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_instance_created</span>(<span class='ident'>instance</span>: <span class='ident'>Instance</span>,
+                                     <span class='ident'>args</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span>) {
 }
-```
-All instances will be created from a new task/thread. The task takes its
+<span class='attribute'>#[<span class='ident'>no_managle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_instance_destroyed</span>() {
+}
+</pre>
+
+<p>All instances will be created from a new task/thread. The task takes its
 name from the id attribute on the embed object used to create the
 instance. Failing will cause rust-ppapi to cleanup the task, though the
 plugin will continue to run. Currently there is no way to automatically
 restart an instance if it fails.</p>
 
-<p>The other callbacks consist of:
-```rust</p>
-
-<h1 id="[no_mangle]" class='section-header'><a
-                           href="#[no_mangle]">[no_mangle]</a></h1>
-<p>pub extern fn ppapi_on_document_loaded(loader: ppapi::UrlLoader) -&gt; bool {
-}</p>
-
-<h1 id="[no_mangle]-1" class='section-header'><a
-                           href="#[no_mangle]-1">[no_mangle]</a></h1>
-<p>pub extern fn ppapi_on_change_view(view: ppapi::View) {
-}</p>
-
-<h1 id="[no_mangle]-2" class='section-header'><a
-                           href="#[no_mangle]-2">[no_mangle]</a></h1>
-<p>pub extern fn ppapi_on_change_focus(has_focus: bool) {
-}</p>
-
-<h1 id="[no_mangle]-3" class='section-header'><a
-                           href="#[no_mangle]-3">[no_mangle]</a></h1>
-<p>pub extern fn ppapi_on_message(msg: ppapi::AnyVar) {
-}</p>
-
-<h1 id="[no_mangle]-4" class='section-header'><a
-                           href="#[no_mangle]-4">[no_mangle]</a></h1>
-<p>pub extern fn ppapi_on_input(event: ppapi::input::Class) -&gt; bool {
-}</p>
-
-<h1 id="[no_mangle]-5" class='section-header'><a
-                           href="#[no_mangle]-5">[no_mangle]</a></h1>
-<p>pub extern fn ppapi_on_graphics_context_lost() {
+<p>The other callbacks consist of:</p>
+<pre class='rust '>
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_document_loaded</span>(<span class='ident'>loader</span>: <span class='ident'>ppapi</span>::<span class='ident'>UrlLoader</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
 }
-```
-These are all optional. If implemented, they will be called from the instance&#39;s task.</p>
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_change_view</span>(<span class='ident'>view</span>: <span class='ident'>ppapi</span>::<span class='ident'>View</span>) {
+}
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_change_focus</span>(<span class='ident'>has_focus</span>: <span class='ident'>bool</span>) {
+}
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_message</span>(<span class='ident'>msg</span>: <span class='ident'>ppapi</span>::<span class='ident'>AnyVar</span>) {
+}
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_input</span>(<span class='ident'>event</span>: <span class='ident'>ppapi</span>::<span class='ident'>input</span>::<span class='ident'>Class</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+}
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_graphics_context_lost</span>() {
+}
+</pre>
+
+<p>These are all optional. If implemented, they will be called from the instance&#39;s task.</p>
 
 <p>More info:
 * <a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aff2dd72f7aab6335cacf8bc3a66ccbba">ppapi_instance_created</a>
