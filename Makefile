@@ -46,15 +46,15 @@ clean:
 	$(MAKE) -C $(LIBRESSL) clean
 	touch Makefile
 
-$(BUILD_DIR)/libhelper.a: helper.cpp Makefile
+$(BUILD_DIR)/libhelper.a: src/helper.cpp Makefile
 	mkdir -p build/obj
 	$(CXX) $(CXXFLAGS) $< -c -o build/obj/helper.o
 	$(AR) cr $@ build/obj/helper.o
 -include helper.d
 
-$(BUILD_DIR)/ppapi.stamp: lib.rs $(wildcard *.rs) $(BUILD_DIR)/libhelper.a \
+$(BUILD_DIR)/ppapi.stamp: src/lib.rs $(wildcard *.rs) $(BUILD_DIR)/libhelper.a \
 	 		  Makefile deps/http.stamp deps/libressl.stamp
-	$(RUSTC) $(RUSTFLAGS) lib.rs --out-dir=$(BUILD_DIR) -L $(TOOLCHAIN)/sdk/lib -L $(BUILD_DIR)
+	$(RUSTC) $(RUSTFLAGS) $< --out-dir=$(BUILD_DIR) -L $(TOOLCHAIN)/sdk/lib -L $(BUILD_DIR)
 	touch $@
 
 
