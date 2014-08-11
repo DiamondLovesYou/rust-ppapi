@@ -1536,21 +1536,23 @@ impl Instance {
              }
              a.push(ffi::PP_GRAPHICS3DATTRIB_NONE as i32);
              let a = a;
-             let share_with = share_with.unwrap_or_else(|| {
-                 unsafe {
-                     Context3d(mem::transmute(0i32))
-                 }
-             });
+             let share_with = share_with
+                 .map(|ctxt| {
+                     let Context3d(res) = ctxt;
+                     res
+                 })
+                 .unwrap_or_else(|| 0i32 );
+
              let graphics = ppb::get_graphics_3d();
              
              let raw_cxt  = (graphics.Create.unwrap())(self.instance,
-                                                       share_with.unwrap(),
+                                                       share_with,
                                                        a.as_ptr());
 
-             if raw_cxt == unsafe { mem::transmute(0i32) } {
+             if raw_cxt == 0i32 {
                  result::Err(Failed)
              } else {
-                 result::Ok(Context3d(raw_cxt))
+                 result::Ok(Context3d::new_bumped(raw_cxt))
              }
          }
     pub fn bind_context<T: ContextResource>(&self, cxt: &T) -> Code {
