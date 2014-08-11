@@ -93,6 +93,8 @@ deps/libressl.stamp: Makefile                          \
 		     $(CC) $(CXX) $(AR)
 	cd $(LIBRESSL); \
 	CC="$(CC)" CXX="$(CXX)" AR="$(AR)" CFLAGS="$(CFLAGS) -DNO_SYSLOG" CXXFLAGS="$(CXXFLAGS)" ./configure --disable-shared --host=le32-unknown-nacl --without-pic
+# keep automake from mucking up the build:
+	touch $(LIBRESSL)/am--refresh
 	$(MAKE) -C $(LIBRESSL)/ssl    && cp $(LIBRESSL)/ssl/.libs/libssl.a $(BUILD_DIR)
 	$(MAKE) -C $(LIBRESSL)/crypto && cp $(LIBRESSL)/crypto/.libs/libcrypto.a $(BUILD_DIR)
 	touch $@
