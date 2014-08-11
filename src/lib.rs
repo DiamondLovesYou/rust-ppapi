@@ -1,53 +1,61 @@
-//! Rust idiomatic wrapper for the Pepper API.
-//!
-//! To use, you will need to implement at least these two functions:
-//! ```rust
-//! #[no_managle]
-//! pub extern fn ppapi_instance_created(instance: Instance,
-//!                                      args: HashMap<String, String>) {
-//! }
-//! #[no_managle]
-//! pub extern fn ppapi_instance_destroyed() {
-//! }
-//! ```
-//! All instances will be created from a new task/thread. The task takes its
-//! name from the id attribute on the embed object used to create the
-//! instance. Failing will cause rust-ppapi to cleanup the task, though the
-//! plugin will continue to run. Currently there is no way to automatically
-//! restart an instance if it fails.
-//!
-//! The other callbacks consist of:
-//! ```rust
-//! #[no_mangle]
-//! pub extern fn ppapi_on_document_loaded(loader: ppapi::UrlLoader) -> bool {
-//! }
-//! #[no_mangle]
-//! pub extern fn ppapi_on_change_view(view: ppapi::View) {
-//! }
-//! #[no_mangle]
-//! pub extern fn ppapi_on_change_focus(has_focus: bool) {
-//! }
-//! #[no_mangle]
-//! pub extern fn ppapi_on_message(msg: ppapi::AnyVar) {
-//! }
-//! #[no_mangle]
-//! pub extern fn ppapi_on_input(event: ppapi::input::Class) -> bool {
-//! }
-//! #[no_mangle]
-//! pub extern fn ppapi_on_graphics_context_lost() {
-//! }
-//! ```
-//! These are all optional. If implemented, they will be called from the instance's task.
-//!
-//! More info:
-//! * [ppapi_instance_created](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aff2dd72f7aab6335cacf8bc3a66ccbba)
-//! * [ppapi_instance_destroyed](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a99edbb91abde255fec3bc3e1f9c8ba82)
-//! * [ppapi_on_document_loaded](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a2fba2c9d06044a48e73a649b04398e1d)
-//! * [ppapi_on_change_view](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aa028a7b17d62242ac56b6ab4b55dc047)
-//! * [ppapi_on_change_focus](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#abf4a481156b605938416bf873bd2c782)
-//! * [ppapi_on_message](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___messaging__1__0.html#a558ca784cf11eaba479ff8621ae2c507)
-//! * [ppapi_on_input](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___input_event__0__1.html#ae684a39a2bf6b58aee0f7420aab43150)
-//! * [ppapi_on_graphics_context_lost](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___graphics3_d__1__0.html#ae7aba86d10d1b8c4c7a41bac3af64b0a)
+/*! Rust idiomatic wrapper for the Pepper API.
+
+To use, you will need to implement at least these two functions:
+
+```rust
+#![no_main]
+#[no_managle]
+pub extern fn ppapi_instance_created(instance: Instance,
+                                     args: HashMap<String, String>) {
+}
+#[no_managle]
+pub extern fn ppapi_instance_destroyed() {
+}
+```
+
+All instances will be created from a new task/thread. The task takes its
+name from the id attribute on the embed object used to create the
+instance. Failing will cause rust-ppapi to cleanup the task, though the
+plugin will continue to run. Currently there is no way to automatically
+restart an instance if it fails.
+
+The other callbacks consist of:
+
+```rust
+#[no_mangle]
+pub extern fn ppapi_on_document_loaded(loader: ppapi::UrlLoader) -> bool {
+}
+#[no_mangle]
+pub extern fn ppapi_on_change_view(view: ppapi::View) {
+}
+#[no_mangle]
+pub extern fn ppapi_on_change_focus(has_focus: bool) {
+}
+#[no_mangle]
+pub extern fn ppapi_on_message(msg: ppapi::AnyVar) {
+}
+#[no_mangle]
+pub extern fn ppapi_on_input(event: ppapi::input::Class) -> bool {
+}
+#[no_mangle]
+pub extern fn ppapi_on_graphics_context_lost() {
+}
+```
+
+These are all optional. If implemented, they will be called from the instance's task.
+
+More info:
+
+ * [ppapi_instance_created](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aff2dd72f7aab6335cacf8bc3a66ccbba)
+ * [ppapi_instance_destroyed](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a99edbb91abde255fec3bc3e1f9c8ba82)
+ * [ppapi_on_document_loaded](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a2fba2c9d06044a48e73a649b04398e1d)
+ * [ppapi_on_change_view](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aa028a7b17d62242ac56b6ab4b55dc047)
+ * [ppapi_on_change_focus](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#abf4a481156b605938416bf873bd2c782)
+ * [ppapi_on_message](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___messaging__1__0.html#a558ca784cf11eaba479ff8621ae2c507)
+ * [ppapi_on_input](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___input_event__0__1.html#ae684a39a2bf6b58aee0f7420aab43150)
+ * [ppapi_on_graphics_context_lost](https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___graphics3_d__1__0.html#ae7aba86d10d1b8c4c7a41bac3af64b0a)
+
+*/
 
 #![crate_name = "ppapi"]
 #![crate_type = "rlib"]
