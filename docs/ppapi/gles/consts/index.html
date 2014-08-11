@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `consts` mod in crate `ppapi`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, consts">
+
+    <title>ppapi::gles::consts - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>ppapi</a>&#8203;::<a href='../index.html'>gles</a></p><div class='block mod'><h2>Modules</h2><a class='mod current' href='../consts/index.html'>consts</a><a class='mod ' href='../traits/index.html'>traits</a><a class='mod ' href='../types/index.html'>types</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='../struct.Blending.html'>Blending</a><a class='struct ' href='../struct.BoundBuffer.html'>BoundBuffer</a><a class='struct ' href='../struct.BoundShaderProgram.html'>BoundShaderProgram</a><a class='struct ' href='../struct.BoundTexBuffer.html'>BoundTexBuffer</a><a class='struct ' href='../struct.ByteType.html'>ByteType</a><a class='struct ' href='../struct.CompilingShader.html'>CompilingShader</a><a class='struct ' href='../struct.DynamicBufferUsage.html'>DynamicBufferUsage</a><a class='struct ' href='../struct.Extensions.html'>Extensions</a><a class='struct ' href='../struct.FloatType.html'>FloatType</a><a class='struct ' href='../struct.FragmentShader.html'>FragmentShader</a><a class='struct ' href='../struct.FrameBuffer.html'>FrameBuffer</a><a class='struct ' href='../struct.IndexBuffer.html'>IndexBuffer</a><a class='struct ' href='../struct.LineLoopGeometryMode.html'>LineLoopGeometryMode</a><a class='struct ' href='../struct.LineStripGeometryMode.html'>LineStripGeometryMode</a><a class='struct ' href='../struct.LinesGeometryMode.html'>LinesGeometryMode</a><a class='struct ' href='../struct.LinkingShaderProgram.html'>LinkingShaderProgram</a><a class='struct ' href='../struct.MaxColorAttachments.html'>MaxColorAttachments</a><a class='struct ' href='../struct.MaxCombinedTextureImageUnits.html'>MaxCombinedTextureImageUnits</a><a class='struct ' href='../struct.MaxCubeMapTextureSize.html'>MaxCubeMapTextureSize</a><a class='struct ' href='../struct.MaxFragmentUniformVectors.html'>MaxFragmentUniformVectors</a><a class='struct ' href='../struct.MaxRenderBufferSize.html'>MaxRenderBufferSize</a><a class='struct ' href='../struct.MaxTextureImageUnits.html'>MaxTextureImageUnits</a><a class='struct ' href='../struct.MaxTextureSize.html'>MaxTextureSize</a><a class='struct ' href='../struct.MaxVaryingVectors.html'>MaxVaryingVectors</a><a class='struct ' href='../struct.MaxVertexAttribs.html'>MaxVertexAttribs</a><a class='struct ' href='../struct.MaxVertexImageUnits.html'>MaxVertexImageUnits</a><a class='struct ' href='../struct.MaxVertexUniformVectors.html'>MaxVertexUniformVectors</a><a class='struct ' href='../struct.PointsGeometryMode.html'>PointsGeometryMode</a><a class='struct ' href='../struct.RenderBuffer.html'>RenderBuffer</a><a class='struct ' href='../struct.Renderer.html'>Renderer</a><a class='struct ' href='../struct.ShaderProgram.html'>ShaderProgram</a><a class='struct ' href='../struct.ShadingLanguageVersion.html'>ShadingLanguageVersion</a><a class='struct ' href='../struct.ShortType.html'>ShortType</a><a class='struct ' href='../struct.StaticBufferUsage.html'>StaticBufferUsage</a><a class='struct ' href='../struct.StreamBufferUsage.html'>StreamBufferUsage</a><a class='struct ' href='../struct.TextureBuffer.html'>TextureBuffer</a><a class='struct ' href='../struct.TriangleFanGeometryMode.html'>TriangleFanGeometryMode</a><a class='struct ' href='../struct.TriangleStripGeometryMode.html'>TriangleStripGeometryMode</a><a class='struct ' href='../struct.TrianglesGeometryMode.html'>TrianglesGeometryMode</a><a class='struct ' href='../struct.UByteType.html'>UByteType</a><a class='struct ' href='../struct.UShortType.html'>UShortType</a><a class='struct ' href='../struct.UnlinkedShaderProgram.html'>UnlinkedShaderProgram</a><a class='struct ' href='../struct.Vendor.html'>Vendor</a><a class='struct ' href='../struct.Version.html'>Version</a><a class='struct ' href='../struct.VertexBuffer.html'>VertexBuffer</a><a class='struct ' href='../struct.VertexShader.html'>VertexShader</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='../trait.Ctor.html'>Ctor</a><a class='trait ' href='../trait.GetQuery.html'>GetQuery</a><a class='trait ' href='../trait.GetQueryType.html'>GetQueryType</a><a class='trait ' href='../trait.InnerProgram.html'>InnerProgram</a><a class='trait ' href='../trait.OptPointerOffset.html'>OptPointerOffset</a><a class='trait ' href='../trait.ShaderUnwrap.html'>ShaderUnwrap</a><a class='trait ' href='../trait.UniformFun.html'>UniformFun</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'>Module <a href='../../index.html'>ppapi</a>::<a href='../index.html'>gles</a>::<a class='mod' href=''>consts</a><a class='stability Experimental' title=''>Experimental</a><span class='out-of-band'><span id='render-detail'>
+            <a id="collapse-all" href="#">[collapse all]</a>
+            <a id="expand-all" href="#">[expand all]</a>
+        </span><a id='src-26482' href='../../../src/ppapi/gles.rs.html#36-321'>[src]</a></span></h1>
+<h2 id='statics' class='section-header'><a href="#statics">Statics</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ACTIVE_ATTRIBUTES: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B89 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ACTIVE_ATTRIBUTE_MAX_LENGTH: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B8A as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ACTIVE_TEXTURE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84E0 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ACTIVE_UNIFORMS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B86 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ACTIVE_UNIFORM_MAX_LENGTH: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B87 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ALIASED_LINE_WIDTH_RANGE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x846E as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ALIASED_POINT_SIZE_RANGE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x846D as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1906 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ALPHA_BITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D55 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ALWAYS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0207 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ARRAY_BUFFER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8892 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ARRAY_BUFFER_BINDING: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8894 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ATTACHED_SHADERS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B85 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BACK: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0405 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BGRA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80e1 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLEND: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0BE2 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLEND_COLOR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8005 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLEND_DST_ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80CA as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLEND_DST_RGB: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80C8 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLEND_EQUATION: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8009 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLEND_EQUATION_ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x883D as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLEND_EQUATION_RGB: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8009 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLEND_SRC_ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80CB as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLEND_SRC_RGB: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80C9 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLUE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1905 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BLUE_BITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D54 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static BYTE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1400 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static CCW: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0901 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static CLAMP_TO_EDGE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x812F as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static COLOR_ATTACHMENT0: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8CE0 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static COLOR_BUFFER_BIT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x00004000 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static COLOR_CLEAR_VALUE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0C22 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static COLOR_WRITEMASK: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0C23 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static COMPILE_STATUS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B81 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static CONSTANT_ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8003 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static CONSTANT_COLOR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8001 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static CULL_FACE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B44 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static CULL_FACE_MODE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B45 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static CURRENT_PROGRAM: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B8D as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static CW: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0900 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DELETE_STATUS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B80 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DEPTH_BITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D56 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DEPTH_BUFFER_BIT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x00000100 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DEPTH_CLEAR_VALUE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B73 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DEPTH_COMPONENT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1902 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DEPTH_FUNC: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B74 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DEPTH_RANGE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B70 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DEPTH_TEST: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B71 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DEPTH_WRITEMASK: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B72 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DITHER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0BD0 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DST_ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0304 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DST_COLOR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0306 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static DYNAMIC_DRAW: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x88E8 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static EDGE_FLAG: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B43 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ELEMENT_ARRAY_BUFFER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8893 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ELEMENT_ARRAY_BUFFER_BINDING: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8895 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static EQUAL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0202 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static EXTENSIONS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1F03 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FALSE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uchar.html' title='libc::types::os::arch::c95::c_uchar'>c_uchar</a></code><code> = </code><code>0 as c_uchar</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FILL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1B02 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FIXED: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x140C as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FLOAT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1406 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FRAGMENT_SHADER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B30 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FRAMEBUFFER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8D40 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FRAMEBUFFER_COMPLETE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8CD5 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FRONT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0404 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FRONT_AND_BACK: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0408 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FRONT_FACE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B46 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FUNC_ADD: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8006 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FUNC_REVERSE_SUBTRACT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x800B as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static FUNC_SUBTRACT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x800A as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static GEQUAL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0206 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static GREATER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0204 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static GREEN: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1904 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static GREEN_BITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D53 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static INFO_LOG_LENGTH: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B84 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static INT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1404 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static INVALID_ENUM: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0500 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static INVALID_FRAMEBUFFER_OPERATION: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0506 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static INVALID_OPERATION: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0502 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static INVALID_VALUE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0501 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static LEQUAL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0203 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static LESS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0201 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static LINE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1B01 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static LINEAR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x2601 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static LINES: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0001 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static LINE_LOOP: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0002 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static LINE_STRIP: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0003 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static LINE_WIDTH: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B21 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static LINK_STATUS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B82 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_COLOR_ATTACHMENTS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8CDF as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_COMBINED_TEXTURE_IMAGE_UNITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B4D as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_CUBE_MAP_TEXTURE_SIZE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x851C as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_FRAGMENT_UNIFORM_VECTORS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8DFD as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_RENDER_BUFFER_SIZE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84E8 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_TEXTURE_IMAGE_UNITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8872 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_TEXTURE_SIZE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D33 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_VARYING_VECTORS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8DFC as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_VERTEX_ATTRIBS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8869 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_VERTEX_TEXTURE_IMAGE_UNITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B4C as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_VERTEX_UNIFORM_VECTORS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8DFB as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MAX_VIEWPORT_DIMS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D3A as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static MIRRORED_REPEAT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8370 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static NEAREST: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x2600 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static NEVER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0200 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static NOTEQUAL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0205 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static NO_ERROR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ONE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>1      as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ONE_MINUS_CONSTANT_ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8004 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ONE_MINUS_CONSTANT_COLOR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8002 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ONE_MINUS_DST_ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0305 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ONE_MINUS_DST_COLOR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0307 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ONE_MINUS_SRC_ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0303 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ONE_MINUS_SRC_COLOR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0301 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static OUT_OF_MEMORY: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0505 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static PACK_ALIGNMENT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D05 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static POINT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1B00 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static POINTS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0000 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static POLYGON_MODE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B40 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static POLYGON_OFFSET_FACTOR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8038 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static POLYGON_OFFSET_FILL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8037 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static POLYGON_OFFSET_UNITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x2A00 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static POLYGON_SMOOTH: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B41 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static POLYGON_STIPPLE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B42 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static RED: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1903 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static RED_BITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D52 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static RENDERBUFFER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8D41 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static RENDERER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1F01 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static REPEAT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x2901 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static RGB: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1907 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static RGBA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1908 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static RGBA8: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8058 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SAMPLES: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80A9 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SAMPLE_ALPHA_TO_COVERAGE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x809E as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SAMPLE_BUFFERS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80A8 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SAMPLE_COVERAGE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80A0 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SAMPLE_COVERAGE_INVERT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80AB as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SAMPLE_COVERAGE_VALUE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x80AA as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SCISSOR_BOX: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0C10 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SCISSOR_TEST: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0C11 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SHADER_COMPILER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8DFA as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SHADER_SOURCE_LENGTH: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B88 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SHADER_TYPE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B4F as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SHADING_LANGUAGE_VERSION: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B8C as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SHORT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1402 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SRC_ALPHA: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0302 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SRC_ALPHA_SATURATE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0308 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SRC_COLOR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0300 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STACK_OVERFLOW: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0503 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STACK_UNDERFLOW: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0504 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STATIC_DRAW: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x88E4 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_BACK_FAIL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8801 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_BACK_FUNC: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8800 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_BACK_PASS_DEPTH_FAIL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8802 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_BACK_PASS_DEPTH_PASS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8803 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_BACK_REF: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8CA3 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_BACK_VALUE_MASK: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8CA4 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_BACK_WRITEMASK: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8CA5 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_BITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D57 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_BUFFER_BIT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x00000400 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_CLEAR_VALUE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B91 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_FAIL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B94 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_FUNC: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B92 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_PASS_DEPTH_FAIL: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B95 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_PASS_DEPTH_PASS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B96 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_REF: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B97 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_TEST: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B90 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_VALUE_MASK: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B93 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STENCIL_WRITEMASK: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0B98 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static STREAM_DRAW: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x88E0 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static SUBPIXEL_BITS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0D50 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE0: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C0 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE1: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C1 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE10: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84CA as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE11: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84CB as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE12: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84CC as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE13: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84CD as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE14: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84CE as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE15: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84CF as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE16: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D0 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE17: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D1 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE18: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D2 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE19: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D3 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE2: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C2 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE20: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D4 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE21: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D5 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE22: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D6 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE23: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D7 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE24: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D8 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE25: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84D9 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE26: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84DA as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE27: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84DB as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE28: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84DC as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE29: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84DD as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE3: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C3 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE30: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84DE as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE31: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84DF as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE4: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C4 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE5: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C5 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE6: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C6 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE7: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C7 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE8: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C8 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE9: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x84C9 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE_2D: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0DE1 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE_BINDING_2D: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8069 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE_MAG_FILTER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x2800 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE_MIN_FILTER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x2801 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE_WRAP_S: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x2802 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TEXTURE_WRAP_T: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x2803 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TRIANGLES: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0004 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TRIANGLE_FAN: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0006 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TRIANGLE_STRIP: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0005 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static TRUE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uchar.html' title='libc::types::os::arch::c95::c_uchar'>c_uchar</a></code><code> = </code><code>1 as c_uchar</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static UNPACK_ALIGNMENT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0CF5 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static UNPACK_ROW_LENGTH: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0CF2 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static UNSIGNED_BYTE: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1401 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static UNSIGNED_INT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1405 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static UNSIGNED_INT_8_8_8_8_REV: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8367 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static UNSIGNED_SHORT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1403 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static VALIDATE_STATUS: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B83 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static VENDOR: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1F00 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static VERSION: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x1F02 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static VERTEX_SHADER: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x8B31 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static VIEWPORT: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0x0BA2 as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><code>pub static ZERO: <a class='type' href='http://doc.rust-lang.org/master/libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code><code> = </code><code>0      as c_uint</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "ppapi";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script async src="../../../search-index.js"></script>
+</body>
+</html>

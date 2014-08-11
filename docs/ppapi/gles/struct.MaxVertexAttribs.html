@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `MaxVertexAttribs` struct in crate `ppapi`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, MaxVertexAttribs">
+
+    <title>ppapi::gles::MaxVertexAttribs - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../index.html'>ppapi</a>&#8203;::<a href='index.html'>gles</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='consts/index.html'>consts</a><a class='mod ' href='traits/index.html'>traits</a><a class='mod ' href='types/index.html'>types</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Blending.html'>Blending</a><a class='struct ' href='struct.BoundBuffer.html'>BoundBuffer</a><a class='struct ' href='struct.BoundShaderProgram.html'>BoundShaderProgram</a><a class='struct ' href='struct.BoundTexBuffer.html'>BoundTexBuffer</a><a class='struct ' href='struct.ByteType.html'>ByteType</a><a class='struct ' href='struct.CompilingShader.html'>CompilingShader</a><a class='struct ' href='struct.DynamicBufferUsage.html'>DynamicBufferUsage</a><a class='struct ' href='struct.Extensions.html'>Extensions</a><a class='struct ' href='struct.FloatType.html'>FloatType</a><a class='struct ' href='struct.FragmentShader.html'>FragmentShader</a><a class='struct ' href='struct.FrameBuffer.html'>FrameBuffer</a><a class='struct ' href='struct.IndexBuffer.html'>IndexBuffer</a><a class='struct ' href='struct.LineLoopGeometryMode.html'>LineLoopGeometryMode</a><a class='struct ' href='struct.LineStripGeometryMode.html'>LineStripGeometryMode</a><a class='struct ' href='struct.LinesGeometryMode.html'>LinesGeometryMode</a><a class='struct ' href='struct.LinkingShaderProgram.html'>LinkingShaderProgram</a><a class='struct ' href='struct.MaxColorAttachments.html'>MaxColorAttachments</a><a class='struct ' href='struct.MaxCombinedTextureImageUnits.html'>MaxCombinedTextureImageUnits</a><a class='struct ' href='struct.MaxCubeMapTextureSize.html'>MaxCubeMapTextureSize</a><a class='struct ' href='struct.MaxFragmentUniformVectors.html'>MaxFragmentUniformVectors</a><a class='struct ' href='struct.MaxRenderBufferSize.html'>MaxRenderBufferSize</a><a class='struct ' href='struct.MaxTextureImageUnits.html'>MaxTextureImageUnits</a><a class='struct ' href='struct.MaxTextureSize.html'>MaxTextureSize</a><a class='struct ' href='struct.MaxVaryingVectors.html'>MaxVaryingVectors</a><a class='struct current' href='struct.MaxVertexAttribs.html'>MaxVertexAttribs</a><a class='struct ' href='struct.MaxVertexImageUnits.html'>MaxVertexImageUnits</a><a class='struct ' href='struct.MaxVertexUniformVectors.html'>MaxVertexUniformVectors</a><a class='struct ' href='struct.PointsGeometryMode.html'>PointsGeometryMode</a><a class='struct ' href='struct.RenderBuffer.html'>RenderBuffer</a><a class='struct ' href='struct.Renderer.html'>Renderer</a><a class='struct ' href='struct.ShaderProgram.html'>ShaderProgram</a><a class='struct ' href='struct.ShadingLanguageVersion.html'>ShadingLanguageVersion</a><a class='struct ' href='struct.ShortType.html'>ShortType</a><a class='struct ' href='struct.StaticBufferUsage.html'>StaticBufferUsage</a><a class='struct ' href='struct.StreamBufferUsage.html'>StreamBufferUsage</a><a class='struct ' href='struct.TextureBuffer.html'>TextureBuffer</a><a class='struct ' href='struct.TriangleFanGeometryMode.html'>TriangleFanGeometryMode</a><a class='struct ' href='struct.TriangleStripGeometryMode.html'>TriangleStripGeometryMode</a><a class='struct ' href='struct.TrianglesGeometryMode.html'>TrianglesGeometryMode</a><a class='struct ' href='struct.UByteType.html'>UByteType</a><a class='struct ' href='struct.UShortType.html'>UShortType</a><a class='struct ' href='struct.UnlinkedShaderProgram.html'>UnlinkedShaderProgram</a><a class='struct ' href='struct.Vendor.html'>Vendor</a><a class='struct ' href='struct.Version.html'>Version</a><a class='struct ' href='struct.VertexBuffer.html'>VertexBuffer</a><a class='struct ' href='struct.VertexShader.html'>VertexShader</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='trait.Ctor.html'>Ctor</a><a class='trait ' href='trait.GetQuery.html'>GetQuery</a><a class='trait ' href='trait.GetQueryType.html'>GetQueryType</a><a class='trait ' href='trait.InnerProgram.html'>InnerProgram</a><a class='trait ' href='trait.OptPointerOffset.html'>OptPointerOffset</a><a class='trait ' href='trait.ShaderUnwrap.html'>ShaderUnwrap</a><a class='trait ' href='trait.UniformFun.html'>UniformFun</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'>Struct <a href='../index.html'>ppapi</a>::<a href='index.html'>gles</a>::<a class='struct' href=''>MaxVertexAttribs</a><a class='stability Experimental' title=''>Experimental</a><span class='out-of-band'><span id='render-detail'>
+            <a id="collapse-all" href="#">[collapse all]</a>
+            <a id="expand-all" href="#">[expand all]</a>
+        </span><a id='src-45878' href='../../src/ppapi/gles.rs.html#1273'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct MaxVertexAttribs;</pre><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='../../ppapi/gles/trait.GetQuery.html' title='ppapi::gles::GetQuery'>GetQuery</a>&lt;<a class='type' href='../../ppapi/gles/types/type.Int.html' title='ppapi::gles::types::Int'>Int</a>&gt; for <a class='struct' href='../../ppapi/gles/struct.MaxVertexAttribs.html' title='ppapi::gles::MaxVertexAttribs'>MaxVertexAttribs</a></code></h3><div class='impl-methods'><h4 id='method.pname' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.pname' class='fnname'>pname</a>(&amp;self) -&gt; <a class='type' href='../../ppapi/gles/types/type.Enum.html' title='ppapi::gles::types::Enum'>Enum</a></code></h4>
+<h4 id='method.pstr' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.pstr' class='fnname'>pstr</a>(&amp;self) -&gt; &amp;'static <a href='http://doc.rust-lang.org/master/std/primitive.str.html'>str</a></code></h4>
+<h4 id='method.get' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.get' class='fnname'>get</a>(&amp;self, ctxt: &amp;<a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>) -&gt; Ret</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "ppapi";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>

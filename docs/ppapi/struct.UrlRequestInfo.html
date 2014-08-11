@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `UrlRequestInfo` struct in crate `ppapi`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, UrlRequestInfo">
+
+    <title>ppapi::UrlRequestInfo - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='index.html'>ppapi</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='entry/index.html'>entry</a><a class='mod ' href='ffi/index.html'>ffi</a><a class='mod ' href='font/index.html'>font</a><a class='mod ' href='gles/index.html'>gles</a><a class='mod ' href='imagedata/index.html'>imagedata</a><a class='mod ' href='input/index.html'>input</a><a class='mod ' href='pp/index.html'>pp</a><a class='mod ' href='ppb/index.html'>ppb</a><a class='mod ' href='url/index.html'>url</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.ArrayBufferVar.html'>ArrayBufferVar</a><a class='struct ' href='struct.ArrayVar.html'>ArrayVar</a><a class='struct ' href='struct.Console.html'>Console</a><a class='struct ' href='struct.Context2d.html'>Context2d</a><a class='struct ' href='struct.Context3d.html'>Context3d</a><a class='struct ' href='struct.DictionaryVar.html'>DictionaryVar</a><a class='struct ' href='struct.FileIo.html'>FileIo</a><a class='struct ' href='struct.FileRef.html'>FileRef</a><a class='struct ' href='struct.FileSliceRef.html'>FileSliceRef</a><a class='struct ' href='struct.Filesystem.html'>Filesystem</a><a class='struct ' href='struct.Font.html'>Font</a><a class='struct ' href='struct.IMEInputEvent.html'>IMEInputEvent</a><a class='struct ' href='struct.ImageData.html'>ImageData</a><a class='struct ' href='struct.Instance.html'>Instance</a><a class='struct ' href='struct.KeyboardInputEvent.html'>KeyboardInputEvent</a><a class='struct ' href='struct.MessageLoop.html'>MessageLoop</a><a class='struct ' href='struct.MouseInputEvent.html'>MouseInputEvent</a><a class='struct ' href='struct.NullVar.html'>NullVar</a><a class='struct ' href='struct.ObjectVar.html'>ObjectVar</a><a class='struct ' href='struct.Size.html'>Size</a><a class='struct ' href='struct.StringVar.html'>StringVar</a><a class='struct ' href='struct.TouchInputEvent.html'>TouchInputEvent</a><a class='struct ' href='struct.UndefinedVar.html'>UndefinedVar</a><a class='struct ' href='struct.UrlLoader.html'>UrlLoader</a><a class='struct current' href='struct.UrlRequestInfo.html'>UrlRequestInfo</a><a class='struct ' href='struct.UrlResponseInfo.html'>UrlResponseInfo</a><a class='struct ' href='struct.View.html'>View</a><a class='struct ' href='struct.WheelInputEvent.html'>WheelInputEvent</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='trait.ByRefVar.html'>ByRefVar</a><a class='trait ' href='trait.Callback.html'>Callback</a><a class='trait ' href='trait.ContextResource.html'>ContextResource</a><a class='trait ' href='trait.FromVar.html'>FromVar</a><a class='trait ' href='trait.Resource.html'>Resource</a><a class='trait ' href='trait.ToFFIBool.html'>ToFFIBool</a><a class='trait ' href='trait.ToOption.html'>ToOption</a><a class='trait ' href='trait.ToStringVar.html'>ToStringVar</a><a class='trait ' href='trait.ToVar.html'>ToVar</a><a class='trait ' href='trait.Var.html'>Var</a><a class='trait ' href='trait.VarCtor.html'>VarCtor</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.PPP_InitializeModule.html'>PPP_InitializeModule</a><a class='fn ' href='fn.PPP_ShutdownModule.html'>PPP_ShutdownModule</a><a class='fn ' href='fn.is_main_thread.html'>is_main_thread</a><a class='fn ' href='fn.mount.html'>mount</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'>Struct <a href='index.html'>ppapi</a>::<a class='struct' href=''>UrlRequestInfo</a><a class='stability Experimental' title=''>Experimental</a><span class='out-of-band'><span id='render-detail'>
+            <a id="collapse-all" href="#">[collapse all]</a>
+            <a id="expand-all" href="#">[expand all]</a>
+        </span><a id='src-64891' href='../src/ppapi/lib.rs.html#385'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct UrlRequestInfo(_);</pre><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h3><div class='impl-methods'><h4 id='method.new' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.new' class='fnname'>new</a>(res: <a class='type' href='../ppapi/ffi/type.PP_Resource.html' title='ppapi::ffi::PP_Resource'>PP_Resource</a>) -&gt; <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h4>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='../ppapi/trait.Resource.html' title='ppapi::Resource'>Resource</a> for <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h3><div class='impl-methods'><h4 id='method.unwrap' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.unwrap' class='fnname'>unwrap</a>(&amp;self) -&gt; <a class='type' href='../ppapi/ffi/type.PP_Resource.html' title='ppapi::ffi::PP_Resource'>PP_Resource</a></code></h4>
+<h4 id='method.type_of' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.type_of' class='fnname'>type_of</a>(&amp;self) -&gt; <a class='type' href='../ppapi/type.ResourceType.html' title='ppapi::ResourceType'>ResourceType</a></code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='../ppapi/trait.ToOption.html' title='ppapi::ToOption'>ToOption</a>&lt;<a class='type' href='../ppapi/ffi/type.PP_Resource.html' title='ppapi::ffi::PP_Resource'>PP_Resource</a>&gt; for <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h3><div class='impl-methods'><h4 id='method.to_option' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.to_option' class='fnname'>to_option</a>(from: &amp;<a class='type' href='../ppapi/ffi/type.PP_Resource.html' title='ppapi::ffi::PP_Resource'>PP_Resource</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/option/type.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a>&gt;</code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h3><div class='impl-methods'><h4 id='method.clone' class='method'><a class='stability Unstable' title='Unstable'></a><code>fn <a href='#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h4>
+<h4 id='method.clone_from' class='method'><a class='stability Experimental' title='Experimental: this function is mostly unused'></a><code>fn <a href='#tymethod.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h3><div class='impl-methods'><h4 id='method.drop' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
+</div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/fmt/trait.Show.html' title='core::fmt::Show'>Show</a> for <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h3><div class='impl-methods'><h4 id='method.fmt' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='http://doc.rust-lang.org/master/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h3><div class='impl-methods'><h4 id='method.eq' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a>) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.ne' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a>) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> for <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h3><div class='impl-methods'><h4 id='method.assert_receiver_is_total_eq' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#tymethod.assert_receiver_is_total_eq' class='fnname'>assert_receiver_is_total_eq</a>(&amp;self)</code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl&lt;__S: <a class='trait' href='http://doc.rust-lang.org/master/collections/hash/trait.Writer.html' title='collections::hash::Writer'>Writer</a>&gt; <a class='trait' href='http://doc.rust-lang.org/master/collections/hash/trait.Hash.html' title='collections::hash::Hash'>Hash</a>&lt;__S&gt; for <a class='struct' href='../ppapi/struct.UrlRequestInfo.html' title='ppapi::UrlRequestInfo'>UrlRequestInfo</a></code></h3><div class='impl-methods'><h4 id='method.hash' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.hash' class='fnname'>hash</a>(&amp;self, __arg_0: &amp;mut __S)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "ppapi";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script async src="../search-index.js"></script>
+</body>
+</html>

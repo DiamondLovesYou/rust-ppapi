@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `VertexBuffer` struct in crate `ppapi`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, VertexBuffer">
+
+    <title>ppapi::gles::VertexBuffer - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../index.html'>ppapi</a>&#8203;::<a href='index.html'>gles</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='consts/index.html'>consts</a><a class='mod ' href='traits/index.html'>traits</a><a class='mod ' href='types/index.html'>types</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Blending.html'>Blending</a><a class='struct ' href='struct.BoundBuffer.html'>BoundBuffer</a><a class='struct ' href='struct.BoundShaderProgram.html'>BoundShaderProgram</a><a class='struct ' href='struct.BoundTexBuffer.html'>BoundTexBuffer</a><a class='struct ' href='struct.ByteType.html'>ByteType</a><a class='struct ' href='struct.CompilingShader.html'>CompilingShader</a><a class='struct ' href='struct.DynamicBufferUsage.html'>DynamicBufferUsage</a><a class='struct ' href='struct.Extensions.html'>Extensions</a><a class='struct ' href='struct.FloatType.html'>FloatType</a><a class='struct ' href='struct.FragmentShader.html'>FragmentShader</a><a class='struct ' href='struct.FrameBuffer.html'>FrameBuffer</a><a class='struct ' href='struct.IndexBuffer.html'>IndexBuffer</a><a class='struct ' href='struct.LineLoopGeometryMode.html'>LineLoopGeometryMode</a><a class='struct ' href='struct.LineStripGeometryMode.html'>LineStripGeometryMode</a><a class='struct ' href='struct.LinesGeometryMode.html'>LinesGeometryMode</a><a class='struct ' href='struct.LinkingShaderProgram.html'>LinkingShaderProgram</a><a class='struct ' href='struct.MaxColorAttachments.html'>MaxColorAttachments</a><a class='struct ' href='struct.MaxCombinedTextureImageUnits.html'>MaxCombinedTextureImageUnits</a><a class='struct ' href='struct.MaxCubeMapTextureSize.html'>MaxCubeMapTextureSize</a><a class='struct ' href='struct.MaxFragmentUniformVectors.html'>MaxFragmentUniformVectors</a><a class='struct ' href='struct.MaxRenderBufferSize.html'>MaxRenderBufferSize</a><a class='struct ' href='struct.MaxTextureImageUnits.html'>MaxTextureImageUnits</a><a class='struct ' href='struct.MaxTextureSize.html'>MaxTextureSize</a><a class='struct ' href='struct.MaxVaryingVectors.html'>MaxVaryingVectors</a><a class='struct ' href='struct.MaxVertexAttribs.html'>MaxVertexAttribs</a><a class='struct ' href='struct.MaxVertexImageUnits.html'>MaxVertexImageUnits</a><a class='struct ' href='struct.MaxVertexUniformVectors.html'>MaxVertexUniformVectors</a><a class='struct ' href='struct.PointsGeometryMode.html'>PointsGeometryMode</a><a class='struct ' href='struct.RenderBuffer.html'>RenderBuffer</a><a class='struct ' href='struct.Renderer.html'>Renderer</a><a class='struct ' href='struct.ShaderProgram.html'>ShaderProgram</a><a class='struct ' href='struct.ShadingLanguageVersion.html'>ShadingLanguageVersion</a><a class='struct ' href='struct.ShortType.html'>ShortType</a><a class='struct ' href='struct.StaticBufferUsage.html'>StaticBufferUsage</a><a class='struct ' href='struct.StreamBufferUsage.html'>StreamBufferUsage</a><a class='struct ' href='struct.TextureBuffer.html'>TextureBuffer</a><a class='struct ' href='struct.TriangleFanGeometryMode.html'>TriangleFanGeometryMode</a><a class='struct ' href='struct.TriangleStripGeometryMode.html'>TriangleStripGeometryMode</a><a class='struct ' href='struct.TrianglesGeometryMode.html'>TrianglesGeometryMode</a><a class='struct ' href='struct.UByteType.html'>UByteType</a><a class='struct ' href='struct.UShortType.html'>UShortType</a><a class='struct ' href='struct.UnlinkedShaderProgram.html'>UnlinkedShaderProgram</a><a class='struct ' href='struct.Vendor.html'>Vendor</a><a class='struct ' href='struct.Version.html'>Version</a><a class='struct current' href='struct.VertexBuffer.html'>VertexBuffer</a><a class='struct ' href='struct.VertexShader.html'>VertexShader</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='trait.Ctor.html'>Ctor</a><a class='trait ' href='trait.GetQuery.html'>GetQuery</a><a class='trait ' href='trait.GetQueryType.html'>GetQueryType</a><a class='trait ' href='trait.InnerProgram.html'>InnerProgram</a><a class='trait ' href='trait.OptPointerOffset.html'>OptPointerOffset</a><a class='trait ' href='trait.ShaderUnwrap.html'>ShaderUnwrap</a><a class='trait ' href='trait.UniformFun.html'>UniformFun</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'>Struct <a href='../index.html'>ppapi</a>::<a href='index.html'>gles</a>::<a class='struct' href=''>VertexBuffer</a><a class='stability Experimental' title=''>Experimental</a><span class='out-of-band'><span id='render-detail'>
+            <a id="collapse-all" href="#">[collapse all]</a>
+            <a id="expand-all" href="#">[expand all]</a>
+        </span><a id='src-31212' href='../../src/ppapi/gles.rs.html#638'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct VertexBuffer(_);</pre><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='../../ppapi/gles/traits/trait.Buffer.html' title='ppapi::gles::traits::Buffer'>Buffer</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.unwrap' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.unwrap' class='fnname'>unwrap</a>(&amp;self) -&gt; <a class='type' href='../../ppapi/gles/types/type.UInt.html' title='ppapi::gles::types::UInt'>UInt</a></code></h4>
+<h4 id='method.get_type' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.get_type' class='fnname'>get_type</a>(&amp;self) -&gt; <a class='type' href='../../ppapi/gles/type.BufferType.html' title='ppapi::gles::BufferType'>BufferType</a></code></h4>
+<h4 id='method.to_object' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.to_object' class='fnname'>to_object</a>(&amp;self) -&gt; <a class='type' href='../../ppapi/gles/type.BufferObject.html' title='ppapi::gles::BufferObject'>BufferObject</a></code></h4>
+<h4 id='method.is_default' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.is_default' class='fnname'>is_default</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='../../ppapi/gles/traits/trait.BindableBuffer.html' title='ppapi::gles::traits::BindableBuffer'>BindableBuffer</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.bind' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.bind' class='fnname'>bind</a>(&amp;self, ctxt: &amp;mut <a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>) -&gt; <a class='struct' href='../../ppapi/gles/struct.BoundBuffer.html' title='ppapi::gles::BoundBuffer'>BoundBuffer</a>&lt;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>&gt;</code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='../../ppapi/gles/traits/trait.GenBuffer.html' title='ppapi::gles::traits::GenBuffer'>GenBuffer</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.gen_single' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.gen_single' class='fnname'>gen_single</a>(ctxt: &amp;<a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>) -&gt; <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h4>
+<h4 id='method.gen_multiple' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.gen_multiple' class='fnname'>gen_multiple</a>(ctxt: &amp;<a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>, count: <a href='http://doc.rust-lang.org/master/std/primitive.uint.html'>uint</a>) -&gt; <a class='struct' href='http://doc.rust-lang.org/master/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>&gt;</code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='../../ppapi/gles/traits/trait.DropBuffer.html' title='ppapi::gles::traits::DropBuffer'>DropBuffer</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.drop_buffer' class='method'><a class='stability Experimental' title='Experimental'></a><code>unsafe fn <a href='#method.drop_buffer' class='fnname'>drop_buffer</a>(self, ctxt: &amp;<a class='struct' href='../../ppapi/struct.Context3d.html' title='ppapi::Context3d'>Context3d</a>)</code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='../../ppapi/gles/trait.Ctor.html' title='ppapi::gles::Ctor'>Ctor</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.ctor' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.ctor' class='fnname'>ctor</a>(id: <a class='type' href='../../ppapi/gles/types/type.UInt.html' title='ppapi::gles::types::UInt'>UInt</a>) -&gt; <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/default/trait.Default.html' title='core::default::Default'>Default</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.default' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.default' class='fnname'>default</a>() -&gt; <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h4>
+</div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl&lt;__S: <a class='trait' href='http://doc.rust-lang.org/master/collections/hash/trait.Writer.html' title='collections::hash::Writer'>Writer</a>&gt; <a class='trait' href='http://doc.rust-lang.org/master/collections/hash/trait.Hash.html' title='collections::hash::Hash'>Hash</a>&lt;__S&gt; for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.hash' class='method'><a class='stability Experimental' title='Experimental'></a><code>fn <a href='#method.hash' class='fnname'>hash</a>(&amp;self, __arg_0: &amp;mut __S)</code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.clone' class='method'><a class='stability Unstable' title='Unstable'></a><code>fn <a href='#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h4>
+<h4 id='method.clone_from' class='method'><a class='stability Experimental' title='Experimental: this function is mostly unused'></a><code>fn <a href='#tymethod.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/cmp/trait.PartialOrd.html' title='core::cmp::PartialOrd'>PartialOrd</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.partial_cmp' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.partial_cmp' class='fnname'>partial_cmp</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/option/type.Option.html' title='core::option::Option'>Option</a>&lt;<a class='type' href='http://doc.rust-lang.org/master/core/cmp/type.Ordering.html' title='core::cmp::Ordering'>Ordering</a>&gt;</code></h4>
+<h4 id='method.lt' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.lt' class='fnname'>lt</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.le' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.le' class='fnname'>le</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.gt' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.gt' class='fnname'>gt</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.ge' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.ge' class='fnname'>ge</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.cmp' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.cmp' class='fnname'>cmp</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/cmp/type.Ordering.html' title='core::cmp::Ordering'>Ordering</a></code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.eq' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.ne' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a>) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+</div><h3 class='impl'><a class='stability Experimental' title='Experimental'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> for <a class='struct' href='../../ppapi/gles/struct.VertexBuffer.html' title='ppapi::gles::VertexBuffer'>VertexBuffer</a></code></h3><div class='impl-methods'><h4 id='method.assert_receiver_is_total_eq' class='method'><a class='stability Unstable' title='Unstable: Definition may change slightly after trait reform'></a><code>fn <a href='#tymethod.assert_receiver_is_total_eq' class='fnname'>assert_receiver_is_total_eq</a>(&amp;self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "ppapi";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>
