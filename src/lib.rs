@@ -1440,7 +1440,7 @@ impl Writer for StdIo {
                     return result::Ok(());
                 }
             };
-            let rest = buf.slice(0, newline_pos);
+            let rest = buf.slice(0, newline_pos + 1);
             self.buffer.push_all(rest);
             let result = (|| {
                 use std::result::{Ok, Err};
@@ -1452,7 +1452,7 @@ impl Writer for StdIo {
 
                 try!(self.raw.write(self.buffer.as_slice()));
 
-                str::from_utf8(self.buffer.as_slice())
+                str::from_utf8(self.buffer.slice_to(self.buffer.len() - 2))
                     .and_then(|s| console.map(|c| (c, s) ) )
                     .map(|(c, s)| {
                         c.log(self.level, s)
