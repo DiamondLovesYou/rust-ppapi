@@ -3,7 +3,6 @@
 #![allow(missing_doc)]
 
 use std::mem::{size_of, uninitialized};
-use core::mem::transmute;
 use std::{clone, ptr};
 use std::default::Default;
 use std::str::MaybeOwned;
@@ -1216,7 +1215,7 @@ macro_rules! impl_uniform_fun_v(
             fn uniform(&self,
                        ctxt: &Context3d,
                        locale: types::Int) {
-                let ptr = unsafe { transmute(self.as_ptr()) };
+                let ptr = self.as_ptr();
                 call_gl_fun!(get_gles2() -> $ident => (ctxt,
                                                        locale,
                                                        self.len() as types::Int,
