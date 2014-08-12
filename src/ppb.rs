@@ -6,7 +6,7 @@ use core::mem;
 use core::mem::uninitialized;
 use libc;
 use std::ptr::RawPtr;
-use std::{intrinsics, str};
+use std::{intrinsics, string};
 
 use super::ffi;
 use super::ffi::{Struct_PP_Var, PP_Instance, PP_LogLevel, PP_Resource,
@@ -231,7 +231,7 @@ impl ffi::Struct_PPB_Var_1_2 {
     pub fn var_to_utf8(&self, string: &Struct_PP_Var) -> String {
         let mut len: u32 = unsafe { intrinsics::uninit() };
         let buf = impl_fun!(self.VarToUtf8 => (*string, &mut len as *mut u32));
-        unsafe { str::raw::from_buf_len(buf as *const u8, len as uint) }
+        unsafe { string::raw::from_buf_len(buf as *const u8, len as uint) }
     }
 }
 impl ffi::Struct_PPB_Console_1_0 {

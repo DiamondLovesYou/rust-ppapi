@@ -94,7 +94,7 @@ use std::ops;
 use std::rt::task;
 use std::iter;
 use std::clone;
-use std::str;
+use std::{str, string};
 use std::result;
 use std::collections::hashmap::HashMap;
 use std::fmt;
@@ -1162,7 +1162,7 @@ impl fmt::Show for StringVar {
                 (self.to_var(), 
                  &mut len as *mut u32);
             let len = len;
-            str::raw::from_buf_len(buf as *const u8, len as uint)
+            string::raw::from_buf_len(buf as *const u8, len as uint)
         };
         f.pad(str.as_slice())
     }
@@ -1234,8 +1234,8 @@ fn parse_args(argc: u32,
     let mut args: HashMap<String, String> = HashMap::new();
     for i in iter::range(0, argc as int) {
         unsafe {
-            args.swap(str::raw::from_c_str(*argk.offset(i) as *const i8),
-                      str::raw::from_c_str(*argv.offset(i) as *const i8));
+            args.swap(string::raw::from_buf(*argk.offset(i) as *const u8),
+                      string::raw::from_buf(*argv.offset(i) as *const u8));
         }
     }
     return args;
