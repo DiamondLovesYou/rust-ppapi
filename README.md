@@ -7,7 +7,7 @@ Rust idiomatic bindings to the Pepper API. This API is experimental. Expect it t
 
 Just run ```make```, or ```remake``` if you're kool. You'll need to pass it two
 variables, SYSROOT, pointing to your build of
-[Rust](https://github.com/DiamondLovesYou/rust), and TOOLCHAIN, pointing to
+[Rust](https://github.com/DiamondLovesYou/rust), and NACL_SDK, pointing to
 ```pepper_canary``` within the NaCl SDK (```pepper_35``` *might* work, but no
 promises).
 
