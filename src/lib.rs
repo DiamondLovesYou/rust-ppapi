@@ -1743,10 +1743,12 @@ pub mod entry {
 
     use libc::c_char;
     use std::any::Any;
+    use std::finally::try_finally;
     use std::mem::transmute;
     use std::result;
     use TaskResult = std::rt::task::Result;
     use std::rt::local::{Local};
+    use std::rt::task::Task;
     use rustrt::unwind::try;
 
     // We need to catch all failures in our callbacks,
@@ -1842,36 +1844,36 @@ pub mod entry {
                     }
                 }
 
-                let mut args = Some(args);
-                // Nb this doesn't conflict with the outer try_block because
-                // we're on a separate thread.
-                let result = try_block(|| {
-                    unsafe {
-                        super::ppapi_instance_created(instance.clone(), args.take_unwrap())
-                    }
-                });
-                
-                match result {
-                    result::Ok(()) => {
-                        tx.send(Some(ml.clone()));
-                    }
-                    result::Err(_) => {
-                        error!("failed to initialize instance");
-                        tx.send(None);
-                        return;
-                    }
+                fn unwinding() -> bool {
+                    Local::borrow(None::<Task>).unwinder.unwinding()
                 }
-                
-                let _ = try_block(|| {
-                    let code = ml.run_loop();
-                    warn!("message loop finished");
-                    if code != Ok {
-                        fail!("message loop exited with code: `{}`", code);
-                    }
-                    if MessageLoop::is_attached() {
-                        fail!("please shutdown the loop; I may add pausing for some sort of pattern later");
-                    }
-                });
+
+                try_finally(&mut (), args,
+                            |_, args| unsafe {
+                                super::ppapi_instance_created(instance.clone(), args)
+                            },
+                            |_| {
+                                if unwinding() {
+                                    error!("failed to initialize instance");
+                                    tx.send(None);
+                                } else {
+                                    tx.send(Some(ml.clone()));
+                                }
+                            });
+
+                let code = try_finally(&mut (), ml.clone(),
+                                       |_, ml| ml.run_loop(),
+                                       |_| {
+                                           if unwinding() {
+                                               let _ = ml.shutdown();
+                                           }
+                                       });
+                if code != Ok {
+                    fail!("message loop exited with code: `{}`", code);
+                }
+                if MessageLoop::is_attached() {
+                    fail!("please shutdown the loop; I may add pausing for some sort of pattern later");
+                }
             });
 
             success = rx.recv()
