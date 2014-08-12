@@ -1,21 +1,29 @@
-Rusted Pepper (Make'em Oxidize!)
+Rusted Pepper
 ==========
 
-Rust idiomatic bindings to the Pepper API. This API is experimental. Expect it to change somewhat.
+Rust idiomatic bindings to the Pepper API. This API is experimental. Expect it
+to change somewhat.
 
 ## Build
 
 Just run ```make```, or ```remake``` if you're kool. You'll need to pass it two
-variables, SYSROOT, pointing to your build of
-[Rust](https://github.com/DiamondLovesYou/rust), and NACL_SDK, pointing to
-```pepper_canary``` within the NaCl SDK (```pepper_35``` *might* work, but no
-promises).
+variables, SYSROOT, pointing to the stage2 directory in the host machine's
+target triple in your build of [Rust](https://github.com/DiamondLovesYou/rust),
+and NACL_SDK, pointing to ```pepper_canary``` within the NaCl SDK
+(```pepper_35``` *might* work, but no promises).
+
+For example on my Ubuntu machine it would be:
+
+```
+make SYSROOT=~/workspace/build/rust-pnacl-canary/x86_64-unknown-linux-gnu/stage2 NACL_SDK=~/workspace/tools/nacl-sdk/pepper_canary
+```
 
 *Don't run ```build.sh```.* It is used to update FFI bindings.
 
 ## Getting Started
 
 Taken from [pnacl-hello-world](https://github.com/DiamondLovesYou/rust-pnacl-hello-world):
+
 ```rust
 #![crate_name = "pnacl-hello-world"]
 #![crate_type = "bin"]
