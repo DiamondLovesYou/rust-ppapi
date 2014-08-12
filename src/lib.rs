@@ -1682,7 +1682,7 @@ impl MessageLoop {
             }),
                        0)
             .expect("couldn't tell an instance about an on_change_view event");
-        rx.recv()
+        rx.recv_opt().unwrap_or(false)
     }
 }
 
