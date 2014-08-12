@@ -1415,9 +1415,10 @@ impl log::Logger for ConsoleLogger {
                           record.module_path,
                           record.file,
                           record.line,
-                          record.args);
-        self.console.log_to_browser(level,
-                                    str.to_var());
+                          record.args)
+            .to_string_var();
+        self.console.log(level,
+                         str);
     }
 }
 struct StdIo {
