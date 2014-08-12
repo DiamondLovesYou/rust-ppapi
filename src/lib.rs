@@ -1563,7 +1563,7 @@ impl Instance {
             ffi::PP_TRUE => Ok,
             ffi::PP_FALSE => Failed,
             other => {
-                format!("unknown truthy value: {:}", other);
+                error!("unknown truthy value: {:}", other);
                 Failed
             }
         }
