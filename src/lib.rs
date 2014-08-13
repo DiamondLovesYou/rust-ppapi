@@ -1452,7 +1452,7 @@ impl Writer for StdIo {
 
                 try!(self.raw.write(self.buffer.as_slice()));
 
-                str::from_utf8(self.buffer.slice_to(self.buffer.len() - 2))
+                str::from_utf8(self.buffer.slice_to(self.buffer.len() - 1))
                     .and_then(|s| console.map(|c| (c, s) ) )
                     .map(|(c, s)| {
                         c.log(self.level, s)
