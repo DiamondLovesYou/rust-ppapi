@@ -1236,6 +1236,16 @@ impl ArrayBufferVar {
         ArrayBufferVar(unsafe { ffi::id_from_var(v) })
     }
 }
+
+#[deriving(Clone, Eq, PartialEq)]
+pub struct Messaging(ffi::PP_Instance);
+impl Messaging {
+    fn unwrap(&self) -> ffi::PP_Instance {
+        let &Messaging(inst) = self;
+        inst
+    }
+}
+
 #[deriving(Clone, Eq, PartialEq)]
 pub struct Console(ffi::PP_Instance);
 impl Console {
@@ -1539,6 +1549,10 @@ impl Instance {
 
     pub fn console(&self) -> Console {
         return Console(self.instance);
+    }
+
+    pub fn messaging(&self) -> Messaging {
+        return Messaging(self.instance);
     }
 
     pub fn create_3d_context<AT: slice::Vector<(i32, i32)> + collections::Collection>
