@@ -131,9 +131,9 @@ pub fn mount<'s, 't, 'f, 'd>(source: &'s str,
     let cdata = data.to_c_str();
 
     match unsafe {
-        ffi::mount(csource.as_ptr(), 
-                   ctarget.as_ptr(), 
-                   cfilesystem_type.as_ptr(), 
+        ffi::mount(csource.as_ptr(),
+                   ctarget.as_ptr(),
+                   cfilesystem_type.as_ptr(),
                    0,
                    cdata.as_ptr() as *const libc::c_void)
     } {
@@ -1159,7 +1159,7 @@ impl fmt::Show for StringVar {
         let str = unsafe {
             let mut len: u32 = intrinsics::uninit();
             let buf = (ppb::get_var().VarToUtf8.unwrap())
-                (self.to_var(), 
+                (self.to_var(),
                  &mut len as *mut u32);
             let len = len;
             string::raw::from_buf_len(buf as *const u8, len as uint)
@@ -1219,6 +1219,16 @@ impl ArrayBufferVar {
         ArrayBufferVar(unsafe { ffi::id_from_var(v) })
     }
 }
+
+#[deriving(Clone, Eq, PartialEq)]
+pub struct Messaging(ffi::PP_Instance);
+impl Messaging {
+    fn unwrap(&self) -> ffi::PP_Instance {
+        let &Messaging(inst) = self;
+        inst
+    }
+}
+
 #[deriving(Clone, Eq, PartialEq)]
 pub struct Console(ffi::PP_Instance);
 impl Console {
@@ -1524,6 +1534,10 @@ impl Instance {
         return Console(self.instance);
     }
 
+    pub fn messaging(&self) -> Messaging {
+        return Messaging(self.instance);
+    }
+
     pub fn create_3d_context<AT: slice::Vector<(i32, i32)> + collections::Collection>
         (&self,
          share_with: Option<Context3d>,
@@ -1545,7 +1559,7 @@ impl Instance {
                  .unwrap_or_else(|| 0i32 );
 
              let graphics = ppb::get_graphics_3d();
-             
+
              let raw_cxt  = (graphics.Create.unwrap())(self.instance,
                                                        share_with,
                                                        a.as_ptr());
@@ -1777,7 +1791,7 @@ pub mod entry {
             ret = Some(f());
         }).map(|()| ret.take().unwrap() )
     }
-    
+
     pub extern "C" fn did_create(inst: ffi::PP_Instance,
                                  argc: u32,
                                  argk: *mut *const c_char,
@@ -1899,9 +1913,9 @@ pub mod entry {
 
         let _ = try_block(|| {
             debug!("did_destroy");
-            
+
             find_instance(instance, (), |store, ()| store.on_destroy() );
-            
+
             expect_instances().pop(&instance);
         });
 
@@ -1945,7 +1959,7 @@ pub mod entry {
 
         Instance::unset_current();
     }
-    pub extern "C" fn handle_document_load(inst: ffi::PP_Instance, 
+    pub extern "C" fn handle_document_load(inst: ffi::PP_Instance,
                                            url_loader: ffi::PP_Resource) -> ffi::PP_Bool {
         let instance = Instance::new(inst);
         Instance::assert_unset_current();
