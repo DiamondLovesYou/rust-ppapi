@@ -1,3 +1,4 @@
 Rust PPApi was written by these outstanding people:
 
 Richard Diamond <wichard@vitalitystudios.com>
+Manuel Adameit <ma.adameit@gmail.com>
