@@ -111,7 +111,7 @@ extern "C" {
   const int64_t id_from_var(const PP_Var v) {
     return v.value.as_id;
   }
-  
+
 
   FILE* stdout_file() {
     return stdin;
