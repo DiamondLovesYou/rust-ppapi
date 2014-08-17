@@ -406,7 +406,7 @@ impl ffi::Struct_PPB_URLRequestInfo_1_0 {
                                        data.len() as u32));
         was_appended != 0
     }
-    
+
 }
 impl ffi::Struct_PPB_URLResponseInfo_1_0 {
     pub fn is(&self, res: &PP_Resource) -> bool {
@@ -421,7 +421,7 @@ impl ffi::Struct_PPB_URLResponseInfo_1_0 {
     pub fn body_as_file(&self, res: &PP_Resource) -> PP_Resource {
         impl_fun!(self.GetBodyAsFileRef => (*res))
     }
-                               
+
 }
 impl ffi::Struct_PPB_InputEvent_1_0 {
     pub fn request(&self,
@@ -654,5 +654,5 @@ pub trait TextInputController {
     fn cancel_composition_text(&self);
     fn set_text_input_type(&self, input_type: ffi::PP_TextInput_Type);
     fn update_caret_position(&self, caret: ffi::PP_Rect);
-    fn update_surrounding_text<T: ToVar>(&self, text: T, caret: u32, anchor: u32);  
+    fn update_surrounding_text<T: ToVar>(&self, text: T, caret: u32, anchor: u32);
 }

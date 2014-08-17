@@ -817,7 +817,7 @@ impl BoundBuffer<VertexBuffer> {
                                                    mode.get_geo_mode_enum(),
                                                    slice_start as types::Int,
                                                    slice_len as types::Size))
-                                                   
+
     }
 }
 pub struct ByteType;
@@ -973,7 +973,7 @@ impl BoundTexBuffer {
     }
 }
 impl FrameBuffer {
-    
+
 }
 impl BoundBuffer<FrameBuffer> {
     pub fn attach_tex2d(&mut self,
@@ -1182,7 +1182,7 @@ impl ShaderProgram {
     pub fn new(ctxt: &Context3d) -> UnlinkedShaderProgram {
         UnlinkedShaderProgram(ctxt.gen_shader_program())
     }
-    
+
     pub fn uniform_locale(&mut self,
                           ctxt: &Context3d,
                           name: &CString) -> Option<types::Int> {
@@ -1200,7 +1200,7 @@ impl ShaderProgram {
         call_gl_fun!(get_gles2() -> UseProgram => (ctxt, self.unwrap()));
         BoundShaderProgram(self)
     }
-    
+
     pub fn unlink(self) -> UnlinkedShaderProgram {
         UnlinkedShaderProgram(self)
     }

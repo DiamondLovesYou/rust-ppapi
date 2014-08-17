@@ -91,7 +91,7 @@ pub struct RequestInfo {
     pub url: Url,
 
     pub method: Method,
-    
+
     pub prefetch_buffer: Option<(i32, i32)>,
     properties: RequestProperties,
     set_props:  RequestProperties,
@@ -127,7 +127,7 @@ impl RequestInfo {
         if bit {
             new.add(prop);
         }
-        
+
         let was_set = self.properties.contains_elem(prop);
         self.properties = new;
         was_set
@@ -245,5 +245,5 @@ impl super::UrlLoader {
                     cb.to_ffi_callback())
             .map(|_| open_loader.clone() )
     }
-                
+
 }
