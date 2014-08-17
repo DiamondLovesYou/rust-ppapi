@@ -103,7 +103,7 @@ extern crate alloc;
 extern crate native;
 extern crate rustrt;
 
-use std::{mem, slice, cmp, io, hash, num, collections};
+use std::{mem, cmp, io, hash, num};
 use std::mem::transmute;
 use std::intrinsics;
 use std::ptr;
@@ -1555,38 +1555,35 @@ impl Instance {
         return Messaging(self.instance);
     }
 
-    pub fn create_3d_context<AT: slice::Vector<(i32, i32)> + collections::Collection>
-        (&self,
-         share_with: Option<Context3d>,
-         attribs: AT)
-         -> result::Result<Context3d, Code> {
-             let attribs = attribs.as_slice();
-             let mut a = Vec::with_capacity(attribs.len() * 2 + 1);
-             for &(k, v) in attribs.iter() {
-                 a.push(k);
-                 a.push(v);
-             }
-             a.push(ffi::PP_GRAPHICS3DATTRIB_NONE as i32);
-             let a = a;
-             let share_with = share_with
-                 .map(|ctxt| {
-                     let Context3d(res) = ctxt;
-                     res
-                 })
-                 .unwrap_or_else(|| 0i32 );
+    pub fn create_3d_context(&self,
+                             share_with: Option<Context3d>,
+                             attribs: &[(u32, u32)]) -> result::Result<Context3d, Code> {
+        let mut a = Vec::with_capacity(attribs.len() * 2 + 1);
+        for &(k, v) in attribs.iter() {
+            a.push(k);
+            a.push(v);
+        }
+        a.push(ffi::PP_GRAPHICS3DATTRIB_NONE);
+        let a = a;
+        let share_with = share_with
+            .map(|ctxt| {
+                let Context3d(res) = ctxt;
+                res
+            })
+            .unwrap_or_else(|| 0i32 );
 
-             let graphics = ppb::get_graphics_3d();
+        let graphics = ppb::get_graphics_3d();
 
-             let raw_cxt  = (graphics.Create.unwrap())(self.instance,
-                                                       share_with,
-                                                       a.as_ptr());
+        let raw_cxt  = (graphics.Create.unwrap())(self.instance,
+                                                  share_with,
+                                                  a.as_ptr() as *const i32);
 
-             if raw_cxt == 0i32 {
-                 result::Err(Failed)
-             } else {
-                 result::Ok(Context3d::new_bumped(raw_cxt))
-             }
-         }
+        if raw_cxt == 0i32 {
+            result::Err(Failed)
+        } else {
+            result::Ok(Context3d::new_bumped(raw_cxt))
+        }
+    }
     pub fn bind_context<T: ContextResource>(&self, cxt: &T) -> Code {
         match (ppb::get_instance().BindGraphics.unwrap())
             (self.instance,
