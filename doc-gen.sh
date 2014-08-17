@@ -12,7 +12,7 @@ git rm -fr $DOCS_DIR
 mkdir -p $DOCS_DIR
 cd $1 &&
 # We strictly speaking don't need to build libressl, but meh.
-  remake SYSROOT="$SYSROOT" NACL_SDK="$NACL_SDK" BUILD_DIR="$BUILD_DIR" &&
+  remake SYSROOT="$SYSROOT" NACL_SDK="$NACL_SDK" BUILD_DIR="$BUILD_DIR" -j 8 &&
   rustdoc -L $BUILD_DIR --target=le32-unknown-nacl -o $DOCS_DIR src/lib.rs
 
 cd $4 &&

@@ -319,7 +319,41 @@
 <span id='277'>277</span>
 <span id='278'>278</span>
 <span id='279'>279</span>
+<span id='280'>280</span>
+<span id='281'>281</span>
+<span id='282'>282</span>
+<span id='283'>283</span>
+<span id='284'>284</span>
+<span id='285'>285</span>
+<span id='286'>286</span>
+<span id='287'>287</span>
+<span id='288'>288</span>
+<span id='289'>289</span>
+<span id='290'>290</span>
+<span id='291'>291</span>
+<span id='292'>292</span>
+<span id='293'>293</span>
+<span id='294'>294</span>
+<span id='295'>295</span>
+<span id='296'>296</span>
 </pre><pre class='rust '>
+<span class='comment'>// Copyright (c) 2014 Richard Diamond &amp; contributors.</span>
+<span class='comment'>//</span>
+<span class='comment'>// This file is part of the Rust PPApi project.</span>
+<span class='comment'>//</span>
+<span class='comment'>// Rust PPApi is free software: you can redistribute it and/or modify</span>
+<span class='comment'>// it under the terms of the GNU Lesser General Public License as published by</span>
+<span class='comment'>// the Free Software Foundation, either version 3 of the License, or</span>
+<span class='comment'>// (at your option) any later version.</span>
+<span class='comment'>//</span>
+<span class='comment'>// Rust PPApi is distributed in the hope that it will be useful,</span>
+<span class='comment'>// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class='comment'>// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class='comment'>// GNU General Public License for more details.</span>
+<span class='comment'>//</span>
+<span class='comment'>// You should have received a copy of the GNU Lesser General Public License</span>
+<span class='comment'>// along with Rust PPApi. If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>intrinsics</span>::<span class='ident'>uninit</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>result</span>::{<span class='prelude-val'>Ok</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ptr</span>::<span class='ident'>RawPtr</span>;
@@ -629,7 +663,7 @@
             </p>
             <p>
                 Accepted types are: <code>fn</code>, <code>mod</code>,
-                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>struct</code>, <code>enum</code>,
                 <code>trait</code>, <code>typedef</code> (or
                 <code>tdef</code>).
             </p>
