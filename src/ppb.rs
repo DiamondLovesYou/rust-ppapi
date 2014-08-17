@@ -177,6 +177,8 @@ get_fun!    (pub fn get_array_buffer() -> VarArrayBuffer { ARRAY_BUFFER })
 get_fun_opt!(pub fn get_array_buffer_opt() -> VarArrayBuffer { ARRAY_BUFFER })
 get_fun!    (pub fn get_graphics_3d() -> Graphics3D { GRAPHICS_3D })
 get_fun_opt!(pub fn get_graphics_3d_opt() -> Graphics3D { GRAPHICS_3D })
+get_fun!    (pub fn get_messaging() -> Messaging { MESSAGING })
+get_fun_opt!(pub fn get_messaging_opt() -> Messaging { MESSAGING })
 get_fun!    (pub fn get_message_loop() -> MessageLoop { MESSAGE_LOOP })
 get_fun_opt!(pub fn get_message_loop_opt() -> MessageLoop { MESSAGE_LOOP })
 get_fun!    (pub fn get_instance() -> Instance { INSTANCE })
@@ -282,11 +284,13 @@ impl ffi::Struct_PPB_VarArrayBuffer_1_0 {
         impl_fun!(self.Unmap => (*var))
     }
 }
+
 impl ffi::Struct_PPB_Messaging_1_0 {
-    pub unsafe fn post_message(&self, instance: &PP_Instance, msg: &Struct_PP_Var) {
-        impl_fun!(self.PostMessage => (*instance, *msg))
+    fn post_message(self, instance: PP_Instance, msg: Struct_PP_Var) {
+        impl_fun!(self.PostMessage => (instance, msg))
     }
 }
+
 impl ffi::Struct_PPB_MessageLoop_1_0 {
     pub fn create(&self, instance: &PP_Instance) -> PP_Resource {
         impl_fun!(self.Create => (*instance))
@@ -641,8 +645,15 @@ impl ffi::Struct_PPB_View_1_1 {
         impl_fun!(self.GetCSSScale => (res))
     }
 }
+
 pub trait MessagingInterface {
     fn post_message<T: ToVar>(&self, message: T);
+}
+
+impl MessagingInterface for super::Messaging {
+    fn post_message<T: ToVar>(&self, message: T) {
+      get_messaging().post_message(self.unwrap(), message.to_var())
+    }
 }
 
 pub trait ConsoleInterface {
