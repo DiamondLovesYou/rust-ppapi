@@ -1,3 +1,20 @@
+// Copyright (c) 2014 Richard Diamond & contributors.
+//
+// This file is part of the Rust PPApi project.
+//
+// Rust PPApi is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Rust PPApi is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with Rust PPApi. If not, see <http://www.gnu.org/licenses/>.
+
 //! A module to wrap OpenGLES 2.0 functions from the PPAPI
 
 #![allow(missing_doc)]
@@ -817,7 +834,7 @@ impl BoundBuffer<VertexBuffer> {
                                                    mode.get_geo_mode_enum(),
                                                    slice_start as types::Int,
                                                    slice_len as types::Size))
-                                                   
+
     }
 }
 pub struct ByteType;
@@ -973,7 +990,7 @@ impl BoundTexBuffer {
     }
 }
 impl FrameBuffer {
-    
+
 }
 impl BoundBuffer<FrameBuffer> {
     pub fn attach_tex2d(&mut self,
@@ -1182,7 +1199,7 @@ impl ShaderProgram {
     pub fn new(ctxt: &Context3d) -> UnlinkedShaderProgram {
         UnlinkedShaderProgram(ctxt.gen_shader_program())
     }
-    
+
     pub fn uniform_locale(&mut self,
                           ctxt: &Context3d,
                           name: &CString) -> Option<types::Int> {
@@ -1200,7 +1217,7 @@ impl ShaderProgram {
         call_gl_fun!(get_gles2() -> UseProgram => (ctxt, self.unwrap()));
         BoundShaderProgram(self)
     }
-    
+
     pub fn unlink(self) -> UnlinkedShaderProgram {
         UnlinkedShaderProgram(self)
     }

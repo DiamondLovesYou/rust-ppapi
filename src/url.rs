@@ -1,3 +1,20 @@
+// Copyright (c) 2014 Richard Diamond & contributors.
+//
+// This file is part of the Rust PPApi project.
+//
+// Rust PPApi is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Rust PPApi is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with Rust PPApi. If not, see <http://www.gnu.org/licenses/>.
+
 use super::{UrlLoader, UrlRequestInfo, UrlResponseInfo, Callback,
             Resource, FileSliceRef, Instance, ToStringVar, ToVar};
 use super::ppb::{get_url_loader, get_url_request, get_url_response};
@@ -91,7 +108,7 @@ pub struct RequestInfo {
     pub url: Url,
 
     pub method: Method,
-    
+
     pub prefetch_buffer: Option<(i32, i32)>,
     properties: RequestProperties,
     set_props:  RequestProperties,
@@ -127,7 +144,7 @@ impl RequestInfo {
         if bit {
             new.add(prop);
         }
-        
+
         let was_set = self.properties.contains_elem(prop);
         self.properties = new;
         was_set
@@ -245,5 +262,5 @@ impl super::UrlLoader {
                     cb.to_ffi_callback())
             .map(|_| open_loader.clone() )
     }
-                
+
 }
