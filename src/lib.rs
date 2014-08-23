@@ -87,7 +87,6 @@ More info:
 
 #![allow(dead_code)]
 
-extern crate std;
 extern crate native;
 #[phase(plugin, link)]
 extern crate log;
@@ -100,7 +99,6 @@ extern crate iurl = "url";
 extern crate libc;
 extern crate core;
 extern crate alloc;
-extern crate native;
 extern crate rustrt;
 
 use std::{mem, cmp, io, hash, num};
@@ -1775,15 +1773,14 @@ pub mod entry {
     use std::finally::try_finally;
     use std::mem::transmute;
     use std::result;
-    use TaskResult = std::rt::task::Result;
     use std::rt::local::{Local};
-    use std::rt::task::Task;
+    use std::rt::task::{Task, Result};
     use rustrt::unwind::try;
 
     // We need to catch all failures in our callbacks,
     // lest an exception (failure) in one instance terminates all
     // instances and crashes the whole plugin.
-    pub fn try_block(f: ||) -> TaskResult {
+    pub fn try_block(f: ||) -> Result {
         let result = unsafe {
             try(f)
         };
@@ -2077,10 +2074,10 @@ pub mod entry {
 }
 
 extern {
-    #[no_mangle]
+    #[no_mangle] #[allow(ctypes)]
     fn ppapi_instance_created(instance: Instance,
                               args: HashMap<String, String>);
-    #[no_mangle]
+    #[no_mangle] #[allow(ctypes)]
     fn ppapi_instance_destroyed();
 
     #[no_mangle]
