@@ -1,17 +1,21 @@
-ifneq ($(MAKECMDGOALS),clean)
-ifeq ($(SYSROOT),)
-$(error I need the sysroot to your Rust build)
-endif
-endif
-
 SRC_DIR := $(abspath .)
 BUILD_DIR ?= $(abspath build)
 
+SYSROOT ?= /usr/local
+
 RUSTC ?= $(shell readlink -f $(SYSROOT)/bin/rustc)
-NACL_SDK  ?= $(shell readlink -f ~/workspace/tools/nacl-sdk/pepper_canary)
+NACL_SDK  ?= $(shell readlink -e ~/workspace/tools/nacl-sdk/pepper_canary)
+
+ifneq ($(MAKECMDGOALS),clean)
+ifeq  ($(NACL_SDK),)
+$(error I need the directory to your Pepper SDK!)
+endif
+endif
+
+TARGET_TRIPLE ?= le32-unknown-nacl
 
 USE_DEBUG ?= 0
-RUSTFLAGS += -C cross-path=$(NACL_SDK) --target=le32-unknown-nacl --sysroot=$(shell readlink -f $(SYSROOT))
+RUSTFLAGS += -C cross-path=$(NACL_SDK) --target=$(TARGET_TRIPLE) --sysroot=$(shell readlink -f $(SYSROOT))
 TOOLCHAIN ?= $(shell readlink -f $(NACL_SDK)/toolchain/linux_pnacl)
 CC  := $(TOOLCHAIN)/bin/pnacl-clang
 CXX := $(TOOLCHAIN)/bin/pnacl-clang++
@@ -100,4 +104,3 @@ deps/libressl.stamp: Makefile                          \
 	$(MAKE) -C $(LIBRESSL)/ssl    && cp $(LIBRESSL)/ssl/.libs/libssl.a $(BUILD_DIR)
 	$(MAKE) -C $(LIBRESSL)/crypto && cp $(LIBRESSL)/crypto/.libs/libcrypto.a $(BUILD_DIR)
 	touch $@
-
