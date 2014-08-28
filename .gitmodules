@@ -3,4 +3,4 @@
 	url = https://github.com/DiamondLovesYou/rust-http.git
 [submodule "deps/rust-openssl"]
 	path = deps/rust-openssl
-	url = https://github.com/sfackler/rust-openssl.git
+	url = https://github.com/DiamondLovesYou/rust-openssl.git
