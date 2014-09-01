@@ -1272,7 +1272,7 @@ trait Callback {
 impl ffi::Struct_PP_CompletionCallback {
     fn post_to_self(self, code: Code) {
         // Used because we specifically don't want to take the callbacks in local data.
-        struct RunCompletionCallback(proc());
+        struct RunCompletionCallback(proc(): 'static);
         impl Callback for RunCompletionCallback {
             fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
                 extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
@@ -1316,7 +1316,7 @@ fn if_error_shutdown_msg_loop(result: task::Result) {
     }
 }
 
-impl Callback for proc() {
+impl<'a> Callback for proc(): 'a {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
         extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
             let code = Code::from_i32(status);
@@ -1332,7 +1332,7 @@ impl Callback for proc() {
         }
     }
 }
-impl Callback for proc(Code) {
+impl<'a> Callback for proc(Code): 'a {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
         extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
             let work: Box<proc(Code)> = unsafe { mem::transmute(user) };
@@ -1375,8 +1375,8 @@ impl Callback for fn(Code) {
     }
 }
 
-struct InternalCallbacksOperatorProc(proc());
-impl Callback for InternalCallbacksOperatorProc {
+struct InternalCallbacksOperatorProc<'a>(proc(): 'a);
+impl<'a> Callback for InternalCallbacksOperatorProc<'a> {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
         extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
             let code = Code::from_i32(status);
@@ -2073,11 +2073,12 @@ pub mod entry {
     }
 }
 
+#[allow(ctypes)]
 extern {
-    #[no_mangle] #[allow(ctypes)]
+    #[no_mangle]
     fn ppapi_instance_created(instance: Instance,
                               args: HashMap<String, String>);
-    #[no_mangle] #[allow(ctypes)]
+    #[no_mangle]
     fn ppapi_instance_destroyed();
 
     #[no_mangle]
@@ -2106,7 +2107,7 @@ extern {
 }
 
 #[no_mangle]
-#[allow(non_snake_case_functions)]
+#[allow(non_snake_case)]
 // The true entry point of any module. DO NOT CALL THIS YOURSELF. It is used by Pepper.
 pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
                                        gbi: ffi::PPB_GetInterface) -> libc::int32_t {
@@ -2158,7 +2159,7 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
     }
 }
 #[no_mangle]
-#[allow(non_snake_case_functions)]
+#[allow(non_snake_case)]
 pub extern "C" fn PPP_ShutdownModule() {
     use std::rt::local::{Local};
     use self::entry::try_block;

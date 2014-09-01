@@ -49,7 +49,7 @@ mod globals {
 #[no_mangle]
 #[allow(dead_code)]
 #[doc(hidden)]
-#[allow(non_snake_case_functions)]
+#[allow(non_snake_case)]
 pub extern "C" fn PPP_GetInterface(interface_name: *const c_char) -> *const c_void {
     use core::mem::transmute;
     unsafe {

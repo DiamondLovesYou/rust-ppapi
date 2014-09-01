@@ -693,7 +693,7 @@ pub enum BufferType {
     FrameBufferType,
     RenderBufferType,
 }
-pub enum BufferOption<'a, T> {
+pub enum BufferOption<'a, T: 'a> {
     BufferSome(&'a Vec<T>),
     BufferNone(uint),
 }
@@ -1045,7 +1045,7 @@ impl<T: Clone> CompilingShader<T> {
 pub type CompilingVertexShader = CompilingShader<VertexShader>;
 pub type CompilingFragmentShader = CompilingShader<FragmentShader>;
 impl<T: traits::CompileShader + Clone + ShaderUnwrap + Send> CompilingShader<T> {
-    pub fn results(&self, ctxt: &Context3d) -> Result<T, proc(&Context3d) -> String> {
+    pub fn results(&self, ctxt: &Context3d) -> Result<T, proc(&Context3d): Send -> String> {
         use std::str;
         let status = ctxt.get_shader_param(self, consts::COMPILE_STATUS);
         if status == consts::TRUE as i32 {
@@ -1095,7 +1095,7 @@ impl LinkingShaderProgram {
     }
 
     pub fn results(&self,
-                   ctxt: &Context3d) -> Result<ShaderProgram, proc(ctxt: &Context3d) -> String> {
+                   ctxt: &Context3d) -> Result<ShaderProgram, proc(ctxt: &Context3d): Send -> String> {
         use std::str;
         let status = ctxt.get_program_param(self, consts::LINK_STATUS);
         if status == consts::TRUE as i32 {
@@ -1468,13 +1468,13 @@ impl super::Context3d {
                                                           sfactor,
                                                           dfactor))
             }
-            Some(BlendingFunSep(srcRGB, dstRGB,
-                                srcAlpha, dstAlpha)) => {
+            Some(BlendingFunSep(src_rgb, dst_rgb,
+                                src_alpha, dst_alpha)) => {
                 call_gl_fun!(get_gles2() -> BlendFuncSeparate => (self,
-                                                                  srcRGB,
-                                                                  dstRGB,
-                                                                  srcAlpha,
-                                                                  dstAlpha))
+                                                                  src_rgb,
+                                                                  dst_rgb,
+                                                                  src_alpha,
+                                                                  dst_alpha))
             }
             None => (),
         }
@@ -1483,11 +1483,11 @@ impl super::Context3d {
                 call_gl_fun!(get_gles2() -> BlendEquation => (self,
                                                               mode))
             }
-            Some(BlendingEqSep(modeRGB,
-                               modeAlpha)) => {
+            Some(BlendingEqSep(mode_rgb,
+                               mode_alpha)) => {
                 call_gl_fun!(get_gles2() -> BlendEquationSeparate => (self,
-                                                                      modeRGB,
-                                                                      modeAlpha))
+                                                                      mode_rgb,
+                                                                      mode_alpha))
             }
             None => (),
         }
