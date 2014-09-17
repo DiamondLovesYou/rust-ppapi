@@ -101,7 +101,7 @@ extern crate core;
 extern crate alloc;
 extern crate rustrt;
 
-use std::{mem, cmp, io, hash, num};
+use std::{mem, cmp, io, num};
 use std::mem::transmute;
 use std::intrinsics;
 use std::ptr;
@@ -116,19 +116,19 @@ use std::fmt;
 
 use log::LogRecord;
 
-use ppb::{get_url_loader, get_url_request, get_url_response};
+use ppb::{get_url_loader, get_url_request};
 use ppb::{ViewIf, MessageLoopIf, VarIf, ImageDataIf, URLLoaderIf,
           URLRequestInfoIf};
 
-use font::Font;
-use gles::Context3d;
-use input::{KeyboardInputEvent,
-            MouseInputEvent,
-            WheelInputEvent,
-            TouchInputEvent,
-            IMEInputEvent};
-use imagedata::ImageData;
-use url::{UrlLoader, UrlRequestInfo, UrlResponseInfo};
+pub use font::Font;
+pub use gles::Context3d;
+pub use input::{KeyboardInputEvent,
+                MouseInputEvent,
+                WheelInputEvent,
+                TouchInputEvent,
+                IMEInputEvent};
+pub use imagedata::ImageData;
+pub use url::{UrlLoader, UrlRequestInfo, UrlResponseInfo};
 
 macro_rules! impl_resource_for(
     ($ty:ty $type_:ident) => (
@@ -1735,10 +1735,7 @@ fn find_instance<U, Take>(instance: Instance,
 }
 pub mod entry {
     use super::{expect_instances, find_instance};
-    use super::{Instance, Callback};
-    use super::{AnyVar, Ok};
-    use super::{View};
-    use super::ToFFIBool;
+    use super::{AnyVar, Ok, Instance, View, ToFFIBool};
     use super::{ffi};
     use super::url::UrlLoader;
 

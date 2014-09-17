@@ -1351,7 +1351,7 @@ impl GetQueryType for MaybeOwned<'static> {
 
         unsafe {
             let str = CString::new(str_ptr as *const i8, false);
-            from_utf8_lossy(transmute(str.as_bytes_no_nul()))
+            String::from_utf8_lossy(transmute(str.as_bytes_no_nul()))
         }
     }
 }
@@ -1370,7 +1370,7 @@ impl GetQueryType for Vec<MaybeOwned<'static>> {
         unsafe {
             from_c_multistring(str_ptr as *const i8, None, |cstr: &CString| {
                 let buf: &'static [u8] = transmute(cstr.as_bytes_no_nul());
-                exts.push(from_utf8_lossy(buf));
+                exts.push(String::from_utf8_lossy(buf));
             });
         }
         exts

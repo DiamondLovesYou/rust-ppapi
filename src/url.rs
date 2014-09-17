@@ -16,7 +16,7 @@
 // along with Rust PPApi. If not, see <http://www.gnu.org/licenses/>.
 
 use super::{Callback, Resource, FileSliceRef, Instance, ToStringVar, ToVar};
-use super::ppb::{get_url_loader, get_url_request, get_url_response};
+use super::ppb::{get_url_loader, get_url_request};
 use ppb::{URLRequestInfoIf, URLResponseInfoIf, URLLoaderIf};
 use std::option::{Option, Some, None};
 use std::{fmt, default, str};
