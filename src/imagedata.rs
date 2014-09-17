@@ -20,8 +20,13 @@ use std::ops;
 use std::rc::Rc;
 
 use super::ffi;
-use super::{ImageData, Resource};
+use super::{Resource};
 use super::ppb;
+use ppb::ImageDataIf;
+
+#[deriving(Hash, Eq, PartialEq, Show)] pub struct ImageData(ffi::PP_Resource);
+
+impl_resource_for!(ImageData ImageDataRes)
 
 #[deriving(Eq, PartialEq, Hash, Clone)]
 pub enum Format {
@@ -71,7 +76,7 @@ impl Description {
 }
 
 pub struct Map_ {
-    pub img: super::ImageData,
+    pub img: ImageData,
     pub desc: Description,
     ptr: *mut c_void,
 }
@@ -104,7 +109,7 @@ pub fn native_image_data_format() -> Format {
     Format::from_ffi(ppb::get_image_data().native_image_data_format())
 }
 
-impl super::ImageData {
+impl ImageData {
     pub fn describe(&self) -> Option<Description> {
         ppb::get_image_data()
             .describe(self.unwrap())

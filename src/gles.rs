@@ -26,9 +26,13 @@ use std::str::MaybeOwned;
 use std::c_str::CString;
 use libc;
 use libc::c_void;
-use super::{Context3d, Resource, Callback};
+use super::{Resource, Callback};
 use super::ppb;
 use super::ppb::get_gles2;
+use ffi;
+
+#[deriving(Hash, Eq, PartialEq, Show)]
+pub struct Context3d(ffi::PP_Resource);
 
 #[allow(missing_doc)] pub mod types {
     use super::super::ffi;
@@ -352,7 +356,8 @@ macro_rules! call_gl_fun(
     })
 )
 pub mod traits {
-    use super::super::{Context3d, Resource};
+    use super::super::{Resource};
+    use super::Context3d;
     use super::{types, consts};
     use super::super::ppb::get_gles2;
     use super::{BufferType, BoundBuffer, Ctor,    BufferObject,
@@ -981,7 +986,7 @@ impl BoundTexBuffer {
                                                    internal_format.to_ffi() as i32,
                                                    size.width as types::Int,
                                                    size.height as types::Int,
-                                                   0,
+                                                   0i32,
                                                    format.to_ffi(),
                                                    type_,
                                                    buf.map_or(null(),
@@ -1413,8 +1418,9 @@ impl_get_query_ret_type!(Renderer               => consts::RENDERER -> MaybeOwne
 impl_get_query_ret_type!(Version                => consts::VERSION -> MaybeOwned<'static>)
 impl_get_query_ret_type!(ShadingLanguageVersion => consts::SHADING_LANGUAGE_VERSION -> MaybeOwned<'static>)
 
+impl_resource_for!(Context3d Graphics3DRes)
 
-impl super::Context3d {
+impl Context3d {
     fn gen_vert_shader(&self) -> VertexShader {
         let handle = call_gl_fun!(get_gles2() -> CreateShader => (self, consts::VERTEX_SHADER));
         VertexShader(handle)
@@ -1497,7 +1503,8 @@ impl super::Context3d {
                                               mask))
     }
     pub fn swap_buffers<T: Callback>(&self, next_frame: T) {
-        use super::Callback;
+        use super::{Callback, PostToSelf};
+        use ppb::Graphics3DIf;
         let interface = ppb::get_graphics_3d();
 
         let cb = next_frame.to_ffi_callback();

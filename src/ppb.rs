@@ -216,6 +216,7 @@ macro_rules! impl_fun(
         #[inline(never)] fn failure() -> ! {
             fail!("Interface function \"{}\" missing!", stringify!($fun))
         }
+        println!("calling `{}`", stringify!($fun));
         let f = $fun.unwrap_or_else(failure);
         f( $($arg),* )
     });
@@ -223,53 +224,78 @@ macro_rules! impl_fun(
         #[inline(never)] fn failure() -> ! {
             fail!("Interface function \"{}\" missing!", stringify!($fun))
         }
+        println!("calling `{}`", stringify!($fun));
         let f = $fun.unwrap_or_else(failure);
         f()
     })
 )
 
-impl ffi::Struct_PPB_Core_1_0 {
-    pub fn get_time_ticks(&self) -> Ticks {
+pub trait CoreIf {
+    fn get_time_ticks(&self) -> Ticks;
+    fn get_time(&self) -> Time;
+}
+impl CoreIf for ffi::Struct_PPB_Core_1_0 {
+    fn get_time_ticks(&self) -> Ticks {
         impl_fun!(self.GetTimeTicks)
     }
-    pub fn get_time(&self) -> Time {
+    fn get_time(&self) -> Time {
         impl_fun!(self.GetTime)
     }
 }
-impl ffi::Struct_PPB_Var_1_2 {
-    pub fn add_ref(&self, var: &Struct_PP_Var) {
+pub trait VarIf {
+    fn add_ref(&self, var: &Struct_PP_Var);
+    fn remove_ref(&self, var: Struct_PP_Var);
+    fn var_from_utf8(&self, string: &str) -> Struct_PP_Var;
+    fn var_to_utf8(&self, string: &Struct_PP_Var) -> String;
+}
+impl VarIf for ffi::Struct_PPB_Var_1_2 {
+    fn add_ref(&self, var: &Struct_PP_Var) {
         impl_fun!(self.AddRef => (*var))
     }
-    pub fn remove_ref(&self, var: Struct_PP_Var) {
+    fn remove_ref(&self, var: Struct_PP_Var) {
         impl_fun!(self.Release => (var))
     }
 
-    pub fn var_from_utf8(&self, string: &str) -> Struct_PP_Var {
+    fn var_from_utf8(&self, string: &str) -> Struct_PP_Var {
         impl_fun!(self.VarFromUtf8 => (string.as_ptr() as *const i8, string.len() as u32))
     }
-    pub fn var_to_utf8(&self, string: &Struct_PP_Var) -> String {
+    fn var_to_utf8(&self, string: &Struct_PP_Var) -> String {
         let mut len: u32 = unsafe { intrinsics::uninit() };
         let buf = impl_fun!(self.VarToUtf8 => (*string, &mut len as *mut u32));
         unsafe { string::raw::from_buf_len(buf as *const u8, len as uint) }
     }
 }
-impl ffi::Struct_PPB_Console_1_0 {
-    pub fn log(&self, inst: PP_Instance, lvl: PP_LogLevel, msg: &Struct_PP_Var) {
+pub trait ConsoleIf {
+    fn log(&self, inst: PP_Instance, lvl: PP_LogLevel, msg: &Struct_PP_Var);
+    fn log_with_source(&self,
+                       inst: PP_Instance,
+                       lvl: PP_LogLevel,
+                       src: &Struct_PP_Var,
+                       msg: &Struct_PP_Var);
+}
+impl ConsoleIf for ffi::Struct_PPB_Console_1_0 {
+    fn log(&self, inst: PP_Instance, lvl: PP_LogLevel, msg: &Struct_PP_Var) {
         impl_fun!(self.Log => (inst, lvl, *msg))
     }
-    pub fn log_with_source(&self,
-                           inst: PP_Instance,
-                           lvl: PP_LogLevel,
-                           src: &Struct_PP_Var,
-                           msg: &Struct_PP_Var) {
+    fn log_with_source(&self,
+                       inst: PP_Instance,
+                       lvl: PP_LogLevel,
+                       src: &Struct_PP_Var,
+                       msg: &Struct_PP_Var) {
         impl_fun!(self.LogWithSource => (inst, lvl, *src, *msg))
     }
 }
-impl ffi::Struct_PPB_VarArrayBuffer_1_0 {
-    pub fn create(&self, len: uint) -> Struct_PP_Var {
+pub trait VarArrayBufferIf {
+    fn create(&self, len: uint) -> Struct_PP_Var;
+    fn byte_len(&self, var: &Struct_PP_Var) -> Option<uint>;
+    fn map(&self, var: &Struct_PP_Var) -> *mut libc::c_void;
+    fn unmap(&self, var: &Struct_PP_Var);
+}
+impl VarArrayBufferIf for ffi::Struct_PPB_VarArrayBuffer_1_0 {
+    fn create(&self, len: uint) -> Struct_PP_Var {
         impl_fun!(self.Create => (len as u32))
     }
-    pub fn byte_len(&self, var: &Struct_PP_Var) -> Option<uint> {
+    fn byte_len(&self, var: &Struct_PP_Var) -> Option<uint> {
         let mut len = unsafe { intrinsics::uninit() };
         if impl_fun!(self.ByteLength => (*var, &mut len as *mut libc::uint32_t)) != 0 {
             Some(len as uint)
@@ -277,28 +303,40 @@ impl ffi::Struct_PPB_VarArrayBuffer_1_0 {
             None
         }
     }
-    pub fn map(&self, var: &Struct_PP_Var) -> *mut libc::c_void {
+    fn map(&self, var: &Struct_PP_Var) -> *mut libc::c_void {
         impl_fun!(self.Map => (*var))
     }
-    pub fn unmap(&self, var: &Struct_PP_Var) {
+    fn unmap(&self, var: &Struct_PP_Var) {
         impl_fun!(self.Unmap => (*var))
     }
 }
-
-impl ffi::Struct_PPB_Messaging_1_0 {
+pub trait MessagingIf {
+    fn post_message(self, instance: PP_Instance, msg: Struct_PP_Var);
+}
+impl MessagingIf for ffi::Struct_PPB_Messaging_1_0 {
     fn post_message(self, instance: PP_Instance, msg: Struct_PP_Var) {
         impl_fun!(self.PostMessage => (instance, msg))
     }
 }
-
-impl ffi::Struct_PPB_MessageLoop_1_0 {
-    pub fn create(&self, instance: &PP_Instance) -> PP_Resource {
+pub trait MessageLoopIf {
+    fn create(&self, instance: &PP_Instance) -> PP_Resource;
+    fn get_for_main_thread(&self) -> PP_Resource;
+    fn get_current(&self) -> Option<PP_Resource>;
+    fn attach_to_current_thread(&self, msg_loop: &PP_Resource) -> libc::int32_t;
+    fn run(&self, msg_loop: &PP_Resource) -> libc::int32_t;
+    fn post_work(&self, to_loop: &PP_Resource,
+                 callback: Struct_PP_CompletionCallback,
+                 delay_ms: libc::int64_t) -> libc::int32_t;
+    fn post_quit(&self, msg_loop: &PP_Resource, full: bool) -> libc::int32_t;
+}
+impl MessageLoopIf for ffi::Struct_PPB_MessageLoop_1_0 {
+    fn create(&self, instance: &PP_Instance) -> PP_Resource {
         impl_fun!(self.Create => (*instance))
     }
-    pub fn get_for_main_thread(&self) -> PP_Resource {
+    fn get_for_main_thread(&self) -> PP_Resource {
         impl_fun!(self.GetForMainThread)
     }
-    pub fn get_current(&self) -> Option<PP_Resource> {
+    fn get_current(&self) -> Option<PP_Resource> {
         let current = impl_fun!(self.GetCurrent);
         if current == unsafe { mem::transmute(0i32) } {
             None
@@ -306,37 +344,49 @@ impl ffi::Struct_PPB_MessageLoop_1_0 {
             Some(current)
         }
     }
-    pub fn attach_to_current_thread(&self, msg_loop: &PP_Resource) -> libc::int32_t {
+    fn attach_to_current_thread(&self, msg_loop: &PP_Resource) -> libc::int32_t {
         impl_fun!(self.AttachToCurrentThread => (*msg_loop))
     }
-    pub fn run(&self, msg_loop: &PP_Resource) -> libc::int32_t {
+    fn run(&self, msg_loop: &PP_Resource) -> libc::int32_t {
         impl_fun!(self.Run => (*msg_loop))
     }
-    pub fn post_work(&self, to_loop: &PP_Resource,
-                     callback: Struct_PP_CompletionCallback,
-                     delay_ms: libc::int64_t) -> libc::int32_t {
+    fn post_work(&self, to_loop: &PP_Resource,
+                 callback: Struct_PP_CompletionCallback,
+                 delay_ms: libc::int64_t) -> libc::int32_t {
         impl_fun!(self.PostWork => (*to_loop, callback, delay_ms))
     }
-    pub fn post_quit(&self, msg_loop: &PP_Resource, full: bool) -> libc::int32_t {
+    fn post_quit(&self, msg_loop: &PP_Resource, full: bool) -> libc::int32_t {
         impl_fun!(self.PostQuit => (*msg_loop, full.to_ffi_bool()))
     }
 }
-impl ffi::Struct_PPB_ImageData_1_0 {
-    pub fn native_image_data_format(&self) -> ffi::PP_ImageDataFormat {
+pub trait ImageDataIf {
+    fn native_image_data_format(&self) -> ffi::PP_ImageDataFormat;
+    fn is_image_data_format_supported(&self, format: ffi::PP_ImageDataFormat) -> bool;
+    fn create(&self,
+              instance: PP_Instance,
+              format: ffi::PP_ImageDataFormat,
+              size: ffi::PP_Size,
+              init_to_zero: bool) -> Option<PP_Resource>;
+    fn describe(&self, img: PP_Resource) -> Option<ffi::Struct_PP_ImageDataDesc>;
+    fn map(&self, img: &PP_Resource) -> *mut libc::c_void;
+    fn unmap(&self, img: &PP_Resource);
+}
+impl ImageDataIf for ffi::Struct_PPB_ImageData_1_0 {
+    fn native_image_data_format(&self) -> ffi::PP_ImageDataFormat {
         impl_fun!(self.GetNativeImageDataFormat)
     }
-    pub fn is_image_data_format_supported(&self, format: ffi::PP_ImageDataFormat) -> bool {
+    fn is_image_data_format_supported(&self, format: ffi::PP_ImageDataFormat) -> bool {
         if impl_fun!(self.IsImageDataFormatSupported => (format)) != 0 {
             true
         } else {
             false
         }
     }
-    pub fn create(&self,
-                  instance: PP_Instance,
-                  format: ffi::PP_ImageDataFormat,
-                  size: ffi::PP_Size,
-                  init_to_zero: bool) -> Option<PP_Resource> {
+    fn create(&self,
+              instance: PP_Instance,
+              format: ffi::PP_ImageDataFormat,
+              size: ffi::PP_Size,
+              init_to_zero: bool) -> Option<PP_Resource> {
         let res = impl_fun!(self.Create => (instance,
                                             format,
                                             &size as *const ffi::PP_Size,
@@ -347,7 +397,7 @@ impl ffi::Struct_PPB_ImageData_1_0 {
             None
         }
     }
-    pub fn describe(&self, img: PP_Resource) -> Option<ffi::Struct_PP_ImageDataDesc> {
+    fn describe(&self, img: PP_Resource) -> Option<ffi::Struct_PP_ImageDataDesc> {
         let mut desc = unsafe { intrinsics::uninit() };
         if impl_fun!(self.Describe => (img,
                                        &mut desc as *mut ffi::Struct_PP_ImageDataDesc)) != 0 {
@@ -356,15 +406,23 @@ impl ffi::Struct_PPB_ImageData_1_0 {
             None
         }
     }
-    pub fn map(&self, img: &PP_Resource) -> *mut libc::c_void {
+    fn map(&self, img: &PP_Resource) -> *mut libc::c_void {
         impl_fun!(self.Map => (*img))
     }
-    pub fn unmap(&self, img: &PP_Resource) {
+    fn unmap(&self, img: &PP_Resource) {
         impl_fun!(self.Unmap => (*img))
     }
 }
-impl ffi::Struct_PPB_URLLoader_1_0 {
-    pub fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
+pub trait URLLoaderIf {
+    fn create(&self, instance: PP_Instance) -> Option<PP_Resource>;
+    fn is(&self, res: PP_Resource) -> bool;
+    fn open(&self,
+            loader: PP_Resource,
+            request: PP_Resource,
+            callback: ffi::Struct_PP_CompletionCallback) -> super::Result<()>;
+}
+impl URLLoaderIf for ffi::Struct_PPB_URLLoader_1_0 {
+    fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
         let loader = impl_fun!(self.Create => (instance));
         if loader == 0 {
             None
@@ -372,20 +430,37 @@ impl ffi::Struct_PPB_URLLoader_1_0 {
             Some(loader)
         }
     }
-    pub fn is(&self, res: PP_Resource) -> bool {
+    fn is(&self, res: PP_Resource) -> bool {
         let is = impl_fun!(self.IsURLLoader => (res));
         is != 0
     }
-    pub fn open(&self,
-                loader: PP_Resource,
-                request: PP_Resource,
-                callback: ffi::Struct_PP_CompletionCallback) -> super::Result<()> {
+    fn open(&self,
+            loader: PP_Resource,
+            request: PP_Resource,
+            callback: ffi::Struct_PP_CompletionCallback) -> super::Result<()> {
         let code = Code::from_i32(impl_fun!(self.Open => (loader, request, callback)));
         code.to_result(|_| () )
     }
 }
-impl ffi::Struct_PPB_URLRequestInfo_1_0 {
-    pub fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
+pub trait URLRequestInfoIf {
+    fn create(&self, instance: PP_Instance) -> Option<PP_Resource>;
+    fn is(&self, res: PP_Resource) -> bool;
+    fn property(&self,
+                res: PP_Resource,
+                prop: ffi::PP_URLRequestProperty,
+                value: PP_Var) -> bool;
+    fn append_file_to_body(&self,
+                           res: PP_Resource,
+                           file: PP_Resource,
+                           start_offset: Option<i64>,
+                           bytes: Option<i64>,
+                           last_modified: Option<ffi::PP_Time>) -> bool;
+    fn append_blob_to_body(&self,
+                           res: PP_Resource,
+                           data: &Vec<u8>) -> bool;
+}
+impl URLRequestInfoIf for ffi::Struct_PPB_URLRequestInfo_1_0 {
+    fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
         let loader = impl_fun!(self.Create => (instance));
         if loader == 0 {
             None
@@ -393,23 +468,23 @@ impl ffi::Struct_PPB_URLRequestInfo_1_0 {
             Some(loader)
         }
     }
-    pub fn is(&self, res: PP_Resource) -> bool {
+    fn is(&self, res: PP_Resource) -> bool {
         let is = impl_fun!(self.IsURLRequestInfo => (res));
         is != 0
     }
-    pub fn property(&self,
-                    res: PP_Resource,
-                    prop: ffi::PP_URLRequestProperty,
-                    value: PP_Var) -> bool {
+    fn property(&self,
+                res: PP_Resource,
+                prop: ffi::PP_URLRequestProperty,
+                value: PP_Var) -> bool {
         let was_set = impl_fun!(self.SetProperty => (res, prop, value));
         was_set != 0
     }
-    pub fn append_file_to_body(&self,
-                               res: PP_Resource,
-                               file: PP_Resource,
-                               start_offset: Option<i64>,
-                               bytes: Option<i64>,
-                               last_modified: Option<ffi::PP_Time>) -> bool {
+    fn append_file_to_body(&self,
+                           res: PP_Resource,
+                           file: PP_Resource,
+                           start_offset: Option<i64>,
+                           bytes: Option<i64>,
+                           last_modified: Option<ffi::PP_Time>) -> bool {
         let was_appended = impl_fun!
             (self.AppendFileToBody => (res,
                                        file,
@@ -418,9 +493,9 @@ impl ffi::Struct_PPB_URLRequestInfo_1_0 {
                                        last_modified.unwrap_or(0.0f64)));
         was_appended != 0
     }
-    pub fn append_blob_to_body(&self,
-                               res: PP_Resource,
-                               data: &Vec<u8>) -> bool {
+    fn append_blob_to_body(&self,
+                           res: PP_Resource,
+                           data: &Vec<u8>) -> bool {
         let was_appended = impl_fun!
             (self.AppendDataToBody => (res,
                                        data.as_ptr() as *const libc::c_void,
@@ -429,70 +504,99 @@ impl ffi::Struct_PPB_URLRequestInfo_1_0 {
     }
 
 }
-impl ffi::Struct_PPB_URLResponseInfo_1_0 {
-    pub fn is(&self, res: &PP_Resource) -> bool {
+pub trait URLResponseInfoIf {
+    fn is(&self, res: &PP_Resource) -> bool;
+    fn property(&self,
+                res: &PP_Resource,
+                property: ffi::PP_URLResponseProperty) -> ffi::PP_Var;
+    fn body_as_file(&self, res: &PP_Resource) -> PP_Resource;
+}
+impl URLResponseInfoIf for ffi::Struct_PPB_URLResponseInfo_1_0 {
+    fn is(&self, res: &PP_Resource) -> bool {
         let is = impl_fun!(self.IsURLResponseInfo => (*res));
         is != 0
     }
-    pub fn property(&self,
-                    res: &PP_Resource,
-                    property: ffi::PP_URLResponseProperty) -> ffi::PP_Var {
+    fn property(&self,
+                res: &PP_Resource,
+                property: ffi::PP_URLResponseProperty) -> ffi::PP_Var {
         impl_fun!(self.GetProperty => (*res, property))
     }
-    pub fn body_as_file(&self, res: &PP_Resource) -> PP_Resource {
+    fn body_as_file(&self, res: &PP_Resource) -> PP_Resource {
         impl_fun!(self.GetBodyAsFileRef => (*res))
     }
 
 }
-impl ffi::Struct_PPB_InputEvent_1_0 {
-    pub fn request(&self,
-                   instance: &PP_Instance,
-                   classes: u32) -> Code {
+pub trait InputEventIf {
+    fn request(&self,
+               instance: &PP_Instance,
+               classes: u32) -> Code;
+    fn request_filtering(&self,
+                         instance: &PP_Instance,
+                         classes: u32) -> Code;
+    fn cancel_requests(&self,
+                       instance: &PP_Instance,
+                       classes: u32);
+    fn is(&self, res: &PP_Resource) -> bool;
+    fn type_of(&self, res: &PP_Resource) -> ffi::PP_InputEvent_Type;
+    fn timestamp(&self, res: &PP_Resource) -> ffi::PP_TimeTicks;
+    fn modifiers(&self, res: &PP_Resource) -> u32;
+}
+impl InputEventIf for ffi::Struct_PPB_InputEvent_1_0 {
+    fn request(&self,
+               instance: &PP_Instance,
+               classes: u32) -> Code {
         Code::from_i32(impl_fun!(self.RequestInputEvents => (*instance, classes)))
     }
-    pub fn request_filtering(&self,
-                             instance: &PP_Instance,
-                             classes: u32) -> Code {
+    fn request_filtering(&self,
+                         instance: &PP_Instance,
+                         classes: u32) -> Code {
         Code::from_i32(impl_fun!(self.RequestFilteringInputEvents => (*instance, classes)))
     }
-    pub fn cancel_requests(&self,
-                           instance: &PP_Instance,
-                           classes: u32) {
+    fn cancel_requests(&self,
+                       instance: &PP_Instance,
+                       classes: u32) {
         impl_fun!(self.ClearInputEventRequest => (*instance, classes))
     }
-    pub fn is(&self, res: &PP_Resource) -> bool {
+    fn is(&self, res: &PP_Resource) -> bool {
         let is = impl_fun!(self.IsInputEvent => (*res));
         is != 0
     }
-    pub fn type_of(&self, res: &PP_Resource) -> ffi::PP_InputEvent_Type {
+    fn type_of(&self, res: &PP_Resource) -> ffi::PP_InputEvent_Type {
         impl_fun!(self.GetType => (*res))
     }
-    pub fn timestamp(&self, res: &PP_Resource) -> ffi::PP_TimeTicks {
+    fn timestamp(&self, res: &PP_Resource) -> ffi::PP_TimeTicks {
         impl_fun!(self.GetTimeStamp => (*res))
     }
-    pub fn modifiers(&self, res: &PP_Resource) -> u32 {
+    fn modifiers(&self, res: &PP_Resource) -> u32 {
         impl_fun!(self.GetModifiers => (*res))
     }
 }
-impl ffi::Struct_PPB_MouseInputEvent_1_1 {
-    pub fn is(&self, res: &PP_Resource) -> bool {
+pub trait MouseInputEventIf {
+    fn is(&self, res: &PP_Resource) -> bool;
+    fn button(&self, res: &PP_Resource) -> ffi::PP_InputEvent_MouseButton;
+    fn point(&self, res: &PP_Resource) -> ffi::PP_FloatPoint;
+    fn click_count(&self, res: &PP_Resource) -> i32;
+    fn delta(&self, res: &PP_Resource) -> ffi::PP_FloatPoint;
+}
+impl MouseInputEventIf for ffi::Struct_PPB_MouseInputEvent_1_1 {
+    fn is(&self, res: &PP_Resource) -> bool {
         let is = impl_fun!(self.IsMouseInputEvent => (*res));
         is != 0
     }
-    pub fn button(&self, res: &PP_Resource) -> ffi::PP_InputEvent_MouseButton {
+    fn button(&self, res: &PP_Resource) -> ffi::PP_InputEvent_MouseButton {
         impl_fun!(self.GetButton => (*res))
     }
-    pub fn point(&self, res: &PP_Resource) -> ffi::PP_FloatPoint {
+    fn point(&self, res: &PP_Resource) -> ffi::PP_FloatPoint {
         let p = impl_fun!(self.GetPosition => (*res));
         ffi::Struct_PP_FloatPoint {
             x: p.x as f32,
             y: p.y as f32,
         }
     }
-    pub fn click_count(&self, res: &PP_Resource) -> i32 {
+    fn click_count(&self, res: &PP_Resource) -> i32 {
         impl_fun!(self.GetClickCount => (*res))
     }
-    pub fn delta(&self, res: &PP_Resource) -> ffi::PP_FloatPoint {
+    fn delta(&self, res: &PP_Resource) -> ffi::PP_FloatPoint {
         let p = impl_fun!(self.GetMovement => (*res));
         ffi::Struct_PP_FloatPoint {
             x: p.x as f32,
@@ -500,66 +604,105 @@ impl ffi::Struct_PPB_MouseInputEvent_1_1 {
         }
     }
 }
-impl ffi::Struct_PPB_KeyboardInputEvent_1_2 {
-    pub fn is(&self, res: &PP_Resource) -> bool {
+
+pub trait KeyboardInputEventIf {
+    fn is(&self, res: &PP_Resource) -> bool;
+    fn key_code(&self, res: &PP_Resource) -> u32;
+    fn text(&self, res: &PP_Resource) -> ffi::PP_Var;
+}
+impl KeyboardInputEventIf for ffi::Struct_PPB_KeyboardInputEvent_1_2 {
+    fn is(&self, res: &PP_Resource) -> bool {
         let is = impl_fun!(self.IsKeyboardInputEvent => (*res));
         is != 0
     }
-    pub fn key_code(&self, res: &PP_Resource) -> u32 {
+    fn key_code(&self, res: &PP_Resource) -> u32 {
         impl_fun!(self.GetKeyCode => (*res))
     }
-    pub fn text(&self, res: &PP_Resource) -> ffi::PP_Var {
+    fn text(&self, res: &PP_Resource) -> ffi::PP_Var {
         impl_fun!(self.GetCharacterText => (*res))
     }
 }
-impl ffi::Struct_PPB_TouchInputEvent_1_0 {
-    pub fn is(&self, res: &PP_Resource) -> bool {
+pub trait TouchInputEventIf {
+    fn is(&self, res: &PP_Resource) -> bool;
+    fn count(&self, res: &PP_Resource, list: ffi::PP_TouchListType) -> u32;
+    fn by_index(&self,
+                res: &PP_Resource,
+                list_type: ffi::PP_TouchListType,
+                index: u32) -> ffi::PP_TouchPoint;
+    fn by_id(&self,
+             res: &PP_Resource,
+             list_type: ffi::PP_TouchListType,
+             id: u32) -> ffi::PP_TouchPoint;
+}
+impl TouchInputEventIf for ffi::Struct_PPB_TouchInputEvent_1_0 {
+    fn is(&self, res: &PP_Resource) -> bool {
         let is = impl_fun!(self.IsTouchInputEvent => (*res));
         is != 0
     }
-    pub fn count(&self, res: &PP_Resource, list: ffi::PP_TouchListType) -> u32 {
+    fn count(&self, res: &PP_Resource, list: ffi::PP_TouchListType) -> u32 {
         impl_fun!(self.GetTouchCount => (*res, list))
     }
-    pub fn by_index(&self,
-                    res: &PP_Resource,
-                    list_type: ffi::PP_TouchListType,
-                    index: u32) -> ffi::PP_TouchPoint {
+    fn by_index(&self,
+                res: &PP_Resource,
+                list_type: ffi::PP_TouchListType,
+                index: u32) -> ffi::PP_TouchPoint {
         impl_fun!(self.GetTouchByIndex => (*res, list_type, index))
     }
-    pub fn by_id(&self,
-                 res: &PP_Resource,
-                 list_type: ffi::PP_TouchListType,
-                 id: u32) -> ffi::PP_TouchPoint {
+    fn by_id(&self,
+             res: &PP_Resource,
+             list_type: ffi::PP_TouchListType,
+             id: u32) -> ffi::PP_TouchPoint {
         impl_fun!(self.GetTouchById => (*res, list_type, id))
     }
 }
-impl ffi::Struct_PPB_WheelInputEvent_1_0 {
-    pub fn is(&self, res: &PP_Resource) -> bool {
+pub trait WheelInputEventIf {
+    fn is(&self, res: &PP_Resource) -> bool;
+    fn delta(&self, res: &PP_Resource) -> ffi::PP_FloatPoint;
+    fn ticks(&self, res: &PP_Resource) -> ffi::PP_FloatPoint;
+    fn scroll_by_page(&self, res: &PP_Resource) -> bool;
+}
+impl WheelInputEventIf for ffi::Struct_PPB_WheelInputEvent_1_0 {
+    fn is(&self, res: &PP_Resource) -> bool {
         let is = impl_fun!(self.IsWheelInputEvent => (*res));
         is != 0
     }
-    pub fn delta(&self, res: &PP_Resource) -> ffi::PP_FloatPoint {
+    fn delta(&self, res: &PP_Resource) -> ffi::PP_FloatPoint {
         impl_fun!(self.GetDelta => (*res))
     }
-    pub fn ticks(&self, res: &PP_Resource) -> ffi::PP_FloatPoint {
+    fn ticks(&self, res: &PP_Resource) -> ffi::PP_FloatPoint {
         impl_fun!(self.GetTicks => (*res))
     }
-    pub fn scroll_by_page(&self, res: &PP_Resource) -> bool {
+    fn scroll_by_page(&self, res: &PP_Resource) -> bool {
         let r = impl_fun!(self.GetScrollByPage => (*res));
         r != 0
     }
 }
-impl ffi::Struct_PPB_Graphics3D_1_0 {
-    pub fn attrib_max_value(&self, instance: PP_Instance, attribute: i32) -> Result<i32> {
+pub trait Graphics3DIf {
+    fn attrib_max_value(&self, instance: PP_Instance, attribute: i32) -> Result<i32>;
+    fn attribs(&self,
+               ctxt: PP_Resource,
+               attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Result<Vec<u32>>;
+    fn status(&self, ctxt: PP_Resource) -> Code;
+    fn is(&self, res: PP_Resource) -> bool;
+    fn resize_buffers(&self, ctxt: PP_Resource, width: i32, height: i32) -> Code;
+    fn set_attribs(&self,
+                   ctxt: PP_Resource,
+                   mut attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Code;
+    fn swap_buffers(&self,
+                    ctxt: PP_Resource,
+                    callback: ffi::Struct_PP_CompletionCallback) -> Code;
+}
+impl Graphics3DIf for ffi::Struct_PPB_Graphics3D_1_0 {
+    fn attrib_max_value(&self, instance: PP_Instance, attribute: i32) -> Result<i32> {
         let mut value: i32 = 0;
         let r = impl_fun!(self.GetAttribMaxValue => (instance,
                                                      attribute,
                                                      &mut value as *mut i32));
         Code::from_i32(r).to_result(|_| value)
     }
-    pub fn attribs(&self,
-                   ctxt: PP_Resource,
-                   attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Result<Vec<u32>> {
+    fn attribs(&self,
+               ctxt: PP_Resource,
+               attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Result<Vec<u32>> {
         let attribs: Vec<ffi::PP_Graphics3DAttrib> = attribs
             .move_iter()
             .flat_map(|attrib| {
@@ -584,34 +727,44 @@ impl ffi::Struct_PPB_Graphics3D_1_0 {
             Err(r)
         }
     }
-    pub fn status(&self, ctxt: PP_Resource) -> Code {
+    fn status(&self, ctxt: PP_Resource) -> Code {
         Code::from_i32(impl_fun!(self.GetError => (ctxt)))
     }
-    pub fn is(&self, res: PP_Resource) -> bool {
+    fn is(&self, res: PP_Resource) -> bool {
         let r = impl_fun!(self.IsGraphics3D => (res));
         r != 0
     }
-    pub fn resize_buffers(&self, ctxt: PP_Resource, width: i32, height: i32) -> Code {
+    fn resize_buffers(&self, ctxt: PP_Resource, width: i32, height: i32) -> Code {
         Code::from_i32(impl_fun!(self.ResizeBuffers => (ctxt, width, height)))
     }
-    pub fn set_attribs(&self,
-                       ctxt: PP_Resource,
-                       mut attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Code {
+    fn set_attribs(&self,
+                   ctxt: PP_Resource,
+                   mut attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Code {
         attribs.push(ffi::PP_GRAPHICS3DATTRIB_NONE);
         Code::from_i32(impl_fun!(self.SetAttribs => (ctxt, attribs.as_ptr() as *const i32)))
     }
-    pub fn swap_buffers(&self,
-                        ctxt: PP_Resource,
-                        callback: ffi::Struct_PP_CompletionCallback) -> Code {
+    fn swap_buffers(&self,
+                    ctxt: PP_Resource,
+                    callback: ffi::Struct_PP_CompletionCallback) -> Code {
         Code::from_i32(impl_fun!(self.SwapBuffers => (ctxt, callback)))
     }
 }
-impl ffi::Struct_PPB_View_1_1 {
-    pub fn is(&self, res: PP_Resource) -> bool {
+pub trait ViewIf {
+    fn is(&self, res: PP_Resource) -> bool;
+    fn rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect>;
+    fn is_fullscreen(&self, res: PP_Resource) -> bool;
+    fn is_visible(&self, res: PP_Resource) -> bool;
+    fn is_page_visible(&self, res: PP_Resource) -> bool;
+    fn clip_rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect>;
+    fn device_scale(&self, res: PP_Resource) -> f32;
+    fn css_scale(&self, res: PP_Resource) -> f32;
+}
+impl ViewIf for ffi::Struct_PPB_View_1_1 {
+    fn is(&self, res: PP_Resource) -> bool {
         let r = impl_fun!(self.IsView => (res));
         r != 0
     }
-    pub fn rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect> {
+    fn rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect> {
         let mut dest = unsafe { uninitialized() };
         let ok = impl_fun!(self.GetRect => (res, &mut dest as *mut ffi::Struct_PP_Rect));
         if ok != 0 {
@@ -620,16 +773,16 @@ impl ffi::Struct_PPB_View_1_1 {
             None
         }
     }
-    pub fn is_fullscreen(&self, res: PP_Resource) -> bool {
+    fn is_fullscreen(&self, res: PP_Resource) -> bool {
         (impl_fun!(self.IsFullscreen => (res))) != 0
     }
-    pub fn is_visible(&self, res: PP_Resource) -> bool {
+    fn is_visible(&self, res: PP_Resource) -> bool {
         (impl_fun!(self.IsVisible => (res))) != 0
     }
-    pub fn is_page_visible(&self, res: PP_Resource) -> bool {
+    fn is_page_visible(&self, res: PP_Resource) -> bool {
         (impl_fun!(self.IsPageVisible => (res))) != 0
     }
-    pub fn clip_rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect> {
+    fn clip_rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect> {
         let mut dest = unsafe { uninitialized() };
         let ok = impl_fun!(self.GetClipRect => (res, &mut dest as *mut ffi::Struct_PP_Rect));
         if ok != 0 {
@@ -638,21 +791,11 @@ impl ffi::Struct_PPB_View_1_1 {
             None
         }
     }
-    pub fn device_scale(&self, res: PP_Resource) -> f32 {
+    fn device_scale(&self, res: PP_Resource) -> f32 {
         impl_fun!(self.GetDeviceScale => (res))
     }
-    pub fn css_scale(&self, res: PP_Resource) -> f32 {
+    fn css_scale(&self, res: PP_Resource) -> f32 {
         impl_fun!(self.GetCSSScale => (res))
-    }
-}
-
-pub trait MessagingInterface {
-    fn post_message<T: ToVar>(&self, message: T);
-}
-
-impl MessagingInterface for super::Messaging {
-    fn post_message<T: ToVar>(&self, message: T) {
-      get_messaging().post_message(self.unwrap(), message.to_var())
     }
 }
 

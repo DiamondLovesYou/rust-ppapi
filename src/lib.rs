@@ -95,7 +95,7 @@ extern crate sync;
 extern crate rand;
 extern crate serialize;
 extern crate http;
-extern crate iurl = "url";
+extern crate "url" as iurl;
 extern crate libc;
 extern crate core;
 extern crate alloc;
@@ -116,6 +116,77 @@ use std::fmt;
 
 use log::LogRecord;
 
+use ppb::{get_url_loader, get_url_request, get_url_response};
+use ppb::{ViewIf, MessageLoopIf, VarIf, ImageDataIf, URLLoaderIf,
+          URLRequestInfoIf};
+
+use font::Font;
+use gles::Context3d;
+use input::{KeyboardInputEvent,
+            MouseInputEvent,
+            WheelInputEvent,
+            TouchInputEvent,
+            IMEInputEvent};
+use imagedata::ImageData;
+use url::{UrlLoader, UrlRequestInfo, UrlResponseInfo};
+
+macro_rules! impl_resource_for(
+    ($ty:ty $type_:ident) => (
+        impl Resource for $ty {
+            #[inline]
+            fn unwrap(&self) -> ::ffi::PP_Resource {
+                unsafe { ::std::mem::transmute_copy(self) }
+            }
+            #[inline]
+            fn type_of(&self) -> ::ResourceType {
+                ::$type_
+            }
+        }
+        impl $ty {
+            pub fn new(res: ::ffi::PP_Resource) -> $ty {
+                unsafe {
+                    ::std::mem::transmute_copy(&res)
+                }
+            }
+            pub fn new_bumped(res: ::ffi::PP_Resource) -> $ty {
+                let v: $ty = unsafe { ::std::mem::transmute_copy(&res) };
+                // bump the ref count:
+                unsafe { ::std::mem::forget(v.clone()) };
+                v
+            }
+        }
+        impl ::ToOption<::ffi::PP_Resource> for $ty {
+            fn to_option(from: &::ffi::PP_Resource) -> Option<$ty> {
+                if *from == 0 {
+                    None
+                } else {
+                    Some(unsafe {
+                        ::std::mem::transmute_copy(from)
+                    })
+                }
+            }
+        }
+    )
+)
+macro_rules! impl_clone_drop_for(
+    ($ty:ty) => (
+        impl Clone for $ty {
+            fn clone(&self) -> $ty {
+                println!("add ref: `{}`", self);
+                (ppb::get_core().AddRefResource.unwrap())(self.unwrap());
+                unsafe {
+                    mem::transmute_copy(self)
+                }
+            }
+        }
+        impl Drop for $ty {
+            fn drop(&mut self) {
+                println!("drop ref: `{}`", self);
+                (ppb::get_core().ReleaseResource.unwrap())(self.unwrap());
+            }
+        }
+    )
+)
 
 #[allow(missing_doc)] pub mod ffi;
 pub mod ppp;
@@ -440,25 +511,9 @@ pub trait Resource {
 pub trait ContextResource {
     fn get_device(&self) -> ffi::PP_Resource;
 }
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct Context3d(ffi::PP_Resource);
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct Context2d(ffi::PP_Resource);
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct View(ffi::PP_Resource);
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct MessageLoop(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct KeyboardInputEvent(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct MouseInputEvent(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct WheelInputEvent(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct TouchInputEvent(ffi::PP_Resource);
-#[deriving(Eq, Show)]
-pub struct IMEInputEvent {
-    res: ffi::PP_Resource,
-    pub string: String,
-    segments_len: uint,
-}
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlLoader(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlRequestInfo(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlResponseInfo(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct Font(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct ImageData(ffi::PP_Resource);
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct FileRef(ffi::PP_Resource);
 #[deriving(Clone, Hash, Eq, PartialEq, Show)]
 pub struct FileSliceRef(FileRef,
@@ -467,62 +522,6 @@ pub struct FileSliceRef(FileRef,
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct FileIo(ffi::PP_Resource);
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct Filesystem(ffi::PP_Resource);
 
-macro_rules! impl_resource_for(
-    ($ty:ty $type_:ident) => (
-        impl Resource for $ty {
-            #[inline]
-            fn unwrap(&self) -> ffi::PP_Resource {
-                unsafe { mem::transmute_copy(self) }
-            }
-            #[inline]
-            fn type_of(&self) -> ResourceType {
-                $type_
-            }
-        }
-        impl $ty {
-            pub fn new(res: ffi::PP_Resource) -> $ty {
-                unsafe {
-                    mem::transmute_copy(&res)
-                }
-            }
-            fn new_bumped(res: ffi::PP_Resource) -> $ty {
-                let v: $ty = unsafe { mem::transmute_copy(&res) };
-                // bump the ref count:
-                unsafe { mem::forget(v.clone()) };
-                v
-            }
-        }
-        impl ToOption<ffi::PP_Resource> for $ty {
-            fn to_option(from: &ffi::PP_Resource) -> Option<$ty> {
-                if *from == 0 {
-                    None
-                } else {
-                    Some(unsafe {
-                        mem::transmute_copy(from)
-                    })
-                }
-            }
-        }
-    )
-)
-macro_rules! impl_clone_drop_for(
-    ($ty:ty) => (
-        impl Clone for $ty {
-            fn clone(&self) -> $ty {
-                (ppb::get_core().AddRefResource.unwrap())(self.unwrap());
-                unsafe {
-                    mem::transmute_copy(self)
-                }
-            }
-        }
-        impl Drop for $ty {
-            fn drop(&mut self) {
-                (ppb::get_core().ReleaseResource.unwrap())(self.unwrap());
-            }
-        }
-    )
-)
-impl_resource_for!(Context3d Graphics3DRes)
 impl_clone_drop_for!(Context3d)
 impl_resource_for!(Context2d Graphics2DRes)
 impl_clone_drop_for!(Context2d)
@@ -530,17 +529,11 @@ impl_resource_for!(View ViewRes)
 impl_clone_drop_for!(View)
 impl_resource_for!(MessageLoop MessageLoopRes)
 impl_clone_drop_for!(MessageLoop)
-impl_resource_for!(KeyboardInputEvent KeyboardInputEventRes)
 impl_clone_drop_for!(KeyboardInputEvent)
-impl_resource_for!(MouseInputEvent MouseInputEventRes)
 impl_clone_drop_for!(MouseInputEvent)
-impl_resource_for!(WheelInputEvent WheelInputEventRes)
 impl_clone_drop_for!(WheelInputEvent)
-impl_resource_for!(TouchInputEvent TouchInputEventRes)
 impl_clone_drop_for!(TouchInputEvent)
-impl_resource_for!(Font FontRes)
 impl_clone_drop_for!(Font)
-impl_resource_for!(ImageData ImageDataRes)
 impl_clone_drop_for!(ImageData)
 impl_resource_for!(FileRef FileRefRes)
 impl_clone_drop_for!(FileRef)
@@ -548,44 +541,9 @@ impl_resource_for!(FileIo FileIoRes)
 impl_clone_drop_for!(FileIo)
 impl_resource_for!(Filesystem FilesystemRes)
 impl_clone_drop_for!(Filesystem)
-
-impl Resource for IMEInputEvent {
-    fn unwrap(&self) -> ffi::PP_Resource {
-        self.res
-    }
-    fn type_of(&self) -> ResourceType {
-        IMEInputEventRes
-    }
-}
-impl IMEInputEvent {
-    pub fn new(res: ffi::PP_Resource) -> IMEInputEvent {
-        let var = (ppb::get_ime_event().GetText.unwrap())(res);
-        let string = StringVar::new_from_var(var).to_string();
-        let seg_len = (ppb::get_ime_event().GetSegmentNumber.unwrap())(res);
-        IMEInputEvent {
-            res: res,
-            string: string,
-            segments_len: seg_len as uint,
-        }
-    }
-}
-impl cmp::PartialEq for IMEInputEvent {
-    fn eq(&self, rhs: &IMEInputEvent) -> bool {
-        self.res == rhs.res
-    }
-}
-impl<T: std::hash::Writer> hash::Hash<T> for IMEInputEvent {
-    fn hash(&self, s: &mut T) {
-        self.res.hash(s)
-    }
-}
-
 impl_clone_drop_for!(IMEInputEvent)
-impl_resource_for!(UrlLoader UrlLoaderRes)
 impl_clone_drop_for!(UrlLoader)
-impl_resource_for!(UrlRequestInfo UrlRequestInfoRes)
 impl_clone_drop_for!(UrlRequestInfo)
-impl_resource_for!(UrlResponseInfo UrlResponseInfoRes)
 impl_clone_drop_for!(UrlResponseInfo)
 
 impl ContextResource for Context3d {
@@ -619,6 +577,12 @@ impl View {
     }
     #[inline] pub fn css_scale(&self) -> f32 {
         ppb::get_view().css_scale(self.unwrap())
+    }
+}
+impl Messaging {
+    pub fn post_message<T: ToVar>(&self, message: T) {
+        use ppb::MessagingIf;
+        ppb::get_messaging().post_message(self.unwrap(), message.to_var())
     }
 }
 impl MessageLoop {
@@ -1269,7 +1233,10 @@ fn parse_args(argc: u32,
 trait Callback {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback;
 }
-impl ffi::Struct_PP_CompletionCallback {
+trait PostToSelf {
+    fn post_to_self(self, code: Code);
+}
+impl PostToSelf for ffi::Struct_PP_CompletionCallback {
     fn post_to_self(self, code: Code) {
         // Used because we specifically don't want to take the callbacks in local data.
         struct RunCompletionCallback(proc(): 'static);
@@ -1316,14 +1283,14 @@ fn if_error_shutdown_msg_loop(result: task::Result) {
     }
 }
 
-impl<'a> Callback for proc(): 'a {
+impl Callback for proc():Send {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
         extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
             let code = Code::from_i32(status);
 
             if possibly_warn_code_callback(code) { return; }
 
-            let work: Box<proc()> = unsafe { mem::transmute(user) };
+            let work: Box<proc():Send> = unsafe { mem::transmute(user) };
             (*work)();
         }
         unsafe {
@@ -1332,10 +1299,10 @@ impl<'a> Callback for proc(): 'a {
         }
     }
 }
-impl<'a> Callback for proc(Code): 'a {
+impl Callback for proc(Code):Send {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
         extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
-            let work: Box<proc(Code)> = unsafe { mem::transmute(user) };
+            let work: Box<proc(Code):Send> = unsafe { mem::transmute(user) };
             let code = Code::from_i32(status);
             (*work)(code);
         }
@@ -1565,8 +1532,7 @@ impl Instance {
         let a = a;
         let share_with = share_with
             .map(|ctxt| {
-                let Context3d(res) = ctxt;
-                res
+                ctxt.unwrap()
             })
             .unwrap_or_else(|| 0i32 );
 
@@ -1643,6 +1609,13 @@ impl Instance {
 
     pub fn create_msg_loop(&self) -> MessageLoop {
         MessageLoop(ppb::get_message_loop().create(&self.unwrap()))
+    }
+
+    pub fn create_url_loader(&self) -> Option<UrlLoader> {
+        get_url_loader().create(self.unwrap()).map(|loader| UrlLoader::new(loader) )
+    }
+    fn create_url_request_info(&self) -> Option<UrlRequestInfo> {
+        get_url_request().create(self.unwrap()).map(|info| UrlRequestInfo::new(info) )
     }
 }
 
@@ -1762,11 +1735,12 @@ fn find_instance<U, Take>(instance: Instance,
 }
 pub mod entry {
     use super::{expect_instances, find_instance};
-    use super::{Instance};
+    use super::{Instance, Callback};
     use super::{AnyVar, Ok};
-    use super::{View, UrlLoader};
+    use super::{View};
     use super::ToFFIBool;
     use super::{ffi};
+    use super::url::UrlLoader;
 
     use libc::c_char;
     use std::any::Any;
@@ -1899,6 +1873,12 @@ pub mod entry {
                 }
                 if MessageLoop::is_attached() {
                     fail!("please shutdown the loop; I may add pausing for some sort of pattern later");
+                } else {
+                    MessageLoop::get_main_loop()
+                        .post_work(proc() {
+                            super::expect_instances()
+                                .pop(&instance);
+                        }, 0);
                 }
             });
 
@@ -1940,10 +1920,12 @@ pub mod entry {
         if !super::ppapi_on_change_view.is_null() {
             let _ = try_block(|| {
                 debug!("did_change_view");
-                let view = View::new_bumped(view);
                 find_instance(instance,
                               view,
-                              |store, view| store.on_change_view(view) );
+                              |store, view| {
+                                  let view = View::new_bumped(view);
+                                  store.on_change_view(view)
+                              });
             });
         } else {
             warn!("plugin is missing 'ppapi_on_change_view'");
@@ -2017,7 +1999,7 @@ pub mod entry {
     pub extern "C" fn handle_input_event(inst: ffi::PP_Instance,
                                          event: ffi::PP_Resource) -> ffi::PP_Bool {
         use super::{ppb, ppapi_on_input};
-        use super::{MouseInputEvent, KeyboardInputEvent, WheelInputEvent,
+        use input::{MouseInputEvent, KeyboardInputEvent, WheelInputEvent,
                     TouchInputEvent, IMEInputEvent};
         use input::Class;
         let instance = Instance::new(inst);
@@ -2038,13 +2020,13 @@ pub mod entry {
             let ime = ppb::get_ime_event().IsIMEInputEvent.unwrap();
 
             let e = if me(event) != 0 {
-                Class::new(MouseInputEvent(event))
+                Class::new(MouseInputEvent::new(event))
             } else if kbe(event) != 0 {
-                Class::new(KeyboardInputEvent(event))
+                Class::new(KeyboardInputEvent::new(event))
             } else if we(event) != 0 {
-                Class::new(WheelInputEvent(event))
+                Class::new(WheelInputEvent::new(event))
             } else if te(event) != 0 {
-                Class::new(TouchInputEvent(event))
+                Class::new(TouchInputEvent::new(event))
             } else if ime(event) != 0 {
                 Class::new(IMEInputEvent::new(event))
             } else {

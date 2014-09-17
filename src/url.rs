@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Rust PPApi. If not, see <http://www.gnu.org/licenses/>.
 
-use super::{UrlLoader, UrlRequestInfo, UrlResponseInfo, Callback,
-            Resource, FileSliceRef, Instance, ToStringVar, ToVar};
+use super::{Callback, Resource, FileSliceRef, Instance, ToStringVar, ToVar};
 use super::ppb::{get_url_loader, get_url_request, get_url_response};
+use ppb::{URLRequestInfoIf, URLResponseInfoIf, URLLoaderIf};
 use std::option::{Option, Some, None};
 use std::{fmt, default, str};
 use std::io::IoResult;
@@ -27,14 +27,14 @@ use super::ffi;
 use super::ffi::bool_to_var;
 use iurl::Url;
 
-impl super::Instance {
-    pub fn create_url_loader(&self) -> Option<UrlLoader> {
-        get_url_loader().create(self.unwrap()).map(|loader| UrlLoader(loader) )
-    }
-    fn create_url_request_info(&self) -> Option<UrlRequestInfo> {
-        get_url_request().create(self.unwrap()).map(|info| UrlRequestInfo(info) )
-    }
-}
+#[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlLoader(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlRequestInfo(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlResponseInfo(ffi::PP_Resource);
+
+impl_resource_for!(UrlLoader UrlLoaderRes)
+impl_resource_for!(UrlRequestInfo UrlRequestInfoRes)
+impl_resource_for!(UrlResponseInfo UrlResponseInfoRes)
+
 pub type RequestProperties = EnumSet<RequestProperties_>;
 #[deriving(Eq, PartialEq, Clone, Hash)]
 pub enum RequestProperties_ {
@@ -246,7 +246,7 @@ impl Resource for OpenedUrlLoader {
     }
 }
 
-impl super::UrlLoader {
+impl UrlLoader {
     // TODO: this is messy. Do it generically.
     pub fn open(&self,
                 ffi_info: UrlRequestInfo,

@@ -26,6 +26,8 @@ use super::ffi::{Struct_PP_FontMetrics_Dev, Struct_PP_TextRun_Dev,
                  Struct_PP_FontDescription_Dev, PP_FontFamily_Dev};
 use super::StringVar;
 
+use imagedata;
+
 
 #[deriving(Eq, PartialEq, Clone, Hash)]
 pub enum Family {
@@ -156,7 +158,11 @@ impl Description {
     }
 }
 
-impl super::Font {
+#[deriving(Hash, Eq, PartialEq, Show)] pub struct Font(ffi::PP_Resource);
+
+impl_resource_for!(Font FontRes)
+
+impl Font {
     pub fn describe(&self) -> Option<(Description, Metrics)> {
         let mut desc: Struct_PP_FontDescription_Dev = Struct_PP_FontDescription_Dev {
             face: {super::NullVar}.to_var(),
@@ -211,7 +217,7 @@ impl super::Font {
      */
     pub fn draw_text<TStr: super::ToStringVar +
         super::ToVar>(&self,
-                      image: &super::ImageData,
+                      image: &imagedata::ImageData,
                       text: &TStr,
                       rtl: bool,
                       override_direction: bool,
@@ -227,7 +233,7 @@ impl super::Font {
                 override_direction: override_direction as u32,
             };
             let pos_ptr = &pos as *const super::Point;
-            let clip_ptr = if clip.is_some() { clip.get_ref() as *const super::Rect}
+            let clip_ptr = if clip.is_some() { clip.as_ref().unwrap() as *const super::Rect}
                            else              { RawPtr::null() };
             if (ppb::get_font().DrawTextAt.unwrap())
                 (font_res,
@@ -282,9 +288,11 @@ impl super::Font {
         else            { Some(result) }
     }
 }
-
-impl super::Instance {
-    pub fn get_font_families(&self) -> HashSet<String> {
+pub trait FontFamilies {
+    fn get_font_families(&self) -> HashSet<String>;
+}
+impl FontFamilies for super::Instance {
+    fn get_font_families(&self) -> HashSet<String> {
         let mut dest = HashSet::new();
         let fam_str = (ppb::get_font().GetFontFamilies.unwrap())(self.instance);
         let fam_str = StringVar::new_from_var(fam_str).to_string();

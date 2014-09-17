@@ -1,29 +1,73 @@
-use super::{KeyboardInputEvent,
-            MouseInputEvent,
-            WheelInputEvent,
-            TouchInputEvent,
-            IMEInputEvent};
 use super::{Resource, ResourceType, Ticks, FloatPoint,
             StringVar, Point, TouchPoint};
 use super::{ppb, ffi};
+use ppb::{InputEventIf, KeyboardInputEventIf, MouseInputEventIf,
+          TouchInputEventIf, WheelInputEventIf};
 use collections::enum_set;
 use collections::enum_set::{CLike, EnumSet};
-use std::{collections, iter, intrinsics, clone};
+use std::{collections, iter, intrinsics, clone, hash};
+
+#[deriving(Hash, Eq, PartialEq, Show)] pub struct KeyboardInputEvent(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq, Show)] pub struct MouseInputEvent(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq, Show)] pub struct WheelInputEvent(ffi::PP_Resource);
+#[deriving(Hash, Eq, PartialEq, Show)] pub struct TouchInputEvent(ffi::PP_Resource);
+#[deriving(Eq, Show)]
+pub struct IMEInputEvent {
+    res: ffi::PP_Resource,
+    pub string: String,
+    segments_len: uint,
+}
+
+impl_resource_for!(TouchInputEvent TouchInputEventRes)
+impl_resource_for!(WheelInputEvent WheelInputEventRes)
+impl_resource_for!(MouseInputEvent MouseInputEventRes)
+impl_resource_for!(KeyboardInputEvent KeyboardInputEventRes)
+
+impl IMEInputEvent {
+    pub fn new(res: ffi::PP_Resource) -> IMEInputEvent {
+        let var = (ppb::get_ime_event().GetText.unwrap())(res);
+        let string = StringVar::new_from_var(var).to_string();
+        let seg_len = (ppb::get_ime_event().GetSegmentNumber.unwrap())(res);
+        IMEInputEvent {
+            res: res,
+            string: string,
+            segments_len: seg_len as uint,
+        }
+    }
+}
+impl Resource for IMEInputEvent {
+    fn unwrap(&self) -> ffi::PP_Resource {
+        self.res
+    }
+    fn type_of(&self) -> ResourceType {
+        super::IMEInputEventRes
+    }
+}
+impl PartialEq for IMEInputEvent {
+    fn eq(&self, rhs: &IMEInputEvent) -> bool {
+        self.res == rhs.res
+    }
+}
+impl<T: hash::Writer> hash::Hash<T> for IMEInputEvent {
+    fn hash(&self, s: &mut T) {
+        self.res.hash(s)
+    }
+}
 
 #[deriving(Clone, Show)]
 pub enum Class {
-    KeyboardClass(Event<super::KeyboardInputEvent, KeyboardEvent>),
-    MouseClass   (Event<super::MouseInputEvent,    MouseEvent>),
-    WheelClass   (Event<super::WheelInputEvent,    WheelEvent>),
-    TouchClass   (Event<super::TouchInputEvent,    super::TouchInputEvent>),
-    IMEClass     (Event<super::IMEInputEvent,      super::IMEInputEvent>),
+    KeyboardClass(Event<KeyboardInputEvent, KeyboardEvent>),
+    MouseClass   (Event<MouseInputEvent,    MouseEvent>),
+    WheelClass   (Event<WheelInputEvent,    WheelEvent>),
+    TouchClass   (Event<TouchInputEvent,    TouchInputEvent>),
+    IMEClass     (Event<IMEInputEvent,      IMEInputEvent>),
 }
 
-pub type KeyboardClassEvent = Event<super::KeyboardInputEvent, KeyboardEvent>;
-pub type MouseClassEvent    = Event<super::MouseInputEvent,    MouseEvent>;
-pub type WheelClassEvent    = Event<super::WheelInputEvent,    WheelEvent>;
-pub type TouchClassEvent    = Event<super::TouchInputEvent,    super::TouchInputEvent>;
-pub type IMEClassEvent      = Event<super::IMEInputEvent,      super::IMEInputEvent>;
+pub type KeyboardClassEvent = Event<KeyboardInputEvent, KeyboardEvent>;
+pub type MouseClassEvent    = Event<MouseInputEvent,    MouseEvent>;
+pub type WheelClassEvent    = Event<WheelInputEvent,    WheelEvent>;
+pub type TouchClassEvent    = Event<TouchInputEvent,    TouchInputEvent>;
+pub type IMEClassEvent      = Event<IMEInputEvent,      IMEInputEvent>;
 
 impl Class {
     pub fn new<T: InputEvent + Resource + 'static>(res: T) -> Class {
@@ -39,14 +83,14 @@ impl Class {
             use core::mem::{replace, uninitialized};
             use core::mem::transmute;
             use std::intrinsics::type_id;
-            unsafe {                            
+            unsafe {
                 // This *should* never fail, but it's here just in case:
                 assert_eq!(type_id::<T>(), type_id::<U>());
                 let res_ptr: &mut U = transmute(&mut res);
                 replace(res_ptr, uninitialized())
             }
         }
-        
+
         let input_event = ppb::get_input_event();
         let mouse_event = ppb::get_mouse_event();
         let kb_event = ppb::get_keyboard_event();
@@ -371,7 +415,7 @@ pub struct MouseClickEvent {
 pub struct MouseMoveEvent {
     point: FloatPoint,
     delta: FloatPoint,
-    click_count: i32,    
+    click_count: i32,
 }
 
 #[deriving(Clone, Eq, PartialEq, Show)]
@@ -406,13 +450,13 @@ macro_rules! impl_input_event_for(
     )
 )
 
-impl_input_event_for!(super::KeyboardInputEvent)
-impl_input_event_for!(super::MouseInputEvent)
-impl_input_event_for!(super::WheelInputEvent)
-impl_input_event_for!(super::TouchInputEvent)
-impl_input_event_for!(super::IMEInputEvent)
+impl_input_event_for!(KeyboardInputEvent)
+impl_input_event_for!(MouseInputEvent)
+impl_input_event_for!(WheelInputEvent)
+impl_input_event_for!(TouchInputEvent)
+impl_input_event_for!(IMEInputEvent)
 
-impl super::KeyboardInputEvent {
+impl KeyboardInputEvent {
     pub fn get_key_code(&self) -> u32 {
         (ppb::get_keyboard_event().GetKeyCode.unwrap())(self.unwrap())
     }
@@ -421,7 +465,7 @@ impl super::KeyboardInputEvent {
         StringVar::new_from_var(var)
     }
 }
-impl super::MouseInputEvent {
+impl MouseInputEvent {
     pub fn get_button(&self) -> ffi::PP_InputEvent_MouseButton {
         (ppb::get_mouse_event().GetButton.unwrap())(self.unwrap())
     }
@@ -435,7 +479,7 @@ impl super::MouseInputEvent {
         (ppb::get_mouse_event().GetMovement.unwrap())(self.unwrap())
     }
 }
-impl super::WheelInputEvent {
+impl WheelInputEvent {
     pub fn get_delta(&self) -> FloatPoint {
         (ppb::get_wheel_event().GetDelta.unwrap())(self.unwrap())
     }
@@ -463,7 +507,7 @@ impl TouchListType {
 }
 #[deriving(Clone)]
 pub struct TouchList {
-    event: super::TouchInputEvent, 
+    event: TouchInputEvent,
     list_type: TouchListType,
 }
 #[deriving(Clone)]
@@ -472,7 +516,7 @@ pub struct TouchListIterator {
     current: uint,
     size: uint,
 }
-impl super::TouchInputEvent {
+impl TouchInputEvent {
     pub fn get_touch_list(&self, list_type: TouchListType) -> TouchList {
         TouchList{
             event: self.clone(),
@@ -529,7 +573,7 @@ impl iter::RandomAccessIterator<TouchPoint> for TouchListIterator {
     }
 }
 
-impl super::IMEInputEvent {
+impl IMEInputEvent {
     pub fn segments_len(&self) -> uint {
         self.segments_len
     }
@@ -565,15 +609,15 @@ impl super::IMEInputEvent {
     pub fn selection_offset(&self) -> (u32, u32) {
         let mut start: u32 = unsafe { intrinsics::uninit() };
         let mut end: u32 = unsafe { intrinsics::uninit() };
-        
-        
+
+
         let start_ptr: *mut u32 = &mut start as *mut u32;
         let end_ptr: *mut u32 = &mut end as *mut u32;
         (ppb::get_ime_event().GetSelection.unwrap())
             (self.unwrap(),
              start_ptr,
              end_ptr);
-        
+
         let start = start;
         let end   = end;
 
@@ -598,7 +642,7 @@ impl super::IMEInputEvent {
     }
 }
 pub struct IMESegmentIterator<'a> {
-    event: &'a super::IMEInputEvent,
+    event: &'a IMEInputEvent,
     current: uint,
 }
 impl<'a> clone::Clone for IMESegmentIterator<'a> {
@@ -609,7 +653,7 @@ impl<'a> clone::Clone for IMESegmentIterator<'a> {
         }
     }
 }
-impl collections::Collection for super::IMEInputEvent {
+impl collections::Collection for IMEInputEvent {
     fn len(&self) -> uint {
         self.segments_len()
     }
