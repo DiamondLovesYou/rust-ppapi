@@ -148,10 +148,12 @@ macro_rules! get_fun(
         #[doc = "Returns a static ref to the interface"]
         pub fn $ident() -> &'static $ty {
             #[inline(never)] fn failure() -> ! {
-                fail!("Missing browser {} interface", stringify!($ty))
+                panic!("Missing browser {} interface", stringify!($ty))
             }
             unsafe {
-                globals::$global.unwrap_or_else(failure)
+                if globals::$global.is_none() {
+                    failure()
+                } else { globals::$global.unwrap() }
             }
         }
     );
@@ -214,18 +216,20 @@ get_fun_opt!(pub fn get_view_opt() -> View { VIEW })
 macro_rules! impl_fun(
     ($fun:expr => ( $($arg:expr),* ) ) => ({
         #[inline(never)] fn failure() -> ! {
-            fail!("Interface function \"{}\" missing!", stringify!($fun))
+            panic!("Interface function \"{}\" missing!", stringify!($fun))
         }
         println!("calling `{}`", stringify!($fun));
-        let f = $fun.unwrap_or_else(failure);
+        let f = if $fun.is_none() { failure() }
+                else { $fun.unwrap() };
         f( $($arg),* )
     });
     ($fun:expr) => ({
         #[inline(never)] fn failure() -> ! {
-            fail!("Interface function \"{}\" missing!", stringify!($fun))
+            panic!("Interface function \"{}\" missing!", stringify!($fun))
         }
         println!("calling `{}`", stringify!($fun));
-        let f = $fun.unwrap_or_else(failure);
+        let f = if $fun.is_none() { failure() }
+                else { $fun.unwrap() };
         f()
     })
 )
@@ -703,22 +707,23 @@ impl Graphics3DIf for ffi::Struct_PPB_Graphics3D_1_0 {
     fn attribs(&self,
                ctxt: PP_Resource,
                attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Result<Vec<u32>> {
-        let attribs: Vec<ffi::PP_Graphics3DAttrib> = attribs
-            .move_iter()
+        let mut attribs: Vec<ffi::PP_Graphics3DAttrib> = attribs
+            .into_iter()
             .flat_map(|attrib| {
                 let v = vec!(attrib, 0);
-                v.move_iter()
+                v.into_iter()
             })
             .collect();
-        let mut attribs = attribs.append_one(ffi::PP_GRAPHICS3DATTRIB_NONE);
+        attribs.push(ffi::PP_GRAPHICS3DATTRIB_NONE);
         let r = impl_fun!(self.GetAttribs => (ctxt, attribs.as_mut_ptr() as *mut i32));
         let r = Code::from_i32(r);
         if r.is_ok() {
-            Ok(attribs.move_iter()
+            Ok(attribs.into_iter()
                .enumerate()
-               .fold(vec!(), |fold, (i, v)| {
+               .fold(vec!(), |mut fold: Vec<u32>, (i, v): (uint, u32)| {
                    if i.rem(&2) != 0 {
-                       fold.append_one(v)
+                       fold.push(v);
+                       fold
                    } else {
                        fold
                    }

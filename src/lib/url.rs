@@ -176,7 +176,7 @@ impl RequestInfo {
             method: method,
             ..
         } = self;
-        for body in body.move_iter() {
+        for body in body.into_iter() {
             let success = match body {
                 FileBody(FileSliceRef(file, start_opt, len_opt), time) => {
                     request.append_file_to_body(res.unwrap(),

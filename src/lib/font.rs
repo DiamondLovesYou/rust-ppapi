@@ -18,7 +18,7 @@
 use std::intrinsics::uninit;
 use std::result::{Ok};
 use std::ptr::RawPtr;
-use std::collections::hashmap::HashSet;
+use std::collections::HashSet;
 
 use super::{ppb, ffi};
 use super::{ToVar, Resource, ToFFIBool};

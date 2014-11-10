@@ -216,7 +216,7 @@ impl Class {
                 })
             }
             _ => {
-                fail!("invalid input event type")
+                panic!("invalid input event type")
             }
         }
     }
@@ -524,13 +524,6 @@ impl TouchInputEvent {
         }
     }
 }
-impl collections::Collection for TouchList {
-    fn len(&self) -> uint {
-        (ppb::get_touch_event().GetTouchCount.unwrap())
-            (self.event.unwrap(),
-             self.list_type.to_ffi()) as uint
-    }
-}
 impl TouchList {
     pub fn get(&self, index: uint) -> TouchPoint {
         ppb::get_touch_event().by_index
@@ -554,6 +547,11 @@ impl TouchList {
         } else {
             None
         }
+    }
+    pub fn len(&self) -> uint {
+        (ppb::get_touch_event().GetTouchCount.unwrap())
+            (self.event.unwrap(),
+             self.list_type.to_ffi()) as uint
     }
 }
 impl iter::Iterator<TouchPoint> for TouchListIterator {
@@ -592,7 +590,7 @@ impl IMEInputEvent {
         }
     }
     pub fn segment_str<'a>(&'a self, index: uint) -> Option<&'a str> {
-        if index < self.len() {
+        if index < self.segments_len() {
             let segment = self.segment_offset(index);
             let (start, end) = segment.expect("WAT. #1");
             Some(self.string.as_slice().slice(start, end))
@@ -651,11 +649,6 @@ impl<'a> clone::Clone for IMESegmentIterator<'a> {
             event: self.event,
             current: self.current,
         }
-    }
-}
-impl collections::Collection for IMEInputEvent {
-    fn len(&self) -> uint {
-        self.segments_len()
     }
 }
 impl<'a> iter::Iterator<&'a str> for IMESegmentIterator<'a> {

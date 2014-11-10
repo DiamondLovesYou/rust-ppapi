@@ -342,16 +342,20 @@ pub struct Context3d(ffi::PP_Resource);
 macro_rules! call_gl_fun(
     ($expr:expr->$fun:ident => ( $ctxt:expr, $($arg:expr),* ) ) => ({
         #[inline(never)] fn failure() -> ! {
-            fail!("Interface function \"{}\" missing!", stringify!($fun))
+            panic!("Interface function \"{}\" missing!", stringify!($fun))
         }
-        let f = $expr.$fun.unwrap_or_else(failure);
+        let e = $expr.$fun;
+        let f = if e.is_none() { failure() }
+                else { e.unwrap() };
         f( $ctxt.unwrap(), $($arg),* )
     });
     ($expr:expr->$fun:ident => ( $ctxt:expr )) => ({
         #[inline(never)] fn failure() -> ! {
-            fail!("Interface function \"{}\" missing!", stringify!($fun))
+            panic!("Interface function \"{}\" missing!", stringify!($fun))
         }
-        let f = $expr.$fun.unwrap_or_else(failure);
+        let e = $expr.$fun;
+        let f = if e.is_none() { failure() }
+                else { e.unwrap() };
         f( $ctxt.unwrap() )
     })
 )
@@ -493,7 +497,7 @@ pub mod traits {
             impl GenBuffer for $ty {
                 fn gen_single(ctxt: &Context3d) -> $ty {
                     let mut v: Vec<$ty> = GenBuffer::gen_multiple(ctxt, 1);
-                    v.shift().unwrap()
+                    v[0]
                 }
                 fn gen_multiple(ctxt: &Context3d, count: uint) -> Vec<$ty> {
                     use std::intrinsics::uninit;
@@ -503,7 +507,7 @@ pub mod traits {
                                                     count as i32,
                                                     buffers.as_mut_ptr());
                     buffers
-                        .move_iter()
+                        .into_iter()
                         .map(|b| Ctor::ctor(b) )
                         .collect()
                 }
@@ -576,8 +580,9 @@ pub mod traits {
             consts::DYNAMIC_DRAW
         }
     }
-    // utility trait for CompileShader below.
-    trait GenShader {
+    /// utility trait for CompileShader below.
+    /// INTERNEL
+    pub trait GenShader {
         fn gen_single(ctxt: &Context3d) -> Self;
     }
     impl GenShader for super::VertexShader {
@@ -1155,7 +1160,8 @@ impl<'a> InnerProgram for &'a LinkingShaderProgram {
     }
 }
 
-trait ShaderUnwrap {
+/// INTERNEL
+pub trait ShaderUnwrap {
     fn unwrap(&self) -> types::UInt;
 }
 impl ShaderUnwrap for VertexShader {
@@ -1228,7 +1234,8 @@ impl ShaderProgram {
     }
 }
 
-trait UniformFun {
+/// INTERNEL
+pub trait UniformFun {
     fn uniform(&self, ctxt: &Context3d, locale: types::Int);
 }
 macro_rules! impl_uniform_fun_v(
@@ -1308,7 +1315,8 @@ pub struct Renderer;
 pub struct Version;
 pub struct ShadingLanguageVersion;
 
-trait GetQueryType {
+/// INTERNEL
+pub trait GetQueryType {
     fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> Self;
 }
 impl GetQueryType for types::Boolean {
@@ -1341,12 +1349,11 @@ impl GetQueryType for types::Int {
 impl GetQueryType for MaybeOwned<'static> {
     fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> MaybeOwned<'static> {
         use std::c_str::CString;
-        use std::str::from_utf8_lossy;
         use core::mem::transmute;
         let str_ptr = call_gl_fun!(get_gles2() -> GetString => (ctxt,
                                                                 pname));
         if str_ptr.is_null() {
-            fail!("Got null when I queried for `{}`", pstr);
+            panic!("Got null when I queried for `{}`", pstr);
         }
 
         unsafe {
@@ -1358,12 +1365,11 @@ impl GetQueryType for MaybeOwned<'static> {
 impl GetQueryType for Vec<MaybeOwned<'static>> {
     fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> Vec<MaybeOwned<'static>> {
         use std::c_str::{from_c_multistring, CString};
-        use std::str::from_utf8_lossy;
         use core::mem::transmute;
         let str_ptr = call_gl_fun!(get_gles2() -> GetString => (ctxt,
                                                                 pname));
         if str_ptr.is_null() {
-            fail!("Got null when I queried for `{}`", pstr);
+            panic!("Got null when I queried for `{}`", pstr);
         }
 
         let mut exts = Vec::new();

@@ -111,7 +111,7 @@ use std::iter;
 use std::clone;
 use std::{str, string};
 use std::result;
-use std::collections::hashmap::HashMap;
+use std::collections::HashMap;
 use std::fmt;
 
 use log::LogRecord;
@@ -287,7 +287,7 @@ impl Code {
             ffi::PP_ERROR_NOTSUPPORTED => NotSupported,
             ffi::PP_ERROR_NOMEMORY => NoMemory,
             ffi::PP_ERROR_CONTEXT_LOST => ContextLost,
-            _ => fail!("Invalid code!"),
+            _ => panic!("Invalid code!"),
         }
     }
     pub fn to_i32(self) -> i32 {
@@ -319,7 +319,7 @@ impl Code {
     }
     pub fn expect(self, msg: &str) {
         if !self.is_ok() {
-            fail!("Code: `{code:s}`, Message: `{msg:s}`",
+            panic!("Code: `{code:s}`, Message: `{msg:s}`",
                   code=self.to_string(), msg=msg)
         }
     }
@@ -609,7 +609,7 @@ impl MessageLoop {
     pub fn post_work<T: Callback>(&self, work: T, delay: i64) -> Code {
         let comp_cb = work.to_ffi_callback();
         match ppb::get_message_loop().post_work(&self.unwrap(), comp_cb, delay) {
-            ffi::PP_ERROR_BADARGUMENT => fail!("internal error: completion callback was null?"),
+            ffi::PP_ERROR_BADARGUMENT => panic!("internal error: completion callback was null?"),
             c => Code::from_i32(c),
         }
     }
@@ -897,10 +897,10 @@ impl ToStringVar for StringVar {
         self.clone()
     }
 }
-impl Var for String {
+impl Var for ::std::string::String {
     #[inline] fn is_a_string(&self) -> bool { true }
 }
-impl ToStringVar for String {
+impl ToStringVar for ::std::string::String {
     #[inline] fn to_string_var(&self) -> StringVar {
         StringVar::new_from_str(self.as_slice())
     }
@@ -1164,7 +1164,7 @@ impl StringVar {
         StringVar(unsafe { ffi::id_from_var(v) })
     }
 }
-impl ToVar for String {
+impl ToVar for ::std::string::String {
     fn to_var(&self) -> ffi::PP_Var {
         (ppb::get_var().VarFromUtf8.unwrap())
             (self.as_slice().as_ptr() as *const i8,
@@ -1219,8 +1219,8 @@ impl Console {
 
 fn parse_args(argc: u32,
               argk: *mut *const libc::c_char,
-              argv: *mut *const libc::c_char) -> HashMap<String, String> {
-    let mut args: HashMap<String, String> = HashMap::new();
+              argv: *mut *const libc::c_char) -> HashMap<::std::string::String, ::std::string::String> {
+    let mut args: HashMap<::std::string::String, ::std::string::String> = HashMap::new();
     for i in iter::range(0, argc as int) {
         unsafe {
             args.swap(string::raw::from_buf(*argk.offset(i) as *const u8),
@@ -1229,8 +1229,8 @@ fn parse_args(argc: u32,
     }
     return args;
 }
-
-trait Callback {
+/// INTERNAL
+pub trait Callback {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback;
 }
 trait PostToSelf {
@@ -1701,16 +1701,17 @@ unsafe fn deinitialize_instances() {
 fn expect_instances() -> &'static mut InstancesType {
     use std::hash::RandomSipHasher;
     use core::mem;
-    use alloc::libc_heap::malloc_raw;
+    use alloc::heap::allocate;
     unsafe {
         if INSTANCES.is_null() {
             let hasher = RandomSipHasher::new();
             let instances: InstancesType = HashMap::with_hasher(hasher);
-            INSTANCES = malloc_raw(mem::size_of::<InstancesType>())
+            INSTANCES = allocate(mem::size_of::<InstancesType>(),
+                                 mem::align_of::<InstancesType>())
                 as *mut InstancesType;
             if INSTANCES.is_null() {
                 // PANIC!
-                fail!("couldn't allocate instances map!");
+                panic!("couldn't allocate instances map!");
             }
             ptr::write(mem::transmute(INSTANCES),
                        instances);
@@ -1866,10 +1867,10 @@ pub mod entry {
                                            }
                                        });
                 if code != Ok {
-                    fail!("message loop exited with code: `{}`", code);
+                    panic!("message loop exited with code: `{}`", code);
                 }
                 if MessageLoop::is_attached() {
-                    fail!("please shutdown the loop; I may add pausing for some sort of pattern later");
+                    panic!("please shutdown the loop; I may add pausing for some sort of pattern later");
                 } else {
                     MessageLoop::get_main_loop()
                         .post_work(proc() {
@@ -1881,13 +1882,12 @@ pub mod entry {
 
             success = rx.recv()
                 .map(|ml| {
-                    if !expect_instances().insert(instance, ml.clone()) {
-                        error!("instance already exists");
-                        ml.on_destroy();
-                        false
-                    } else {
-                        true
+                    let last = expect_instances().insert(instance, ml.clone());
+                    if last.is_some() {
+                        error!("instance already exists; replacing.");
+                        last.unwrap().on_destroy();
                     }
+                    true
                 })
                 .unwrap_or(false)
         });
@@ -2027,7 +2027,7 @@ pub mod entry {
             } else if ime(event) != 0 {
                 Class::new(IMEInputEvent::new(event))
             } else {
-                fail!("unknown input event");
+                panic!("unknown input event");
             };
             let on_input: fn(Class) -> bool =
                 transmute(ppapi_on_input);
@@ -2056,7 +2056,7 @@ pub mod entry {
 extern {
     #[no_mangle]
     fn ppapi_instance_created(instance: Instance,
-                              args: HashMap<String, String>);
+                              args: HashMap<::std::string::String, ::std::string::String>);
     #[no_mangle]
     fn ppapi_instance_destroyed();
 
@@ -2101,7 +2101,7 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
     rt::init(0, ptr::null());
     {
         // for now, stack bounds don't matter.
-        let mut task = native::task::new((0, 0));
+        let mut task = native::task::new((0, 0), 0);
         task.name = Some(Slice(MAIN_TASK_NAME));
         Local::put(task);
     }

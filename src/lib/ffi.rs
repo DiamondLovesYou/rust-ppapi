@@ -64,8 +64,8 @@ pub type PP_GetInterface_Func =
     ::std::option::Option<extern "C" fn(arg1: *const ::libc::c_char)
                               -> *const ::libc::c_void>;
 pub type PP_Bool = ::libc::c_uint;
-pub static PP_FALSE: ::libc::c_uint = 0;
-pub static PP_TRUE: ::libc::c_uint = 1;
+pub const PP_FALSE: ::libc::c_uint = 0;
+pub const PP_TRUE: ::libc::c_uint = 1;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Bool {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Bool_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -142,18 +142,18 @@ pub struct Struct_PPB_Audio_1_0 {
                                                 -> PP_Bool>,
 }
 pub type PP_AudioBuffer_SampleRate = ::libc::c_uint;
-pub static PP_AUDIOBUFFER_SAMPLERATE_UNKNOWN: ::libc::c_uint = 0;
-pub static PP_AUDIOBUFFER_SAMPLERATE_8000: ::libc::c_uint = 8000;
-pub static PP_AUDIOBUFFER_SAMPLERATE_16000: ::libc::c_uint = 16000;
-pub static PP_AUDIOBUFFER_SAMPLERATE_22050: ::libc::c_uint = 22050;
-pub static PP_AUDIOBUFFER_SAMPLERATE_32000: ::libc::c_uint = 32000;
-pub static PP_AUDIOBUFFER_SAMPLERATE_44100: ::libc::c_uint = 44100;
-pub static PP_AUDIOBUFFER_SAMPLERATE_48000: ::libc::c_uint = 48000;
-pub static PP_AUDIOBUFFER_SAMPLERATE_96000: ::libc::c_uint = 96000;
-pub static PP_AUDIOBUFFER_SAMPLERATE_192000: ::libc::c_uint = 192000;
+pub const PP_AUDIOBUFFER_SAMPLERATE_UNKNOWN: ::libc::c_uint = 0;
+pub const PP_AUDIOBUFFER_SAMPLERATE_8000: ::libc::c_uint = 8000;
+pub const PP_AUDIOBUFFER_SAMPLERATE_16000: ::libc::c_uint = 16000;
+pub const PP_AUDIOBUFFER_SAMPLERATE_22050: ::libc::c_uint = 22050;
+pub const PP_AUDIOBUFFER_SAMPLERATE_32000: ::libc::c_uint = 32000;
+pub const PP_AUDIOBUFFER_SAMPLERATE_44100: ::libc::c_uint = 44100;
+pub const PP_AUDIOBUFFER_SAMPLERATE_48000: ::libc::c_uint = 48000;
+pub const PP_AUDIOBUFFER_SAMPLERATE_96000: ::libc::c_uint = 96000;
+pub const PP_AUDIOBUFFER_SAMPLERATE_192000: ::libc::c_uint = 192000;
 pub type PP_AudioBuffer_SampleSize = ::libc::c_uint;
-pub static PP_AUDIOBUFFER_SAMPLESIZE_UNKNOWN: ::libc::c_uint = 0;
-pub static PP_AUDIOBUFFER_SAMPLESIZE_16_BITS: ::libc::c_uint = 2;
+pub const PP_AUDIOBUFFER_SAMPLESIZE_UNKNOWN: ::libc::c_uint = 0;
+pub const PP_AUDIOBUFFER_SAMPLESIZE_16_BITS: ::libc::c_uint = 2;
 #[repr(C)]
 pub struct Struct_PPB_AudioBuffer_0_1 {
     pub IsAudioBuffer: ::std::option::Option<extern "C" fn(arg1: PP_Resource)
@@ -183,12 +183,12 @@ pub struct Struct_PPB_AudioBuffer_0_1 {
 }
 pub type PPB_AudioBuffer = Struct_PPB_AudioBuffer_0_1;
 pub type Enum_Unnamed1 = ::libc::c_uint;
-pub static PP_AUDIOMINSAMPLEFRAMECOUNT: ::libc::c_uint = 64;
-pub static PP_AUDIOMAXSAMPLEFRAMECOUNT: ::libc::c_uint = 32768;
+pub const PP_AUDIOMINSAMPLEFRAMECOUNT: ::libc::c_uint = 64;
+pub const PP_AUDIOMAXSAMPLEFRAMECOUNT: ::libc::c_uint = 32768;
 pub type PP_AudioSampleRate = ::libc::c_uint;
-pub static PP_AUDIOSAMPLERATE_NONE: ::libc::c_uint = 0;
-pub static PP_AUDIOSAMPLERATE_44100: ::libc::c_uint = 44100;
-pub static PP_AUDIOSAMPLERATE_48000: ::libc::c_uint = 48000;
+pub const PP_AUDIOSAMPLERATE_NONE: ::libc::c_uint = 0;
+pub const PP_AUDIOSAMPLERATE_44100: ::libc::c_uint = 44100;
+pub const PP_AUDIOSAMPLERATE_48000: ::libc::c_uint = 48000;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_AudioSampleRate {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_AudioSampleRate_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -242,17 +242,17 @@ pub struct Struct_PPB_AudioConfig_1_0 {
                                                        -> uint32_t>,
 }
 pub type PP_VarType = ::libc::c_uint;
-pub static PP_VARTYPE_UNDEFINED: ::libc::c_uint = 0;
-pub static PP_VARTYPE_NULL: ::libc::c_uint = 1;
-pub static PP_VARTYPE_BOOL: ::libc::c_uint = 2;
-pub static PP_VARTYPE_INT32: ::libc::c_uint = 3;
-pub static PP_VARTYPE_DOUBLE: ::libc::c_uint = 4;
-pub static PP_VARTYPE_STRING: ::libc::c_uint = 5;
-pub static PP_VARTYPE_OBJECT: ::libc::c_uint = 6;
-pub static PP_VARTYPE_ARRAY: ::libc::c_uint = 7;
-pub static PP_VARTYPE_DICTIONARY: ::libc::c_uint = 8;
-pub static PP_VARTYPE_ARRAY_BUFFER: ::libc::c_uint = 9;
-pub static PP_VARTYPE_RESOURCE: ::libc::c_uint = 10;
+pub const PP_VARTYPE_UNDEFINED: ::libc::c_uint = 0;
+pub const PP_VARTYPE_NULL: ::libc::c_uint = 1;
+pub const PP_VARTYPE_BOOL: ::libc::c_uint = 2;
+pub const PP_VARTYPE_INT32: ::libc::c_uint = 3;
+pub const PP_VARTYPE_DOUBLE: ::libc::c_uint = 4;
+pub const PP_VARTYPE_STRING: ::libc::c_uint = 5;
+pub const PP_VARTYPE_OBJECT: ::libc::c_uint = 6;
+pub const PP_VARTYPE_ARRAY: ::libc::c_uint = 7;
+pub const PP_VARTYPE_DICTIONARY: ::libc::c_uint = 8;
+pub const PP_VARTYPE_ARRAY_BUFFER: ::libc::c_uint = 9;
+pub const PP_VARTYPE_RESOURCE: ::libc::c_uint = 10;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_VarType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_VarType_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -286,10 +286,10 @@ pub struct Struct_PP_Dummy_Struct_For_PP_Var {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Var_is_not_16_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_LogLevel = ::libc::c_uint;
-pub static PP_LOGLEVEL_TIP: ::libc::c_uint = 0;
-pub static PP_LOGLEVEL_LOG: ::libc::c_uint = 1;
-pub static PP_LOGLEVEL_WARNING: ::libc::c_uint = 2;
-pub static PP_LOGLEVEL_ERROR: ::libc::c_uint = 3;
+pub const PP_LOGLEVEL_TIP: ::libc::c_uint = 0;
+pub const PP_LOGLEVEL_LOG: ::libc::c_uint = 1;
+pub const PP_LOGLEVEL_WARNING: ::libc::c_uint = 2;
+pub const PP_LOGLEVEL_ERROR: ::libc::c_uint = 3;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_LogLevel {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_LogLevel_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -309,8 +309,8 @@ pub type PPB_Console = Struct_PPB_Console_1_0;
 pub type PP_CompletionCallback_Func = extern "C" fn
     (arg1: *mut ::libc::c_void, arg2: int32_t);
 pub type PP_CompletionCallback_Flag = ::libc::c_uint;
-pub static PP_COMPLETIONCALLBACK_FLAG_NONE: ::libc::c_uint = 0;
-pub static PP_COMPLETIONCALLBACK_FLAG_OPTIONAL: ::libc::c_uint = 1;
+pub const PP_COMPLETIONCALLBACK_FLAG_NONE: ::libc::c_uint = 0;
+pub const PP_COMPLETIONCALLBACK_FLAG_OPTIONAL: ::libc::c_uint = 1;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_CompletionCallback_Flag {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CompletionCallback_Flag_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -582,19 +582,19 @@ pub struct Struct_PP_ArrayOutput {
     pub user_data: *mut ::libc::c_void,
 }
 pub type PP_FileType = ::libc::c_uint;
-pub static PP_FILETYPE_REGULAR: ::libc::c_uint = 0;
-pub static PP_FILETYPE_DIRECTORY: ::libc::c_uint = 1;
-pub static PP_FILETYPE_OTHER: ::libc::c_uint = 2;
+pub const PP_FILETYPE_REGULAR: ::libc::c_uint = 0;
+pub const PP_FILETYPE_DIRECTORY: ::libc::c_uint = 1;
+pub const PP_FILETYPE_OTHER: ::libc::c_uint = 2;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileType_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_FileSystemType = ::libc::c_uint;
-pub static PP_FILESYSTEMTYPE_INVALID: ::libc::c_uint = 0;
-pub static PP_FILESYSTEMTYPE_EXTERNAL: ::libc::c_uint = 1;
-pub static PP_FILESYSTEMTYPE_LOCALPERSISTENT: ::libc::c_uint = 2;
-pub static PP_FILESYSTEMTYPE_LOCALTEMPORARY: ::libc::c_uint = 3;
-pub static PP_FILESYSTEMTYPE_ISOLATED: ::libc::c_uint = 4;
+pub const PP_FILESYSTEMTYPE_INVALID: ::libc::c_uint = 0;
+pub const PP_FILESYSTEMTYPE_EXTERNAL: ::libc::c_uint = 1;
+pub const PP_FILESYSTEMTYPE_LOCALPERSISTENT: ::libc::c_uint = 2;
+pub const PP_FILESYSTEMTYPE_LOCALTEMPORARY: ::libc::c_uint = 3;
+pub const PP_FILESYSTEMTYPE_ISOLATED: ::libc::c_uint = 4;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileSystemType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileSystemType_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -613,12 +613,12 @@ pub struct Struct_PP_Dummy_Struct_For_PP_FileInfo {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileInfo_is_not_40_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_FileOpenFlags = ::libc::c_uint;
-pub static PP_FILEOPENFLAG_READ: ::libc::c_uint = 1;
-pub static PP_FILEOPENFLAG_WRITE: ::libc::c_uint = 2;
-pub static PP_FILEOPENFLAG_CREATE: ::libc::c_uint = 4;
-pub static PP_FILEOPENFLAG_TRUNCATE: ::libc::c_uint = 8;
-pub static PP_FILEOPENFLAG_EXCLUSIVE: ::libc::c_uint = 16;
-pub static PP_FILEOPENFLAG_APPEND: ::libc::c_uint = 32;
+pub const PP_FILEOPENFLAG_READ: ::libc::c_uint = 1;
+pub const PP_FILEOPENFLAG_WRITE: ::libc::c_uint = 2;
+pub const PP_FILEOPENFLAG_CREATE: ::libc::c_uint = 4;
+pub const PP_FILEOPENFLAG_TRUNCATE: ::libc::c_uint = 8;
+pub const PP_FILEOPENFLAG_EXCLUSIVE: ::libc::c_uint = 16;
+pub const PP_FILEOPENFLAG_APPEND: ::libc::c_uint = 32;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileOpenFlags_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -723,9 +723,9 @@ pub struct Struct_PPB_FileIO_1_0 {
     pub Close: ::std::option::Option<extern "C" fn(arg1: PP_Resource)>,
 }
 pub type PP_MakeDirectoryFlags = ::libc::c_uint;
-pub static PP_MAKEDIRECTORYFLAG_NONE: ::libc::c_uint = 0;
-pub static PP_MAKEDIRECTORYFLAG_WITH_ANCESTORS: ::libc::c_uint = 1;
-pub static PP_MAKEDIRECTORYFLAG_EXCLUSIVE: ::libc::c_uint = 2;
+pub const PP_MAKEDIRECTORYFLAG_NONE: ::libc::c_uint = 0;
+pub const PP_MAKEDIRECTORYFLAG_WITH_ANCESTORS: ::libc::c_uint = 1;
+pub const PP_MAKEDIRECTORYFLAG_EXCLUSIVE: ::libc::c_uint = 2;
 #[repr(C)]
 pub struct Struct_PPB_FileRef_1_2 {
     pub Create: ::std::option::Option<extern "C" fn
@@ -1043,24 +1043,24 @@ pub struct Struct_PPB_Graphics2D_1_0 {
                                          -> int32_t>,
 }
 pub type PP_Graphics3DAttrib = ::libc::c_uint;
-pub static PP_GRAPHICS3DATTRIB_ALPHA_SIZE: ::libc::c_uint = 12321;
-pub static PP_GRAPHICS3DATTRIB_BLUE_SIZE: ::libc::c_uint = 12322;
-pub static PP_GRAPHICS3DATTRIB_GREEN_SIZE: ::libc::c_uint = 12323;
-pub static PP_GRAPHICS3DATTRIB_RED_SIZE: ::libc::c_uint = 12324;
-pub static PP_GRAPHICS3DATTRIB_DEPTH_SIZE: ::libc::c_uint = 12325;
-pub static PP_GRAPHICS3DATTRIB_STENCIL_SIZE: ::libc::c_uint = 12326;
-pub static PP_GRAPHICS3DATTRIB_SAMPLES: ::libc::c_uint = 12337;
-pub static PP_GRAPHICS3DATTRIB_SAMPLE_BUFFERS: ::libc::c_uint = 12338;
-pub static PP_GRAPHICS3DATTRIB_NONE: ::libc::c_uint = 12344;
-pub static PP_GRAPHICS3DATTRIB_HEIGHT: ::libc::c_uint = 12374;
-pub static PP_GRAPHICS3DATTRIB_WIDTH: ::libc::c_uint = 12375;
-pub static PP_GRAPHICS3DATTRIB_SWAP_BEHAVIOR: ::libc::c_uint = 12435;
-pub static PP_GRAPHICS3DATTRIB_BUFFER_PRESERVED: ::libc::c_uint = 12436;
-pub static PP_GRAPHICS3DATTRIB_BUFFER_DESTROYED: ::libc::c_uint = 12437;
-pub static PP_GRAPHICS3DATTRIB_GPU_PREFERENCE: ::libc::c_uint = 69632;
-pub static PP_GRAPHICS3DATTRIB_GPU_PREFERENCE_LOW_POWER: ::libc::c_uint =
+pub const PP_GRAPHICS3DATTRIB_ALPHA_SIZE: ::libc::c_uint = 12321;
+pub const PP_GRAPHICS3DATTRIB_BLUE_SIZE: ::libc::c_uint = 12322;
+pub const PP_GRAPHICS3DATTRIB_GREEN_SIZE: ::libc::c_uint = 12323;
+pub const PP_GRAPHICS3DATTRIB_RED_SIZE: ::libc::c_uint = 12324;
+pub const PP_GRAPHICS3DATTRIB_DEPTH_SIZE: ::libc::c_uint = 12325;
+pub const PP_GRAPHICS3DATTRIB_STENCIL_SIZE: ::libc::c_uint = 12326;
+pub const PP_GRAPHICS3DATTRIB_SAMPLES: ::libc::c_uint = 12337;
+pub const PP_GRAPHICS3DATTRIB_SAMPLE_BUFFERS: ::libc::c_uint = 12338;
+pub const PP_GRAPHICS3DATTRIB_NONE: ::libc::c_uint = 12344;
+pub const PP_GRAPHICS3DATTRIB_HEIGHT: ::libc::c_uint = 12374;
+pub const PP_GRAPHICS3DATTRIB_WIDTH: ::libc::c_uint = 12375;
+pub const PP_GRAPHICS3DATTRIB_SWAP_BEHAVIOR: ::libc::c_uint = 12435;
+pub const PP_GRAPHICS3DATTRIB_BUFFER_PRESERVED: ::libc::c_uint = 12436;
+pub const PP_GRAPHICS3DATTRIB_BUFFER_DESTROYED: ::libc::c_uint = 12437;
+pub const PP_GRAPHICS3DATTRIB_GPU_PREFERENCE: ::libc::c_uint = 69632;
+pub const PP_GRAPHICS3DATTRIB_GPU_PREFERENCE_LOW_POWER: ::libc::c_uint =
     69633;
-pub static PP_GRAPHICS3DATTRIB_GPU_PREFERENCE_PERFORMANCE: ::libc::c_uint =
+pub const PP_GRAPHICS3DATTRIB_GPU_PREFERENCE_PERFORMANCE: ::libc::c_uint =
     69634;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Graphics3DAttrib {
@@ -1102,9 +1102,9 @@ pub struct Struct_PPB_Graphics3D_1_0 {
 }
 pub type PPB_Graphics3D = Struct_PPB_Graphics3D_1_0;
 pub type PP_NetAddress_Family = ::libc::c_uint;
-pub static PP_NETADDRESS_FAMILY_UNSPECIFIED: ::libc::c_uint = 0;
-pub static PP_NETADDRESS_FAMILY_IPV4: ::libc::c_uint = 1;
-pub static PP_NETADDRESS_FAMILY_IPV6: ::libc::c_uint = 2;
+pub const PP_NETADDRESS_FAMILY_UNSPECIFIED: ::libc::c_uint = 0;
+pub const PP_NETADDRESS_FAMILY_IPV4: ::libc::c_uint = 1;
+pub const PP_NETADDRESS_FAMILY_IPV6: ::libc::c_uint = 2;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_Family {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_Family_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -1160,7 +1160,7 @@ pub struct Struct_PPB_NetAddress_1_0 {
 }
 pub type PPB_NetAddress = Struct_PPB_NetAddress_1_0;
 pub type PP_HostResolver_Flag = ::libc::c_uint;
-pub static PP_HOSTRESOLVER_FLAG_CANONNAME: ::libc::c_uint = 1;
+pub const PP_HOSTRESOLVER_FLAG_CANONNAME: ::libc::c_uint = 1;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_HostResolver_Flag {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_HostResolver_Flag_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -1202,8 +1202,8 @@ pub struct Struct_PPB_HostResolver_1_0 {
 }
 pub type PPB_HostResolver = Struct_PPB_HostResolver_1_0;
 pub type PP_ImageDataFormat = ::libc::c_uint;
-pub static PP_IMAGEDATAFORMAT_BGRA_PREMUL: ::libc::c_uint = 0;
-pub static PP_IMAGEDATAFORMAT_RGBA_PREMUL: ::libc::c_uint = 1;
+pub const PP_IMAGEDATAFORMAT_BGRA_PREMUL: ::libc::c_uint = 0;
+pub const PP_IMAGEDATAFORMAT_RGBA_PREMUL: ::libc::c_uint = 1;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_ImageDataFormat {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_ImageDataFormat_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -1257,63 +1257,63 @@ pub struct Struct_PP_Dummy_Struct_For_PP_TouchPoint {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchPoint_is_not_28_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_InputEvent_Type = ::libc::c_int;
-pub static PP_INPUTEVENT_TYPE_UNDEFINED: ::libc::c_int = -1;
-pub static PP_INPUTEVENT_TYPE_MOUSEDOWN: ::libc::c_int = 0;
-pub static PP_INPUTEVENT_TYPE_MOUSEUP: ::libc::c_int = 1;
-pub static PP_INPUTEVENT_TYPE_MOUSEMOVE: ::libc::c_int = 2;
-pub static PP_INPUTEVENT_TYPE_MOUSEENTER: ::libc::c_int = 3;
-pub static PP_INPUTEVENT_TYPE_MOUSELEAVE: ::libc::c_int = 4;
-pub static PP_INPUTEVENT_TYPE_WHEEL: ::libc::c_int = 5;
-pub static PP_INPUTEVENT_TYPE_RAWKEYDOWN: ::libc::c_int = 6;
-pub static PP_INPUTEVENT_TYPE_KEYDOWN: ::libc::c_int = 7;
-pub static PP_INPUTEVENT_TYPE_KEYUP: ::libc::c_int = 8;
-pub static PP_INPUTEVENT_TYPE_CHAR: ::libc::c_int = 9;
-pub static PP_INPUTEVENT_TYPE_CONTEXTMENU: ::libc::c_int = 10;
-pub static PP_INPUTEVENT_TYPE_IME_COMPOSITION_START: ::libc::c_int = 11;
-pub static PP_INPUTEVENT_TYPE_IME_COMPOSITION_UPDATE: ::libc::c_int = 12;
-pub static PP_INPUTEVENT_TYPE_IME_COMPOSITION_END: ::libc::c_int = 13;
-pub static PP_INPUTEVENT_TYPE_IME_TEXT: ::libc::c_int = 14;
-pub static PP_INPUTEVENT_TYPE_TOUCHSTART: ::libc::c_int = 15;
-pub static PP_INPUTEVENT_TYPE_TOUCHMOVE: ::libc::c_int = 16;
-pub static PP_INPUTEVENT_TYPE_TOUCHEND: ::libc::c_int = 17;
-pub static PP_INPUTEVENT_TYPE_TOUCHCANCEL: ::libc::c_int = 18;
+pub const PP_INPUTEVENT_TYPE_UNDEFINED: ::libc::c_int = -1;
+pub const PP_INPUTEVENT_TYPE_MOUSEDOWN: ::libc::c_int = 0;
+pub const PP_INPUTEVENT_TYPE_MOUSEUP: ::libc::c_int = 1;
+pub const PP_INPUTEVENT_TYPE_MOUSEMOVE: ::libc::c_int = 2;
+pub const PP_INPUTEVENT_TYPE_MOUSEENTER: ::libc::c_int = 3;
+pub const PP_INPUTEVENT_TYPE_MOUSELEAVE: ::libc::c_int = 4;
+pub const PP_INPUTEVENT_TYPE_WHEEL: ::libc::c_int = 5;
+pub const PP_INPUTEVENT_TYPE_RAWKEYDOWN: ::libc::c_int = 6;
+pub const PP_INPUTEVENT_TYPE_KEYDOWN: ::libc::c_int = 7;
+pub const PP_INPUTEVENT_TYPE_KEYUP: ::libc::c_int = 8;
+pub const PP_INPUTEVENT_TYPE_CHAR: ::libc::c_int = 9;
+pub const PP_INPUTEVENT_TYPE_CONTEXTMENU: ::libc::c_int = 10;
+pub const PP_INPUTEVENT_TYPE_IME_COMPOSITION_START: ::libc::c_int = 11;
+pub const PP_INPUTEVENT_TYPE_IME_COMPOSITION_UPDATE: ::libc::c_int = 12;
+pub const PP_INPUTEVENT_TYPE_IME_COMPOSITION_END: ::libc::c_int = 13;
+pub const PP_INPUTEVENT_TYPE_IME_TEXT: ::libc::c_int = 14;
+pub const PP_INPUTEVENT_TYPE_TOUCHSTART: ::libc::c_int = 15;
+pub const PP_INPUTEVENT_TYPE_TOUCHMOVE: ::libc::c_int = 16;
+pub const PP_INPUTEVENT_TYPE_TOUCHEND: ::libc::c_int = 17;
+pub const PP_INPUTEVENT_TYPE_TOUCHCANCEL: ::libc::c_int = 18;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Type_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_InputEvent_Modifier = ::libc::c_uint;
-pub static PP_INPUTEVENT_MODIFIER_SHIFTKEY: ::libc::c_uint = 1;
-pub static PP_INPUTEVENT_MODIFIER_CONTROLKEY: ::libc::c_uint = 2;
-pub static PP_INPUTEVENT_MODIFIER_ALTKEY: ::libc::c_uint = 4;
-pub static PP_INPUTEVENT_MODIFIER_METAKEY: ::libc::c_uint = 8;
-pub static PP_INPUTEVENT_MODIFIER_ISKEYPAD: ::libc::c_uint = 16;
-pub static PP_INPUTEVENT_MODIFIER_ISAUTOREPEAT: ::libc::c_uint = 32;
-pub static PP_INPUTEVENT_MODIFIER_LEFTBUTTONDOWN: ::libc::c_uint = 64;
-pub static PP_INPUTEVENT_MODIFIER_MIDDLEBUTTONDOWN: ::libc::c_uint = 128;
-pub static PP_INPUTEVENT_MODIFIER_RIGHTBUTTONDOWN: ::libc::c_uint = 256;
-pub static PP_INPUTEVENT_MODIFIER_CAPSLOCKKEY: ::libc::c_uint = 512;
-pub static PP_INPUTEVENT_MODIFIER_NUMLOCKKEY: ::libc::c_uint = 1024;
-pub static PP_INPUTEVENT_MODIFIER_ISLEFT: ::libc::c_uint = 2048;
-pub static PP_INPUTEVENT_MODIFIER_ISRIGHT: ::libc::c_uint = 4096;
+pub const PP_INPUTEVENT_MODIFIER_SHIFTKEY: ::libc::c_uint = 1;
+pub const PP_INPUTEVENT_MODIFIER_CONTROLKEY: ::libc::c_uint = 2;
+pub const PP_INPUTEVENT_MODIFIER_ALTKEY: ::libc::c_uint = 4;
+pub const PP_INPUTEVENT_MODIFIER_METAKEY: ::libc::c_uint = 8;
+pub const PP_INPUTEVENT_MODIFIER_ISKEYPAD: ::libc::c_uint = 16;
+pub const PP_INPUTEVENT_MODIFIER_ISAUTOREPEAT: ::libc::c_uint = 32;
+pub const PP_INPUTEVENT_MODIFIER_LEFTBUTTONDOWN: ::libc::c_uint = 64;
+pub const PP_INPUTEVENT_MODIFIER_MIDDLEBUTTONDOWN: ::libc::c_uint = 128;
+pub const PP_INPUTEVENT_MODIFIER_RIGHTBUTTONDOWN: ::libc::c_uint = 256;
+pub const PP_INPUTEVENT_MODIFIER_CAPSLOCKKEY: ::libc::c_uint = 512;
+pub const PP_INPUTEVENT_MODIFIER_NUMLOCKKEY: ::libc::c_uint = 1024;
+pub const PP_INPUTEVENT_MODIFIER_ISLEFT: ::libc::c_uint = 2048;
+pub const PP_INPUTEVENT_MODIFIER_ISRIGHT: ::libc::c_uint = 4096;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Modifier {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Modifier_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_InputEvent_MouseButton = ::libc::c_int;
-pub static PP_INPUTEVENT_MOUSEBUTTON_NONE: ::libc::c_int = -1;
-pub static PP_INPUTEVENT_MOUSEBUTTON_LEFT: ::libc::c_int = 0;
-pub static PP_INPUTEVENT_MOUSEBUTTON_MIDDLE: ::libc::c_int = 1;
-pub static PP_INPUTEVENT_MOUSEBUTTON_RIGHT: ::libc::c_int = 2;
+pub const PP_INPUTEVENT_MOUSEBUTTON_NONE: ::libc::c_int = -1;
+pub const PP_INPUTEVENT_MOUSEBUTTON_LEFT: ::libc::c_int = 0;
+pub const PP_INPUTEVENT_MOUSEBUTTON_MIDDLE: ::libc::c_int = 1;
+pub const PP_INPUTEVENT_MOUSEBUTTON_RIGHT: ::libc::c_int = 2;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_MouseButton {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_MouseButton_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_InputEvent_Class = ::libc::c_uint;
-pub static PP_INPUTEVENT_CLASS_MOUSE: ::libc::c_uint = 1;
-pub static PP_INPUTEVENT_CLASS_KEYBOARD: ::libc::c_uint = 2;
-pub static PP_INPUTEVENT_CLASS_WHEEL: ::libc::c_uint = 4;
-pub static PP_INPUTEVENT_CLASS_TOUCH: ::libc::c_uint = 8;
-pub static PP_INPUTEVENT_CLASS_IME: ::libc::c_uint = 16;
+pub const PP_INPUTEVENT_CLASS_MOUSE: ::libc::c_uint = 1;
+pub const PP_INPUTEVENT_CLASS_KEYBOARD: ::libc::c_uint = 2;
+pub const PP_INPUTEVENT_CLASS_WHEEL: ::libc::c_uint = 4;
+pub const PP_INPUTEVENT_CLASS_TOUCH: ::libc::c_uint = 8;
+pub const PP_INPUTEVENT_CLASS_IME: ::libc::c_uint = 16;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Class {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Class_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -1447,9 +1447,9 @@ pub struct Struct_PPB_KeyboardInputEvent_1_0 {
                                                     -> Struct_PP_Var>,
 }
 pub type PP_TouchListType = ::libc::c_uint;
-pub static PP_TOUCHLIST_TYPE_TOUCHES: ::libc::c_uint = 0;
-pub static PP_TOUCHLIST_TYPE_CHANGEDTOUCHES: ::libc::c_uint = 1;
-pub static PP_TOUCHLIST_TYPE_TARGETTOUCHES: ::libc::c_uint = 2;
+pub const PP_TOUCHLIST_TYPE_TOUCHES: ::libc::c_uint = 0;
+pub const PP_TOUCHLIST_TYPE_CHANGEDTOUCHES: ::libc::c_uint = 1;
+pub const PP_TOUCHLIST_TYPE_TARGETTOUCHES: ::libc::c_uint = 2;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TouchListType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchListType_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -1528,12 +1528,12 @@ pub struct Struct_PPB_Instance_1_0 {
 }
 pub type PPB_Instance = Struct_PPB_Instance_1_0;
 pub type PP_MediaStreamAudioTrack_Attrib = ::libc::c_uint;
-pub static PP_MEDIASTREAMAUDIOTRACK_ATTRIB_NONE: ::libc::c_uint = 0;
-pub static PP_MEDIASTREAMAUDIOTRACK_ATTRIB_BUFFERS: ::libc::c_uint = 1;
-pub static PP_MEDIASTREAMAUDIOTRACK_ATTRIB_SAMPLE_RATE: ::libc::c_uint = 2;
-pub static PP_MEDIASTREAMAUDIOTRACK_ATTRIB_SAMPLE_SIZE: ::libc::c_uint = 3;
-pub static PP_MEDIASTREAMAUDIOTRACK_ATTRIB_CHANNELS: ::libc::c_uint = 4;
-pub static PP_MEDIASTREAMAUDIOTRACK_ATTRIB_DURATION: ::libc::c_uint = 5;
+pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_NONE: ::libc::c_uint = 0;
+pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_BUFFERS: ::libc::c_uint = 1;
+pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_SAMPLE_RATE: ::libc::c_uint = 2;
+pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_SAMPLE_SIZE: ::libc::c_uint = 3;
+pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_CHANNELS: ::libc::c_uint = 4;
+pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_DURATION: ::libc::c_uint = 5;
 #[repr(C)]
 pub struct Struct_PPB_MediaStreamAudioTrack_0_1 {
     pub IsMediaStreamAudioTrack: ::std::option::Option<extern "C" fn
@@ -1568,12 +1568,12 @@ pub struct Struct_PPB_MediaStreamAudioTrack_0_1 {
 }
 pub type PPB_MediaStreamAudioTrack = Struct_PPB_MediaStreamAudioTrack_0_1;
 pub type PP_MediaStreamVideoTrack_Attrib = ::libc::c_uint;
-pub static PP_MEDIASTREAMVIDEOTRACK_ATTRIB_NONE: ::libc::c_uint = 0;
-pub static PP_MEDIASTREAMVIDEOTRACK_ATTRIB_BUFFERED_FRAMES: ::libc::c_uint =
+pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_NONE: ::libc::c_uint = 0;
+pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_BUFFERED_FRAMES: ::libc::c_uint =
     1;
-pub static PP_MEDIASTREAMVIDEOTRACK_ATTRIB_WIDTH: ::libc::c_uint = 2;
-pub static PP_MEDIASTREAMVIDEOTRACK_ATTRIB_HEIGHT: ::libc::c_uint = 3;
-pub static PP_MEDIASTREAMVIDEOTRACK_ATTRIB_FORMAT: ::libc::c_uint = 4;
+pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_WIDTH: ::libc::c_uint = 2;
+pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_HEIGHT: ::libc::c_uint = 3;
+pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_FORMAT: ::libc::c_uint = 4;
 #[repr(C)]
 pub struct Struct_PPB_MediaStreamVideoTrack_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(arg1: PP_Instance)
@@ -1713,50 +1713,50 @@ pub struct Struct_PPB_Messaging_1_0 {
 }
 pub type PPB_Messaging = Struct_PPB_Messaging_1_0;
 pub type Enum_PP_MouseCursor_Type = ::libc::c_int;
-pub static PP_MOUSECURSOR_TYPE_CUSTOM: ::libc::c_int = -1;
-pub static PP_MOUSECURSOR_TYPE_POINTER: ::libc::c_int = 0;
-pub static PP_MOUSECURSOR_TYPE_CROSS: ::libc::c_int = 1;
-pub static PP_MOUSECURSOR_TYPE_HAND: ::libc::c_int = 2;
-pub static PP_MOUSECURSOR_TYPE_IBEAM: ::libc::c_int = 3;
-pub static PP_MOUSECURSOR_TYPE_WAIT: ::libc::c_int = 4;
-pub static PP_MOUSECURSOR_TYPE_HELP: ::libc::c_int = 5;
-pub static PP_MOUSECURSOR_TYPE_EASTRESIZE: ::libc::c_int = 6;
-pub static PP_MOUSECURSOR_TYPE_NORTHRESIZE: ::libc::c_int = 7;
-pub static PP_MOUSECURSOR_TYPE_NORTHEASTRESIZE: ::libc::c_int = 8;
-pub static PP_MOUSECURSOR_TYPE_NORTHWESTRESIZE: ::libc::c_int = 9;
-pub static PP_MOUSECURSOR_TYPE_SOUTHRESIZE: ::libc::c_int = 10;
-pub static PP_MOUSECURSOR_TYPE_SOUTHEASTRESIZE: ::libc::c_int = 11;
-pub static PP_MOUSECURSOR_TYPE_SOUTHWESTRESIZE: ::libc::c_int = 12;
-pub static PP_MOUSECURSOR_TYPE_WESTRESIZE: ::libc::c_int = 13;
-pub static PP_MOUSECURSOR_TYPE_NORTHSOUTHRESIZE: ::libc::c_int = 14;
-pub static PP_MOUSECURSOR_TYPE_EASTWESTRESIZE: ::libc::c_int = 15;
-pub static PP_MOUSECURSOR_TYPE_NORTHEASTSOUTHWESTRESIZE: ::libc::c_int = 16;
-pub static PP_MOUSECURSOR_TYPE_NORTHWESTSOUTHEASTRESIZE: ::libc::c_int = 17;
-pub static PP_MOUSECURSOR_TYPE_COLUMNRESIZE: ::libc::c_int = 18;
-pub static PP_MOUSECURSOR_TYPE_ROWRESIZE: ::libc::c_int = 19;
-pub static PP_MOUSECURSOR_TYPE_MIDDLEPANNING: ::libc::c_int = 20;
-pub static PP_MOUSECURSOR_TYPE_EASTPANNING: ::libc::c_int = 21;
-pub static PP_MOUSECURSOR_TYPE_NORTHPANNING: ::libc::c_int = 22;
-pub static PP_MOUSECURSOR_TYPE_NORTHEASTPANNING: ::libc::c_int = 23;
-pub static PP_MOUSECURSOR_TYPE_NORTHWESTPANNING: ::libc::c_int = 24;
-pub static PP_MOUSECURSOR_TYPE_SOUTHPANNING: ::libc::c_int = 25;
-pub static PP_MOUSECURSOR_TYPE_SOUTHEASTPANNING: ::libc::c_int = 26;
-pub static PP_MOUSECURSOR_TYPE_SOUTHWESTPANNING: ::libc::c_int = 27;
-pub static PP_MOUSECURSOR_TYPE_WESTPANNING: ::libc::c_int = 28;
-pub static PP_MOUSECURSOR_TYPE_MOVE: ::libc::c_int = 29;
-pub static PP_MOUSECURSOR_TYPE_VERTICALTEXT: ::libc::c_int = 30;
-pub static PP_MOUSECURSOR_TYPE_CELL: ::libc::c_int = 31;
-pub static PP_MOUSECURSOR_TYPE_CONTEXTMENU: ::libc::c_int = 32;
-pub static PP_MOUSECURSOR_TYPE_ALIAS: ::libc::c_int = 33;
-pub static PP_MOUSECURSOR_TYPE_PROGRESS: ::libc::c_int = 34;
-pub static PP_MOUSECURSOR_TYPE_NODROP: ::libc::c_int = 35;
-pub static PP_MOUSECURSOR_TYPE_COPY: ::libc::c_int = 36;
-pub static PP_MOUSECURSOR_TYPE_NONE: ::libc::c_int = 37;
-pub static PP_MOUSECURSOR_TYPE_NOTALLOWED: ::libc::c_int = 38;
-pub static PP_MOUSECURSOR_TYPE_ZOOMIN: ::libc::c_int = 39;
-pub static PP_MOUSECURSOR_TYPE_ZOOMOUT: ::libc::c_int = 40;
-pub static PP_MOUSECURSOR_TYPE_GRAB: ::libc::c_int = 41;
-pub static PP_MOUSECURSOR_TYPE_GRABBING: ::libc::c_int = 42;
+pub const PP_MOUSECURSOR_TYPE_CUSTOM: ::libc::c_int = -1;
+pub const PP_MOUSECURSOR_TYPE_POINTER: ::libc::c_int = 0;
+pub const PP_MOUSECURSOR_TYPE_CROSS: ::libc::c_int = 1;
+pub const PP_MOUSECURSOR_TYPE_HAND: ::libc::c_int = 2;
+pub const PP_MOUSECURSOR_TYPE_IBEAM: ::libc::c_int = 3;
+pub const PP_MOUSECURSOR_TYPE_WAIT: ::libc::c_int = 4;
+pub const PP_MOUSECURSOR_TYPE_HELP: ::libc::c_int = 5;
+pub const PP_MOUSECURSOR_TYPE_EASTRESIZE: ::libc::c_int = 6;
+pub const PP_MOUSECURSOR_TYPE_NORTHRESIZE: ::libc::c_int = 7;
+pub const PP_MOUSECURSOR_TYPE_NORTHEASTRESIZE: ::libc::c_int = 8;
+pub const PP_MOUSECURSOR_TYPE_NORTHWESTRESIZE: ::libc::c_int = 9;
+pub const PP_MOUSECURSOR_TYPE_SOUTHRESIZE: ::libc::c_int = 10;
+pub const PP_MOUSECURSOR_TYPE_SOUTHEASTRESIZE: ::libc::c_int = 11;
+pub const PP_MOUSECURSOR_TYPE_SOUTHWESTRESIZE: ::libc::c_int = 12;
+pub const PP_MOUSECURSOR_TYPE_WESTRESIZE: ::libc::c_int = 13;
+pub const PP_MOUSECURSOR_TYPE_NORTHSOUTHRESIZE: ::libc::c_int = 14;
+pub const PP_MOUSECURSOR_TYPE_EASTWESTRESIZE: ::libc::c_int = 15;
+pub const PP_MOUSECURSOR_TYPE_NORTHEASTSOUTHWESTRESIZE: ::libc::c_int = 16;
+pub const PP_MOUSECURSOR_TYPE_NORTHWESTSOUTHEASTRESIZE: ::libc::c_int = 17;
+pub const PP_MOUSECURSOR_TYPE_COLUMNRESIZE: ::libc::c_int = 18;
+pub const PP_MOUSECURSOR_TYPE_ROWRESIZE: ::libc::c_int = 19;
+pub const PP_MOUSECURSOR_TYPE_MIDDLEPANNING: ::libc::c_int = 20;
+pub const PP_MOUSECURSOR_TYPE_EASTPANNING: ::libc::c_int = 21;
+pub const PP_MOUSECURSOR_TYPE_NORTHPANNING: ::libc::c_int = 22;
+pub const PP_MOUSECURSOR_TYPE_NORTHEASTPANNING: ::libc::c_int = 23;
+pub const PP_MOUSECURSOR_TYPE_NORTHWESTPANNING: ::libc::c_int = 24;
+pub const PP_MOUSECURSOR_TYPE_SOUTHPANNING: ::libc::c_int = 25;
+pub const PP_MOUSECURSOR_TYPE_SOUTHEASTPANNING: ::libc::c_int = 26;
+pub const PP_MOUSECURSOR_TYPE_SOUTHWESTPANNING: ::libc::c_int = 27;
+pub const PP_MOUSECURSOR_TYPE_WESTPANNING: ::libc::c_int = 28;
+pub const PP_MOUSECURSOR_TYPE_MOVE: ::libc::c_int = 29;
+pub const PP_MOUSECURSOR_TYPE_VERTICALTEXT: ::libc::c_int = 30;
+pub const PP_MOUSECURSOR_TYPE_CELL: ::libc::c_int = 31;
+pub const PP_MOUSECURSOR_TYPE_CONTEXTMENU: ::libc::c_int = 32;
+pub const PP_MOUSECURSOR_TYPE_ALIAS: ::libc::c_int = 33;
+pub const PP_MOUSECURSOR_TYPE_PROGRESS: ::libc::c_int = 34;
+pub const PP_MOUSECURSOR_TYPE_NODROP: ::libc::c_int = 35;
+pub const PP_MOUSECURSOR_TYPE_COPY: ::libc::c_int = 36;
+pub const PP_MOUSECURSOR_TYPE_NONE: ::libc::c_int = 37;
+pub const PP_MOUSECURSOR_TYPE_NOTALLOWED: ::libc::c_int = 38;
+pub const PP_MOUSECURSOR_TYPE_ZOOMIN: ::libc::c_int = 39;
+pub const PP_MOUSECURSOR_TYPE_ZOOMOUT: ::libc::c_int = 40;
+pub const PP_MOUSECURSOR_TYPE_GRAB: ::libc::c_int = 41;
+pub const PP_MOUSECURSOR_TYPE_GRABBING: ::libc::c_int = 42;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_MouseCursor_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_MouseCursor_Type_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -1782,17 +1782,17 @@ pub struct Struct_PPB_MouseLock_1_0 {
 }
 pub type PPB_MouseLock = Struct_PPB_MouseLock_1_0;
 pub type PP_NetworkList_Type = ::libc::c_uint;
-pub static PP_NETWORKLIST_TYPE_UNKNOWN: ::libc::c_uint = 0;
-pub static PP_NETWORKLIST_TYPE_ETHERNET: ::libc::c_uint = 1;
-pub static PP_NETWORKLIST_TYPE_WIFI: ::libc::c_uint = 2;
-pub static PP_NETWORKLIST_TYPE_CELLULAR: ::libc::c_uint = 3;
+pub const PP_NETWORKLIST_TYPE_UNKNOWN: ::libc::c_uint = 0;
+pub const PP_NETWORKLIST_TYPE_ETHERNET: ::libc::c_uint = 1;
+pub const PP_NETWORKLIST_TYPE_WIFI: ::libc::c_uint = 2;
+pub const PP_NETWORKLIST_TYPE_CELLULAR: ::libc::c_uint = 3;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetworkList_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_Type_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_NetworkList_State = ::libc::c_uint;
-pub static PP_NETWORKLIST_STATE_DOWN: ::libc::c_uint = 0;
-pub static PP_NETWORKLIST_STATE_UP: ::libc::c_uint = 1;
+pub const PP_NETWORKLIST_STATE_DOWN: ::libc::c_uint = 0;
+pub const PP_NETWORKLIST_STATE_UP: ::libc::c_uint = 1;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetworkList_State {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_State_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -2646,9 +2646,9 @@ pub struct Struct_PPB_OpenGLES2Query {
                                                          arg4: *mut GLuint)>,
 }
 pub type PP_TCPSocket_Option = ::libc::c_uint;
-pub static PP_TCPSOCKET_OPTION_NO_DELAY: ::libc::c_uint = 0;
-pub static PP_TCPSOCKET_OPTION_SEND_BUFFER_SIZE: ::libc::c_uint = 1;
-pub static PP_TCPSOCKET_OPTION_RECV_BUFFER_SIZE: ::libc::c_uint = 2;
+pub const PP_TCPSOCKET_OPTION_NO_DELAY: ::libc::c_uint = 0;
+pub const PP_TCPSOCKET_OPTION_SEND_BUFFER_SIZE: ::libc::c_uint = 1;
+pub const PP_TCPSOCKET_OPTION_RECV_BUFFER_SIZE: ::libc::c_uint = 2;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TCPSocket_Option {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TCPSocket_Option_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -2746,14 +2746,14 @@ pub struct Struct_PPB_TCPSocket_1_0 {
                                              -> int32_t>,
 }
 pub type PP_TextInput_Type = ::libc::c_uint;
-pub static PP_TEXTINPUT_TYPE_NONE: ::libc::c_uint = 0;
-pub static PP_TEXTINPUT_TYPE_TEXT: ::libc::c_uint = 1;
-pub static PP_TEXTINPUT_TYPE_PASSWORD: ::libc::c_uint = 2;
-pub static PP_TEXTINPUT_TYPE_SEARCH: ::libc::c_uint = 3;
-pub static PP_TEXTINPUT_TYPE_EMAIL: ::libc::c_uint = 4;
-pub static PP_TEXTINPUT_TYPE_NUMBER: ::libc::c_uint = 5;
-pub static PP_TEXTINPUT_TYPE_TELEPHONE: ::libc::c_uint = 6;
-pub static PP_TEXTINPUT_TYPE_URL: ::libc::c_uint = 7;
+pub const PP_TEXTINPUT_TYPE_NONE: ::libc::c_uint = 0;
+pub const PP_TEXTINPUT_TYPE_TEXT: ::libc::c_uint = 1;
+pub const PP_TEXTINPUT_TYPE_PASSWORD: ::libc::c_uint = 2;
+pub const PP_TEXTINPUT_TYPE_SEARCH: ::libc::c_uint = 3;
+pub const PP_TEXTINPUT_TYPE_EMAIL: ::libc::c_uint = 4;
+pub const PP_TEXTINPUT_TYPE_NUMBER: ::libc::c_uint = 5;
+pub const PP_TEXTINPUT_TYPE_TELEPHONE: ::libc::c_uint = 6;
+pub const PP_TEXTINPUT_TYPE_URL: ::libc::c_uint = 7;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TextInput_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TextInput_Type_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -2778,10 +2778,10 @@ pub struct Struct_PPB_TextInputController_1_0 {
 }
 pub type PPB_TextInputController = Struct_PPB_TextInputController_1_0;
 pub type PP_UDPSocket_Option = ::libc::c_uint;
-pub static PP_UDPSOCKET_OPTION_ADDRESS_REUSE: ::libc::c_uint = 0;
-pub static PP_UDPSOCKET_OPTION_BROADCAST: ::libc::c_uint = 1;
-pub static PP_UDPSOCKET_OPTION_SEND_BUFFER_SIZE: ::libc::c_uint = 2;
-pub static PP_UDPSOCKET_OPTION_RECV_BUFFER_SIZE: ::libc::c_uint = 3;
+pub const PP_UDPSOCKET_OPTION_ADDRESS_REUSE: ::libc::c_uint = 0;
+pub const PP_UDPSOCKET_OPTION_BROADCAST: ::libc::c_uint = 1;
+pub const PP_UDPSOCKET_OPTION_SEND_BUFFER_SIZE: ::libc::c_uint = 2;
+pub const PP_UDPSOCKET_OPTION_RECV_BUFFER_SIZE: ::libc::c_uint = 3;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_UDPSocket_Option {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_UDPSocket_Option_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -2868,26 +2868,26 @@ pub struct Struct_PPB_URLLoader_1_0 {
 }
 pub type PPB_URLLoader = Struct_PPB_URLLoader_1_0;
 pub type PP_URLRequestProperty = ::libc::c_uint;
-pub static PP_URLREQUESTPROPERTY_URL: ::libc::c_uint = 0;
-pub static PP_URLREQUESTPROPERTY_METHOD: ::libc::c_uint = 1;
-pub static PP_URLREQUESTPROPERTY_HEADERS: ::libc::c_uint = 2;
-pub static PP_URLREQUESTPROPERTY_STREAMTOFILE: ::libc::c_uint = 3;
-pub static PP_URLREQUESTPROPERTY_FOLLOWREDIRECTS: ::libc::c_uint = 4;
-pub static PP_URLREQUESTPROPERTY_RECORDDOWNLOADPROGRESS: ::libc::c_uint = 5;
-pub static PP_URLREQUESTPROPERTY_RECORDUPLOADPROGRESS: ::libc::c_uint = 6;
-pub static PP_URLREQUESTPROPERTY_CUSTOMREFERRERURL: ::libc::c_uint = 7;
-pub static PP_URLREQUESTPROPERTY_ALLOWCROSSORIGINREQUESTS: ::libc::c_uint = 8;
-pub static PP_URLREQUESTPROPERTY_ALLOWCREDENTIALS: ::libc::c_uint = 9;
-pub static PP_URLREQUESTPROPERTY_CUSTOMCONTENTTRANSFERENCODING: ::libc::c_uint
+pub const PP_URLREQUESTPROPERTY_URL: ::libc::c_uint = 0;
+pub const PP_URLREQUESTPROPERTY_METHOD: ::libc::c_uint = 1;
+pub const PP_URLREQUESTPROPERTY_HEADERS: ::libc::c_uint = 2;
+pub const PP_URLREQUESTPROPERTY_STREAMTOFILE: ::libc::c_uint = 3;
+pub const PP_URLREQUESTPROPERTY_FOLLOWREDIRECTS: ::libc::c_uint = 4;
+pub const PP_URLREQUESTPROPERTY_RECORDDOWNLOADPROGRESS: ::libc::c_uint = 5;
+pub const PP_URLREQUESTPROPERTY_RECORDUPLOADPROGRESS: ::libc::c_uint = 6;
+pub const PP_URLREQUESTPROPERTY_CUSTOMREFERRERURL: ::libc::c_uint = 7;
+pub const PP_URLREQUESTPROPERTY_ALLOWCROSSORIGINREQUESTS: ::libc::c_uint = 8;
+pub const PP_URLREQUESTPROPERTY_ALLOWCREDENTIALS: ::libc::c_uint = 9;
+pub const PP_URLREQUESTPROPERTY_CUSTOMCONTENTTRANSFERENCODING: ::libc::c_uint
            =
     10;
-pub static PP_URLREQUESTPROPERTY_PREFETCHBUFFERUPPERTHRESHOLD: ::libc::c_uint
+pub const PP_URLREQUESTPROPERTY_PREFETCHBUFFERUPPERTHRESHOLD: ::libc::c_uint
            =
     11;
-pub static PP_URLREQUESTPROPERTY_PREFETCHBUFFERLOWERTHRESHOLD: ::libc::c_uint
+pub const PP_URLREQUESTPROPERTY_PREFETCHBUFFERLOWERTHRESHOLD: ::libc::c_uint
            =
     12;
-pub static PP_URLREQUESTPROPERTY_CUSTOMUSERAGENT: ::libc::c_uint = 13;
+pub const PP_URLREQUESTPROPERTY_CUSTOMUSERAGENT: ::libc::c_uint = 13;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_URLRequestProperty {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLRequestProperty_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -2920,12 +2920,12 @@ pub struct Struct_PPB_URLRequestInfo_1_0 {
 }
 pub type PPB_URLRequestInfo = Struct_PPB_URLRequestInfo_1_0;
 pub type PP_URLResponseProperty = ::libc::c_uint;
-pub static PP_URLRESPONSEPROPERTY_URL: ::libc::c_uint = 0;
-pub static PP_URLRESPONSEPROPERTY_REDIRECTURL: ::libc::c_uint = 1;
-pub static PP_URLRESPONSEPROPERTY_REDIRECTMETHOD: ::libc::c_uint = 2;
-pub static PP_URLRESPONSEPROPERTY_STATUSCODE: ::libc::c_uint = 3;
-pub static PP_URLRESPONSEPROPERTY_STATUSLINE: ::libc::c_uint = 4;
-pub static PP_URLRESPONSEPROPERTY_HEADERS: ::libc::c_uint = 5;
+pub const PP_URLRESPONSEPROPERTY_URL: ::libc::c_uint = 0;
+pub const PP_URLRESPONSEPROPERTY_REDIRECTURL: ::libc::c_uint = 1;
+pub const PP_URLRESPONSEPROPERTY_REDIRECTMETHOD: ::libc::c_uint = 2;
+pub const PP_URLRESPONSEPROPERTY_STATUSCODE: ::libc::c_uint = 3;
+pub const PP_URLRESPONSEPROPERTY_STATUSLINE: ::libc::c_uint = 4;
+pub const PP_URLRESPONSEPROPERTY_HEADERS: ::libc::c_uint = 5;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_URLResponseProperty {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLResponseProperty_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -3113,35 +3113,35 @@ pub struct Struct_PPB_View_1_1 {
 }
 pub type PPB_View = Struct_PPB_View_1_1;
 pub type PP_WebSocketReadyState = ::libc::c_int;
-pub static PP_WEBSOCKETREADYSTATE_INVALID: ::libc::c_int = -1;
-pub static PP_WEBSOCKETREADYSTATE_CONNECTING: ::libc::c_int = 0;
-pub static PP_WEBSOCKETREADYSTATE_OPEN: ::libc::c_int = 1;
-pub static PP_WEBSOCKETREADYSTATE_CLOSING: ::libc::c_int = 2;
-pub static PP_WEBSOCKETREADYSTATE_CLOSED: ::libc::c_int = 3;
+pub const PP_WEBSOCKETREADYSTATE_INVALID: ::libc::c_int = -1;
+pub const PP_WEBSOCKETREADYSTATE_CONNECTING: ::libc::c_int = 0;
+pub const PP_WEBSOCKETREADYSTATE_OPEN: ::libc::c_int = 1;
+pub const PP_WEBSOCKETREADYSTATE_CLOSING: ::libc::c_int = 2;
+pub const PP_WEBSOCKETREADYSTATE_CLOSED: ::libc::c_int = 3;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_WebSocketReadyState {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketReadyState_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_WebSocketCloseCode = ::libc::c_uint;
-pub static PP_WEBSOCKETSTATUSCODE_NOT_SPECIFIED: ::libc::c_uint = 1005;
-pub static PP_WEBSOCKETSTATUSCODE_NORMAL_CLOSURE: ::libc::c_uint = 1000;
-pub static PP_WEBSOCKETSTATUSCODE_GOING_AWAY: ::libc::c_uint = 1001;
-pub static PP_WEBSOCKETSTATUSCODE_PROTOCOL_ERROR: ::libc::c_uint = 1002;
-pub static PP_WEBSOCKETSTATUSCODE_UNSUPPORTED_DATA: ::libc::c_uint = 1003;
-pub static PP_WEBSOCKETSTATUSCODE_NO_STATUS_RECEIVED: ::libc::c_uint = 1005;
-pub static PP_WEBSOCKETSTATUSCODE_ABNORMAL_CLOSURE: ::libc::c_uint = 1006;
-pub static PP_WEBSOCKETSTATUSCODE_INVALID_FRAME_PAYLOAD_DATA: ::libc::c_uint =
+pub const PP_WEBSOCKETSTATUSCODE_NOT_SPECIFIED: ::libc::c_uint = 1005;
+pub const PP_WEBSOCKETSTATUSCODE_NORMAL_CLOSURE: ::libc::c_uint = 1000;
+pub const PP_WEBSOCKETSTATUSCODE_GOING_AWAY: ::libc::c_uint = 1001;
+pub const PP_WEBSOCKETSTATUSCODE_PROTOCOL_ERROR: ::libc::c_uint = 1002;
+pub const PP_WEBSOCKETSTATUSCODE_UNSUPPORTED_DATA: ::libc::c_uint = 1003;
+pub const PP_WEBSOCKETSTATUSCODE_NO_STATUS_RECEIVED: ::libc::c_uint = 1005;
+pub const PP_WEBSOCKETSTATUSCODE_ABNORMAL_CLOSURE: ::libc::c_uint = 1006;
+pub const PP_WEBSOCKETSTATUSCODE_INVALID_FRAME_PAYLOAD_DATA: ::libc::c_uint =
     1007;
-pub static PP_WEBSOCKETSTATUSCODE_POLICY_VIOLATION: ::libc::c_uint = 1008;
-pub static PP_WEBSOCKETSTATUSCODE_MESSAGE_TOO_BIG: ::libc::c_uint = 1009;
-pub static PP_WEBSOCKETSTATUSCODE_MANDATORY_EXTENSION: ::libc::c_uint = 1010;
-pub static PP_WEBSOCKETSTATUSCODE_INTERNAL_SERVER_ERROR: ::libc::c_uint =
+pub const PP_WEBSOCKETSTATUSCODE_POLICY_VIOLATION: ::libc::c_uint = 1008;
+pub const PP_WEBSOCKETSTATUSCODE_MESSAGE_TOO_BIG: ::libc::c_uint = 1009;
+pub const PP_WEBSOCKETSTATUSCODE_MANDATORY_EXTENSION: ::libc::c_uint = 1010;
+pub const PP_WEBSOCKETSTATUSCODE_INTERNAL_SERVER_ERROR: ::libc::c_uint =
     1011;
-pub static PP_WEBSOCKETSTATUSCODE_TLS_HANDSHAKE: ::libc::c_uint = 1015;
-pub static PP_WEBSOCKETSTATUSCODE_USER_REGISTERED_MIN: ::libc::c_uint = 3000;
-pub static PP_WEBSOCKETSTATUSCODE_USER_REGISTERED_MAX: ::libc::c_uint = 3999;
-pub static PP_WEBSOCKETSTATUSCODE_USER_PRIVATE_MIN: ::libc::c_uint = 4000;
-pub static PP_WEBSOCKETSTATUSCODE_USER_PRIVATE_MAX: ::libc::c_uint = 4999;
+pub const PP_WEBSOCKETSTATUSCODE_TLS_HANDSHAKE: ::libc::c_uint = 1015;
+pub const PP_WEBSOCKETSTATUSCODE_USER_REGISTERED_MIN: ::libc::c_uint = 3000;
+pub const PP_WEBSOCKETSTATUSCODE_USER_REGISTERED_MAX: ::libc::c_uint = 3999;
+pub const PP_WEBSOCKETSTATUSCODE_USER_PRIVATE_MIN: ::libc::c_uint = 4000;
+pub const PP_WEBSOCKETSTATUSCODE_USER_PRIVATE_MAX: ::libc::c_uint = 4999;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_WebSocketCloseCode {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketCloseCode_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -3205,44 +3205,44 @@ pub struct Struct_PP_Dummy_Struct_For_PP_DirectoryEntry {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_DirectoryEntry_is_not_8_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type Enum_Unnamed6 = ::libc::c_int;
-pub static PP_OK: ::libc::c_int = 0;
-pub static PP_OK_COMPLETIONPENDING: ::libc::c_int = -1;
-pub static PP_ERROR_FAILED: ::libc::c_int = -2;
-pub static PP_ERROR_ABORTED: ::libc::c_int = -3;
-pub static PP_ERROR_BADARGUMENT: ::libc::c_int = -4;
-pub static PP_ERROR_BADRESOURCE: ::libc::c_int = -5;
-pub static PP_ERROR_NOINTERFACE: ::libc::c_int = -6;
-pub static PP_ERROR_NOACCESS: ::libc::c_int = -7;
-pub static PP_ERROR_NOMEMORY: ::libc::c_int = -8;
-pub static PP_ERROR_NOSPACE: ::libc::c_int = -9;
-pub static PP_ERROR_NOQUOTA: ::libc::c_int = -10;
-pub static PP_ERROR_INPROGRESS: ::libc::c_int = -11;
-pub static PP_ERROR_NOTSUPPORTED: ::libc::c_int = -12;
-pub static PP_ERROR_BLOCKS_MAIN_THREAD: ::libc::c_int = -13;
-pub static PP_ERROR_MALFORMED_INPUT: ::libc::c_int = -14;
-pub static PP_ERROR_RESOURCE_FAILED: ::libc::c_int = -15;
-pub static PP_ERROR_FILENOTFOUND: ::libc::c_int = -20;
-pub static PP_ERROR_FILEEXISTS: ::libc::c_int = -21;
-pub static PP_ERROR_FILETOOBIG: ::libc::c_int = -22;
-pub static PP_ERROR_FILECHANGED: ::libc::c_int = -23;
-pub static PP_ERROR_NOTAFILE: ::libc::c_int = -24;
-pub static PP_ERROR_TIMEDOUT: ::libc::c_int = -30;
-pub static PP_ERROR_USERCANCEL: ::libc::c_int = -40;
-pub static PP_ERROR_NO_USER_GESTURE: ::libc::c_int = -41;
-pub static PP_ERROR_CONTEXT_LOST: ::libc::c_int = -50;
-pub static PP_ERROR_NO_MESSAGE_LOOP: ::libc::c_int = -51;
-pub static PP_ERROR_WRONG_THREAD: ::libc::c_int = -52;
-pub static PP_ERROR_CONNECTION_CLOSED: ::libc::c_int = -100;
-pub static PP_ERROR_CONNECTION_RESET: ::libc::c_int = -101;
-pub static PP_ERROR_CONNECTION_REFUSED: ::libc::c_int = -102;
-pub static PP_ERROR_CONNECTION_ABORTED: ::libc::c_int = -103;
-pub static PP_ERROR_CONNECTION_FAILED: ::libc::c_int = -104;
-pub static PP_ERROR_CONNECTION_TIMEDOUT: ::libc::c_int = -105;
-pub static PP_ERROR_ADDRESS_INVALID: ::libc::c_int = -106;
-pub static PP_ERROR_ADDRESS_UNREACHABLE: ::libc::c_int = -107;
-pub static PP_ERROR_ADDRESS_IN_USE: ::libc::c_int = -108;
-pub static PP_ERROR_MESSAGE_TOO_BIG: ::libc::c_int = -109;
-pub static PP_ERROR_NAME_NOT_RESOLVED: ::libc::c_int = -110;
+pub const PP_OK: ::libc::c_int = 0;
+pub const PP_OK_COMPLETIONPENDING: ::libc::c_int = -1;
+pub const PP_ERROR_FAILED: ::libc::c_int = -2;
+pub const PP_ERROR_ABORTED: ::libc::c_int = -3;
+pub const PP_ERROR_BADARGUMENT: ::libc::c_int = -4;
+pub const PP_ERROR_BADRESOURCE: ::libc::c_int = -5;
+pub const PP_ERROR_NOINTERFACE: ::libc::c_int = -6;
+pub const PP_ERROR_NOACCESS: ::libc::c_int = -7;
+pub const PP_ERROR_NOMEMORY: ::libc::c_int = -8;
+pub const PP_ERROR_NOSPACE: ::libc::c_int = -9;
+pub const PP_ERROR_NOQUOTA: ::libc::c_int = -10;
+pub const PP_ERROR_INPROGRESS: ::libc::c_int = -11;
+pub const PP_ERROR_NOTSUPPORTED: ::libc::c_int = -12;
+pub const PP_ERROR_BLOCKS_MAIN_THREAD: ::libc::c_int = -13;
+pub const PP_ERROR_MALFORMED_INPUT: ::libc::c_int = -14;
+pub const PP_ERROR_RESOURCE_FAILED: ::libc::c_int = -15;
+pub const PP_ERROR_FILENOTFOUND: ::libc::c_int = -20;
+pub const PP_ERROR_FILEEXISTS: ::libc::c_int = -21;
+pub const PP_ERROR_FILETOOBIG: ::libc::c_int = -22;
+pub const PP_ERROR_FILECHANGED: ::libc::c_int = -23;
+pub const PP_ERROR_NOTAFILE: ::libc::c_int = -24;
+pub const PP_ERROR_TIMEDOUT: ::libc::c_int = -30;
+pub const PP_ERROR_USERCANCEL: ::libc::c_int = -40;
+pub const PP_ERROR_NO_USER_GESTURE: ::libc::c_int = -41;
+pub const PP_ERROR_CONTEXT_LOST: ::libc::c_int = -50;
+pub const PP_ERROR_NO_MESSAGE_LOOP: ::libc::c_int = -51;
+pub const PP_ERROR_WRONG_THREAD: ::libc::c_int = -52;
+pub const PP_ERROR_CONNECTION_CLOSED: ::libc::c_int = -100;
+pub const PP_ERROR_CONNECTION_RESET: ::libc::c_int = -101;
+pub const PP_ERROR_CONNECTION_REFUSED: ::libc::c_int = -102;
+pub const PP_ERROR_CONNECTION_ABORTED: ::libc::c_int = -103;
+pub const PP_ERROR_CONNECTION_FAILED: ::libc::c_int = -104;
+pub const PP_ERROR_CONNECTION_TIMEDOUT: ::libc::c_int = -105;
+pub const PP_ERROR_ADDRESS_INVALID: ::libc::c_int = -106;
+pub const PP_ERROR_ADDRESS_UNREACHABLE: ::libc::c_int = -107;
+pub const PP_ERROR_ADDRESS_IN_USE: ::libc::c_int = -108;
+pub const PP_ERROR_MESSAGE_TOO_BIG: ::libc::c_int = -109;
+pub const PP_ERROR_NAME_NOT_RESOLVED: ::libc::c_int = -110;
 #[repr(C)]
 pub struct Struct_PP_InputEvent_Key {
     pub modifier: uint32_t,
@@ -3361,50 +3361,50 @@ pub struct Struct_PPP_MouseLock_1_0 {
 }
 pub type PPP_MouseLock = Struct_PPP_MouseLock_1_0;
 pub type Enum_PP_CursorType_Dev = ::libc::c_int;
-pub static PP_CURSORTYPE_CUSTOM: ::libc::c_int = -1;
-pub static PP_CURSORTYPE_POINTER: ::libc::c_int = 0;
-pub static PP_CURSORTYPE_CROSS: ::libc::c_int = 1;
-pub static PP_CURSORTYPE_HAND: ::libc::c_int = 2;
-pub static PP_CURSORTYPE_IBEAM: ::libc::c_int = 3;
-pub static PP_CURSORTYPE_WAIT: ::libc::c_int = 4;
-pub static PP_CURSORTYPE_HELP: ::libc::c_int = 5;
-pub static PP_CURSORTYPE_EASTRESIZE: ::libc::c_int = 6;
-pub static PP_CURSORTYPE_NORTHRESIZE: ::libc::c_int = 7;
-pub static PP_CURSORTYPE_NORTHEASTRESIZE: ::libc::c_int = 8;
-pub static PP_CURSORTYPE_NORTHWESTRESIZE: ::libc::c_int = 9;
-pub static PP_CURSORTYPE_SOUTHRESIZE: ::libc::c_int = 10;
-pub static PP_CURSORTYPE_SOUTHEASTRESIZE: ::libc::c_int = 11;
-pub static PP_CURSORTYPE_SOUTHWESTRESIZE: ::libc::c_int = 12;
-pub static PP_CURSORTYPE_WESTRESIZE: ::libc::c_int = 13;
-pub static PP_CURSORTYPE_NORTHSOUTHRESIZE: ::libc::c_int = 14;
-pub static PP_CURSORTYPE_EASTWESTRESIZE: ::libc::c_int = 15;
-pub static PP_CURSORTYPE_NORTHEASTSOUTHWESTRESIZE: ::libc::c_int = 16;
-pub static PP_CURSORTYPE_NORTHWESTSOUTHEASTRESIZE: ::libc::c_int = 17;
-pub static PP_CURSORTYPE_COLUMNRESIZE: ::libc::c_int = 18;
-pub static PP_CURSORTYPE_ROWRESIZE: ::libc::c_int = 19;
-pub static PP_CURSORTYPE_MIDDLEPANNING: ::libc::c_int = 20;
-pub static PP_CURSORTYPE_EASTPANNING: ::libc::c_int = 21;
-pub static PP_CURSORTYPE_NORTHPANNING: ::libc::c_int = 22;
-pub static PP_CURSORTYPE_NORTHEASTPANNING: ::libc::c_int = 23;
-pub static PP_CURSORTYPE_NORTHWESTPANNING: ::libc::c_int = 24;
-pub static PP_CURSORTYPE_SOUTHPANNING: ::libc::c_int = 25;
-pub static PP_CURSORTYPE_SOUTHEASTPANNING: ::libc::c_int = 26;
-pub static PP_CURSORTYPE_SOUTHWESTPANNING: ::libc::c_int = 27;
-pub static PP_CURSORTYPE_WESTPANNING: ::libc::c_int = 28;
-pub static PP_CURSORTYPE_MOVE: ::libc::c_int = 29;
-pub static PP_CURSORTYPE_VERTICALTEXT: ::libc::c_int = 30;
-pub static PP_CURSORTYPE_CELL: ::libc::c_int = 31;
-pub static PP_CURSORTYPE_CONTEXTMENU: ::libc::c_int = 32;
-pub static PP_CURSORTYPE_ALIAS: ::libc::c_int = 33;
-pub static PP_CURSORTYPE_PROGRESS: ::libc::c_int = 34;
-pub static PP_CURSORTYPE_NODROP: ::libc::c_int = 35;
-pub static PP_CURSORTYPE_COPY: ::libc::c_int = 36;
-pub static PP_CURSORTYPE_NONE: ::libc::c_int = 37;
-pub static PP_CURSORTYPE_NOTALLOWED: ::libc::c_int = 38;
-pub static PP_CURSORTYPE_ZOOMIN: ::libc::c_int = 39;
-pub static PP_CURSORTYPE_ZOOMOUT: ::libc::c_int = 40;
-pub static PP_CURSORTYPE_GRAB: ::libc::c_int = 41;
-pub static PP_CURSORTYPE_GRABBING: ::libc::c_int = 42;
+pub const PP_CURSORTYPE_CUSTOM: ::libc::c_int = -1;
+pub const PP_CURSORTYPE_POINTER: ::libc::c_int = 0;
+pub const PP_CURSORTYPE_CROSS: ::libc::c_int = 1;
+pub const PP_CURSORTYPE_HAND: ::libc::c_int = 2;
+pub const PP_CURSORTYPE_IBEAM: ::libc::c_int = 3;
+pub const PP_CURSORTYPE_WAIT: ::libc::c_int = 4;
+pub const PP_CURSORTYPE_HELP: ::libc::c_int = 5;
+pub const PP_CURSORTYPE_EASTRESIZE: ::libc::c_int = 6;
+pub const PP_CURSORTYPE_NORTHRESIZE: ::libc::c_int = 7;
+pub const PP_CURSORTYPE_NORTHEASTRESIZE: ::libc::c_int = 8;
+pub const PP_CURSORTYPE_NORTHWESTRESIZE: ::libc::c_int = 9;
+pub const PP_CURSORTYPE_SOUTHRESIZE: ::libc::c_int = 10;
+pub const PP_CURSORTYPE_SOUTHEASTRESIZE: ::libc::c_int = 11;
+pub const PP_CURSORTYPE_SOUTHWESTRESIZE: ::libc::c_int = 12;
+pub const PP_CURSORTYPE_WESTRESIZE: ::libc::c_int = 13;
+pub const PP_CURSORTYPE_NORTHSOUTHRESIZE: ::libc::c_int = 14;
+pub const PP_CURSORTYPE_EASTWESTRESIZE: ::libc::c_int = 15;
+pub const PP_CURSORTYPE_NORTHEASTSOUTHWESTRESIZE: ::libc::c_int = 16;
+pub const PP_CURSORTYPE_NORTHWESTSOUTHEASTRESIZE: ::libc::c_int = 17;
+pub const PP_CURSORTYPE_COLUMNRESIZE: ::libc::c_int = 18;
+pub const PP_CURSORTYPE_ROWRESIZE: ::libc::c_int = 19;
+pub const PP_CURSORTYPE_MIDDLEPANNING: ::libc::c_int = 20;
+pub const PP_CURSORTYPE_EASTPANNING: ::libc::c_int = 21;
+pub const PP_CURSORTYPE_NORTHPANNING: ::libc::c_int = 22;
+pub const PP_CURSORTYPE_NORTHEASTPANNING: ::libc::c_int = 23;
+pub const PP_CURSORTYPE_NORTHWESTPANNING: ::libc::c_int = 24;
+pub const PP_CURSORTYPE_SOUTHPANNING: ::libc::c_int = 25;
+pub const PP_CURSORTYPE_SOUTHEASTPANNING: ::libc::c_int = 26;
+pub const PP_CURSORTYPE_SOUTHWESTPANNING: ::libc::c_int = 27;
+pub const PP_CURSORTYPE_WESTPANNING: ::libc::c_int = 28;
+pub const PP_CURSORTYPE_MOVE: ::libc::c_int = 29;
+pub const PP_CURSORTYPE_VERTICALTEXT: ::libc::c_int = 30;
+pub const PP_CURSORTYPE_CELL: ::libc::c_int = 31;
+pub const PP_CURSORTYPE_CONTEXTMENU: ::libc::c_int = 32;
+pub const PP_CURSORTYPE_ALIAS: ::libc::c_int = 33;
+pub const PP_CURSORTYPE_PROGRESS: ::libc::c_int = 34;
+pub const PP_CURSORTYPE_NODROP: ::libc::c_int = 35;
+pub const PP_CURSORTYPE_COPY: ::libc::c_int = 36;
+pub const PP_CURSORTYPE_NONE: ::libc::c_int = 37;
+pub const PP_CURSORTYPE_NOTALLOWED: ::libc::c_int = 38;
+pub const PP_CURSORTYPE_ZOOMIN: ::libc::c_int = 39;
+pub const PP_CURSORTYPE_ZOOMOUT: ::libc::c_int = 40;
+pub const PP_CURSORTYPE_GRAB: ::libc::c_int = 41;
+pub const PP_CURSORTYPE_GRABBING: ::libc::c_int = 42;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_CursorType_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CursorType_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -3428,8 +3428,8 @@ pub struct Struct_PPB_CursorControl_Dev_0_4 {
 }
 pub type PPB_CursorControl_Dev = Struct_PPB_CursorControl_Dev_0_4;
 pub type PP_FileChooserMode_Dev = ::libc::c_uint;
-pub static PP_FILECHOOSERMODE_OPEN: ::libc::c_uint = 0;
-pub static PP_FILECHOOSERMODE_OPENMULTIPLE: ::libc::c_uint = 1;
+pub const PP_FILECHOOSERMODE_OPEN: ::libc::c_uint = 0;
+pub const PP_FILECHOOSERMODE_OPENMULTIPLE: ::libc::c_uint = 1;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileChooserMode_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileChooserMode_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -3468,26 +3468,26 @@ pub struct Struct_PPB_FileChooser_Dev_0_5 {
                                                      -> PP_Resource>,
 }
 pub type PP_FontFamily_Dev = ::libc::c_uint;
-pub static PP_FONTFAMILY_DEFAULT: ::libc::c_uint = 0;
-pub static PP_FONTFAMILY_SERIF: ::libc::c_uint = 1;
-pub static PP_FONTFAMILY_SANSSERIF: ::libc::c_uint = 2;
-pub static PP_FONTFAMILY_MONOSPACE: ::libc::c_uint = 3;
+pub const PP_FONTFAMILY_DEFAULT: ::libc::c_uint = 0;
+pub const PP_FONTFAMILY_SERIF: ::libc::c_uint = 1;
+pub const PP_FONTFAMILY_SANSSERIF: ::libc::c_uint = 2;
+pub const PP_FONTFAMILY_MONOSPACE: ::libc::c_uint = 3;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontFamily_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_FontWeight_Dev = ::libc::c_uint;
-pub static PP_FONTWEIGHT_100: ::libc::c_uint = 0;
-pub static PP_FONTWEIGHT_200: ::libc::c_uint = 1;
-pub static PP_FONTWEIGHT_300: ::libc::c_uint = 2;
-pub static PP_FONTWEIGHT_400: ::libc::c_uint = 3;
-pub static PP_FONTWEIGHT_500: ::libc::c_uint = 4;
-pub static PP_FONTWEIGHT_600: ::libc::c_uint = 5;
-pub static PP_FONTWEIGHT_700: ::libc::c_uint = 6;
-pub static PP_FONTWEIGHT_800: ::libc::c_uint = 7;
-pub static PP_FONTWEIGHT_900: ::libc::c_uint = 8;
-pub static PP_FONTWEIGHT_NORMAL: ::libc::c_uint = 3;
-pub static PP_FONTWEIGHT_BOLD: ::libc::c_uint = 6;
+pub const PP_FONTWEIGHT_100: ::libc::c_uint = 0;
+pub const PP_FONTWEIGHT_200: ::libc::c_uint = 1;
+pub const PP_FONTWEIGHT_300: ::libc::c_uint = 2;
+pub const PP_FONTWEIGHT_400: ::libc::c_uint = 3;
+pub const PP_FONTWEIGHT_500: ::libc::c_uint = 4;
+pub const PP_FONTWEIGHT_600: ::libc::c_uint = 5;
+pub const PP_FONTWEIGHT_700: ::libc::c_uint = 6;
+pub const PP_FONTWEIGHT_800: ::libc::c_uint = 7;
+pub const PP_FONTWEIGHT_900: ::libc::c_uint = 8;
+pub const PP_FONTWEIGHT_NORMAL: ::libc::c_uint = 3;
+pub const PP_FONTWEIGHT_BOLD: ::libc::c_uint = 6;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontWeight_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -3593,27 +3593,27 @@ pub struct Struct_PPB_OpenGLES2DrawBuffers_Dev {
                                                    arg3: *const GLenum)>,
 }
 pub type PP_PrintOrientation_Dev = ::libc::c_uint;
-pub static PP_PRINTORIENTATION_NORMAL: ::libc::c_uint = 0;
-pub static PP_PRINTORIENTATION_ROTATED_90_CW: ::libc::c_uint = 1;
-pub static PP_PRINTORIENTATION_ROTATED_180: ::libc::c_uint = 2;
-pub static PP_PRINTORIENTATION_ROTATED_90_CCW: ::libc::c_uint = 3;
+pub const PP_PRINTORIENTATION_NORMAL: ::libc::c_uint = 0;
+pub const PP_PRINTORIENTATION_ROTATED_90_CW: ::libc::c_uint = 1;
+pub const PP_PRINTORIENTATION_ROTATED_180: ::libc::c_uint = 2;
+pub const PP_PRINTORIENTATION_ROTATED_90_CCW: ::libc::c_uint = 3;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintOrientation_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOrientation_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_PrintOutputFormat_Dev = ::libc::c_uint;
-pub static PP_PRINTOUTPUTFORMAT_RASTER: ::libc::c_uint = 1;
-pub static PP_PRINTOUTPUTFORMAT_PDF: ::libc::c_uint = 2;
-pub static PP_PRINTOUTPUTFORMAT_POSTSCRIPT: ::libc::c_uint = 4;
-pub static PP_PRINTOUTPUTFORMAT_EMF: ::libc::c_uint = 8;
+pub const PP_PRINTOUTPUTFORMAT_RASTER: ::libc::c_uint = 1;
+pub const PP_PRINTOUTPUTFORMAT_PDF: ::libc::c_uint = 2;
+pub const PP_PRINTOUTPUTFORMAT_POSTSCRIPT: ::libc::c_uint = 4;
+pub const PP_PRINTOUTPUTFORMAT_EMF: ::libc::c_uint = 8;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintOutputFormat_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOutputFormat_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_PrintScalingOption_Dev = ::libc::c_uint;
-pub static PP_PRINTSCALINGOPTION_NONE: ::libc::c_uint = 0;
-pub static PP_PRINTSCALINGOPTION_FIT_TO_PRINTABLE_AREA: ::libc::c_uint = 1;
-pub static PP_PRINTSCALINGOPTION_SOURCE_SIZE: ::libc::c_uint = 2;
+pub const PP_PRINTSCALINGOPTION_NONE: ::libc::c_uint = 0;
+pub const PP_PRINTSCALINGOPTION_FIT_TO_PRINTABLE_AREA: ::libc::c_uint = 1;
+pub const PP_PRINTSCALINGOPTION_SOURCE_SIZE: ::libc::c_uint = 2;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintScalingOption_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintScalingOption_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
@@ -3715,70 +3715,70 @@ pub struct Struct_PPB_Trace_Event_Dev_0_1 {
                                                       *const ::libc::c_char)>,
 }
 pub type PP_TrueTypeFontFamily_Dev = ::libc::c_uint;
-pub static PP_TRUETYPEFONTFAMILY_SERIF: ::libc::c_uint = 0;
-pub static PP_TRUETYPEFONTFAMILY_SANSSERIF: ::libc::c_uint = 1;
-pub static PP_TRUETYPEFONTFAMILY_CURSIVE: ::libc::c_uint = 2;
-pub static PP_TRUETYPEFONTFAMILY_FANTASY: ::libc::c_uint = 3;
-pub static PP_TRUETYPEFONTFAMILY_MONOSPACE: ::libc::c_uint = 4;
+pub const PP_TRUETYPEFONTFAMILY_SERIF: ::libc::c_uint = 0;
+pub const PP_TRUETYPEFONTFAMILY_SANSSERIF: ::libc::c_uint = 1;
+pub const PP_TRUETYPEFONTFAMILY_CURSIVE: ::libc::c_uint = 2;
+pub const PP_TRUETYPEFONTFAMILY_FANTASY: ::libc::c_uint = 3;
+pub const PP_TRUETYPEFONTFAMILY_MONOSPACE: ::libc::c_uint = 4;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontFamily_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_TrueTypeFontStyle_Dev = ::libc::c_uint;
-pub static PP_TRUETYPEFONTSTYLE_NORMAL: ::libc::c_uint = 0;
-pub static PP_TRUETYPEFONTSTYLE_ITALIC: ::libc::c_uint = 1;
+pub const PP_TRUETYPEFONTSTYLE_NORMAL: ::libc::c_uint = 0;
+pub const PP_TRUETYPEFONTSTYLE_ITALIC: ::libc::c_uint = 1;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontStyle_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontStyle_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_TrueTypeFontWeight_Dev = ::libc::c_uint;
-pub static PP_TRUETYPEFONTWEIGHT_THIN: ::libc::c_uint = 100;
-pub static PP_TRUETYPEFONTWEIGHT_ULTRALIGHT: ::libc::c_uint = 200;
-pub static PP_TRUETYPEFONTWEIGHT_LIGHT: ::libc::c_uint = 300;
-pub static PP_TRUETYPEFONTWEIGHT_NORMAL: ::libc::c_uint = 400;
-pub static PP_TRUETYPEFONTWEIGHT_MEDIUM: ::libc::c_uint = 500;
-pub static PP_TRUETYPEFONTWEIGHT_SEMIBOLD: ::libc::c_uint = 600;
-pub static PP_TRUETYPEFONTWEIGHT_BOLD: ::libc::c_uint = 700;
-pub static PP_TRUETYPEFONTWEIGHT_ULTRABOLD: ::libc::c_uint = 800;
-pub static PP_TRUETYPEFONTWEIGHT_HEAVY: ::libc::c_uint = 900;
+pub const PP_TRUETYPEFONTWEIGHT_THIN: ::libc::c_uint = 100;
+pub const PP_TRUETYPEFONTWEIGHT_ULTRALIGHT: ::libc::c_uint = 200;
+pub const PP_TRUETYPEFONTWEIGHT_LIGHT: ::libc::c_uint = 300;
+pub const PP_TRUETYPEFONTWEIGHT_NORMAL: ::libc::c_uint = 400;
+pub const PP_TRUETYPEFONTWEIGHT_MEDIUM: ::libc::c_uint = 500;
+pub const PP_TRUETYPEFONTWEIGHT_SEMIBOLD: ::libc::c_uint = 600;
+pub const PP_TRUETYPEFONTWEIGHT_BOLD: ::libc::c_uint = 700;
+pub const PP_TRUETYPEFONTWEIGHT_ULTRABOLD: ::libc::c_uint = 800;
+pub const PP_TRUETYPEFONTWEIGHT_HEAVY: ::libc::c_uint = 900;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWeight_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_TrueTypeFontWidth_Dev = ::libc::c_uint;
-pub static PP_TRUETYPEFONTWIDTH_ULTRACONDENSED: ::libc::c_uint = 0;
-pub static PP_TRUETYPEFONTWIDTH_EXTRACONDENSED: ::libc::c_uint = 1;
-pub static PP_TRUETYPEFONTWIDTH_CONDENSED: ::libc::c_uint = 2;
-pub static PP_TRUETYPEFONTWIDTH_SEMICONDENSED: ::libc::c_uint = 3;
-pub static PP_TRUETYPEFONTWIDTH_NORMAL: ::libc::c_uint = 4;
-pub static PP_TRUETYPEFONTWIDTH_SEMIEXPANDED: ::libc::c_uint = 5;
-pub static PP_TRUETYPEFONTWIDTH_EXPANDED: ::libc::c_uint = 6;
-pub static PP_TRUETYPEFONTWIDTH_EXTRAEXPANDED: ::libc::c_uint = 7;
-pub static PP_TRUETYPEFONTWIDTH_ULTRAEXPANDED: ::libc::c_uint = 8;
+pub const PP_TRUETYPEFONTWIDTH_ULTRACONDENSED: ::libc::c_uint = 0;
+pub const PP_TRUETYPEFONTWIDTH_EXTRACONDENSED: ::libc::c_uint = 1;
+pub const PP_TRUETYPEFONTWIDTH_CONDENSED: ::libc::c_uint = 2;
+pub const PP_TRUETYPEFONTWIDTH_SEMICONDENSED: ::libc::c_uint = 3;
+pub const PP_TRUETYPEFONTWIDTH_NORMAL: ::libc::c_uint = 4;
+pub const PP_TRUETYPEFONTWIDTH_SEMIEXPANDED: ::libc::c_uint = 5;
+pub const PP_TRUETYPEFONTWIDTH_EXPANDED: ::libc::c_uint = 6;
+pub const PP_TRUETYPEFONTWIDTH_EXTRAEXPANDED: ::libc::c_uint = 7;
+pub const PP_TRUETYPEFONTWIDTH_ULTRAEXPANDED: ::libc::c_uint = 8;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWidth_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWidth_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],
 }
 pub type PP_TrueTypeFontCharset_Dev = ::libc::c_uint;
-pub static PP_TRUETYPEFONTCHARSET_ANSI: ::libc::c_uint = 0;
-pub static PP_TRUETYPEFONTCHARSET_DEFAULT: ::libc::c_uint = 1;
-pub static PP_TRUETYPEFONTCHARSET_SYMBOL: ::libc::c_uint = 2;
-pub static PP_TRUETYPEFONTCHARSET_MAC: ::libc::c_uint = 77;
-pub static PP_TRUETYPEFONTCHARSET_SHIFTJIS: ::libc::c_uint = 128;
-pub static PP_TRUETYPEFONTCHARSET_HANGUL: ::libc::c_uint = 129;
-pub static PP_TRUETYPEFONTCHARSET_JOHAB: ::libc::c_uint = 130;
-pub static PP_TRUETYPEFONTCHARSET_GB2312: ::libc::c_uint = 134;
-pub static PP_TRUETYPEFONTCHARSET_CHINESEBIG5: ::libc::c_uint = 136;
-pub static PP_TRUETYPEFONTCHARSET_GREEK: ::libc::c_uint = 161;
-pub static PP_TRUETYPEFONTCHARSET_TURKISH: ::libc::c_uint = 162;
-pub static PP_TRUETYPEFONTCHARSET_VIETNAMESE: ::libc::c_uint = 163;
-pub static PP_TRUETYPEFONTCHARSET_HEBREW: ::libc::c_uint = 177;
-pub static PP_TRUETYPEFONTCHARSET_ARABIC: ::libc::c_uint = 178;
-pub static PP_TRUETYPEFONTCHARSET_BALTIC: ::libc::c_uint = 186;
-pub static PP_TRUETYPEFONTCHARSET_RUSSIAN: ::libc::c_uint = 204;
-pub static PP_TRUETYPEFONTCHARSET_THAI: ::libc::c_uint = 222;
-pub static PP_TRUETYPEFONTCHARSET_EASTEUROPE: ::libc::c_uint = 238;
-pub static PP_TRUETYPEFONTCHARSET_OEM: ::libc::c_uint = 255;
+pub const PP_TRUETYPEFONTCHARSET_ANSI: ::libc::c_uint = 0;
+pub const PP_TRUETYPEFONTCHARSET_DEFAULT: ::libc::c_uint = 1;
+pub const PP_TRUETYPEFONTCHARSET_SYMBOL: ::libc::c_uint = 2;
+pub const PP_TRUETYPEFONTCHARSET_MAC: ::libc::c_uint = 77;
+pub const PP_TRUETYPEFONTCHARSET_SHIFTJIS: ::libc::c_uint = 128;
+pub const PP_TRUETYPEFONTCHARSET_HANGUL: ::libc::c_uint = 129;
+pub const PP_TRUETYPEFONTCHARSET_JOHAB: ::libc::c_uint = 130;
+pub const PP_TRUETYPEFONTCHARSET_GB2312: ::libc::c_uint = 134;
+pub const PP_TRUETYPEFONTCHARSET_CHINESEBIG5: ::libc::c_uint = 136;
+pub const PP_TRUETYPEFONTCHARSET_GREEK: ::libc::c_uint = 161;
+pub const PP_TRUETYPEFONTCHARSET_TURKISH: ::libc::c_uint = 162;
+pub const PP_TRUETYPEFONTCHARSET_VIETNAMESE: ::libc::c_uint = 163;
+pub const PP_TRUETYPEFONTCHARSET_HEBREW: ::libc::c_uint = 177;
+pub const PP_TRUETYPEFONTCHARSET_ARABIC: ::libc::c_uint = 178;
+pub const PP_TRUETYPEFONTCHARSET_BALTIC: ::libc::c_uint = 186;
+pub const PP_TRUETYPEFONTCHARSET_RUSSIAN: ::libc::c_uint = 204;
+pub const PP_TRUETYPEFONTCHARSET_THAI: ::libc::c_uint = 222;
+pub const PP_TRUETYPEFONTCHARSET_EASTEUROPE: ::libc::c_uint = 238;
+pub const PP_TRUETYPEFONTCHARSET_OEM: ::libc::c_uint = 255;
 #[repr(C)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontCharset_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontCharset_Dev_is_not_4_bytes_wide: [::libc::c_char, ..1u],

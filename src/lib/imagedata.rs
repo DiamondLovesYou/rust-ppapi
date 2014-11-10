@@ -38,7 +38,7 @@ impl Format {
         match v {
             ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL => BGRA,
             ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL => RGBA,
-            _ => fail!(),
+            _ => panic!(),
         }
     }
     pub fn to_ffi(&self) -> ffi::PP_ImageDataFormat {
@@ -88,9 +88,7 @@ impl MapImpl for Rc<Map_> {
     fn with_imm_vec<U>(&self, f: |&Vec<u8>, &Description| -> U) -> U {
         use core::mem::forget;
         let size = ((**self).desc.size.height * (**self).desc.line_stride) as uint;
-        let v = unsafe { Vec::from_raw_parts(size,
-                                             size,
-                                             (**self).ptr as *mut u8) };
+        let v = unsafe { Vec::from_raw_parts((**self).ptr as *mut u8, size, size) };
         let ret = f(&v, &(**self).desc);
         unsafe {
             forget(v);
