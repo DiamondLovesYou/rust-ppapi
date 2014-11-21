@@ -19,6 +19,6 @@ extern crate "pnacl-build-helper" as helper;
 
 pub fn main() {
     let mut a = helper::Archive::new("helper");
-    a.cxx("src/libhelper/helper.cpp", ["-Os".to_string()]);
+    a.cxx("src/libhelper/helper.cpp", &["-Os".to_string()]);
     a.archive();
 }
