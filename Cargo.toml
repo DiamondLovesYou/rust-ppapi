@@ -16,7 +16,7 @@ path = "src/lib/lib.rs"
 [features]
 use-openssl = ["openssl", "http/ssl"]
 
-[dependencies.http]
+[dependencies.old-http]
 git = "https://github.com/DiamondLovesYou/rust-http.git"
 default-features = false
 
