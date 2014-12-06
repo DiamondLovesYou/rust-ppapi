@@ -18,7 +18,7 @@ git = "https://github.com/DiamondLovesYou/rust-http.git"
 
 [dependencies.openssl]
 git = "https://github.com/DiamondLovesYou/rust-openssl.git"
-rev = "09be71d11a4d063e5ab0ccef45bd67575795fe37"
+rev = "7dbe0d4d49adf2b646912a32813933b2eb7c855e"
 
 [build-dependencies.pnacl-build-helper]
 version = "*"
