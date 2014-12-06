@@ -31,9 +31,9 @@ use iurl::Url;
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlRequestInfo(ffi::PP_Resource);
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlResponseInfo(ffi::PP_Resource);
 
-impl_resource_for!(UrlLoader UrlLoaderRes)
-impl_resource_for!(UrlRequestInfo UrlRequestInfoRes)
-impl_resource_for!(UrlResponseInfo UrlResponseInfoRes)
+impl_resource_for!(UrlLoader ResourceType::UrlLoaderRes)
+impl_resource_for!(UrlRequestInfo ResourceType::UrlRequestInfoRes)
+impl_resource_for!(UrlResponseInfo ResourceType::UrlResponseInfoRes)
 
 pub type RequestProperties = EnumSet<RequestProperties_>;
 #[deriving(Eq, PartialEq, Clone, Hash)]
@@ -48,22 +48,22 @@ pub enum RequestProperties_ {
 impl CLike for RequestProperties_ {
     fn to_uint(&self) -> uint {
         match self {
-            &AllowCrossOriginRequests => 0,
-            &AllowCredentials => 1,
-            &RecordUploadProgress => 2,
-            &RecordDownloadProgress => 3,
-            &FollowRedirects => 4,
-            &StreamToFile => 5,
+            &RequestProperties_::AllowCrossOriginRequests => 0,
+            &RequestProperties_::AllowCredentials => 1,
+            &RequestProperties_::RecordUploadProgress => 2,
+            &RequestProperties_::RecordDownloadProgress => 3,
+            &RequestProperties_::FollowRedirects => 4,
+            &RequestProperties_::StreamToFile => 5,
         }
     }
     fn from_uint(v: uint) -> RequestProperties_ {
         match v {
-            0 => AllowCrossOriginRequests,
-            1 => AllowCredentials,
-            2 => RecordUploadProgress,
-            3 => RecordDownloadProgress,
-            4 => FollowRedirects,
-            5 => StreamToFile,
+            0 => RequestProperties_::AllowCrossOriginRequests,
+            1 => RequestProperties_::AllowCredentials,
+            2 => RequestProperties_::RecordUploadProgress,
+            3 => RequestProperties_::RecordDownloadProgress,
+            4 => RequestProperties_::FollowRedirects,
+            5 => RequestProperties_::StreamToFile,
             _ => unreachable!(),
         }
     }
@@ -71,36 +71,42 @@ impl CLike for RequestProperties_ {
 impl RequestProperties_ {
     fn to_ffi(&self) -> ffi::PP_URLRequestProperty {
         match self {
-            &AllowCrossOriginRequests => ffi::PP_URLREQUESTPROPERTY_ALLOWCROSSORIGINREQUESTS,
-            &AllowCredentials => ffi::PP_URLREQUESTPROPERTY_ALLOWCREDENTIALS,
-            &RecordUploadProgress => ffi::PP_URLREQUESTPROPERTY_RECORDUPLOADPROGRESS,
-            &RecordDownloadProgress => ffi::PP_URLREQUESTPROPERTY_RECORDDOWNLOADPROGRESS,
-            &FollowRedirects => ffi::PP_URLREQUESTPROPERTY_FOLLOWREDIRECTS,
-            &StreamToFile => ffi::PP_URLREQUESTPROPERTY_STREAMTOFILE,
+            &RequestProperties_::AllowCrossOriginRequests =>
+                ffi::PP_URLREQUESTPROPERTY_ALLOWCROSSORIGINREQUESTS,
+            &RequestProperties_::AllowCredentials =>
+                ffi::PP_URLREQUESTPROPERTY_ALLOWCREDENTIALS,
+            &RequestProperties_::RecordUploadProgress =>
+                ffi::PP_URLREQUESTPROPERTY_RECORDUPLOADPROGRESS,
+            &RequestProperties_::RecordDownloadProgress =>
+                ffi::PP_URLREQUESTPROPERTY_RECORDDOWNLOADPROGRESS,
+            &RequestProperties_::FollowRedirects =>
+                ffi::PP_URLREQUESTPROPERTY_FOLLOWREDIRECTS,
+            &RequestProperties_::StreamToFile =>
+                ffi::PP_URLREQUESTPROPERTY_STREAMTOFILE,
         }
     }
 }
 #[deriving(Clone)]
 pub enum Body {
-    FileBody(FileSliceRef, Option<super::Time>),
-    BlobBody(Vec<u8>),
+    File(FileSliceRef, Option<super::Time>),
+    Blob(Vec<u8>),
 }
 #[deriving(Clone, Eq, PartialEq, Hash)]
 pub enum Method {
-    GetMethod,
-    PostMethod,
+    Get,
+    Post,
 }
 impl fmt::Show for Method {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            &GetMethod => f.pad("GET"),
-            &PostMethod => f.pad("POST"),
+            &Method::Get => f.pad("GET"),
+            &Method::Post => f.pad("POST"),
         }
     }
 }
 impl default::Default for Method {
     fn default() -> Method {
-        GetMethod
+        Method::Get
     }
 }
 #[deriving(Clone)]
@@ -119,21 +125,21 @@ pub struct RequestInfo {
 }
 impl RequestInfo {
     fn clear_bit(bitfield: RequestProperties, prop: RequestProperties_) -> RequestProperties {
-        let mut new = EnumSet::empty();
+        let mut new = EnumSet::new();
         for p in bitfield
             .iter()
             .filter(|&p| p != prop ) {
-                new.add(p);
+                new.insert(p);
             }
         new
     }
     pub fn set_prop(&mut self, prop: RequestProperties_, bit: bool) {
-        self.set_props.add(prop);
+        self.set_props.insert(prop);
         self.set_prop_value(prop, bit);
     }
     // unsets the 'this property is set' bit. Doesn't clear the actual property value bit.
     pub fn unset_prop(&mut self, prop: RequestProperties_) -> bool {
-        let was_set = self.set_props.contains_elem(prop);
+        let was_set = self.set_props.contains(&prop);
         self.set_props = RequestInfo::clear_bit(self.set_props, prop);
         was_set
     }
@@ -142,10 +148,10 @@ impl RequestInfo {
     pub fn set_prop_value(&mut self, prop: RequestProperties_, bit: bool) -> bool {
         let mut new = RequestInfo::clear_bit(self.properties, prop);
         if bit {
-            new.add(prop);
+            new.insert(prop);
         }
 
-        let was_set = self.properties.contains_elem(prop);
+        let was_set = self.properties.contains(&prop);
         self.properties = new;
         was_set
     }
@@ -170,22 +176,18 @@ impl RequestInfo {
             assert!(set);
         }
         let RequestInfo {
-            body: body,
-            headers: headers,
-            url: url,
-            method: method,
-            ..
+            body, headers, url, method, ..
         } = self;
         for body in body.into_iter() {
             let success = match body {
-                FileBody(FileSliceRef(file, start_opt, len_opt), time) => {
+                Body::File(FileSliceRef(file, start_opt, len_opt), time) => {
                     request.append_file_to_body(res.unwrap(),
                                                 file.unwrap(),
                                                 start_opt,
                                                 len_opt,
                                                 time)
                 }
-                BlobBody(blob) => {
+                Body::Blob(blob) => {
                     request.append_blob_to_body(res.unwrap(),
                                                 &blob)
                 }
@@ -194,7 +196,7 @@ impl RequestInfo {
         }
         let mut headers_str = MemWriter::new();
         try!(headers.write_all(&mut headers_str));
-        let headers_str = headers_str.unwrap();
+        let headers_str = headers_str.into_inner();
         let headers_str =
             str::from_utf8(headers_str.as_slice())
             .expect("HTTP headers should always be valid UTF8.");

@@ -80,33 +80,31 @@ More info:
 #![feature(globs)]
 #![feature(macro_rules)]
 #![feature(phase)]
-#![feature(default_type_params, struct_variant)]
+#![feature(default_type_params)]
 #![feature(linkage)]
 #![feature(thread_local)]
 //#![warn(missing_doc)]
 
 #![allow(dead_code)]
 
-extern crate native;
 #[phase(plugin, link)]
 extern crate log;
 extern crate collections;
-extern crate sync;
 extern crate rand;
 extern crate serialize;
-extern crate http;
+extern crate "http" as http;
 extern crate "url" as iurl;
 extern crate libc;
 extern crate core;
 extern crate alloc;
 extern crate rustrt;
 
-use std::{mem, cmp, io, num};
+use std::{mem, cmp, io};
 use std::mem::transmute;
 use std::intrinsics;
 use std::ptr;
 use std::ops;
-use std::rt::task;
+use rustrt::task;
 use std::iter;
 use std::clone;
 use std::{str, string};
@@ -131,7 +129,7 @@ pub use imagedata::ImageData;
 pub use url::{UrlLoader, UrlRequestInfo, UrlResponseInfo};
 
 macro_rules! impl_resource_for(
-    ($ty:ty $type_:ident) => (
+    ($ty:ty $type_:expr) => (
         impl Resource for $ty {
             #[inline]
             fn unwrap(&self) -> ::ffi::PP_Resource {
@@ -139,7 +137,8 @@ macro_rules! impl_resource_for(
             }
             #[inline]
             fn type_of(&self) -> ::ResourceType {
-                ::$type_
+                use ResourceType;
+                $type_
             }
         }
         impl $ty {
@@ -188,7 +187,7 @@ macro_rules! impl_clone_drop_for(
     )
 )
 
-#[allow(missing_doc)] pub mod ffi;
+#[allow(missing_docs)] pub mod ffi;
 pub mod ppp;
 pub mod pp;
 pub mod ppb;
@@ -223,11 +222,11 @@ pub fn mount<'s, 't, 'f, 'd>(source: &'s str,
                    0,
                    cdata.as_ptr() as *const libc::c_void)
     } {
-        c if c >= 0 => Ok,
-        -1 => Failed,
+        c if c >= 0 => Code::Ok,
+        -1 => Code::Failed,
         _ => {
             warn!("Unrecognized failure code");
-            Failed
+            Code::Failed
         }
     }
 }
@@ -261,47 +260,47 @@ pub enum Code {
 impl fmt::Show for Code {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Ok => f.pad("ok"),
-            BadResource => f.pad("bad resource"),
-            BadArgument => f.pad("bad argument"),
-            WrongThread => f.pad("wrong thread"),
-            InProgress  => f.pad("in-progress"),
-            Failed      => f.pad("failed"),
-            NotSupported=> f.pad("not supported"),
-            NoMemory    => f.pad("no memory"),
-            ContextLost => f.pad("context lost"),
-            CompletionPending => f.pad("completion callback pending"),
+            Code::Ok => f.pad("ok"),
+            Code::BadResource => f.pad("bad resource"),
+            Code::BadArgument => f.pad("bad argument"),
+            Code::WrongThread => f.pad("wrong thread"),
+            Code::InProgress  => f.pad("in-progress"),
+            Code::Failed      => f.pad("failed"),
+            Code::NotSupported=> f.pad("not supported"),
+            Code::NoMemory    => f.pad("no memory"),
+            Code::ContextLost => f.pad("context lost"),
+            Code::CompletionPending => f.pad("completion callback pending"),
         }
     }
 }
 impl Code {
     pub fn from_i32(code: i32) -> Code {
         match code {
-            ffi::PP_OK => Ok,
-            ffi::PP_OK_COMPLETIONPENDING => CompletionPending,
-            ffi::PP_ERROR_BADRESOURCE => BadResource,
-            ffi::PP_ERROR_BADARGUMENT => BadArgument,
-            ffi::PP_ERROR_WRONG_THREAD => WrongThread,
-            ffi::PP_ERROR_INPROGRESS => InProgress,
-            ffi::PP_ERROR_FAILED => Failed,
-            ffi::PP_ERROR_NOTSUPPORTED => NotSupported,
-            ffi::PP_ERROR_NOMEMORY => NoMemory,
-            ffi::PP_ERROR_CONTEXT_LOST => ContextLost,
+            ffi::PP_OK => Code::Ok,
+            ffi::PP_OK_COMPLETIONPENDING => Code::CompletionPending,
+            ffi::PP_ERROR_BADRESOURCE => Code::BadResource,
+            ffi::PP_ERROR_BADARGUMENT => Code::BadArgument,
+            ffi::PP_ERROR_WRONG_THREAD => Code::WrongThread,
+            ffi::PP_ERROR_INPROGRESS => Code::InProgress,
+            ffi::PP_ERROR_FAILED => Code::Failed,
+            ffi::PP_ERROR_NOTSUPPORTED => Code::NotSupported,
+            ffi::PP_ERROR_NOMEMORY => Code::NoMemory,
+            ffi::PP_ERROR_CONTEXT_LOST => Code::ContextLost,
             _ => panic!("Invalid code!"),
         }
     }
     pub fn to_i32(self) -> i32 {
         match self {
-            Ok                => ffi::PP_OK,
-            CompletionPending => ffi::PP_OK_COMPLETIONPENDING,
-            BadResource => ffi::PP_ERROR_BADRESOURCE,
-            BadArgument => ffi::PP_ERROR_BADARGUMENT,
-            WrongThread => ffi::PP_ERROR_WRONG_THREAD,
-            InProgress  => ffi::PP_ERROR_INPROGRESS,
-            Failed      => ffi::PP_ERROR_FAILED,
-            NotSupported=> ffi::PP_ERROR_NOTSUPPORTED,
-            NoMemory    => ffi::PP_ERROR_NOMEMORY,
-            ContextLost => ffi::PP_ERROR_CONTEXT_LOST,
+            Code::Ok                => ffi::PP_OK,
+            Code::CompletionPending => ffi::PP_OK_COMPLETIONPENDING,
+            Code::BadResource => ffi::PP_ERROR_BADRESOURCE,
+            Code::BadArgument => ffi::PP_ERROR_BADARGUMENT,
+            Code::WrongThread => ffi::PP_ERROR_WRONG_THREAD,
+            Code::InProgress  => ffi::PP_ERROR_INPROGRESS,
+            Code::Failed      => ffi::PP_ERROR_FAILED,
+            Code::NotSupported=> ffi::PP_ERROR_NOTSUPPORTED,
+            Code::NoMemory    => ffi::PP_ERROR_NOMEMORY,
+            Code::ContextLost => ffi::PP_ERROR_CONTEXT_LOST,
         }
     }
     pub fn to_result<T>(self, ok: |Code| -> T) -> Result<T> {
@@ -313,14 +312,14 @@ impl Code {
     }
     pub fn is_ok(&self) -> bool {
         match self {
-            &Ok | &CompletionPending => true,
+            &Code::Ok | &Code::CompletionPending => true,
             _ => false,
         }
     }
     pub fn expect(self, msg: &str) {
         if !self.is_ok() {
-            panic!("Code: `{code:s}`, Message: `{msg:s}`",
-                  code=self.to_string(), msg=msg)
+            panic!("Code: `{code:}`, Message: `{msg:}`",
+                  code=self, msg=msg)
         }
     }
     pub fn map<T>(self, take: T) -> Option<T> {
@@ -396,22 +395,7 @@ impl ops::Div<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size 
         }
     }
 }
-impl num::Zero for ffi::Struct_PP_Point {
-    fn zero() -> ffi::Struct_PP_Point {
-        ffi::Struct_PP_Point {
-            x: 0,
-            y: 0,
-        }
-    }
-    fn is_zero(&self) -> bool {
-        match self {
-            &ffi::Struct_PP_Point {
-                x: 0, y: 0
-            } => true,
-            _ => false,
-        }
-    }
-}
+
 impl cmp::PartialEq for ffi::Struct_PP_Point {
     fn eq(&self, rhs: &ffi::Struct_PP_Point) -> bool {
         self.x == rhs.x && self.y == rhs.y
@@ -523,11 +507,11 @@ pub struct FileSliceRef(FileRef,
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct Filesystem(ffi::PP_Resource);
 
 impl_clone_drop_for!(Context3d)
-impl_resource_for!(Context2d Graphics2DRes)
+impl_resource_for!(Context2d ResourceType::Graphics2DRes)
 impl_clone_drop_for!(Context2d)
-impl_resource_for!(View ViewRes)
+impl_resource_for!(View ResourceType::ViewRes)
 impl_clone_drop_for!(View)
-impl_resource_for!(MessageLoop MessageLoopRes)
+impl_resource_for!(MessageLoop ResourceType::MessageLoopRes)
 impl_clone_drop_for!(MessageLoop)
 impl_clone_drop_for!(KeyboardInputEvent)
 impl_clone_drop_for!(MouseInputEvent)
@@ -535,11 +519,11 @@ impl_clone_drop_for!(WheelInputEvent)
 impl_clone_drop_for!(TouchInputEvent)
 impl_clone_drop_for!(Font)
 impl_clone_drop_for!(ImageData)
-impl_resource_for!(FileRef FileRefRes)
+impl_resource_for!(FileRef ResourceType::FileRefRes)
 impl_clone_drop_for!(FileRef)
-impl_resource_for!(FileIo FileIoRes)
+impl_resource_for!(FileIo ResourceType::FileIoRes)
 impl_clone_drop_for!(FileIo)
-impl_resource_for!(Filesystem FilesystemRes)
+impl_resource_for!(Filesystem ResourceType::FilesystemRes)
 impl_clone_drop_for!(Filesystem)
 impl_clone_drop_for!(IMEInputEvent)
 impl_clone_drop_for!(UrlLoader)
@@ -916,16 +900,16 @@ impl ToVar for AnyVar {
     #[inline]
     fn to_var(&self) -> ffi::PP_Var {
         match self {
-            &Null => {NullVar}.to_var(),
-            &Undefined => {UndefinedVar}.to_var(),
-            &Bool(b) => b.to_var(),
-            &I32(i) => i.to_var(),
-            &F64(f) => f.to_var(),
-            &String(ref v) => v.to_var(),
-            &Object(ref v) => v.to_var(),
-            &Array(ref v) => v.to_var(),
-            &Dictionary(ref v) => v.to_var(),
-            &ArrayBuffer(ref v) => v.to_var(),
+            &AnyVar::Null => {NullVar}.to_var(),
+            &AnyVar::Undefined => {UndefinedVar}.to_var(),
+            &AnyVar::Bool(b) => b.to_var(),
+            &AnyVar::I32(i) => i.to_var(),
+            &AnyVar::F64(f) => f.to_var(),
+            &AnyVar::String(ref v) => v.to_var(),
+            &AnyVar::Object(ref v) => v.to_var(),
+            &AnyVar::Array(ref v) => v.to_var(),
+            &AnyVar::Dictionary(ref v) => v.to_var(),
+            &AnyVar::ArrayBuffer(ref v) => v.to_var(),
         }
     }
     #[inline]
@@ -1088,31 +1072,31 @@ impl AnyVar {
     #[inline]
     fn new(var: ffi::PP_Var) -> AnyVar {
         if var.is_null() {
-            Null
+            AnyVar::Null
         } else if var.is_undefined() {
-            Undefined
+            AnyVar::Undefined
         } else if var.is_a_bool() {
-            Bool(unsafe { ffi::bool_from_var(var) != 0 })
+            AnyVar::Bool(unsafe { ffi::bool_from_var(var) != 0 })
         } else if var.is_an_i32() {
-            I32(unsafe { ffi::i32_from_var(var) })
+            AnyVar::I32(unsafe { ffi::i32_from_var(var) })
         } else if var.is_a_f64() {
-            F64(unsafe { ffi::f64_from_var(var) })
+            AnyVar::F64(unsafe { ffi::f64_from_var(var) })
         } else if var.is_a_string() {
-            String(StringVar::new_from_var(var))
+            AnyVar::String(StringVar::new_from_var(var))
         } else if var.is_an_object() {
-            Object(ObjectVar::new_from_var(var))
+            AnyVar::Object(ObjectVar::new_from_var(var))
         } else if var.is_an_array() {
-            Array(ArrayVar::new_from_var(var))
+            AnyVar::Array(ArrayVar::new_from_var(var))
         } else if var.is_a_dictionary() {
-            Dictionary(DictionaryVar::new_from_var(var))
+            AnyVar::Dictionary(DictionaryVar::new_from_var(var))
         } else if var.is_an_array_buffer() {
-            ArrayBuffer(ArrayBufferVar::new_from_var(var))
+            AnyVar::ArrayBuffer(ArrayBufferVar::new_from_var(var))
         } else if var.is_a_resource() {
             error!("Resource vars aren't implemented");
-            Undefined
+            AnyVar::Undefined
         } else {
             error!("Var doesn't have a known type");
-            Undefined
+            AnyVar::Undefined
         }
     }
     #[inline]
@@ -1223,8 +1207,8 @@ fn parse_args(argc: u32,
     let mut args: HashMap<::std::string::String, ::std::string::String> = HashMap::new();
     for i in iter::range(0, argc as int) {
         unsafe {
-            args.swap(string::raw::from_buf(*argk.offset(i) as *const u8),
-                      string::raw::from_buf(*argv.offset(i) as *const u8));
+            args.insert(string::raw::from_buf(*argk.offset(i) as *const u8),
+                        string::raw::from_buf(*argv.offset(i) as *const u8));
         }
     }
     return args;
@@ -1268,7 +1252,7 @@ impl PostToSelf for ffi::Struct_PP_CompletionCallback {
     }
 }
 fn possibly_warn_code_callback(code: Code) -> bool {
-    if code != Ok {
+    if code != Code::Ok {
         warn!("unhandled code in callback: `{}`", code);
         true
     } else {
@@ -1463,8 +1447,8 @@ impl Writer for StdIo {
     }
 }
 
-local_data_key!(current_instance: Instance)
-static mut first_instance: Option<Instance> = None;
+scoped_thread_local!(static CURRENT_INSTANCE: Instance)
+static mut FIRST_INSTANCE: Option<Instance> = None;
 
 pub fn is_main_thread() -> bool {
     Some(MessageLoop::get_main_loop()) == MessageLoop::current()
@@ -1485,21 +1469,12 @@ impl Instance {
         Instance::opt_current().expect("instance not set in task local storage!")
     }
     pub fn opt_current() -> Option<Instance> {
-        current_instance.get().map(|instance| {
-            (*instance).clone()
-        })
-    }
-    fn set_current(&self) {
-        current_instance.replace(Some(self.clone()));
+        if CURRENT_INSTANCE.is_set() {
+            Some(CURRENT_INSTANCE.with(|i| i.clone() ))
+        } else { None }
     }
     fn check_current(&self) {
         assert!(Instance::current() == *self);
-    }
-    fn assert_unset_current() {
-        assert!(Instance::opt_current().is_none());
-    }
-    fn unset_current() {
-        current_instance.replace(None);
     }
     fn unwrap(&self) -> ffi::PP_Instance {
         self.instance
@@ -1543,7 +1518,7 @@ impl Instance {
                                                   a.as_ptr() as *const i32);
 
         if raw_cxt == 0i32 {
-            result::Err(Failed)
+            result::Err(Code::Failed)
         } else {
             result::Ok(Context3d::new_bumped(raw_cxt))
         }
@@ -1552,11 +1527,11 @@ impl Instance {
         match (ppb::get_instance().BindGraphics.unwrap())
             (self.instance,
              cxt.get_device()) {
-            ffi::PP_TRUE => Ok,
-            ffi::PP_FALSE => Failed,
+            ffi::PP_TRUE => Code::Ok,
+            ffi::PP_FALSE => Code::Failed,
             other => {
                 error!("unknown truthy value: {:}", other);
-                Failed
+                Code::Failed
             }
         }
     }
@@ -1725,7 +1700,7 @@ fn expect_instances() -> &'static mut InstancesType {
 fn find_instance<U, Take>(instance: Instance,
                           take: Take,
                           f: |&mut MessageLoop, Take| -> U) -> Option<U> {
-    match expect_instances().find_mut(&instance) {
+    match expect_instances().get_mut(&instance) {
         Some(inst) => Some(f(inst, take)),
         None => {
             // TODO: better message/moar infos.
@@ -1735,8 +1710,8 @@ fn find_instance<U, Take>(instance: Instance,
     }
 }
 pub mod entry {
-    use super::{expect_instances, find_instance};
-    use super::{AnyVar, Ok, Instance, View, ToFFIBool};
+    use super::{expect_instances, find_instance, CURRENT_INSTANCE};
+    use super::{AnyVar, Code, Instance, View, ToFFIBool};
     use super::{ffi};
     use super::url::UrlLoader;
 
@@ -1745,8 +1720,8 @@ pub mod entry {
     use std::finally::try_finally;
     use std::mem::transmute;
     use std::result;
-    use std::rt::local::{Local};
-    use std::rt::task::{Task, Result};
+    use rustrt::local::{Local};
+    use rustrt::task::Result;
     use rustrt::unwind::try;
 
     // We need to catch all failures in our callbacks,
@@ -1762,7 +1737,7 @@ pub mod entry {
         // into the global store.
         if result.is_err() {
             match Instance::opt_current() {
-                Some(inst) => { expect_instances().pop(&inst); }
+                Some(inst) => { expect_instances().remove(&inst); }
                 _ => {}
             }
         }
@@ -1780,198 +1755,205 @@ pub mod entry {
                                  argk: *mut *const c_char,
                                  argv: *mut *const c_char) -> ffi::PP_Bool {
         use log::set_logger;
-        use std::rt::task::TaskOpts;
-        use std::str::Owned;
+        use rustrt::task::{TaskOpts, Task};
+        use std::borrow::Cow::Owned;
         use std::io;
         use std::io::{Writer};
         use std::io::stdio::{set_stderr, set_stdout};
-        use std::task::Spawner;
-        use native;
         use super::{StdIo, ConsoleLogger, MessageLoop};
 
         let instance = Instance::new(inst);
-        Instance::assert_unset_current();
-        instance.set_current();
+        // Dat nesting.
+        let success = CURRENT_INSTANCE.set
+            (&instance,
+             || {
+                 let logger = ConsoleLogger::new(&instance);
+                 // TODO: I think this should be set only for the first created instance,
+                 // not all of them.
+                 set_logger(box logger);
 
-        let logger = ConsoleLogger::new(&instance);
-        // TODO: I think this should be set only for the first created instance,
-        // not all of them.
-        set_logger(box logger);
+                 let mut success = false;
+                 let _ = try_block(|| {
+                     instance.initialize_nacl_io();
 
-        let mut success = false;
-        let _ = try_block(|| {
-            instance.initialize_nacl_io();
+                     let args = super::parse_args(argc, argk, argv);
+                     let mut ops = TaskOpts::new();
+                     ops.name = args
+                         .get("id")
+                         .cloned()
+                         .map(|id| {
+                             Owned(id)
+                         });
 
-            let args = super::parse_args(argc, argk, argv);
-            let mut ops = TaskOpts::new();
-            ops.name = args.find_copy(&"id".to_string())
-                .map(|id| {
-                    Owned(id)
-                });
+                     let (tx, rx) = channel();
 
-            let (tx, rx) = channel();
+                     Task::spawn(ops, proc() {
+                         let mut args = Some(args);
+                         CURRENT_INSTANCE.set
+                             (&instance,
+                              || {
+                                  let console = instance.console();
+                                  let stdout = StdIo {
+                                      level:   ffi::PP_LOGLEVEL_LOG,
+                                      raw:     io::stdio::stdout_raw(),
+                                      console: Some(console.clone()),
+                                      buffer:  Vec::new(),
+                                  };
+                                  let stderr = StdIo {
+                                      level:   ffi::PP_LOGLEVEL_ERROR,
+                                      raw:     io::stdio::stderr_raw(),
+                                      console: Some(console.clone()),
+                                      buffer:  Vec::new(),
+                                  };
+                                  let logger = ConsoleLogger::new(&instance);
+                                  set_stdout(box stdout as Box<Writer + Send>);
+                                  set_stderr(box stderr as Box<Writer + Send>);
+                                  set_logger(box logger);
 
-            let spawner = native::task::NativeSpawner;
-            spawner.spawn(ops, proc() {
-                instance.set_current();
-                let console = instance.console();
-                let stdout = StdIo {
-                    level:   ffi::PP_LOGLEVEL_LOG,
-                    raw:     io::stdio::stdout_raw(),
-                    console: Some(console.clone()),
-                    buffer:  Vec::new(),
-                };
-                let stderr = StdIo {
-                    level:   ffi::PP_LOGLEVEL_ERROR,
-                    raw:     io::stdio::stderr_raw(),
-                    console: Some(console.clone()),
-                    buffer:  Vec::new(),
-                };
-                let logger = ConsoleLogger::new(&instance);
-                set_stdout(box stdout as Box<Writer + Send>);
-                set_stderr(box stderr as Box<Writer + Send>);
-                set_logger(box logger);
+                                  let ml = instance.create_msg_loop();
+                                  match ml.attach_to_current_thread() {
+                                      Code::Ok => {}
+                                      _ => {
+                                          error!("failed to attach the new instance's message loop");
+                                          tx.send(None);
+                                          return;
+                                      }
+                                  }
 
-                let ml = instance.create_msg_loop();
-                match ml.attach_to_current_thread() {
-                    Ok => {}
-                    _ => {
-                        error!("failed to attach the new instance's message loop");
-                        tx.send(None);
-                        return;
-                    }
-                }
+                                  fn unwinding() -> bool {
+                                      Local::borrow(None::<Task>).unwinder.unwinding()
+                                  }
 
-                fn unwinding() -> bool {
-                    Local::borrow(None::<Task>).unwinder.unwinding()
-                }
+                                  try_finally(&mut (), args.take().unwrap(),
+                                              |_, args| unsafe {
+                                                  super::ppapi_instance_created(instance.clone(), args)
+                                              },
+                                              |_| {
+                                                  if unwinding() {
+                                                      error!("failed to initialize instance");
+                                                      tx.send(None);
+                                                  } else {
+                                                      tx.send(Some(ml.clone()));
+                                                  }
+                                              });
 
-                try_finally(&mut (), args,
-                            |_, args| unsafe {
-                                super::ppapi_instance_created(instance.clone(), args)
-                            },
-                            |_| {
-                                if unwinding() {
-                                    error!("failed to initialize instance");
-                                    tx.send(None);
-                                } else {
-                                    tx.send(Some(ml.clone()));
-                                }
-                            });
+                                  let code = try_finally(&mut (), ml.clone(),
+                                                         |_, ml| ml.run_loop(),
+                                                         |_| {
+                                                             if unwinding() {
+                                                                 let _ = ml.shutdown();
+                                                             }
+                                                         });
+                                  if code != Code::Ok {
+                                      panic!("message loop exited with code: `{}`", code);
+                                  }
+                                  if MessageLoop::is_attached() {
+                                      panic!("please shutdown the loop; I may add pausing \
+                                              for some sort of pattern later");
+                                  } else {
+                                      MessageLoop::get_main_loop()
+                                          .post_work(proc() {
+                                              super::expect_instances()
+                                                  .remove(&instance);
+                                          }, 0);
+                                  }
+                              });
+                     });
 
-                let code = try_finally(&mut (), ml.clone(),
-                                       |_, ml| ml.run_loop(),
-                                       |_| {
-                                           if unwinding() {
-                                               let _ = ml.shutdown();
-                                           }
-                                       });
-                if code != Ok {
-                    panic!("message loop exited with code: `{}`", code);
-                }
-                if MessageLoop::is_attached() {
-                    panic!("please shutdown the loop; I may add pausing for some sort of pattern later");
-                } else {
-                    MessageLoop::get_main_loop()
-                        .post_work(proc() {
-                            super::expect_instances()
-                                .pop(&instance);
-                        }, 0);
-                }
-            });
-
-            success = rx.recv()
-                .map(|ml| {
-                    let last = expect_instances().insert(instance, ml.clone());
-                    if last.is_some() {
-                        error!("instance already exists; replacing.");
-                        last.unwrap().on_destroy();
-                    }
-                    true
-                })
-                .unwrap_or(false)
-        });
-        Instance::unset_current();
+                     success = rx.recv()
+                         .map(|ml| {
+                             let last = expect_instances().insert(instance, ml.clone());
+                             if last.is_some() {
+                                 error!("instance already exists; replacing.");
+                                 last.unwrap().on_destroy();
+                             }
+                             true
+                         })
+                         .unwrap_or(false)
+                 });
+                 success
+             });
         success.to_ffi_bool()
     }
     pub extern "C" fn did_destroy(inst: ffi::PP_Instance) {
         let instance = Instance::new(inst);
-        Instance::assert_unset_current();
-        instance.set_current();
 
-        let _ = try_block(|| {
-            debug!("did_destroy");
+        CURRENT_INSTANCE.set
+            (&instance,
+             || {
+                 let _ = try_block(|| {
+                     debug!("did_destroy");
 
-            find_instance(instance, (), |store, ()| store.on_destroy() );
+                     find_instance(instance, (), |store, ()| store.on_destroy() );
 
-            expect_instances().pop(&instance);
-        });
+                     expect_instances().remove(&instance);
+                 });
+             });
 
-        Instance::unset_current();
     }
     pub extern "C" fn did_change_view(inst: ffi::PP_Instance, view: ffi::PP_Resource) {
         let instance = Instance::new(inst);
-        Instance::assert_unset_current();
-        instance.set_current();
 
-        if !super::ppapi_on_change_view.is_null() {
-            let _ = try_block(|| {
-                debug!("did_change_view");
-                find_instance(instance,
-                              view,
-                              |store, view| {
-                                  let view = View::new_bumped(view);
-                                  store.on_change_view(view)
-                              });
-            });
-        } else {
-            warn!("plugin is missing 'ppapi_on_change_view'");
-        }
-
-        Instance::unset_current();
+        CURRENT_INSTANCE.set
+            (&instance,
+             || {
+                 if !super::ppapi_on_change_view.is_null() {
+                     let _ = try_block(|| {
+                         debug!("did_change_view");
+                         find_instance(instance,
+                                       view,
+                                       |store, view| {
+                                           let view = View::new_bumped(view);
+                                           store.on_change_view(view)
+                                       });
+                     });
+                 } else {
+                     warn!("plugin is missing 'ppapi_on_change_view'");
+                 }
+             })
     }
     pub extern "C" fn did_change_focus(inst: ffi::PP_Instance, has_focus: ffi::PP_Bool) {
         let instance = Instance::new(inst);
-        Instance::assert_unset_current();
-        instance.set_current();
 
-        if !super::ppapi_on_change_focus.is_null() {
-            let _ = try_block(|| {
-                debug!("did_change_focus");
+        CURRENT_INSTANCE.set
+            (&instance,
+             || {
+                 if !super::ppapi_on_change_focus.is_null() {
+                     let _ = try_block(|| {
+                         debug!("did_change_focus");
 
-                find_instance(instance,
-                              (),
-                              |store, ()| store.on_change_focus(has_focus != ffi::PP_FALSE) );
-            });
-        } else {
-            warn!("plugin is missing 'ppapi_on_change_focus'");
-        }
-
-        Instance::unset_current();
+                         find_instance(instance,
+                                       (),
+                                       |store, ()| store.on_change_focus(has_focus != ffi::PP_FALSE) );
+                     });
+                 } else {
+                     warn!("plugin is missing 'ppapi_on_change_focus'");
+                 }
+             });
     }
     pub extern "C" fn handle_document_load(inst: ffi::PP_Instance,
                                            url_loader: ffi::PP_Resource) -> ffi::PP_Bool {
         let instance = Instance::new(inst);
-        Instance::assert_unset_current();
-        instance.set_current();
 
-        if super::ppapi_on_document_loaded.is_null() {
-            warn!("plugin is missing 'ppapi_on_document_loaded'");
-            return false.to_ffi_bool();
-        }
+        let handled = CURRENT_INSTANCE.set
+            (&instance,
+             || {
+                 if super::ppapi_on_document_loaded.is_null() {
+                     warn!("plugin is missing 'ppapi_on_document_loaded'");
+                     return false;
+                 }
 
-        let handled = try_block_with_ret(|| {
-            debug!("handle_document_load");
+                 let handled = try_block_with_ret(|| {
+                     debug!("handle_document_load");
 
-            find_instance(instance,
-                          UrlLoader::new_bumped(url_loader),
-                          |store, url_loader| {
-                              store.on_document_load(url_loader)
-                          }).unwrap_or(false)
-        }).ok().unwrap_or(false);
-
-        Instance::unset_current();
-
+                     find_instance(instance,
+                                   UrlLoader::new_bumped(url_loader),
+                                   |store, url_loader| {
+                                       store.on_document_load(url_loader)
+                                   }).unwrap_or(false)
+                 }).ok().unwrap_or(false);
+                 handled
+             });
         return handled.to_ffi_bool();
     }
 
@@ -2052,7 +2034,7 @@ pub mod entry {
     }
 }
 
-#[allow(ctypes)]
+#[allow(improper_ctypes)]
 extern {
     #[no_mangle]
     fn ppapi_instance_created(instance: Instance,
@@ -2091,19 +2073,19 @@ extern {
 pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
                                        gbi: ffi::PPB_GetInterface) -> libc::int32_t {
     use std::io::stdio::{set_stderr, set_stdout, stdout_raw, stderr_raw};
-    use std::str::Slice;
-    use std::rt;
-    use std::rt::local::{Local};
+    use std::borrow::Cow::Borrowed;
+    use rustrt::local::{Local};
+    use rustrt::task::Task;
     use self::entry::try_block;
 
     static MAIN_TASK_NAME: &'static str = "main module task";
 
-    rt::init(0, ptr::null());
+    rustrt::init(0, ptr::null());
     {
         // for now, stack bounds don't matter.
-        let mut task = native::task::new((0, 0), 0);
-        task.name = Some(Slice(MAIN_TASK_NAME));
-        Local::put(task);
+        let mut task = Task::new(None, None);
+        task.name = Some(Borrowed(MAIN_TASK_NAME));
+        Local::put(box task);
     }
 
     let stdout = StdIo {
@@ -2140,12 +2122,13 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern "C" fn PPP_ShutdownModule() {
-    use std::rt::local::{Local};
+    use rustrt::local::{Local};
     use self::entry::try_block;
-    use std::rt::task::Task;
+    use rustrt::task::Task;
     // FIXME
     let _ = try_block(|| { unsafe {
         deinitialize_instances();
     }} );
-    let _: Box<Task> = Local::take();
+    let task: Box<Task> = Local::take();
+    task.drop();
 }

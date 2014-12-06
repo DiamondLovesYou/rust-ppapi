@@ -5,7 +5,7 @@ use ppb::{InputEventIf, KeyboardInputEventIf, MouseInputEventIf,
           TouchInputEventIf, WheelInputEventIf};
 use collections::enum_set;
 use collections::enum_set::{CLike, EnumSet};
-use std::{collections, iter, intrinsics, clone, hash};
+use std::{iter, intrinsics, clone, hash};
 
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct KeyboardInputEvent(ffi::PP_Resource);
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct MouseInputEvent(ffi::PP_Resource);
@@ -18,10 +18,10 @@ pub struct IMEInputEvent {
     segments_len: uint,
 }
 
-impl_resource_for!(TouchInputEvent TouchInputEventRes)
-impl_resource_for!(WheelInputEvent WheelInputEventRes)
-impl_resource_for!(MouseInputEvent MouseInputEventRes)
-impl_resource_for!(KeyboardInputEvent KeyboardInputEventRes)
+impl_resource_for!(TouchInputEvent ResourceType::TouchInputEventRes)
+impl_resource_for!(WheelInputEvent ResourceType::WheelInputEventRes)
+impl_resource_for!(MouseInputEvent ResourceType::MouseInputEventRes)
+impl_resource_for!(KeyboardInputEvent ResourceType::KeyboardInputEventRes)
 
 impl IMEInputEvent {
     pub fn new(res: ffi::PP_Resource) -> IMEInputEvent {
@@ -40,7 +40,7 @@ impl Resource for IMEInputEvent {
         self.res
     }
     fn type_of(&self) -> ResourceType {
-        super::IMEInputEventRes
+        super::ResourceType::IMEInputEventRes
     }
 }
 impl PartialEq for IMEInputEvent {
@@ -56,11 +56,11 @@ impl<T: hash::Writer> hash::Hash<T> for IMEInputEvent {
 
 #[deriving(Clone, Show)]
 pub enum Class {
-    KeyboardClass(Event<KeyboardInputEvent, KeyboardEvent>),
-    MouseClass   (Event<MouseInputEvent,    MouseEvent>),
-    WheelClass   (Event<WheelInputEvent,    WheelEvent>),
-    TouchClass   (Event<TouchInputEvent,    TouchInputEvent>),
-    IMEClass     (Event<IMEInputEvent,      IMEInputEvent>),
+    Keyboard(Event<KeyboardInputEvent, KeyboardEvent>),
+    Mouse   (Event<MouseInputEvent,    MouseEvent>),
+    Wheel   (Event<WheelInputEvent,    WheelEvent>),
+    Touch   (Event<TouchInputEvent,    TouchInputEvent>),
+    IME     (Event<IMEInputEvent,      IMEInputEvent>),
 }
 
 pub type KeyboardClassEvent = Event<KeyboardInputEvent, KeyboardEvent>;
@@ -100,8 +100,8 @@ impl Class {
 
         match input_event.type_of(&res.unwrap()) {
             ffi::PP_INPUTEVENT_TYPE_MOUSEDOWN => {
-                MouseClass(Event {
-                    event: MousePress(DownPress,
+                Class::Mouse(Event {
+                    event: MouseEvent::Press(Press::Down,
                                       MouseClickEvent {
                                           point: mouse_event.point(&res.unwrap()),
                                           button: MouseButton::from_ffi
@@ -114,8 +114,8 @@ impl Class {
                 })
             }
             ffi::PP_INPUTEVENT_TYPE_MOUSEUP => {
-                MouseClass(Event {
-                    event: MousePress(UpPress,
+                Class::Mouse(Event {
+                    event: MouseEvent::Press(Press::Up,
                                       MouseClickEvent {
                                           point: mouse_event.point(&res.unwrap()),
                                           button: MouseButton::from_ffi
@@ -128,8 +128,8 @@ impl Class {
                 })
             }
             ffi::PP_INPUTEVENT_TYPE_MOUSEMOVE => {
-                MouseClass(Event {
-                    event: MouseMove(MoveMove,
+                Class::Mouse(Event {
+                    event: MouseEvent::Move(Move::Move,
                                      MouseMoveEvent {
                                          point: mouse_event.point(&res.unwrap()),
                                          delta: mouse_event.delta(&res.unwrap()),
@@ -141,8 +141,8 @@ impl Class {
                 })
             }
             ffi::PP_INPUTEVENT_TYPE_MOUSEENTER => {
-                MouseClass(Event {
-                    event: MouseMove(EnterMove,
+                Class::Mouse(Event {
+                    event: MouseEvent::Move(Move::Enter,
                                      MouseMoveEvent {
                                          point: mouse_event.point(&res.unwrap()),
                                          delta: mouse_event.delta(&res.unwrap()),
@@ -154,8 +154,8 @@ impl Class {
                 })
             }
             ffi::PP_INPUTEVENT_TYPE_MOUSELEAVE => {
-                MouseClass(Event {
-                    event: MouseMove(LeaveMove,
+                Class::Mouse(Event {
+                    event: MouseEvent::Move(Move::Leave,
                                      MouseMoveEvent {
                                          point: mouse_event.point(&res.unwrap()),
                                          delta: mouse_event.delta(&res.unwrap()),
@@ -170,8 +170,8 @@ impl Class {
                 unreachable!()
             }
             ffi::PP_INPUTEVENT_TYPE_KEYDOWN => {
-                KeyboardClass(Event {
-                    event: KeyPress(DownPress,
+                Class::Keyboard(Event {
+                    event: KeyboardEvent::Press(Press::Down,
                                     kb_event.key_code(&res.unwrap()) as i32),
                     res: cast_to_expected(res),
                     timestamp: ticks,
@@ -179,8 +179,8 @@ impl Class {
                 })
             }
             ffi::PP_INPUTEVENT_TYPE_KEYUP => {
-                KeyboardClass(Event {
-                    event: KeyPress(UpPress,
+                Class::Keyboard(Event {
+                    event: KeyboardEvent::Press(Press::Up,
                                     kb_event.key_code(&res.unwrap()) as i32),
                     res: cast_to_expected(res),
                     timestamp: ticks,
@@ -196,18 +196,18 @@ impl Class {
                     warn!("character input event does not have a length of one: \
                           \"{}\"", str)
                 }
-                KeyboardClass(Event {
+                Class::Keyboard(Event {
                     res: cast_to_expected(res),
                     timestamp: ticks,
                     mods: modifiers,
-                    event: KeyChar(str.as_slice().char_at(0)),
+                    event: KeyboardEvent::Char(str.as_slice().char_at(0)),
                 })
             }
             ffi::PP_INPUTEVENT_TYPE_CONTEXTMENU => {
-                MouseClass(Event {
-                    event: MouseContextMenu(MouseClickEvent {
+                Class::Mouse(Event {
+                    event: MouseEvent::ContextMenu(MouseClickEvent {
                         point: mouse_event.point(&res.unwrap()),
-                        button: RightMouseButton,
+                        button: MouseButton::Right,
                         click_count: mouse_event.click_count(&res.unwrap()),
                     }),
                     res: cast_to_expected(res),
@@ -224,40 +224,40 @@ impl Class {
 impl Resource for Class {
     fn unwrap(&self) -> ffi::PP_Resource {
         match self {
-            &KeyboardClass(ref e) => e.res.unwrap(),
-            &MouseClass   (ref e) => e.res.unwrap(),
-            &WheelClass   (ref e) => e.res.unwrap(),
-            &TouchClass   (ref e) => e.res.unwrap(),
-            &IMEClass     (ref e) => e.res.unwrap(),
+            &Class::Keyboard(ref e) => e.res.unwrap(),
+            &Class::Mouse   (ref e) => e.res.unwrap(),
+            &Class::Wheel   (ref e) => e.res.unwrap(),
+            &Class::Touch   (ref e) => e.res.unwrap(),
+            &Class::IME     (ref e) => e.res.unwrap(),
         }
     }
     fn type_of(&self) -> ResourceType {
         match self {
-            &KeyboardClass(ref e) => e.res.type_of(),
-            &MouseClass   (ref e) => e.res.type_of(),
-            &WheelClass   (ref e) => e.res.type_of(),
-            &TouchClass   (ref e) => e.res.type_of(),
-            &IMEClass     (ref e) => e.res.type_of(),
+            &Class::Keyboard(ref e) => e.res.type_of(),
+            &Class::Mouse   (ref e) => e.res.type_of(),
+            &Class::Wheel   (ref e) => e.res.type_of(),
+            &Class::Touch   (ref e) => e.res.type_of(),
+            &Class::IME     (ref e) => e.res.type_of(),
         }
     }
 }
 impl InputEvent for Class {
     fn modifiers(&self) -> Modifiers {
         match self {
-            &KeyboardClass(Event { mods: ref m, .. }) |
-            &MouseClass   (Event { mods: ref m, .. }) |
-            &WheelClass   (Event { mods: ref m, .. }) |
-            &TouchClass   (Event { mods: ref m, .. }) |
-            &IMEClass     (Event { mods: ref m, .. }) => m.clone(),
+            &Class::Keyboard(Event { mods: ref m, .. }) |
+            &Class::Mouse   (Event { mods: ref m, .. }) |
+            &Class::Wheel   (Event { mods: ref m, .. }) |
+            &Class::Touch   (Event { mods: ref m, .. }) |
+            &Class::IME     (Event { mods: ref m, .. }) => m.clone(),
         }
     }
     fn timestamp(&self) -> Ticks {
         match self {
-            &KeyboardClass(Event { timestamp: ts, .. }) |
-            &MouseClass   (Event { timestamp: ts, .. }) |
-            &WheelClass   (Event { timestamp: ts, .. }) |
-            &TouchClass   (Event { timestamp: ts, .. }) |
-            &IMEClass     (Event { timestamp: ts, .. }) => ts,
+            &Class::Keyboard(Event { timestamp: ts, .. }) |
+            &Class::Mouse   (Event { timestamp: ts, .. }) |
+            &Class::Wheel   (Event { timestamp: ts, .. }) |
+            &Class::Touch   (Event { timestamp: ts, .. }) |
+            &Class::IME     (Event { timestamp: ts, .. }) => ts,
         }
     }
 }
@@ -303,104 +303,101 @@ pub enum Modifiers_ {
 impl CLike for Modifiers_ {
     fn to_uint(&self) -> uint {
         match self {
-            &ShiftKey         => 0,
-            &ControlKey       => 1,
-            &AltKey           => 2,
-            &MetaKey          => 3,
-            &IsKeyPad         => 4,
-            &IsAutoRepeat     => 5,
-            &LeftButtonDown   => 6,
-            &MiddleButtonDown => 7,
-            &RightButtonDown  => 8,
-            &CapsLockKey      => 9,
-            &NumLockKey       => 10,
-            &IsLeft           => 11,
-            &IsRight          => 12,
+            &Modifiers_::ShiftKey         => 0,
+            &Modifiers_::ControlKey       => 1,
+            &Modifiers_::AltKey           => 2,
+            &Modifiers_::MetaKey          => 3,
+            &Modifiers_::IsKeyPad         => 4,
+            &Modifiers_::IsAutoRepeat     => 5,
+            &Modifiers_::LeftButtonDown   => 6,
+            &Modifiers_::MiddleButtonDown => 7,
+            &Modifiers_::RightButtonDown  => 8,
+            &Modifiers_::CapsLockKey      => 9,
+            &Modifiers_::NumLockKey       => 10,
+            &Modifiers_::IsLeft           => 11,
+            &Modifiers_::IsRight          => 12,
         }
     }
     fn from_uint(v: uint) -> Modifiers_ {
         match v {
-            0  => ShiftKey,
-            1  => ControlKey,
-            2  => AltKey,
-            3  => MetaKey,
-            4  => IsKeyPad,
-            5  => IsAutoRepeat,
-            6  => LeftButtonDown,
-            7  => MiddleButtonDown,
-            8  => RightButtonDown,
-            9  => CapsLockKey,
-            10 => NumLockKey,
-            11 => IsLeft,
-            12 => IsRight,
+            0  => Modifiers_::ShiftKey,
+            1  => Modifiers_::ControlKey,
+            2  => Modifiers_::AltKey,
+            3  => Modifiers_::MetaKey,
+            4  => Modifiers_::IsKeyPad,
+            5  => Modifiers_::IsAutoRepeat,
+            6  => Modifiers_::LeftButtonDown,
+            7  => Modifiers_::MiddleButtonDown,
+            8  => Modifiers_::RightButtonDown,
+            9  => Modifiers_::CapsLockKey,
+            10 => Modifiers_::NumLockKey,
+            11 => Modifiers_::IsLeft,
+            12 => Modifiers_::IsRight,
             _  => unreachable!(),
         }
     }
 }
 pub type Modifiers = EnumSet<Modifiers_>;
 fn modifiers_from_bitset(set: u32) -> Modifiers {
-    let mut e: Modifiers = enum_set::EnumSet::empty();
-    if set & 0b0000000000001 != 0 { e.add(ShiftKey) }
-    if set & 0b0000000000010 != 0 { e.add(ControlKey) }
-    if set & 0b0000000000100 != 0 { e.add(AltKey) }
-    if set & 0b0000000001000 != 0 { e.add(MetaKey) }
-    if set & 0b0000000010000 != 0 { e.add(IsKeyPad) }
-    if set & 0b0000000100000 != 0 { e.add(IsAutoRepeat) }
-    if set & 0b0000001000000 != 0 { e.add(LeftButtonDown) }
-    if set & 0b0000010000000 != 0 { e.add(MiddleButtonDown) }
-    if set & 0b0000100000000 != 0 { e.add(RightButtonDown) }
-    if set & 0b0001000000000 != 0 { e.add(CapsLockKey) }
-    if set & 0b0010000000000 != 0 { e.add(NumLockKey) }
-    if set & 0b0100000000000 != 0 { e.add(IsLeft) }
-    if set & 0b1000000000000 != 0 { e.add(IsRight) }
+    let mut e: Modifiers = enum_set::EnumSet::new();
+    if set & 0b0000000000001 != 0 { e.insert(Modifiers_::ShiftKey); }
+    if set & 0b0000000000010 != 0 { e.insert(Modifiers_::ControlKey); }
+    if set & 0b0000000000100 != 0 { e.insert(Modifiers_::AltKey); }
+    if set & 0b0000000001000 != 0 { e.insert(Modifiers_::MetaKey); }
+    if set & 0b0000000010000 != 0 { e.insert(Modifiers_::IsKeyPad); }
+    if set & 0b0000000100000 != 0 { e.insert(Modifiers_::IsAutoRepeat); }
+    if set & 0b0000001000000 != 0 { e.insert(Modifiers_::LeftButtonDown); }
+    if set & 0b0000010000000 != 0 { e.insert(Modifiers_::MiddleButtonDown); }
+    if set & 0b0000100000000 != 0 { e.insert(Modifiers_::RightButtonDown); }
+    if set & 0b0001000000000 != 0 { e.insert(Modifiers_::CapsLockKey); }
+    if set & 0b0010000000000 != 0 { e.insert(Modifiers_::NumLockKey); }
+    if set & 0b0100000000000 != 0 { e.insert(Modifiers_::IsLeft); }
+    if set & 0b1000000000000 != 0 { e.insert(Modifiers_::IsRight); }
     e
 }
 #[deriving(Clone, Hash, Eq, PartialEq, Show)]
 pub enum Move {
-    EnterMove,
-    LeaveMove,
-    MoveMove,
+    Enter,
+    Leave,
+    Move,
 }
 
 #[deriving(Clone, Hash, Eq, PartialEq, Show)]
 pub enum Press {
-    DownPress,
-    UpPress,
+    Down,
+    Up,
 }
 #[deriving(Clone, Eq, PartialEq, Show)]
 pub enum MouseEvent {
-    MousePress       (Press, MouseClickEvent),
-    MouseContextMenu (MouseClickEvent),
-    MouseMove        (Move,  MouseMoveEvent),
+    Press       (Press, MouseClickEvent),
+    ContextMenu (MouseClickEvent),
+    Move        (Move,  MouseMoveEvent),
 }
 impl MouseEvent {
     fn point(&self) -> FloatPoint {
         match self {
-            &MousePress(_, MouseClickEvent {
-                point: point,
-                ..
-            }) | &MouseContextMenu(MouseClickEvent {
-                point: point,
-                ..
-            }) | &MouseMove(_, MouseMoveEvent {
-                point: point,
-                ..
+            &MouseEvent::Press(_, MouseClickEvent {
+                point, ..
+            }) | &MouseEvent::ContextMenu(MouseClickEvent {
+                point, ..
+            }) | &MouseEvent::Move(_, MouseMoveEvent {
+                point, ..
             }) => point,
         }
     }
 }
 #[deriving(Clone, Eq, PartialEq, Show)]
 pub enum MouseButton {
-    LeftMouseButton,
-    MiddleMouseButton,
-    RightMouseButton,
+    Left,
+    Middle,
+    Right,
 }
 impl MouseButton {
     fn from_ffi(v: i32) -> MouseButton {
         match v {
-            ffi::PP_INPUTEVENT_MOUSEBUTTON_LEFT   => LeftMouseButton,
-            ffi::PP_INPUTEVENT_MOUSEBUTTON_MIDDLE => MiddleMouseButton,
-            ffi::PP_INPUTEVENT_MOUSEBUTTON_RIGHT  => RightMouseButton,
+            ffi::PP_INPUTEVENT_MOUSEBUTTON_LEFT   => MouseButton::Left,
+            ffi::PP_INPUTEVENT_MOUSEBUTTON_MIDDLE => MouseButton::Middle,
+            ffi::PP_INPUTEVENT_MOUSEBUTTON_RIGHT  => MouseButton::Right,
             _ => unreachable!(),
         }
     }
@@ -420,8 +417,8 @@ pub struct MouseMoveEvent {
 
 #[deriving(Clone, Eq, PartialEq, Show)]
 pub enum KeyboardEvent {
-    KeyPress(Press, i32),
-    KeyChar(char),
+    Press(Press, i32),
+    Char(char),
 }
 
 #[deriving(Clone, Eq, PartialEq, Show)]
@@ -492,16 +489,16 @@ impl WheelInputEvent {
 }
 #[deriving(Clone, Eq, PartialEq, Hash, Show)]
 pub enum TouchListType {
-    TouchesTouchListType,
-    DeltaTouchListType,
-    TargetTouchListType,
+    Touches,
+    Delta,
+    Target,
 }
 impl TouchListType {
     fn to_ffi(&self) -> ffi::PP_TouchListType {
         match self {
-            &TouchesTouchListType => ffi::PP_TOUCHLIST_TYPE_TOUCHES,
-            &DeltaTouchListType => ffi::PP_TOUCHLIST_TYPE_CHANGEDTOUCHES,
-            &TargetTouchListType => ffi::PP_TOUCHLIST_TYPE_TARGETTOUCHES,
+            &TouchListType::Touches => ffi::PP_TOUCHLIST_TYPE_TOUCHES,
+            &TouchListType::Delta => ffi::PP_TOUCHLIST_TYPE_CHANGEDTOUCHES,
+            &TouchListType::Target => ffi::PP_TOUCHLIST_TYPE_TARGETTOUCHES,
         }
     }
 }

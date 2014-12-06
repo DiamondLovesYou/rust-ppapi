@@ -18,7 +18,7 @@
 //! PPB related interfaces. Many interfaces have convenience functions to remove much
 //! of the verbose-ness of the originals.
 
-#![allow(missing_doc)]
+#![allow(missing_docs)]
 use core::mem;
 use core::mem::uninitialized;
 use libc;

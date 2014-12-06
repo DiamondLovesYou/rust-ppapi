@@ -39,19 +39,19 @@ pub enum Family {
 impl Family {
     fn new_from_ffi(v: ffi::PP_FontFamily_Dev) -> Family {
         match v {
-            ffi::PP_FONTFAMILY_DEFAULT => DefaultFamily,
-            ffi::PP_FONTFAMILY_SERIF => SerifFamily,
-            ffi::PP_FONTFAMILY_SANSSERIF => SansSerifFamily,
-            ffi::PP_FONTFAMILY_MONOSPACE => MonospaceFamily,
+            ffi::PP_FONTFAMILY_DEFAULT => Family::DefaultFamily,
+            ffi::PP_FONTFAMILY_SERIF => Family::SerifFamily,
+            ffi::PP_FONTFAMILY_SANSSERIF => Family::SansSerifFamily,
+            ffi::PP_FONTFAMILY_MONOSPACE => Family::MonospaceFamily,
             _ => unreachable!(),
         }
     }
     fn to_ffi(&self) -> PP_FontFamily_Dev {
         match self {
-            &DefaultFamily => ffi::PP_FONTFAMILY_DEFAULT,
-            &SerifFamily => ffi::PP_FONTFAMILY_SERIF,
-            &SansSerifFamily => ffi::PP_FONTFAMILY_SANSSERIF,
-            &MonospaceFamily => ffi::PP_FONTFAMILY_MONOSPACE,
+            &Family::DefaultFamily => ffi::PP_FONTFAMILY_DEFAULT,
+            &Family::SerifFamily => ffi::PP_FONTFAMILY_SERIF,
+            &Family::SansSerifFamily => ffi::PP_FONTFAMILY_SANSSERIF,
+            &Family::MonospaceFamily => ffi::PP_FONTFAMILY_MONOSPACE,
         }
     }
 }
@@ -66,31 +66,31 @@ pub enum Weight {
 impl Weight {
     fn new_from_ffi(v: ffi::PP_FontWeight_Dev) -> Weight {
         match v {
-            ffi::PP_FONTWEIGHT_100 => ValueWeight(100),
-            ffi::PP_FONTWEIGHT_200 => ValueWeight(200),
-            ffi::PP_FONTWEIGHT_300 => ValueWeight(300),
-            ffi::PP_FONTWEIGHT_400 => NormalWeight,
-            ffi::PP_FONTWEIGHT_500 => ValueWeight(500),
-            ffi::PP_FONTWEIGHT_600 => ValueWeight(600),
-            ffi::PP_FONTWEIGHT_700 => BoldWeight,
-            ffi::PP_FONTWEIGHT_800 => ValueWeight(800),
-            ffi::PP_FONTWEIGHT_900 => ValueWeight(900),
+            ffi::PP_FONTWEIGHT_100 => Weight::ValueWeight(100),
+            ffi::PP_FONTWEIGHT_200 => Weight::ValueWeight(200),
+            ffi::PP_FONTWEIGHT_300 => Weight::ValueWeight(300),
+            ffi::PP_FONTWEIGHT_400 => Weight::NormalWeight,
+            ffi::PP_FONTWEIGHT_500 => Weight::ValueWeight(500),
+            ffi::PP_FONTWEIGHT_600 => Weight::ValueWeight(600),
+            ffi::PP_FONTWEIGHT_700 => Weight::BoldWeight,
+            ffi::PP_FONTWEIGHT_800 => Weight::ValueWeight(800),
+            ffi::PP_FONTWEIGHT_900 => Weight::ValueWeight(900),
             _ => unreachable!(),
         }
     }
     fn to_ffi(&self) -> ffi::PP_FontWeight_Dev {
         match self {
-            &ValueWeight(v) if v <= 100 => ffi::PP_FONTWEIGHT_100,
-            &ValueWeight(v) if v > 100 && v <= 200 => ffi::PP_FONTWEIGHT_200,
-            &ValueWeight(v) if v > 200 && v <= 300 => ffi::PP_FONTWEIGHT_300,
-            &ValueWeight(v) if v > 300 && v <= 400 => ffi::PP_FONTWEIGHT_400,
-            &NormalWeight => ffi::PP_FONTWEIGHT_400,
-            &ValueWeight(v) if v > 400 && v <= 500 => ffi::PP_FONTWEIGHT_500,
-            &ValueWeight(v) if v > 500 && v <= 600 => ffi::PP_FONTWEIGHT_600,
-            &ValueWeight(v) if v > 600 && v <= 700 => ffi::PP_FONTWEIGHT_700,
-            &BoldWeight => ffi::PP_FONTWEIGHT_700,
-            &ValueWeight(v) if v > 700 && v <= 800 => ffi::PP_FONTWEIGHT_800,
-            &ValueWeight(_) => ffi::PP_FONTWEIGHT_900,
+            &Weight::ValueWeight(v) if v <= 100 => ffi::PP_FONTWEIGHT_100,
+            &Weight::ValueWeight(v) if v > 100 && v <= 200 => ffi::PP_FONTWEIGHT_200,
+            &Weight::ValueWeight(v) if v > 200 && v <= 300 => ffi::PP_FONTWEIGHT_300,
+            &Weight::ValueWeight(v) if v > 300 && v <= 400 => ffi::PP_FONTWEIGHT_400,
+            &Weight::NormalWeight => ffi::PP_FONTWEIGHT_400,
+            &Weight::ValueWeight(v) if v > 400 && v <= 500 => ffi::PP_FONTWEIGHT_500,
+            &Weight::ValueWeight(v) if v > 500 && v <= 600 => ffi::PP_FONTWEIGHT_600,
+            &Weight::ValueWeight(v) if v > 600 && v <= 700 => ffi::PP_FONTWEIGHT_700,
+            &Weight::BoldWeight => ffi::PP_FONTWEIGHT_700,
+            &Weight::ValueWeight(v) if v > 700 && v <= 800 => ffi::PP_FONTWEIGHT_800,
+            &Weight::ValueWeight(_) => ffi::PP_FONTWEIGHT_900,
         }
     }
 }
@@ -125,7 +125,7 @@ impl Description {
             face: None,
             family: fam,
             size: 12,
-            weight: NormalWeight,
+            weight: Weight::NormalWeight,
             italic: false,
             small_caps: false,
             letter_spacing: 0,
@@ -160,7 +160,7 @@ impl Description {
 
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct Font(ffi::PP_Resource);
 
-impl_resource_for!(Font FontRes)
+impl_resource_for!(Font ResourceType::FontRes)
 
 impl Font {
     pub fn describe(&self) -> Option<(Description, Metrics)> {
@@ -243,8 +243,8 @@ impl Font {
                  color,
                  clip_ptr,
                  image_data_is_opaque as ffi::PP_Bool) != -1 as u32 {
-                super::Ok
-            } else { super::Failed }
+                super::Code::Ok
+            } else { super::Code::Failed }
         }
 
     pub fn char_offset_for_pixel<TStr: super::ToStringVar +

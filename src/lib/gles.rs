@@ -17,16 +17,16 @@
 
 //! A module to wrap OpenGLES 2.0 functions from the PPAPI
 
-#![allow(missing_doc)]
+#![allow(missing_docs)]
 
 use std::mem::{size_of, uninitialized};
 use std::{clone, ptr};
 use std::default::Default;
-use std::str::MaybeOwned;
 use std::c_str::CString;
+use std::borrow::Cow;
 use libc;
 use libc::c_void;
-use super::{Resource, Callback};
+use super::{Resource, ResourceType, Callback};
 use super::ppb;
 use super::ppb::get_gles2;
 use ffi;
@@ -34,7 +34,7 @@ use ffi;
 #[deriving(Hash, Eq, PartialEq, Show)]
 pub struct Context3d(ffi::PP_Resource);
 
-#[allow(missing_doc)] pub mod types {
+#[allow(missing_docs)] pub mod types {
     use super::super::ffi;
     pub type Enum    = ffi::GLenum;
     pub type UInt    = ffi::GLuint;
@@ -53,7 +53,7 @@ pub struct Context3d(ffi::PP_Resource);
     pub type UShort  = ffi::GLushort;
     pub type Void    = ffi::GLvoid;
 }
-#[allow(missing_doc)] pub mod consts {
+#[allow(missing_docs)] pub mod consts {
     use libc::{c_uint, c_uchar};
     /* BeginMode */
     pub static POINTS:         c_uint = 0x0000 as c_uint;
@@ -364,14 +364,11 @@ pub mod traits {
     use super::Context3d;
     use super::{types, consts};
     use super::super::ppb::get_gles2;
-    use super::{BufferType, BoundBuffer, Ctor,    BufferObject,
-                VertexBuffer,  VertexBufferType,  VertBufObject,
-                IndexBuffer,   IndexBufferType,   IdxBufObject,
-                TextureBuffer, TextureBufferType, TexBufObject,
-                FrameBuffer,   FrameBufferType,   FrameBufObject,
-                RenderBuffer,  RenderBufferType,  RenderBufObject};
+    use super::{BufferType, BoundBuffer, Ctor, BufferObject,
+                VertexBuffer, IndexBuffer, TextureBuffer, FrameBuffer,
+                RenderBuffer};
     use std::clone::Clone;
-    use std::str::{MaybeOwned, Owned, Slice};
+    use std::str::CowString;
     use libc::c_void;
 
     pub trait Buffer {
@@ -387,58 +384,58 @@ pub mod traits {
             let &VertexBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { VertexBufferType }
-        fn to_object(&self) -> BufferObject { VertBufObject(self.clone()) }
+        fn get_type(&self) -> BufferType { BufferType::VertexBufferType }
+        fn to_object(&self) -> BufferObject { BufferObject::VertBufObject(self.clone()) }
     }
     impl Buffer for IndexBuffer {
         fn unwrap(&self) -> types::UInt {
             let &IndexBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { IndexBufferType }
-        fn to_object(&self) -> BufferObject { IdxBufObject(self.clone()) }
+        fn get_type(&self) -> BufferType { BufferType::IndexBufferType }
+        fn to_object(&self) -> BufferObject { BufferObject::IdxBufObject(self.clone()) }
     }
     impl Buffer for TextureBuffer {
         fn unwrap(&self) -> types::UInt {
             let &TextureBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { TextureBufferType }
-        fn to_object(&self) -> BufferObject { TexBufObject(self.clone()) }
+        fn get_type(&self) -> BufferType { BufferType::TextureBufferType }
+        fn to_object(&self) -> BufferObject { BufferObject::TexBufObject(self.clone()) }
     }
     impl Buffer for FrameBuffer {
         fn unwrap(&self) -> types::UInt {
             let &FrameBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { FrameBufferType }
-        fn to_object(&self) -> BufferObject { FrameBufObject(self.clone()) }
+        fn get_type(&self) -> BufferType { BufferType::FrameBufferType }
+        fn to_object(&self) -> BufferObject { BufferObject::FrameBufObject(self.clone()) }
     }
     impl Buffer for RenderBuffer {
         fn unwrap(&self) -> types::UInt {
             let &RenderBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { RenderBufferType }
-        fn to_object(&self) -> BufferObject { RenderBufObject(self.clone()) }
+        fn get_type(&self) -> BufferType { BufferType::RenderBufferType }
+        fn to_object(&self) -> BufferObject { BufferObject::RenderBufObject(self.clone()) }
     }
     impl Buffer for BufferObject {
         fn unwrap(&self) -> types::UInt {
             match self {
-                &VertBufObject(inner)   => inner.unwrap(),
-                &IdxBufObject(inner)    => inner.unwrap(),
-                &TexBufObject(inner)    => inner.unwrap(),
-                &FrameBufObject(inner)  => inner.unwrap(),
-                &RenderBufObject(inner) => inner.unwrap(),
+                &BufferObject::VertBufObject(inner)   => inner.unwrap(),
+                &BufferObject::IdxBufObject(inner)    => inner.unwrap(),
+                &BufferObject::TexBufObject(inner)    => inner.unwrap(),
+                &BufferObject::FrameBufObject(inner)  => inner.unwrap(),
+                &BufferObject::RenderBufObject(inner) => inner.unwrap(),
             }
         }
         fn get_type(&self) -> BufferType {
             match self {
-                &VertBufObject(inner)   => inner.get_type(),
-                &IdxBufObject(inner)    => inner.get_type(),
-                &TexBufObject(inner)    => inner.get_type(),
-                &FrameBufObject(inner)  => inner.get_type(),
-                &RenderBufObject(inner) => inner.get_type(),
+                &BufferObject::VertBufObject(inner)   => inner.get_type(),
+                &BufferObject::IdxBufObject(inner)    => inner.get_type(),
+                &BufferObject::TexBufObject(inner)    => inner.get_type(),
+                &BufferObject::FrameBufObject(inner)  => inner.get_type(),
+                &BufferObject::RenderBufObject(inner) => inner.get_type(),
             }
         }
         fn to_object(&self) -> BufferObject { self.clone() }
@@ -496,7 +493,7 @@ pub mod traits {
         ($ty:ty, $gen_fun:ident) => {
             impl GenBuffer for $ty {
                 fn gen_single(ctxt: &Context3d) -> $ty {
-                    let mut v: Vec<$ty> = GenBuffer::gen_multiple(ctxt, 1);
+                    let v: Vec<$ty> = GenBuffer::gen_multiple(ctxt, 1);
                     v[0]
                 }
                 fn gen_multiple(ctxt: &Context3d, count: uint) -> Vec<$ty> {
@@ -529,11 +526,11 @@ pub mod traits {
     impl DropBuffer for BufferObject {
         unsafe fn drop_buffer(self, ctxt: &Context3d) {
             match self {
-                VertBufObject(inner)   => inner.drop_buffer(ctxt),
-                IdxBufObject(inner)    => inner.drop_buffer(ctxt),
-                TexBufObject(inner)    => inner.drop_buffer(ctxt),
-                FrameBufObject(inner)  => inner.drop_buffer(ctxt),
-                RenderBufObject(inner) => inner.drop_buffer(ctxt),
+                BufferObject::VertBufObject(inner)   => inner.drop_buffer(ctxt),
+                BufferObject::IdxBufObject(inner)    => inner.drop_buffer(ctxt),
+                BufferObject::TexBufObject(inner)    => inner.drop_buffer(ctxt),
+                BufferObject::FrameBufObject(inner)  => inner.drop_buffer(ctxt),
+                BufferObject::RenderBufObject(inner) => inner.drop_buffer(ctxt),
             }
         }
     }
@@ -596,16 +593,11 @@ pub mod traits {
         }
     }
     pub trait CompileShader: GenShader + super::ShaderUnwrap {
-        fn new(ctxt: &Context3d, src: &Vec<MaybeOwned>) -> super::CompilingShader<Self> {
+        fn new(ctxt: &Context3d, src: &Vec<CowString>) -> super::CompilingShader<Self> {
             use libc::c_char;
             let this: Self = GenShader::gen_single(ctxt);
             let mut src_ptrs: Vec<*const c_char> = src.iter()
-                .map(|s| {
-                    (match s {
-                        &Owned(ref s) => s.as_slice().as_ptr(),
-                        &Slice(s) => s.as_ptr(),
-                    }) as *const c_char
-                })
+                .map(|s| s.as_slice().as_ptr() as *const c_char )
                 .collect();
             let src_lens: Vec<types::Int> = src.iter()
                 .map(|s| s.len() as types::Int)
@@ -710,23 +702,23 @@ pub enum BufferOption<'a, T: 'a> {
 impl<'a, T> clone::Clone for BufferOption<'a, T> {
     fn clone(&self) -> BufferOption<'a, T> {
         match self {
-            &BufferSome(vec) => BufferSome(vec),
-            &BufferNone(count) => BufferNone(count),
+            &BufferOption::BufferSome(vec) => BufferOption::BufferSome(vec),
+            &BufferOption::BufferNone(count) => BufferOption::BufferNone(count),
         }
     }
 }
 impl<'a, T> BufferOption<'a, T> {
     fn byte_len(&self) -> types::SizePtr {
         (match self {
-            &BufferSome(buf) => buf.len() * size_of::<T>(),
-            &BufferNone(len) => len * size_of::<T>(),
+            &BufferOption::BufferSome(buf) => buf.len() * size_of::<T>(),
+            &BufferOption::BufferNone(len) => len * size_of::<T>(),
         }) as types::SizePtr
     }
     fn as_void_ptr(&self) -> *const c_void {
         use std::ptr;
         match self {
-            &BufferSome(buf) => buf.as_ptr() as *const c_void,
-            &BufferNone(_)   => ptr::null(),
+            &BufferOption::BufferSome(buf) => buf.as_ptr() as *const c_void,
+            &BufferOption::BufferNone(_)   => ptr::null(),
         }
     }
 }
@@ -764,30 +756,30 @@ pub struct TrianglesGeometryMode;
 
 #[deriving(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Encodable, Decodable)]
 pub enum GeometryMode {
-    PointsGeoMode,
-    LineStripGeoMode,
-    LineLoopGeoMode,
-    LinesGeoMode,
-    TriangleStripGeoMode,
-    TriangleFanGeoMode,
-    TriangleGeoMode,
+    Points,
+    LineStrip,
+    LineLoop,
+    Lines,
+    TriangleStrip,
+    TriangleFan,
+    Triangle,
 }
 impl traits::GeometryMode for GeometryMode {
     fn get_geo_mode_enum(&self) -> types::Enum {
         match self {
-            &PointsGeoMode        => consts::POINTS,
-            &LineStripGeoMode     => consts::LINE_STRIP,
-            &LineLoopGeoMode      => consts::LINE_LOOP,
-            &LinesGeoMode         => consts::LINES,
-            &TriangleStripGeoMode => consts::TRIANGLE_STRIP,
-            &TriangleFanGeoMode   => consts::TRIANGLE_FAN,
-            &TriangleGeoMode      => consts::TRIANGLES,
+            &GeometryMode::Points        => consts::POINTS,
+            &GeometryMode::LineStrip     => consts::LINE_STRIP,
+            &GeometryMode::LineLoop      => consts::LINE_LOOP,
+            &GeometryMode::Lines         => consts::LINES,
+            &GeometryMode::TriangleStrip => consts::TRIANGLE_STRIP,
+            &GeometryMode::TriangleFan   => consts::TRIANGLE_FAN,
+            &GeometryMode::Triangle      => consts::TRIANGLES,
         }
     }
 }
 impl Default for GeometryMode {
     fn default() -> GeometryMode {
-        TriangleGeoMode
+        GeometryMode::Triangle
     }
 }
 macro_rules! impl_geo_mode(
@@ -857,20 +849,20 @@ pub struct FloatType;
 // For use as a value type.
 #[deriving(Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum VertexAttribType {
-    ByteAttribType,
-    UByteAttribType,
-    ShortAttribType,
-    UShortAttribType,
-    FloatAttribType,
+    Byte,
+    UByte,
+    Short,
+    UShort,
+    Float,
 }
 impl traits::VertexAttribType for VertexAttribType {
     fn get_vertex_attrib_type_enum(&self) -> types::Enum {
         match self {
-            &ByteAttribType =>   consts::BYTE,
-            &UByteAttribType =>  consts::UNSIGNED_BYTE,
-            &ShortAttribType =>  consts::SHORT,
-            &UShortAttribType => consts::UNSIGNED_SHORT,
-            &FloatAttribType =>  consts::FLOAT,
+            &VertexAttribType::Byte =>   consts::BYTE,
+            &VertexAttribType::UByte =>  consts::UNSIGNED_BYTE,
+            &VertexAttribType::Short =>  consts::SHORT,
+            &VertexAttribType::UShort => consts::UNSIGNED_SHORT,
+            &VertexAttribType::Float =>  consts::FLOAT,
         }
     }
 }
@@ -931,20 +923,20 @@ impl BoundBuffer<IndexBuffer> {
 
 #[deriving(Eq, PartialEq, Clone, Hash, Ord, PartialOrd)]
 pub enum TexFormat {
-    AlphaTexFormat,
-    //LuminanceTexFormat,
-    //LuminanceAlphaTexFormat,
-    RgbTexFormat,
-    RgbaTexFormat,
+    Alpha,
+    //Luminance,
+    //LuminanceAlpha,
+    Rgb,
+    Rgba,
 }
 impl TexFormat {
     fn to_ffi(&self) -> types::UInt {
         match self {
-            &AlphaTexFormat => consts::ALPHA,
-            //&LuminanceTexFormat =>,
-            //&LuminanceAlphaTexFormat =>,
-            &RgbTexFormat => consts::RGB,
-            &RgbaTexFormat => consts::RGBA,
+            &TexFormat::Alpha => consts::ALPHA,
+            //&TexFormat::Luminance =>,
+            //&TexFormat::LuminanceAlpha =>,
+            &TexFormat::Rgb => consts::RGB,
+            &TexFormat::Rgba => consts::RGBA,
         }
     }
 }
@@ -1346,8 +1338,8 @@ impl GetQueryType for types::Int {
         ret
     }
 }
-impl GetQueryType for MaybeOwned<'static> {
-    fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> MaybeOwned<'static> {
+impl GetQueryType for Cow<'static, String, str> {
+    fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> Cow<'static, String, str> {
         use std::c_str::CString;
         use core::mem::transmute;
         let str_ptr = call_gl_fun!(get_gles2() -> GetString => (ctxt,
@@ -1362,8 +1354,8 @@ impl GetQueryType for MaybeOwned<'static> {
         }
     }
 }
-impl GetQueryType for Vec<MaybeOwned<'static>> {
-    fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> Vec<MaybeOwned<'static>> {
+impl GetQueryType for Vec<Cow<'static, String, str>> {
+    fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> Vec<Cow<'static, String, str>> {
         use std::c_str::{from_c_multistring, CString};
         use core::mem::transmute;
         let str_ptr = call_gl_fun!(get_gles2() -> GetString => (ctxt,
@@ -1418,13 +1410,13 @@ impl_get_query_ret_type!(MaxRenderBufferSize =>          consts::MAX_RENDER_BUFF
 impl_get_query_ret_type!(MaxTextureSize =>               consts::MAX_TEXTURE_SIZE)
 impl_get_query_ret_type!(MaxColorAttachments =>          consts::MAX_COLOR_ATTACHMENTS)
 
-impl_get_query_ret_type!(Vendor                 => consts::VENDOR -> MaybeOwned<'static>)
-impl_get_query_ret_type!(Extensions             => consts::EXTENSIONS -> Vec<MaybeOwned<'static>>)
-impl_get_query_ret_type!(Renderer               => consts::RENDERER -> MaybeOwned<'static>)
-impl_get_query_ret_type!(Version                => consts::VERSION -> MaybeOwned<'static>)
-impl_get_query_ret_type!(ShadingLanguageVersion => consts::SHADING_LANGUAGE_VERSION -> MaybeOwned<'static>)
+impl_get_query_ret_type!(Vendor                 => consts::VENDOR -> Cow<'static, String, str>)
+impl_get_query_ret_type!(Extensions             => consts::EXTENSIONS -> Vec<Cow<'static, String, str>>)
+impl_get_query_ret_type!(Renderer               => consts::RENDERER -> Cow<'static, String, str>)
+impl_get_query_ret_type!(Version                => consts::VERSION -> Cow<'static, String, str>)
+impl_get_query_ret_type!(ShadingLanguageVersion => consts::SHADING_LANGUAGE_VERSION -> Cow<'static, String, str>)
 
-impl_resource_for!(Context3d Graphics3DRes)
+impl_resource_for!(Context3d ResourceType::Graphics3DRes)
 
 impl Context3d {
     fn gen_vert_shader(&self) -> VertexShader {
@@ -1475,12 +1467,12 @@ impl Context3d {
             None => (),
         }
         match blending.fun {
-            Some(BlendingFun(sfactor, dfactor)) => {
+            Some(BlendingFun_::BlendingFun(sfactor, dfactor)) => {
                 call_gl_fun!(get_gles2() -> BlendFunc => (self,
                                                           sfactor,
                                                           dfactor))
             }
-            Some(BlendingFunSep(src_rgb, dst_rgb,
+            Some(BlendingFun_::BlendingFunSep(src_rgb, dst_rgb,
                                 src_alpha, dst_alpha)) => {
                 call_gl_fun!(get_gles2() -> BlendFuncSeparate => (self,
                                                                   src_rgb,
@@ -1491,11 +1483,11 @@ impl Context3d {
             None => (),
         }
         match blending.eq {
-            Some(BlendingEq(mode)) => {
+            Some(BlendingEq_::BlendingEq(mode)) => {
                 call_gl_fun!(get_gles2() -> BlendEquation => (self,
                                                               mode))
             }
-            Some(BlendingEqSep(mode_rgb,
+            Some(BlendingEq_::BlendingEqSep(mode_rgb,
                                mode_alpha)) => {
                 call_gl_fun!(get_gles2() -> BlendEquationSeparate => (self,
                                                                       mode_rgb,

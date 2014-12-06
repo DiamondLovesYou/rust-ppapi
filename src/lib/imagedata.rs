@@ -26,7 +26,7 @@ use ppb::ImageDataIf;
 
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct ImageData(ffi::PP_Resource);
 
-impl_resource_for!(ImageData ImageDataRes)
+impl_resource_for!(ImageData ResourceType::ImageDataRes)
 
 #[deriving(Eq, PartialEq, Hash, Clone)]
 pub enum Format {
@@ -36,15 +36,15 @@ pub enum Format {
 impl Format {
     fn from_ffi(v: ffi::PP_ImageDataFormat) -> Format {
         match v {
-            ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL => BGRA,
-            ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL => RGBA,
+            ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL => Format::BGRA,
+            ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL => Format::RGBA,
             _ => panic!(),
         }
     }
     pub fn to_ffi(&self) -> ffi::PP_ImageDataFormat {
         match *self {
-            BGRA => ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL,
-            RGBA => ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL,
+            Format::BGRA => ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+            Format::RGBA => ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL,
         }
     }
     pub fn is_supported(&self) -> bool {

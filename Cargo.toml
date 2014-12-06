@@ -1,9 +1,13 @@
 [package]
 name = "ppapi"
 version = "0.0.1"
-authors = ["Richard Diamond"]
+authors = ["Richard Diamond <wichard@vitalitystudios.com>"]
 links = "helper"
 build = "src/build.rs"
+description = "Rust idiomatic bindings to parts of the Pepper API"
+repository = "https://github.com/DiamondLovesYou/rust-ppapi.git"
+documentation = "http://diamondlovesyou.github.io/rust-ppapi/docs/ppapi/index.html"
+license = "LGPL-3.0"
 
 [lib]
 name = "ppapi"
@@ -14,6 +18,7 @@ git = "https://github.com/DiamondLovesYou/rust-http.git"
 
 [dependencies.openssl]
 git = "https://github.com/DiamondLovesYou/rust-openssl.git"
+rev = "09be71d11a4d063e5ab0ccef45bd67575795fe37"
 
 [build-dependencies.pnacl-build-helper]
-git = "https://github.com/DiamondLovesYou/cargo-pnacl-helper.git"
+version = "*"
