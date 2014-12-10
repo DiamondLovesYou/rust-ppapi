@@ -17,12 +17,11 @@ path = "src/lib/lib.rs"
 use-openssl = ["openssl", "old-http/ssl"]
 
 [dependencies.old-http]
-git = "https://github.com/DiamondLovesYou/rust-http.git"
+version = "*"
 default-features = false
 
 [dependencies.openssl]
-git = "https://github.com/DiamondLovesYou/rust-openssl.git"
-branch = "nacl-crosses"
+version = "0.2.3"
 optional = true
 
 [build-dependencies.pnacl-build-helper]
