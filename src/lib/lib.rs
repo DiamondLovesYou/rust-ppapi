@@ -1970,6 +1970,19 @@ extern {
     static ppapi_on_graphics_context_lost: *const libc::c_void;
 }
 
+#[cfg(test)]
+mod test {
+    use super::Instance;
+    use std::collections::HashMap;
+    #[no_mangle]
+    extern fn ppapi_instance_created(_instance: Instance,
+                                     _args: HashMap<::std::string::String, ::std::string::String>) {
+    }
+    #[no_mangle]
+    extern fn ppapi_instance_destroyed() {
+    }
+}
+
 #[no_mangle]
 #[allow(non_snake_case)]
 // The true entry point of any module. DO NOT CALL THIS YOURSELF. It is used by Pepper.
