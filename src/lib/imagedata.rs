@@ -17,9 +17,9 @@ use ppb::ImageDataIf;
 
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct ImageData(ffi::PP_Resource);
 
-impl_resource_for!(ImageData ResourceType::ImageDataRes)
+impl_resource_for!(ImageData ResourceType::ImageDataRes);
 
-#[deriving(Eq, PartialEq, Hash, Clone)]
+#[deriving(Eq, PartialEq, Hash, Clone, Copy)]
 pub enum Format {
     BGRA = ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL as int,
     RGBA = ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL as int,
@@ -44,7 +44,7 @@ impl Format {
     }
 }
 
-#[deriving(Clone)]
+#[deriving(Clone, Copy)]
 pub struct Description {
     pub format: Format,
     pub size: super::Size,

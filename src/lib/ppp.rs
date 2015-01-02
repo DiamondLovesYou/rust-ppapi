@@ -19,21 +19,21 @@ mod consts {
 mod globals {
     use super::super::entry;
     use super::super::ffi;
-    pub static INSTANCE: ffi::Struct_PPP_Instance_1_1 = ffi::Struct_PPP_Instance_1_1 {
-        DidCreate: Some(entry::did_create),
-        DidDestroy: Some(entry::did_destroy),
-        DidChangeView: Some(entry::did_change_view),
-        DidChangeFocus: Some(entry::did_change_focus),
-        HandleDocumentLoad: Some(entry::handle_document_load),
+    pub const INSTANCE: ffi::Struct_PPP_Instance_1_1 = ffi::Struct_PPP_Instance_1_1 {
+        DidCreate: Some(entry::did_create as extern "C" fn(i32, u32, *mut *const i8, *mut *const i8) -> u32),
+        DidDestroy: Some(entry::did_destroy as extern "C" fn(i32)),
+        DidChangeView: Some(entry::did_change_view as extern "C" fn(i32, i32)),
+        DidChangeFocus: Some(entry::did_change_focus as extern "C" fn(i32, u32)),
+        HandleDocumentLoad: Some(entry::handle_document_load as extern "C" fn(i32, i32) -> u32),
     };
     pub static MESSAGING: ffi::Struct_PPP_Messaging_1_0 = ffi::Struct_PPP_Messaging_1_0 {
-        HandleMessage: Some(entry::handle_message),
+        HandleMessage: Some(entry::handle_message as extern "C" fn(i32, ffi::Struct_PP_Var)),
     };
     pub static INPUTEVENT: ffi::Struct_PPP_InputEvent_0_1 = ffi::Struct_PPP_InputEvent_0_1 {
-        HandleInputEvent: Some(entry::handle_input_event),
+        HandleInputEvent: Some(entry::handle_input_event as extern "C" fn(i32, i32) -> u32),
     };
     pub static GRAPHICS: ffi::Struct_PPP_Graphics3D_1_0 = ffi::Struct_PPP_Graphics3D_1_0 {
-        Graphics3DContextLost: Some(entry::graphics_context_lost),
+        Graphics3DContextLost: Some(entry::graphics_context_lost as extern "C" fn(i32)),
     };
 }
 

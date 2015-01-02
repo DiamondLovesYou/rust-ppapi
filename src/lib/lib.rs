@@ -74,7 +74,7 @@ More info:
 #![feature(default_type_params)]
 #![feature(linkage)]
 #![feature(thread_local)]
-//#![warn(missing_doc)]
+#![feature(unboxed_closures)]
 
 #![allow(dead_code)]
 
@@ -83,19 +83,17 @@ extern crate log;
 extern crate collections;
 extern crate rand;
 extern crate serialize;
-extern crate "http" as http;
+extern crate "hyper" as http;
 extern crate "url" as iurl;
 extern crate libc;
 extern crate core;
 extern crate alloc;
-extern crate rustrt;
 
 use std::{mem, cmp, io};
 use std::mem::transmute;
 use std::intrinsics;
 use std::ptr;
 use std::ops;
-use rustrt::task;
 use std::iter;
 use std::clone;
 use std::{str, string};
@@ -121,6 +119,7 @@ pub use url::{UrlLoader, UrlRequestInfo, UrlResponseInfo};
 
 macro_rules! impl_resource_for(
     ($ty:ty $type_:expr) => (
+        unsafe impl Send for $ty {}
         impl Resource for $ty {
             #[inline]
             fn unwrap(&self) -> ::ffi::PP_Resource {
@@ -157,7 +156,7 @@ macro_rules! impl_resource_for(
             }
         }
     )
-)
+);
 macro_rules! impl_clone_drop_for(
     ($ty:ty) => (
         impl Clone for $ty {
@@ -176,7 +175,7 @@ macro_rules! impl_clone_drop_for(
             }
         }
     )
-)
+);
 
 #[allow(missing_docs)] pub mod ffi;
 pub mod ppp;
@@ -235,7 +234,7 @@ impl ToFFIBool for bool {
     }
 }
 
-#[deriving(Clone, Eq, PartialEq)]
+#[deriving(Clone, Eq, PartialEq, Copy)]
 pub enum Code {
     Ok                = ffi::PP_OK as int,
     BadResource       = ffi::PP_ERROR_BADRESOURCE as int,
@@ -296,9 +295,9 @@ impl Code {
     }
     pub fn to_result<T>(self, ok: |Code| -> T) -> Result<T> {
         if self.is_ok() {
-            result::Ok(ok(self))
+            result::Result::Ok(ok(self))
         } else {
-            result::Err(self)
+            result::Result::Err(self)
         }
     }
     pub fn is_ok(&self) -> bool {
@@ -323,7 +322,7 @@ impl Code {
 }
 
 impl ops::Add<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Point {
-    fn add(&self, rhs: &ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
+    fn add(self, rhs: ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
         ffi::Struct_PP_Point {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
@@ -331,7 +330,7 @@ impl ops::Add<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Poi
     }
 }
 impl ops::Sub<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Point {
-    fn sub(&self, rhs: &ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
+    fn sub(self, rhs: ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
         ffi::Struct_PP_Point {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
@@ -339,7 +338,7 @@ impl ops::Sub<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Poi
     }
 }
 impl ops::Mul<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Point {
-    fn mul(&self, rhs: &ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
+    fn mul(self, rhs: ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
         ffi::Struct_PP_Point {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
@@ -347,7 +346,7 @@ impl ops::Mul<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Poi
     }
 }
 impl ops::Div<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Point {
-    fn div(&self, rhs: &ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
+    fn div(self, rhs: ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
         ffi::Struct_PP_Point {
             x: self.x / rhs.x,
             y: self.y / rhs.y,
@@ -355,7 +354,7 @@ impl ops::Div<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Poi
     }
 }
 impl ops::Add<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size {
-    fn add(&self, rhs: &ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
+    fn add(self, rhs: ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
         ffi::Struct_PP_Size {
             width: self.width + rhs.width,
             height: self.height + rhs.height,
@@ -363,7 +362,7 @@ impl ops::Add<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size 
     }
 }
 impl ops::Sub<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size {
-    fn sub(&self, rhs: &ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
+    fn sub(self, rhs: ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
         ffi::Struct_PP_Size {
             width: self.width - rhs.width,
             height: self.height - rhs.height,
@@ -371,7 +370,7 @@ impl ops::Sub<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size 
     }
 }
 impl ops::Mul<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size {
-    fn mul(&self, rhs: &ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
+    fn mul(self, rhs: ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
         ffi::Struct_PP_Size {
             width: self.width * rhs.width,
             height: self.height * rhs.height,
@@ -379,7 +378,7 @@ impl ops::Mul<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size 
     }
 }
 impl ops::Div<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size {
-    fn div(&self, rhs: &ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
+    fn div(self, rhs: ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
         ffi::Struct_PP_Size {
             width: self.width / rhs.width,
             height: self.height / rhs.height,
@@ -423,7 +422,7 @@ pub type Ticks = ffi::PP_TimeTicks;
 pub type Time = ffi::PP_Time;
 
 // duplicated here so we don't have such a long name for this.
-#[deriving(Eq, PartialEq, Hash, Clone)]
+#[deriving(Eq, PartialEq, Hash, Clone, Copy)]
 pub struct Size {
     pub width:  u32,
     pub height: u32,
@@ -448,6 +447,7 @@ pub trait ToOption<From> {
     fn to_option(from: &From) -> Option<Self>;
 }
 
+#[deriving(Copy)]
 pub enum ResourceType {
     WheelInputEventRes,
     WebSocketRes,
@@ -497,29 +497,29 @@ pub struct FileSliceRef(FileRef,
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct FileIo(ffi::PP_Resource);
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct Filesystem(ffi::PP_Resource);
 
-impl_clone_drop_for!(Context3d)
-impl_resource_for!(Context2d ResourceType::Graphics2DRes)
-impl_clone_drop_for!(Context2d)
-impl_resource_for!(View ResourceType::ViewRes)
-impl_clone_drop_for!(View)
-impl_resource_for!(MessageLoop ResourceType::MessageLoopRes)
-impl_clone_drop_for!(MessageLoop)
-impl_clone_drop_for!(KeyboardInputEvent)
-impl_clone_drop_for!(MouseInputEvent)
-impl_clone_drop_for!(WheelInputEvent)
-impl_clone_drop_for!(TouchInputEvent)
-impl_clone_drop_for!(Font)
-impl_clone_drop_for!(ImageData)
-impl_resource_for!(FileRef ResourceType::FileRefRes)
-impl_clone_drop_for!(FileRef)
-impl_resource_for!(FileIo ResourceType::FileIoRes)
-impl_clone_drop_for!(FileIo)
-impl_resource_for!(Filesystem ResourceType::FilesystemRes)
-impl_clone_drop_for!(Filesystem)
-impl_clone_drop_for!(IMEInputEvent)
-impl_clone_drop_for!(UrlLoader)
-impl_clone_drop_for!(UrlRequestInfo)
-impl_clone_drop_for!(UrlResponseInfo)
+impl_clone_drop_for!(Context3d);
+impl_resource_for!(Context2d ResourceType::Graphics2DRes);
+impl_clone_drop_for!(Context2d);
+impl_resource_for!(View ResourceType::ViewRes);
+impl_clone_drop_for!(View);
+impl_resource_for!(MessageLoop ResourceType::MessageLoopRes);
+impl_clone_drop_for!(MessageLoop);
+impl_clone_drop_for!(KeyboardInputEvent);
+impl_clone_drop_for!(MouseInputEvent);
+impl_clone_drop_for!(WheelInputEvent);
+impl_clone_drop_for!(TouchInputEvent);
+impl_clone_drop_for!(Font);
+impl_clone_drop_for!(ImageData);
+impl_resource_for!(FileRef ResourceType::FileRefRes);
+impl_clone_drop_for!(FileRef);
+impl_resource_for!(FileIo ResourceType::FileIoRes);
+impl_clone_drop_for!(FileIo);
+impl_resource_for!(Filesystem ResourceType::FilesystemRes);
+impl_clone_drop_for!(Filesystem);
+impl_clone_drop_for!(IMEInputEvent);
+impl_clone_drop_for!(UrlLoader);
+impl_clone_drop_for!(UrlRequestInfo);
+impl_clone_drop_for!(UrlResponseInfo);
 
 impl ContextResource for Context3d {
     fn get_device(&self) -> ffi::PP_Resource {
@@ -616,9 +616,9 @@ pub enum AnyVar {
     Dictionary(DictionaryVar),
     ArrayBuffer(ArrayBufferVar),
 }
-#[deriving(Clone, Eq, PartialEq)]
+#[deriving(Clone, Eq, PartialEq, Copy)]
 pub struct NullVar;
-#[deriving(Clone, Eq, PartialEq)]
+#[deriving(Clone, Eq, PartialEq, Copy)]
 pub struct UndefinedVar;
 #[deriving(Eq, PartialEq, Hash)]
 pub struct StringVar     (i64);
@@ -763,12 +763,12 @@ macro_rules! impl_clone_drop_for(
             }
         }
     )
-)
-impl_clone_drop_for!(StringVar -> is_a_string)
-impl_clone_drop_for!(ObjectVar -> is_an_object)
-impl_clone_drop_for!(ArrayVar -> is_an_array)
-impl_clone_drop_for!(DictionaryVar -> is_a_dictionary)
-impl_clone_drop_for!(ArrayBufferVar -> is_an_array_buffer)
+);
+impl_clone_drop_for!(StringVar -> is_a_string);
+impl_clone_drop_for!(ObjectVar -> is_an_object);
+impl_clone_drop_for!(ArrayVar -> is_an_array);
+impl_clone_drop_for!(DictionaryVar -> is_a_dictionary);
+impl_clone_drop_for!(ArrayBufferVar -> is_an_array_buffer);
 
 macro_rules! impl_var_for(
     ($ty:ty -> $is_true_name:ident) => (
@@ -791,12 +791,12 @@ macro_rules! impl_var_for(
             }
         }
     )
-)
-impl_var_for!(NullVar -> is_null)
-impl_var_for!(UndefinedVar -> is_undefined)
-impl_var_for!(bool -> is_a_bool)
-impl_var_for!(i32 -> is_an_i32)
-impl_var_for!(f64 -> is_a_f64)
+);
+impl_var_for!(NullVar -> is_null);
+impl_var_for!(UndefinedVar -> is_undefined);
+impl_var_for!(bool -> is_a_bool);
+impl_var_for!(i32 -> is_an_i32);
+impl_var_for!(f64 -> is_a_f64);
 
 impl VarCtor for NullVar {
     fn ctor(_: ffi::PP_Var) -> NullVar {
@@ -973,12 +973,12 @@ macro_rules! impl_by_ref_var(
             }
         }
     )
-)
-impl_by_ref_var!(StringVar)
-impl_by_ref_var!(ObjectVar)
-impl_by_ref_var!(ArrayVar)
-impl_by_ref_var!(DictionaryVar)
-impl_by_ref_var!(ArrayBufferVar)
+);
+impl_by_ref_var!(StringVar);
+impl_by_ref_var!(ObjectVar);
+impl_by_ref_var!(ArrayVar);
+impl_by_ref_var!(DictionaryVar);
+impl_by_ref_var!(ArrayBufferVar);
 
 macro_rules! impl_to_var_int(
     ($ty:ty) => (
@@ -998,10 +998,10 @@ macro_rules! impl_to_var_int(
             }
         }
     )
-)
-impl_to_var_int!(i8)
-impl_to_var_int!(i16)
-impl_to_var_int!(i32)
+);
+impl_to_var_int!(i8);
+impl_to_var_int!(i16);
+impl_to_var_int!(i32);
 
 macro_rules! impl_to_var_float(
     ($ty:ty) => (
@@ -1021,9 +1021,9 @@ macro_rules! impl_to_var_float(
             }
         }
     )
-)
-impl_to_var_float!(f32)
-impl_to_var_float!(f64)
+);
+impl_to_var_float!(f32);
+impl_to_var_float!(f64);
 
 impl<'s> ToVar for &'s bool {
     fn to_var(&self) -> ffi::PP_Var {
@@ -1174,7 +1174,7 @@ impl ArrayBufferVar {
     }
 }
 
-#[deriving(Clone, Eq, PartialEq)]
+#[deriving(Clone, Eq, PartialEq, Copy)]
 pub struct Messaging(ffi::PP_Instance);
 impl Messaging {
     fn unwrap(&self) -> ffi::PP_Instance {
@@ -1183,7 +1183,7 @@ impl Messaging {
     }
 }
 
-#[deriving(Clone, Eq, PartialEq)]
+#[deriving(Clone, Eq, PartialEq, Copy)]
 pub struct Console(ffi::PP_Instance);
 impl Console {
     fn unwrap(&self) -> ffi::PP_Instance {
@@ -1208,38 +1208,18 @@ fn parse_args(argc: u32,
 pub trait Callback {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback;
 }
-trait PostToSelf {
+trait PostToSelf: Send {
     fn post_to_self(self, code: Code);
 }
+unsafe impl Send for ffi::Struct_PP_CompletionCallback {}
 impl PostToSelf for ffi::Struct_PP_CompletionCallback {
     fn post_to_self(self, code: Code) {
-        // Used because we specifically don't want to take the callbacks in local data.
-        struct RunCompletionCallback(proc(): 'static);
-        impl Callback for RunCompletionCallback {
-            fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
-                extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
-                    let code = Code::from_i32(status);
-
-                    if possibly_warn_code_callback(code) { return; }
-
-                    let work: Box<proc()> = unsafe { mem::transmute(user) };
-                    // Nb no try_block here.
-                    (*work)()
-                }
-                let RunCompletionCallback(work) = self;
-                unsafe {
-                    ffi::make_completion_callback(work_callback,
-                                                  mem::transmute(box work))
-                }
-            }
-        }
-
-        MessageLoop::post_to_self(RunCompletionCallback(proc() {
+        MessageLoop::post_to_self(move |: _c: Code| {
             unsafe {
                 ffi::run_completion_callback(self,
                                              code.to_i32())
             }
-        }), 0);
+        }, 0);
     }
 }
 fn possibly_warn_code_callback(code: Code) -> bool {
@@ -1250,93 +1230,25 @@ fn possibly_warn_code_callback(code: Code) -> bool {
         false
     }
 }
-// TODO: use std::ops::FnOnce.
 
-fn if_error_shutdown_msg_loop(result: task::Result) {
-    if result.is_err() {
-        let _ = MessageLoop::current().unwrap().shutdown();
-    }
-}
-
-impl Callback for proc():Send {
+impl<Sized? F> Callback for F
+    where F : FnOnce(Code) + Send
+{
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
-        extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
+        extern "C" fn work_callback<Sized? F>(user: *mut libc::c_void, status: i32)
+            where F : FnOnce(Code) + Send
+        {
+            let work: Box<F> = unsafe { mem::transmute(user) };
             let code = Code::from_i32(status);
-
-            if possibly_warn_code_callback(code) { return; }
-
-            let work: Box<proc():Send> = unsafe { mem::transmute(user) };
-            (*work)();
+            work.call_once((code,));
         }
         unsafe {
-            ffi::make_completion_callback(work_callback,
+            ffi::make_completion_callback(work_callback::<F>,
                                           mem::transmute(box self))
         }
     }
 }
-impl Callback for proc(Code):Send {
-    fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
-        extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
-            let work: Box<proc(Code):Send> = unsafe { mem::transmute(user) };
-            let code = Code::from_i32(status);
-            (*work)(code);
-        }
-        unsafe {
-            ffi::make_completion_callback(work_callback,
-                                          mem::transmute(box self))
-        }
-    }
-}
-impl Callback for fn() {
-    fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
-        extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
-            let code = Code::from_i32(status);
 
-            if possibly_warn_code_callback(code) { return; }
-
-            let work: fn() = unsafe { mem::transmute(user) };
-            work()
-        }
-        unsafe {
-            ffi::make_completion_callback(work_callback,
-                                          mem::transmute(self))
-        }
-    }
-}
-impl Callback for fn(Code) {
-    fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
-        extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
-            let work: fn(Code) = unsafe { mem::transmute(user) };
-            let code = Code::from_i32(status);
-            work(code);
-        }
-        unsafe {
-            ffi::make_completion_callback(work_callback,
-                                          mem::transmute(self))
-        }
-    }
-}
-
-struct InternalCallbacksOperatorProc<'a>(proc(): 'a);
-impl<'a> Callback for InternalCallbacksOperatorProc<'a> {
-    fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
-        extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
-            let code = Code::from_i32(status);
-
-            if possibly_warn_code_callback(code) { return; }
-
-            let work: Box<proc()> = unsafe {
-                mem::transmute(user)
-            };
-            (*work)();
-        }
-        let InternalCallbacksOperatorProc(work) = self;
-        unsafe {
-            ffi::make_completion_callback(work_callback,
-                                          mem::transmute(box work))
-        }
-    }
-}
 struct InternalCallbacksOperatorFn(fn());
 impl Callback for InternalCallbacksOperatorFn {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
@@ -1398,29 +1310,35 @@ impl Writer for StdIo {
     fn write(&mut self, mut buf: &[u8]) -> io::IoResult<()> {
         // Don't write newlines to the console. Also, don't write anything to the console
         // until we get a newline.
+
+        let console = self.console
+            .clone()
+            .or_else(|| {
+                Instance::opt_current()
+                    .map(|i| i.console() )
+            });
+        let c_ref = console.as_ref();
+
         loop {
             let newline_pos_opt = buf.iter().position(|&c| c == '\n' as u8 );
             let newline_pos = match newline_pos_opt {
                 Some(pos) => pos,
                 None => {
                     self.buffer.push_all(buf);
-                    return result::Ok(());
+                    return result::Result::Ok(());
                 }
             };
             let rest = buf.slice(0, newline_pos + 1);
             self.buffer.push_all(rest);
             let result = (|| {
-                use std::result::{Ok, Err};
+                use std::result::Result::{Ok, Err};
                 use self::ppb::ConsoleInterface;
-                let console = self.console.or_else(|| {
-                    Instance::opt_current()
-                        .map(|i| i.console() )
-                });
 
                 try!(self.raw.write(self.buffer.as_slice()));
 
                 str::from_utf8(self.buffer.slice_to(self.buffer.len() - 1))
-                    .and_then(|s| console.map(|c| (c, s) ) )
+                    .ok()
+                    .and_then(|&:s| c_ref.map(|c| (c, s) ) )
                     .map(|(c, s)| {
                         c.log(self.level, s)
                     });
@@ -1438,14 +1356,14 @@ impl Writer for StdIo {
     }
 }
 
-scoped_thread_local!(static CURRENT_INSTANCE: Instance)
+__scoped_thread_local_inner!(static CURRENT_INSTANCE: Instance);
 static mut FIRST_INSTANCE: Option<Instance> = None;
 
 pub fn is_main_thread() -> bool {
     Some(MessageLoop::get_main_loop()) == MessageLoop::current()
 }
 
-#[deriving(Clone, Hash, Eq, PartialEq)]
+#[deriving(Clone, Hash, Eq, PartialEq, Copy)]
 pub struct Instance {
     instance: ffi::PP_Instance,
 }
@@ -1509,9 +1427,9 @@ impl Instance {
                                                   a.as_ptr() as *const i32);
 
         if raw_cxt == 0i32 {
-            result::Err(Code::Failed)
+            result::Result::Err(Code::Failed)
         } else {
-            result::Ok(Context3d::new_bumped(raw_cxt))
+            result::Result::Ok(Context3d::new_bumped(raw_cxt))
         }
     }
     pub fn bind_context<T: ContextResource>(&self, cxt: &T) -> Code {
@@ -1605,37 +1523,34 @@ impl MessageLoop {
 
     fn on_change_view(&mut self, view: View) {
         self.get_ref()
-            .post_work(InternalCallbacksOperatorProc(proc() {
+            .post_work(move |: _c: Code| {
                 unsafe {
                     assert!(!ppapi_on_change_view.is_null());
                     let on_change_view: fn(View) =
                         transmute(ppapi_on_change_view);
                     on_change_view(view);
                 }
-            }),
+            },
                        0)
             .expect("couldn't tell an instance about an on_change_view event");
     }
     fn on_change_focus(&mut self, has_focus: bool) {
         self.get_ref()
-            .post_work(InternalCallbacksOperatorProc(proc() {
+            .post_work(move |: _c: Code| {
                 unsafe {
                     assert!(!ppapi_on_change_focus.is_null());
                     let on_change_focus: fn(bool) =
                         transmute(ppapi_on_change_focus);
                     on_change_focus(has_focus);
                 }
-            }),
+            },
                        0)
             .expect("couldn't tell an instance about an on_change_focus event");
     }
     fn on_document_load(&mut self, loader: UrlLoader) -> bool {
-
-        // TODO: THIS IS MASSIVELY UNSAFE.
-
         let (tx, rx) = channel();
         self.get_ref()
-            .post_work(InternalCallbacksOperatorProc(proc() {
+            .post_work(move |: _c: Code| {
                 unsafe {
                     assert!(!ppapi_on_document_loaded.is_null());
                     let on_document_loaded: fn(UrlLoader) -> bool =
@@ -1644,9 +1559,11 @@ impl MessageLoop {
                     let handled = on_document_loaded(loader);
                     tx.send(handled);
                 }
-            }),
+            },
                        0)
             .expect("couldn't tell an instance about an on_change_view event");
+
+        // This will block forever if the recieving instance isn't responding to new messages.
         rx.recv_opt().unwrap_or(false)
     }
 }
@@ -1710,18 +1627,13 @@ pub mod entry {
     use std::any::Any;
     use std::finally::try_finally;
     use std::mem::transmute;
-    use std::result;
-    use rustrt::local::{Local};
-    use rustrt::task::Result;
-    use rustrt::unwind::try;
+    use std::rt::unwind::try;
 
     // We need to catch all failures in our callbacks,
     // lest an exception (failure) in one instance terminates all
     // instances and crashes the whole plugin.
-    pub fn try_block(f: ||) -> Result {
-        let result = unsafe {
-            try(f)
-        };
+    pub fn try_block<F: FnOnce()>(f: F) -> Result<(), Box<Any + Send>> {
+        let result = unsafe { try(f) };
         // if we're unwinding, the instance had a failure, and we need
         // to destory the instance.
         // Note that this can be called before an instance is ever inserted
@@ -1734,11 +1646,14 @@ pub mod entry {
         }
         result
     }
-    pub fn try_block_with_ret<U>(f: || -> U) -> result::Result<U, Box<Any + Send>> {
+    pub fn try_block_with_ret<U, F: FnOnce() -> U>(f: F) -> Result<U, Box<Any + Send>> {
         let mut ret: Option<U> = None;
-        try_block(|| {
+        let mut f = Some(f);
+        let try_res = try_block(|&mut:| {
+            let f = f.take().unwrap();
             ret = Some(f());
-        }).map(|()| ret.take().unwrap() )
+        });
+        try_res.map(|()| ret.take().unwrap() )
     }
 
     pub extern "C" fn did_create(inst: ffi::PP_Instance,
@@ -1746,11 +1661,10 @@ pub mod entry {
                                  argk: *mut *const c_char,
                                  argv: *mut *const c_char) -> ffi::PP_Bool {
         use log::set_logger;
-        use rustrt::task::{TaskOpts, Task};
-        use std::borrow::Cow::Owned;
         use std::io;
         use std::io::{Writer};
         use std::io::stdio::{set_stderr, set_stdout};
+        use std::thread::{Builder};
         use super::{StdIo, ConsoleLogger, MessageLoop};
 
         let instance = Instance::new(inst);
@@ -1764,25 +1678,21 @@ pub mod entry {
                  set_logger(box logger);
 
                  let mut success = false;
-                 let _ = try_block(|| {
+                 let _ = try_block(|&mut:| {
                      instance.initialize_nacl_io();
 
                      let args = super::parse_args(argc, argk, argv);
-                     let mut ops = TaskOpts::new();
-                     ops.name = args
-                         .get("id")
-                         .cloned()
-                         .map(|id| {
-                             Owned(id)
-                         });
+                     let builder = Builder::new()
+                         .name(args.get("id").cloned().unwrap())
+                         .stack_size(0);
 
                      let (tx, rx) = channel();
 
-                     Task::spawn(ops, proc() {
-                         let mut args = Some(args);
+                     let _ = builder.spawn(move |:| {
+                         let mut args = Some(args.clone());
                          CURRENT_INSTANCE.set
                              (&instance,
-                              || {
+                              |:| {
                                   let console = instance.console();
                                   let stdout = StdIo {
                                       level:   ffi::PP_LOGLEVEL_LOG,
@@ -1812,7 +1722,8 @@ pub mod entry {
                                   }
 
                                   fn unwinding() -> bool {
-                                      Local::borrow(None::<Task>).unwinder.unwinding()
+                                      use std::thread::Thread;
+                                      Thread::panicking()
                                   }
 
                                   try_finally(&mut (), args.take().unwrap(),
@@ -1842,17 +1753,18 @@ pub mod entry {
                                       panic!("please shutdown the loop; I may add pausing \
                                               for some sort of pattern later");
                                   } else {
+                                      let cb = move |&: _c: Code| {
+                                          super::expect_instances()
+                                              .remove(&instance);
+                                      };
                                       MessageLoop::get_main_loop()
-                                          .post_work(proc() {
-                                              super::expect_instances()
-                                                  .remove(&instance);
-                                          }, 0);
+                                          .post_work(cb, 0);
                                   }
                               });
                      });
 
                      success = rx.recv()
-                         .map(|ml| {
+                         .map(|&: ml| {
                              let last = expect_instances().insert(instance, ml.clone());
                              if last.is_some() {
                                  error!("instance already exists; replacing.");
@@ -1889,7 +1801,7 @@ pub mod entry {
             (&instance,
              || {
                  if !super::ppapi_on_change_view.is_null() {
-                     let _ = try_block(|| {
+                     let _ = try_block(|&:| {
                          debug!("did_change_view");
                          find_instance(instance,
                                        view,
@@ -1910,7 +1822,7 @@ pub mod entry {
             (&instance,
              || {
                  if !super::ppapi_on_change_focus.is_null() {
-                     let _ = try_block(|| {
+                     let _ = try_block(|&:| {
                          debug!("did_change_focus");
 
                          find_instance(instance,
@@ -1934,7 +1846,7 @@ pub mod entry {
                      return false;
                  }
 
-                 let handled = try_block_with_ret(|| {
+                 let handled = try_block_with_ret(|&:| {
                      debug!("handle_document_load");
 
                      find_instance(instance,
@@ -2064,20 +1976,9 @@ extern {
 pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
                                        gbi: ffi::PPB_GetInterface) -> libc::int32_t {
     use std::io::stdio::{set_stderr, set_stdout, stdout_raw, stderr_raw};
-    use std::borrow::Cow::Borrowed;
-    use rustrt::local::{Local};
-    use rustrt::task::Task;
     use self::entry::try_block;
 
     static MAIN_TASK_NAME: &'static str = "main module task";
-
-    rustrt::init(0, ptr::null());
-    {
-        // for now, stack bounds don't matter.
-        let mut task = Task::new(None, None);
-        task.name = Some(Borrowed(MAIN_TASK_NAME));
-        Local::put(box task);
-    }
 
     let stdout = StdIo {
         level:   ffi::PP_LOGLEVEL_LOG,
@@ -2101,8 +2002,8 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
     });
 
     match result {
-        result::Ok(()) => ffi::PP_OK,
-        result::Err(_) => {
+        result::Result::Ok(()) => ffi::PP_OK,
+        result::Result::Err(_) => {
             // Nb: this gets printed to chrome's stdout if it is running on a console.
             // Otherwise it falls into a black hole and is eaten.
             println!("module initialization failed");
@@ -2113,13 +2014,9 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern "C" fn PPP_ShutdownModule() {
-    use rustrt::local::{Local};
     use self::entry::try_block;
-    use rustrt::task::Task;
     // FIXME
     let _ = try_block(|| { unsafe {
         deinitialize_instances();
     }} );
-    let task: Box<Task> = Local::take();
-    task.drop();
 }

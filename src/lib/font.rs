@@ -7,8 +7,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 use std::intrinsics::uninit;
-use std::result::{Ok};
-use std::ptr::RawPtr;
+use std::result::Result::{Ok};
+use std::ptr;
+use std::ptr::PtrExt;
 use std::collections::HashSet;
 
 use super::{ppb, ffi};
@@ -20,7 +21,7 @@ use super::StringVar;
 use imagedata;
 
 
-#[deriving(Eq, PartialEq, Clone, Hash)]
+#[deriving(Eq, PartialEq, Clone, Hash, Copy)]
 pub enum Family {
     DefaultFamily,
     SerifFamily,
@@ -47,7 +48,7 @@ impl Family {
     }
 }
 
-#[deriving(Eq, PartialEq, Clone, Hash)]
+#[deriving(Eq, PartialEq, Clone, Hash, Copy)]
 pub enum Weight {
     ValueWeight(u16),
     NormalWeight,
@@ -151,7 +152,7 @@ impl Description {
 
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct Font(ffi::PP_Resource);
 
-impl_resource_for!(Font ResourceType::FontRes)
+impl_resource_for!(Font ResourceType::FontRes);
 
 impl Font {
     pub fn describe(&self) -> Option<(Description, Metrics)> {
@@ -225,7 +226,7 @@ impl Font {
             };
             let pos_ptr = &pos as *const super::Point;
             let clip_ptr = if clip.is_some() { clip.as_ref().unwrap() as *const super::Rect}
-                           else              { RawPtr::null() };
+                           else              { ptr::null() };
             if (ppb::get_font().DrawTextAt.unwrap())
                 (font_res,
                  image_res,

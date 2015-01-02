@@ -17,7 +17,7 @@ use std::c_str::CString;
 use std::borrow::Cow;
 use libc;
 use libc::c_void;
-use super::{Resource, ResourceType, Callback};
+use super::{Resource, Callback};
 use super::ppb;
 use super::ppb::get_gles2;
 use ffi;
@@ -349,7 +349,7 @@ macro_rules! call_gl_fun(
                 else { e.unwrap() };
         f( $ctxt.unwrap() )
     })
-)
+);
 pub mod traits {
     use super::super::{Resource};
     use super::Context3d;
@@ -413,20 +413,20 @@ pub mod traits {
     impl Buffer for BufferObject {
         fn unwrap(&self) -> types::UInt {
             match self {
-                &BufferObject::VertBufObject(inner)   => inner.unwrap(),
-                &BufferObject::IdxBufObject(inner)    => inner.unwrap(),
-                &BufferObject::TexBufObject(inner)    => inner.unwrap(),
-                &BufferObject::FrameBufObject(inner)  => inner.unwrap(),
-                &BufferObject::RenderBufObject(inner) => inner.unwrap(),
+                &BufferObject::VertBufObject(ref inner)   => inner.unwrap(),
+                &BufferObject::IdxBufObject(ref inner)    => inner.unwrap(),
+                &BufferObject::TexBufObject(ref inner)    => inner.unwrap(),
+                &BufferObject::FrameBufObject(ref inner)  => inner.unwrap(),
+                &BufferObject::RenderBufObject(ref inner) => inner.unwrap(),
             }
         }
         fn get_type(&self) -> BufferType {
             match self {
-                &BufferObject::VertBufObject(inner)   => inner.get_type(),
-                &BufferObject::IdxBufObject(inner)    => inner.get_type(),
-                &BufferObject::TexBufObject(inner)    => inner.get_type(),
-                &BufferObject::FrameBufObject(inner)  => inner.get_type(),
-                &BufferObject::RenderBufObject(inner) => inner.get_type(),
+                &BufferObject::VertBufObject(ref inner)   => inner.get_type(),
+                &BufferObject::IdxBufObject(ref inner)    => inner.get_type(),
+                &BufferObject::TexBufObject(ref inner)    => inner.get_type(),
+                &BufferObject::FrameBufObject(ref inner)  => inner.get_type(),
+                &BufferObject::RenderBufObject(ref inner) => inner.get_type(),
             }
         }
         fn to_object(&self) -> BufferObject { self.clone() }
@@ -460,10 +460,10 @@ pub mod traits {
                 }
             }
         }
-    )
-    std_buffer_bind!(VertexBuffer => BindBuffer(consts::ARRAY_BUFFER))
-    std_buffer_bind!(IndexBuffer  => BindBuffer(consts::ELEMENT_ARRAY_BUFFER))
-    std_buffer_bind!(RenderBuffer => BindFramebuffer(consts::RENDERBUFFER))
+    );
+    std_buffer_bind!(VertexBuffer => BindBuffer(consts::ARRAY_BUFFER));
+    std_buffer_bind!(IndexBuffer  => BindBuffer(consts::ELEMENT_ARRAY_BUFFER));
+    std_buffer_bind!(RenderBuffer => BindFramebuffer(consts::RENDERBUFFER));
 
     impl BindableBuffer for FrameBuffer {
         fn bind(&self, ctxt: &mut Context3d) -> BoundBuffer<FrameBuffer> {
@@ -484,8 +484,13 @@ pub mod traits {
         ($ty:ty, $gen_fun:ident) => {
             impl GenBuffer for $ty {
                 fn gen_single(ctxt: &Context3d) -> $ty {
-                    let v: Vec<$ty> = GenBuffer::gen_multiple(ctxt, 1);
-                    v[0]
+                    use std::intrinsics::uninit;
+                    let count = 1i32;
+                    let mut buffers: [types::UInt, ..1] = unsafe { uninit() };
+                    (get_gles2().$gen_fun.unwrap())(ctxt.unwrap(),
+                                                    count,
+                                                    buffers.as_mut_ptr());
+                    Ctor::ctor(buffers[0])
                 }
                 fn gen_multiple(ctxt: &Context3d, count: uint) -> Vec<$ty> {
                     use std::intrinsics::uninit;
@@ -501,12 +506,12 @@ pub mod traits {
                 }
             }
         }
-    )
-    impl_gen_buffer!(VertexBuffer,  GenBuffers)
-    impl_gen_buffer!(IndexBuffer,   GenBuffers)
-    impl_gen_buffer!(TextureBuffer, GenTextures)
-    impl_gen_buffer!(FrameBuffer,   GenFramebuffers)
-    impl_gen_buffer!(RenderBuffer,  GenRenderbuffers)
+    );
+    impl_gen_buffer!(VertexBuffer,  GenBuffers);
+    impl_gen_buffer!(IndexBuffer,   GenBuffers);
+    impl_gen_buffer!(TextureBuffer, GenTextures);
+    impl_gen_buffer!(FrameBuffer,   GenFramebuffers);
+    impl_gen_buffer!(RenderBuffer,  GenRenderbuffers);
 
     pub trait DropBuffer {
         // This is unsafe because there is no way for us to guarantee
@@ -543,12 +548,12 @@ pub mod traits {
                 }
             }
         }
-    )
-    drop_buffer!(VertexBuffer,  DeleteBuffers)
-    drop_buffer!(IndexBuffer,   DeleteBuffers)
-    drop_buffer!(TextureBuffer, DeleteTextures)
-    drop_buffer!(FrameBuffer,   DeleteFramebuffers)
-    drop_buffer!(RenderBuffer,  DeleteRenderbuffers)
+    );
+    drop_buffer!(VertexBuffer,  DeleteBuffers);
+    drop_buffer!(IndexBuffer,   DeleteBuffers);
+    drop_buffer!(TextureBuffer, DeleteTextures);
+    drop_buffer!(FrameBuffer,   DeleteFramebuffers);
+    drop_buffer!(RenderBuffer,  DeleteRenderbuffers);
 
     pub trait Usage {
         fn get_usage_enum(&self) -> types::Enum;
@@ -643,15 +648,16 @@ impl Ctor for RenderBuffer {
         RenderBuffer(id)
     }
 }
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct VertexBuffer(types::UInt);
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct IndexBuffer(types::UInt);
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct TextureBuffer(types::UInt);
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct FrameBuffer(types::UInt);
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct RenderBuffer(types::UInt);
 
 #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
@@ -671,14 +677,14 @@ macro_rules! impl_default(
             }
         }
     }
-)
-impl_default!(VertexBuffer  -> VertexBuffer(0))
-impl_default!(IndexBuffer   -> IndexBuffer(0))
-impl_default!(TextureBuffer -> TextureBuffer(0))
-impl_default!(FrameBuffer   -> FrameBuffer(0))
-impl_default!(RenderBuffer  -> RenderBuffer(0))
+);
+impl_default!(VertexBuffer  -> VertexBuffer(0));
+impl_default!(IndexBuffer   -> IndexBuffer(0));
+impl_default!(TextureBuffer -> TextureBuffer(0));
+impl_default!(FrameBuffer   -> FrameBuffer(0));
+impl_default!(RenderBuffer  -> RenderBuffer(0));
 
-#[deriving(Eq, PartialEq, Clone, Hash)]
+#[deriving(Eq, PartialEq, Clone, Hash, Copy)]
 pub enum BufferType {
     VertexBufferType,
     IndexBufferType,
@@ -736,16 +742,15 @@ impl OptPointerOffset for Option<uint> {
 pub struct BoundBuffer<T>(T);
 pub type BoundVertBuffer = BoundBuffer<VertexBuffer>;
 pub type BoundIdxBuffer  = BoundBuffer<IndexBuffer>;
+#[deriving(Copy)] pub struct PointsGeometryMode;
+#[deriving(Copy)] pub struct LineStripGeometryMode;
+#[deriving(Copy)] pub struct LineLoopGeometryMode;
+#[deriving(Copy)] pub struct LinesGeometryMode;
+#[deriving(Copy)] pub struct TriangleStripGeometryMode;
+#[deriving(Copy)] pub struct TriangleFanGeometryMode;
+#[deriving(Copy)] pub struct TrianglesGeometryMode;
 
-pub struct PointsGeometryMode;
-pub struct LineStripGeometryMode;
-pub struct LineLoopGeometryMode;
-pub struct LinesGeometryMode;
-pub struct TriangleStripGeometryMode;
-pub struct TriangleFanGeometryMode;
-pub struct TrianglesGeometryMode;
-
-#[deriving(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Encodable, Decodable)]
+#[deriving(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Copy)]
 pub enum GeometryMode {
     Points,
     LineStrip,
@@ -781,14 +786,14 @@ macro_rules! impl_geo_mode(
             }
         }
     }
-)
-impl_geo_mode!(PointsGeometryMode consts::POINTS)
-impl_geo_mode!(LineStripGeometryMode consts::LINE_STRIP)
-impl_geo_mode!(LineLoopGeometryMode consts::LINE_LOOP)
-impl_geo_mode!(LinesGeometryMode consts::LINES)
-impl_geo_mode!(TriangleStripGeometryMode consts::TRIANGLE_STRIP)
-impl_geo_mode!(TriangleFanGeometryMode consts::TRIANGLE_FAN)
-impl_geo_mode!(TrianglesGeometryMode consts::TRIANGLES)
+);
+impl_geo_mode!(PointsGeometryMode consts::POINTS);
+impl_geo_mode!(LineStripGeometryMode consts::LINE_STRIP);
+impl_geo_mode!(LineLoopGeometryMode consts::LINE_LOOP);
+impl_geo_mode!(LinesGeometryMode consts::LINES);
+impl_geo_mode!(TriangleStripGeometryMode consts::TRIANGLE_STRIP);
+impl_geo_mode!(TriangleFanGeometryMode consts::TRIANGLE_FAN);
+impl_geo_mode!(TrianglesGeometryMode consts::TRIANGLES);
 
 impl BoundBuffer<VertexBuffer> {
     pub fn buffer_vertex_data<'a, TUsage: traits::Usage>(&self,
@@ -830,15 +835,15 @@ impl BoundBuffer<VertexBuffer> {
 
     }
 }
-pub struct ByteType;
-pub struct UByteType;
-pub struct ShortType;
-pub struct UShortType;
+#[deriving(Copy)] pub struct ByteType;
+#[deriving(Copy)] pub struct UByteType;
+#[deriving(Copy)] pub struct ShortType;
+#[deriving(Copy)] pub struct UShortType;
 // Omitted: FIXED. Isn't recommended by Chrome.
-pub struct FloatType;
+#[deriving(Copy)] pub struct FloatType;
 
 // For use as a value type.
-#[deriving(Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[deriving(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Copy)]
 pub enum VertexAttribType {
     Byte,
     UByte,
@@ -865,12 +870,12 @@ macro_rules! impl_vert_attrib_type(
             }
         }
     }
-)
-impl_vert_attrib_type!(ByteType consts::BYTE)
-impl_vert_attrib_type!(UByteType consts::UNSIGNED_BYTE)
-impl_vert_attrib_type!(ShortType consts::SHORT)
-impl_vert_attrib_type!(UShortType consts::UNSIGNED_SHORT)
-impl_vert_attrib_type!(FloatType consts::FLOAT)
+);
+impl_vert_attrib_type!(ByteType consts::BYTE);
+impl_vert_attrib_type!(UByteType consts::UNSIGNED_BYTE);
+impl_vert_attrib_type!(ShortType consts::SHORT);
+impl_vert_attrib_type!(UShortType consts::UNSIGNED_SHORT);
+impl_vert_attrib_type!(FloatType consts::FLOAT);
 
 macro_rules! impl_idx_elem_type(
     ($ty:ty $expr:expr $bytes:expr) => {
@@ -883,9 +888,9 @@ macro_rules! impl_idx_elem_type(
             }
         }
     }
-)
-impl_idx_elem_type!(UByteType consts::UNSIGNED_BYTE 1)
-impl_idx_elem_type!(UShortType consts::UNSIGNED_SHORT 2)
+);
+impl_idx_elem_type!(UByteType consts::UNSIGNED_BYTE 1);
+impl_idx_elem_type!(UShortType consts::UNSIGNED_SHORT 2);
 
 impl BoundBuffer<IndexBuffer> {
     pub fn buffer_index_data<'a, TUsage: traits::Usage>(&self,
@@ -912,7 +917,7 @@ impl BoundBuffer<IndexBuffer> {
     }
 }
 
-#[deriving(Eq, PartialEq, Clone, Hash, Ord, PartialOrd)]
+#[deriving(Eq, PartialEq, Clone, Hash, Ord, PartialOrd, Copy)]
 pub enum TexFormat {
     Alpha,
     //Luminance,
@@ -1001,11 +1006,11 @@ impl BoundBuffer<FrameBuffer> {
     }
 }
 
-pub struct StaticBufferUsage;
-pub struct StreamBufferUsage;
-pub struct DynamicBufferUsage;
+#[deriving(Copy)] pub struct StaticBufferUsage;
+#[deriving(Copy)] pub struct StreamBufferUsage;
+#[deriving(Copy)] pub struct DynamicBufferUsage;
 
-#[deriving(Clone, PartialEq, Eq)]
+#[deriving(Clone, PartialEq, Eq, Copy)]
 pub enum BlendingFun_ {
     BlendingFun(types::Enum,  // sfactor
                 types::Enum), // dfactor
@@ -1014,7 +1019,7 @@ pub enum BlendingFun_ {
                    types::Enum,   // srcAlpha
                    types::Enum),  // dstAlpha
 }
-#[deriving(Clone, PartialEq, Eq)]
+#[deriving(Clone, PartialEq, Eq, Copy)]
 pub enum BlendingEq_ {
     BlendingEq(types::Enum), // mode
     BlendingEqSep(types::Enum,  // modeRGB
@@ -1026,7 +1031,30 @@ pub struct Blending {
     pub fun:   Option<BlendingFun_>,
     pub eq:    Option<BlendingEq_>,
 }
-
+#[deriving(Clone)]
+pub struct CompileError<'ctxt, T: ShaderUnwrap> {
+    shader: CompilingShader<T>,
+    ctxt: &'ctxt Context3d,
+}
+impl<'ctxt, T: ShaderUnwrap> CompileError<'ctxt, T> {
+    fn description(&self) -> &str {
+        const DESC: &'static str = "OpenGL shader compile error";
+        DESC
+    }
+    fn detail(&self) -> Option<String> {
+        let info_len = self.ctxt.get_shader_param(&self.shader, consts::INFO_LOG_LENGTH);
+        let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as uint);
+        let mut actual_len: types::Size = unsafe { uninitialized() };
+        call_gl_fun!(get_gles2() -> GetShaderInfoLog
+                     => (self.ctxt,
+                         self.shader.unwrap(),
+                         info_buf.capacity() as types::Size,
+                         &mut actual_len as *mut types::Size,
+                         info_buf.as_mut_ptr() as *mut i8));
+        let actual_len: uint = actual_len as uint;
+        Some(String::from_utf8_lossy(info_buf.slice_to_or_fail(&actual_len)).to_string())
+    }
+}
 #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct CompilingShader<T>(T);
 impl<T: Clone> CompilingShader<T> {
@@ -1038,39 +1066,29 @@ impl<T: Clone> CompilingShader<T> {
 pub type CompilingVertexShader = CompilingShader<VertexShader>;
 pub type CompilingFragmentShader = CompilingShader<FragmentShader>;
 impl<T: traits::CompileShader + Clone + ShaderUnwrap + Send> CompilingShader<T> {
-    pub fn results(&self, ctxt: &Context3d) -> Result<T, proc(&Context3d): Send -> String> {
-        use std::str;
+    pub fn results<'ctxt>(&self, ctxt: &'ctxt Context3d) -> Result<T, CompileError<'ctxt, T>> {
         let status = ctxt.get_shader_param(self, consts::COMPILE_STATUS);
         if status == consts::TRUE as i32 {
             let &CompilingShader(ref inner) = self;
             Ok(inner.clone())
         } else {
-            let this = self.clone();
-            Err(proc(ctxt: &Context3d) -> String {
-                let info_len = ctxt.get_shader_param(&this, consts::INFO_LOG_LENGTH);
-                let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as uint);
-                let mut actual_len: types::Size = unsafe { uninitialized() };
-                call_gl_fun!(get_gles2() -> GetShaderInfoLog
-                             => (ctxt,
-                                 this.unwrap(),
-                                 info_buf.capacity() as types::Size,
-                                 &mut actual_len as *mut types::Size,
-                                 info_buf.as_mut_ptr() as *mut i8));
-                str::from_utf8(info_buf.as_slice()).unwrap().to_string()
+            Err(CompileError {
+                shader: self.clone(),
+                ctxt: ctxt,
             })
         }
     }
 }
 
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct VertexShader(types::UInt);
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct FragmentShader(types::UInt);
 
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct ShaderProgram(types::UInt);
 pub struct BoundShaderProgram<'a>(&'a ShaderProgram);
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct UnlinkedShaderProgram(ShaderProgram);
 impl UnlinkedShaderProgram {
     pub unsafe fn get_program(&self) -> ShaderProgram {
@@ -1078,34 +1096,47 @@ impl UnlinkedShaderProgram {
     }
 }
 
+pub struct LinkError<'ctxt> {
+    program: LinkingShaderProgram,
+    ctxt: &'ctxt Context3d,
+}
+impl<'ctxt> LinkError<'ctxt> {
+    fn description(&self) -> &str {
+        const DESC: &'static str = "OpenGL shader program linking error";
+        DESC
+    }
+    fn detail(&self) -> Option<String> {
+        let info_len = self.ctxt.get_program_param(&self.program, consts::INFO_LOG_LENGTH);
+        let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as uint);
+        let mut actual_len: types::Size = unsafe { uninitialized() };
+        call_gl_fun!(get_gles2() -> GetProgramInfoLog
+                     => (self.ctxt,
+                         unsafe { self.program.get_program().unwrap() },
+                         info_buf.capacity() as types::Size,
+                         &mut actual_len as *mut types::Size,
+                         info_buf.as_mut_ptr() as *mut i8));
+        let actual_len: uint = actual_len as uint;
+        Some(String::from_utf8_lossy(info_buf.slice_to_or_fail(&actual_len)).to_string())
+    }
+}
+
 // A program that is currently is the process of linking.
 // Note there is no async access to the results (API level deficiency).
-#[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+#[allow(missing_copy_implementations)] #[deriving(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct LinkingShaderProgram(ShaderProgram);
 impl LinkingShaderProgram {
     pub unsafe fn get_program(&self) -> ShaderProgram {
         self.inner().clone()
     }
 
-    pub fn results(&self,
-                   ctxt: &Context3d) -> Result<ShaderProgram, proc(ctxt: &Context3d): Send -> String> {
-        use std::str;
+    pub fn results<'ctxt>(&self, ctxt: &'ctxt Context3d) -> Result<ShaderProgram, LinkError<'ctxt>> {
         let status = ctxt.get_program_param(self, consts::LINK_STATUS);
         if status == consts::TRUE as i32 {
             Ok(self.inner().clone())
         } else {
-            let this = self.clone();
-            Err(proc(ctxt: &Context3d) -> String {
-                let info_len = ctxt.get_program_param(&this, consts::INFO_LOG_LENGTH);
-                let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as uint);
-                let mut actual_len: types::Size = unsafe { uninitialized() };
-                call_gl_fun!(get_gles2() -> GetProgramInfoLog
-                             => (ctxt,
-                                 this.inner().unwrap(),
-                                 info_buf.capacity() as types::Size,
-                                 &mut actual_len as *mut types::Size,
-                                 info_buf.as_mut_ptr() as *mut i8));
-                str::from_utf8(info_buf.as_slice()).unwrap().to_string()
+            Err(LinkError {
+                program: self.clone(),
+                ctxt: ctxt,
             })
         }
     }
@@ -1124,21 +1155,9 @@ impl InnerProgram for UnlinkedShaderProgram {
         inner
     }
 }
-impl<'a> InnerProgram for &'a UnlinkedShaderProgram {
-    fn inner<'a>(&'a self) -> &'a ShaderProgram {
-        let & &UnlinkedShaderProgram(ref inner) = self;
-        inner
-    }
-}
 impl InnerProgram for LinkingShaderProgram {
     fn inner<'a>(&'a self) -> &'a ShaderProgram {
         let &LinkingShaderProgram(ref inner) = self;
-        inner
-    }
-}
-impl<'a> InnerProgram for &'a LinkingShaderProgram {
-    fn inner<'a>(&'a self) -> &'a ShaderProgram {
-        let & &LinkingShaderProgram(ref inner) = self;
         inner
     }
 }
@@ -1235,9 +1254,9 @@ macro_rules! impl_uniform_fun_v(
             }
         }
     )*}
-)
-impl_uniform_fun_v!((types::Int)   -> Uniform1iv)
-impl_uniform_fun_v!((types::Float) -> Uniform1fv)
+);
+impl_uniform_fun_v!((types::Int)   -> Uniform1iv);
+impl_uniform_fun_v!((types::Float) -> Uniform1fv);
 
 impl<'a> BoundShaderProgram<'a> {
     fn unwrap(&self) -> &'a ShaderProgram {
@@ -1281,22 +1300,22 @@ impl UnlinkedShaderProgram {
     }
 }
 
-pub struct MaxVertexAttribs;
-pub struct MaxVertexUniformVectors;
-pub struct MaxVaryingVectors;
-pub struct MaxCombinedTextureImageUnits;
-pub struct MaxVertexImageUnits;
-pub struct MaxTextureImageUnits;
-pub struct MaxFragmentUniformVectors;
-pub struct MaxCubeMapTextureSize;
-pub struct MaxRenderBufferSize;
-pub struct MaxTextureSize;
-pub struct MaxColorAttachments;
-pub struct Vendor;
-pub struct Extensions;
-pub struct Renderer;
-pub struct Version;
-pub struct ShadingLanguageVersion;
+#[deriving(Copy)] pub struct MaxVertexAttribs;
+#[deriving(Copy)] pub struct MaxVertexUniformVectors;
+#[deriving(Copy)] pub struct MaxVaryingVectors;
+#[deriving(Copy)] pub struct MaxCombinedTextureImageUnits;
+#[deriving(Copy)] pub struct MaxVertexImageUnits;
+#[deriving(Copy)] pub struct MaxTextureImageUnits;
+#[deriving(Copy)] pub struct MaxFragmentUniformVectors;
+#[deriving(Copy)] pub struct MaxCubeMapTextureSize;
+#[deriving(Copy)] pub struct MaxRenderBufferSize;
+#[deriving(Copy)] pub struct MaxTextureSize;
+#[deriving(Copy)] pub struct MaxColorAttachments;
+#[deriving(Copy)] pub struct Vendor;
+#[deriving(Copy)] pub struct Extensions;
+#[deriving(Copy)] pub struct Renderer;
+#[deriving(Copy)] pub struct Version;
+#[deriving(Copy)] pub struct ShadingLanguageVersion;
 
 /// INTERNEL
 pub trait GetQueryType {
@@ -1375,7 +1394,7 @@ pub trait GetQuery<Ret: GetQueryType> {
 
 macro_rules! impl_get_query_ret_type(
     ($ty:ty => $pname:expr) => {
-        impl_get_query_ret_type!($ty => $pname -> types::Int)
+        impl_get_query_ret_type!($ty => $pname -> types::Int);
     };
     ($ty:ty => $pname:expr -> $ret:ty) => {
         impl GetQuery<$ret> for $ty {
@@ -1387,27 +1406,27 @@ macro_rules! impl_get_query_ret_type(
                 PSTR
             }
         }
-    }
-)
-impl_get_query_ret_type!(MaxVertexAttribs =>             consts::MAX_VERTEX_ATTRIBS)
-impl_get_query_ret_type!(MaxVertexUniformVectors =>      consts::MAX_VERTEX_UNIFORM_VECTORS)
-impl_get_query_ret_type!(MaxVaryingVectors =>            consts::MAX_VARYING_VECTORS)
-impl_get_query_ret_type!(MaxCombinedTextureImageUnits => consts::MAX_COMBINED_TEXTURE_IMAGE_UNITS)
-impl_get_query_ret_type!(MaxVertexImageUnits =>          consts::MAX_VERTEX_TEXTURE_IMAGE_UNITS)
-impl_get_query_ret_type!(MaxTextureImageUnits =>         consts::MAX_TEXTURE_IMAGE_UNITS)
-impl_get_query_ret_type!(MaxFragmentUniformVectors =>    consts::MAX_FRAGMENT_UNIFORM_VECTORS)
-impl_get_query_ret_type!(MaxCubeMapTextureSize =>        consts::MAX_CUBE_MAP_TEXTURE_SIZE)
-impl_get_query_ret_type!(MaxRenderBufferSize =>          consts::MAX_RENDER_BUFFER_SIZE)
-impl_get_query_ret_type!(MaxTextureSize =>               consts::MAX_TEXTURE_SIZE)
-impl_get_query_ret_type!(MaxColorAttachments =>          consts::MAX_COLOR_ATTACHMENTS)
+    };
+);
+impl_get_query_ret_type!(MaxVertexAttribs =>             consts::MAX_VERTEX_ATTRIBS);
+impl_get_query_ret_type!(MaxVertexUniformVectors =>      consts::MAX_VERTEX_UNIFORM_VECTORS);
+impl_get_query_ret_type!(MaxVaryingVectors =>            consts::MAX_VARYING_VECTORS);
+impl_get_query_ret_type!(MaxCombinedTextureImageUnits => consts::MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+impl_get_query_ret_type!(MaxVertexImageUnits =>          consts::MAX_VERTEX_TEXTURE_IMAGE_UNITS);
+impl_get_query_ret_type!(MaxTextureImageUnits =>         consts::MAX_TEXTURE_IMAGE_UNITS);
+impl_get_query_ret_type!(MaxFragmentUniformVectors =>    consts::MAX_FRAGMENT_UNIFORM_VECTORS);
+impl_get_query_ret_type!(MaxCubeMapTextureSize =>        consts::MAX_CUBE_MAP_TEXTURE_SIZE);
+impl_get_query_ret_type!(MaxRenderBufferSize =>          consts::MAX_RENDER_BUFFER_SIZE);
+impl_get_query_ret_type!(MaxTextureSize =>               consts::MAX_TEXTURE_SIZE);
+impl_get_query_ret_type!(MaxColorAttachments =>          consts::MAX_COLOR_ATTACHMENTS);
 
-impl_get_query_ret_type!(Vendor                 => consts::VENDOR -> Cow<'static, String, str>)
-impl_get_query_ret_type!(Extensions             => consts::EXTENSIONS -> Vec<Cow<'static, String, str>>)
-impl_get_query_ret_type!(Renderer               => consts::RENDERER -> Cow<'static, String, str>)
-impl_get_query_ret_type!(Version                => consts::VERSION -> Cow<'static, String, str>)
-impl_get_query_ret_type!(ShadingLanguageVersion => consts::SHADING_LANGUAGE_VERSION -> Cow<'static, String, str>)
+impl_get_query_ret_type!(Vendor                 => consts::VENDOR -> Cow<'static, String, str>);
+impl_get_query_ret_type!(Extensions             => consts::EXTENSIONS -> Vec<Cow<'static, String, str>>);
+impl_get_query_ret_type!(Renderer               => consts::RENDERER -> Cow<'static, String, str>);
+impl_get_query_ret_type!(Version                => consts::VERSION -> Cow<'static, String, str>);
+impl_get_query_ret_type!(ShadingLanguageVersion => consts::SHADING_LANGUAGE_VERSION -> Cow<'static, String, str>);
 
-impl_resource_for!(Context3d ResourceType::Graphics3DRes)
+impl_resource_for!(Context3d ResourceType::Graphics3DRes);
 
 impl Context3d {
     fn gen_vert_shader(&self) -> VertexShader {

@@ -13,7 +13,7 @@
 use core::mem;
 use core::mem::uninitialized;
 use libc;
-use std::ptr::RawPtr;
+use std::ptr::PtrExt;
 use std::{intrinsics, string};
 
 use super::ffi;
@@ -148,7 +148,7 @@ macro_rules! get_fun(
             }
         }
     );
-)
+);
 macro_rules! get_fun_opt(
     (pub fn $ident:ident() -> $ty:ty { $global:ident }) => (
         #[doc = "Returns an optional static ref to the interface"]
@@ -158,50 +158,50 @@ macro_rules! get_fun_opt(
             }
         }
     );
-)
+);
 
-get_fun!    (pub fn get_var() -> Var { VAR })
-get_fun_opt!(pub fn get_var_opt() -> Var { VAR })
-get_fun!    (pub fn get_core() -> Core { CORE })
-get_fun_opt!(pub fn get_core_opt() -> Core { CORE })
-get_fun!    (pub fn get_console() -> Console { CONSOLE })
-get_fun_opt!(pub fn get_console_opt() -> Console { CONSOLE })
-get_fun!    (pub fn get_array_buffer() -> VarArrayBuffer { ARRAY_BUFFER })
-get_fun_opt!(pub fn get_array_buffer_opt() -> VarArrayBuffer { ARRAY_BUFFER })
-get_fun!    (pub fn get_graphics_3d() -> Graphics3D { GRAPHICS_3D })
-get_fun_opt!(pub fn get_graphics_3d_opt() -> Graphics3D { GRAPHICS_3D })
-get_fun!    (pub fn get_messaging() -> Messaging { MESSAGING })
-get_fun_opt!(pub fn get_messaging_opt() -> Messaging { MESSAGING })
-get_fun!    (pub fn get_message_loop() -> MessageLoop { MESSAGE_LOOP })
-get_fun_opt!(pub fn get_message_loop_opt() -> MessageLoop { MESSAGE_LOOP })
-get_fun!    (pub fn get_instance() -> Instance { INSTANCE })
-get_fun_opt!(pub fn get_instance_opt() -> Instance { INSTANCE })
-get_fun!    (pub fn get_input_event() -> InputEvent { INPUT })
-get_fun_opt!(pub fn get_input_event_opt() -> InputEvent { INPUT })
-get_fun!    (pub fn get_keyboard_event() -> KeyboardInputEvent { KEYBOARD })
-get_fun_opt!(pub fn get_keyboard_event_opt() -> KeyboardInputEvent { KEYBOARD })
-get_fun!    (pub fn get_mouse_event() -> MouseInputEvent { MOUSE })
-get_fun_opt!(pub fn get_mouse_event_opt() -> MouseInputEvent { MOUSE })
-get_fun!    (pub fn get_wheel_event() -> WheelInputEvent { WHEEL })
-get_fun_opt!(pub fn get_wheel_event_opt() -> WheelInputEvent { WHEEL })
-get_fun!    (pub fn get_touch_event() -> TouchInputEvent { TOUCH })
-get_fun_opt!(pub fn get_touch_event_opt() -> TouchInputEvent { TOUCH })
-get_fun!    (pub fn get_ime_event() -> IMEInputEvent { IME })
-get_fun_opt!(pub fn get_ime_event_opt() -> IMEInputEvent { IME })
-get_fun!    (pub fn get_gles2() -> OpenGLES2 { GLES2 })
-get_fun_opt!(pub fn get_gles2_opt() -> OpenGLES2 { GLES2 })
-get_fun!    (pub fn get_font() -> Font { FONTDEV })
-get_fun_opt!(pub fn get_font_opt() -> Font { FONTDEV })
-get_fun!    (pub fn get_image_data() -> ImageData { IMAGEDATA })
-get_fun_opt!(pub fn get_image_data_opt() -> ImageData { IMAGEDATA })
-get_fun!    (pub fn get_url_loader() -> UrlLoader { URL_LOADER })
-get_fun_opt!(pub fn get_url_loader_opt() -> UrlLoader { URL_LOADER })
-get_fun!    (pub fn get_url_request() -> UrlRequestInfo { URL_REQUEST })
-get_fun_opt!(pub fn get_url_request_opt() -> UrlRequestInfo { URL_REQUEST })
-get_fun!    (pub fn get_url_response() -> UrlResponseInfo { URL_RESPONSE })
-get_fun_opt!(pub fn get_url_response_opt() -> UrlResponseInfo { URL_RESPONSE })
-get_fun!    (pub fn get_view() -> View { VIEW })
-get_fun_opt!(pub fn get_view_opt() -> View { VIEW })
+get_fun!    (pub fn get_var() -> Var { VAR });
+get_fun_opt!(pub fn get_var_opt() -> Var { VAR });
+get_fun!    (pub fn get_core() -> Core { CORE });
+get_fun_opt!(pub fn get_core_opt() -> Core { CORE });
+get_fun!    (pub fn get_console() -> Console { CONSOLE });
+get_fun_opt!(pub fn get_console_opt() -> Console { CONSOLE });
+get_fun!    (pub fn get_array_buffer() -> VarArrayBuffer { ARRAY_BUFFER });
+get_fun_opt!(pub fn get_array_buffer_opt() -> VarArrayBuffer { ARRAY_BUFFER });
+get_fun!    (pub fn get_graphics_3d() -> Graphics3D { GRAPHICS_3D });
+get_fun_opt!(pub fn get_graphics_3d_opt() -> Graphics3D { GRAPHICS_3D });
+get_fun!    (pub fn get_messaging() -> Messaging { MESSAGING });
+get_fun_opt!(pub fn get_messaging_opt() -> Messaging { MESSAGING });
+get_fun!    (pub fn get_message_loop() -> MessageLoop { MESSAGE_LOOP });
+get_fun_opt!(pub fn get_message_loop_opt() -> MessageLoop { MESSAGE_LOOP });
+get_fun!    (pub fn get_instance() -> Instance { INSTANCE });
+get_fun_opt!(pub fn get_instance_opt() -> Instance { INSTANCE });
+get_fun!    (pub fn get_input_event() -> InputEvent { INPUT });
+get_fun_opt!(pub fn get_input_event_opt() -> InputEvent { INPUT });
+get_fun!    (pub fn get_keyboard_event() -> KeyboardInputEvent { KEYBOARD });
+get_fun_opt!(pub fn get_keyboard_event_opt() -> KeyboardInputEvent { KEYBOARD });
+get_fun!    (pub fn get_mouse_event() -> MouseInputEvent { MOUSE });
+get_fun_opt!(pub fn get_mouse_event_opt() -> MouseInputEvent { MOUSE });
+get_fun!    (pub fn get_wheel_event() -> WheelInputEvent { WHEEL });
+get_fun_opt!(pub fn get_wheel_event_opt() -> WheelInputEvent { WHEEL });
+get_fun!    (pub fn get_touch_event() -> TouchInputEvent { TOUCH });
+get_fun_opt!(pub fn get_touch_event_opt() -> TouchInputEvent { TOUCH });
+get_fun!    (pub fn get_ime_event() -> IMEInputEvent { IME });
+get_fun_opt!(pub fn get_ime_event_opt() -> IMEInputEvent { IME });
+get_fun!    (pub fn get_gles2() -> OpenGLES2 { GLES2 });
+get_fun_opt!(pub fn get_gles2_opt() -> OpenGLES2 { GLES2 });
+get_fun!    (pub fn get_font() -> Font { FONTDEV });
+get_fun_opt!(pub fn get_font_opt() -> Font { FONTDEV });
+get_fun!    (pub fn get_image_data() -> ImageData { IMAGEDATA });
+get_fun_opt!(pub fn get_image_data_opt() -> ImageData { IMAGEDATA });
+get_fun!    (pub fn get_url_loader() -> UrlLoader { URL_LOADER });
+get_fun_opt!(pub fn get_url_loader_opt() -> UrlLoader { URL_LOADER });
+get_fun!    (pub fn get_url_request() -> UrlRequestInfo { URL_REQUEST });
+get_fun_opt!(pub fn get_url_request_opt() -> UrlRequestInfo { URL_REQUEST });
+get_fun!    (pub fn get_url_response() -> UrlResponseInfo { URL_RESPONSE });
+get_fun_opt!(pub fn get_url_response_opt() -> UrlResponseInfo { URL_RESPONSE });
+get_fun!    (pub fn get_view() -> View { VIEW });
+get_fun_opt!(pub fn get_view_opt() -> View { VIEW });
 
 
 macro_rules! impl_fun(
@@ -223,7 +223,7 @@ macro_rules! impl_fun(
                 else { $fun.unwrap() };
         f()
     })
-)
+);
 
 pub trait CoreIf {
     fn get_time_ticks(&self) -> Ticks;
@@ -712,7 +712,7 @@ impl Graphics3DIf for ffi::Struct_PPB_Graphics3D_1_0 {
             Ok(attribs.into_iter()
                .enumerate()
                .fold(vec!(), |mut fold: Vec<u32>, (i, v): (uint, u32)| {
-                   if i.rem(&2) != 0 {
+                   if i.rem(2) != 0 {
                        fold.push(v);
                        fold
                    } else {

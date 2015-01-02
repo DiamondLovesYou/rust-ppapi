@@ -6,14 +6,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use super::{Callback, Resource, FileSliceRef, Instance, ToStringVar, ToVar};
+use super::{Callback, Resource, FileSliceRef, Instance, ToStringVar, ToVar, Code};
 use super::ppb::{get_url_loader, get_url_request};
 use ppb::{URLRequestInfoIf, URLResponseInfoIf, URLLoaderIf};
-use std::option::{Option, Some, None};
-use std::{fmt, default, str};
+use std::{fmt, default};
 use std::io::IoResult;
 use collections::enum_set::{CLike, EnumSet};
-use http::headers::request;
+use http::header::Headers;
 use super::ffi;
 use super::ffi::bool_to_var;
 use iurl::Url;
@@ -22,12 +21,12 @@ use iurl::Url;
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlRequestInfo(ffi::PP_Resource);
 #[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlResponseInfo(ffi::PP_Resource);
 
-impl_resource_for!(UrlLoader ResourceType::UrlLoaderRes)
-impl_resource_for!(UrlRequestInfo ResourceType::UrlRequestInfoRes)
-impl_resource_for!(UrlResponseInfo ResourceType::UrlResponseInfoRes)
+impl_resource_for!(UrlLoader ResourceType::UrlLoaderRes);
+impl_resource_for!(UrlRequestInfo ResourceType::UrlRequestInfoRes);
+impl_resource_for!(UrlResponseInfo ResourceType::UrlResponseInfoRes);
 
 pub type RequestProperties = EnumSet<RequestProperties_>;
-#[deriving(Eq, PartialEq, Clone, Hash)]
+#[deriving(Eq, PartialEq, Clone, Hash, Copy)]
 pub enum RequestProperties_ {
     AllowCrossOriginRequests,
     AllowCredentials,
@@ -82,7 +81,7 @@ pub enum Body {
     File(FileSliceRef, Option<super::Time>),
     Blob(Vec<u8>),
 }
-#[deriving(Clone, Eq, PartialEq, Hash)]
+#[deriving(Clone, Eq, PartialEq, Hash, Copy)]
 pub enum Method {
     Get,
     Post,
@@ -112,7 +111,7 @@ pub struct RequestInfo {
 
     pub body: Vec<Body>,
 
-    pub headers: request::HeaderCollection,
+    pub headers: Headers,
 }
 impl RequestInfo {
     fn clear_bit(bitfield: RequestProperties, prop: RequestProperties_) -> RequestProperties {
@@ -147,8 +146,8 @@ impl RequestInfo {
         was_set
     }
 
+    // todo remove those asserts.
     pub fn to_ffi(self) -> IoResult<UrlRequestInfo> {
-        use std::io::MemWriter;
         let instance = Instance::current();
         let request = get_url_request();
         let res = instance.create_url_request_info().unwrap();
@@ -185,12 +184,7 @@ impl RequestInfo {
             };
             assert!(success);
         }
-        let mut headers_str = MemWriter::new();
-        try!(headers.write_all(&mut headers_str));
-        let headers_str = headers_str.into_inner();
-        let headers_str =
-            str::from_utf8(headers_str.as_slice())
-            .expect("HTTP headers should always be valid UTF8.");
+        let headers_str = headers.to_string();
         let headers_str = headers_str.to_string_var();
         let success = request.property(res.unwrap(),
                                        ffi::PP_URLREQUESTPROPERTY_HEADERS,
@@ -241,14 +235,14 @@ impl Resource for OpenedUrlLoader {
 
 impl UrlLoader {
     // TODO: this is messy. Do it generically.
-    pub fn open(&self,
-                ffi_info: UrlRequestInfo,
-                callback: proc(OpenedUrlLoader): 'static + Send) -> super::Result<OpenedUrlLoader> {
+    pub fn open<F: FnOnce<(Code, OpenedUrlLoader),()> + Send>(&self,
+                                                              ffi_info: UrlRequestInfo,
+                                                              callback: F) -> super::Result<OpenedUrlLoader> {
         let loader = get_url_loader();
         let open_loader = OpenedUrlLoader(self.clone());
         let open_loader2 = open_loader.clone();
-        let cb = proc() {
-            callback(open_loader2);
+        let cb = move |: c: Code| {
+            callback(c, open_loader2);
         };
         loader.open(self.unwrap(),
                     ffi_info.unwrap(),

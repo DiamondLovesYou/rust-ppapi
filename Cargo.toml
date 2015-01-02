@@ -7,21 +7,24 @@ build = "src/build.rs"
 description = "Rust idiomatic bindings to parts of the Pepper API"
 repository = "https://github.com/DiamondLovesYou/rust-ppapi.git"
 documentation = "http://diamondlovesyou.github.io/rust-ppapi/docs/ppapi/index.html"
-license = "MPL 2.0"
+license = "MPL-2.0"
 
 [lib]
 name = "ppapi"
 path = "src/lib/lib.rs"
+doc = true
 
 [features]
-use-openssl = ["openssl", "old-http/ssl"]
+use-openssl = ["openssl"]
 
-[dependencies.old-http]
+[dependencies.hyper]
+git = "https://github.com/DiamondLovesYou/hyper.git"
+branch = "lint-fixes"
+[dependencies.log]
 version = "*"
-default-features = false
 
 [dependencies.openssl]
-version = "0.2.3"
+version = "*"
 optional = true
 
 [build-dependencies.pnacl-build-helper]
