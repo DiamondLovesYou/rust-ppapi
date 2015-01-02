@@ -9,9 +9,9 @@
 use super::{Callback, Resource, FileSliceRef, Instance, ToStringVar, ToVar, Code};
 use super::ppb::{get_url_loader, get_url_request};
 use ppb::{URLRequestInfoIf, URLResponseInfoIf, URLLoaderIf};
-use std::{fmt, default};
 use std::io::IoResult;
 use collections::enum_set::{CLike, EnumSet};
+use http;
 use http::header::Headers;
 use super::ffi;
 use super::ffi::bool_to_var;
@@ -81,24 +81,9 @@ pub enum Body {
     File(FileSliceRef, Option<super::Time>),
     Blob(Vec<u8>),
 }
-#[deriving(Clone, Eq, PartialEq, Hash, Copy)]
-pub enum Method {
-    Get,
-    Post,
-}
-impl fmt::Show for Method {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            &Method::Get => f.pad("GET"),
-            &Method::Post => f.pad("POST"),
-        }
-    }
-}
-impl default::Default for Method {
-    fn default() -> Method {
-        Method::Get
-    }
-}
+
+pub type Method = http::method::Method;
+
 #[deriving(Clone)]
 pub struct RequestInfo {
     pub url: Url,
