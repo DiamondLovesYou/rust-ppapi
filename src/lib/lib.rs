@@ -1158,14 +1158,112 @@ impl ObjectVar {
         ObjectVar(unsafe { ffi::id_from_var(v) })
     }
 }
+pub struct ArrayVarIter<'a> {
+    var: &'a ArrayVar,
+    index: uint,
+    len: uint,
+}
+impl<'a> Iterator for ArrayVarIter<'a> {
+    type Item = AnyVar;
+    fn next(&mut self) -> Option<AnyVar> {
+        if self.index > self.len { None }
+        else {
+            let v = self.var.get(self.index);
+            self.index = self.index + 1;
+            Some(v)
+        }
+    }
+    fn size_hint(&self) -> (uint, Option<uint>) {
+        (self.len, Some(self.len))
+    }
+}
+
 impl ArrayVar {
     fn new_from_var(v: ffi::PP_Var) -> ArrayVar {
         ArrayVar(unsafe { ffi::id_from_var(v) })
     }
+    pub fn new() -> ArrayVar {
+        ArrayVar::new_from_var(ppb::get_array().create())
+    }
+    pub fn len(&self) -> uint {
+        ppb::get_array().get_len(&self.to_var()) as uint
+    }
+    pub fn resize(&self, new_len: uint) -> bool {
+        ppb::get_array().set_len(&self.to_var(), new_len as libc::uint32_t) != 0
+    }
+    pub fn get(&self, index: uint) -> AnyVar {
+        AnyVar::new(ppb::get_array().get(&self.to_var(), index as libc::uint32_t))
+    }
+    pub fn set<T: ToVar>(&self, index: uint, value: &T) -> bool {
+        ppb::get_array().set(&self.to_var(), index, &value.to_var()) != 0
+    }
+
+    pub fn iter<'a>(&'a self) -> ArrayVarIter<'a> {
+        ArrayVarIter {
+            var: self,
+            index: 0,
+            len: self.len(),
+        }
+    }
 }
+pub struct DictEntries<'a> {
+    dict: &'a DictionaryVar,
+    keys: ArrayVar,
+    key_index: uint,
+    len: uint,
+}
+impl<'a> Iterator for DictEntries<'a> {
+    type Item = (StringVar, AnyVar);
+    fn next(&mut self) -> Option<(StringVar, AnyVar)> {
+        if self.key_index > self.len { None }
+        else {
+            let k = self.keys.get(self.key_index);
+            let k = match k {
+                AnyVar::String(k) => k,
+                k => unreachable!("dictionary keys should always be stored as strings: `{}`", k),
+            };
+            let v = self.dict.get(&k);
+            self.key_index = self.key_index + 1;
+            Some((k, v))
+        }
+    }
+    fn size_hint(&self) -> (uint, Option<uint>) {
+        (self.len, Some(self.len))
+    }
+}
+
 impl DictionaryVar {
     fn new_from_var(v: ffi::PP_Var) -> DictionaryVar {
         DictionaryVar(unsafe { ffi::id_from_var(v) })
+    }
+
+    pub fn new() -> DictionaryVar {
+        DictionaryVar::new_from_var(ppb::get_dictionary().create())
+    }
+    pub fn len(&self) -> uint {
+        self.keys().len()
+    }
+    pub fn has_key<T: ToVar>(&self, key: T) -> bool {
+        ppb::get_dictionary().has_key(&self.to_var(), &key.to_var()) != 0
+    }
+    pub fn get<T: ToVar>(&self, key: T) -> AnyVar {
+        AnyVar::new(ppb::get_dictionary().get(&self.to_var(), &key.to_var()))
+    }
+    pub fn set<T: ToVar, V: ToVar>(&self, key: T, value: V) -> bool {
+        ppb::get_dictionary().set(&self.to_var(), &key.to_var(), &value.to_var()) != 0
+    }
+    pub fn keys(&self) -> ArrayVar {
+        ArrayVar::new_from_var(ppb::get_dictionary().get_keys(&self.to_var()))
+    }
+    pub fn entries<'a>(&'a self) -> DictEntries<'a> {
+        let keys = self.keys();
+        let keys_len = keys.len();
+        DictEntries {
+            dict: self,
+            keys: keys,
+            key_index: 0,
+            len: keys_len,
+        }
     }
 }
 impl ArrayBufferVar {

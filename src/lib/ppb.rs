@@ -24,7 +24,9 @@ use super::{Ticks, Time, ToFFIBool, Code, Result, ToVar};
 pub type Var = ffi::PPB_Var;
 pub type Core = ffi::PPB_Core;
 pub type Console = ffi::PPB_Console;
+pub type VarArray = ffi::PPB_VarArray;
 pub type VarArrayBuffer = ffi::PPB_VarArrayBuffer;
+pub type VarDictionary  = ffi::PPB_VarDictionary;
 pub type Graphics3D = ffi::PPB_Graphics3D;
 pub type Messaging = ffi::PPB_Messaging;
 pub type MessageLoop = ffi::PPB_MessageLoop;
@@ -49,7 +51,9 @@ mod consts {
     pub static CONSOLE: &'static str          = "PPB_Console;1.0";
     pub static MESSAGING: &'static str        = "PPB_Messaging;1.0";
     pub static MESSAGELOOP: &'static str      = "PPB_MessageLoop;1.0";
+    pub static VAR_ARRAY: &'static str        = "PPB_VarArray;1.0";
     pub static VAR_ARRAY_BUFFER: &'static str = "PPB_VarArrayBuffer;1.0";
+    pub static VAR_DICTIONARY: &'static str   = "PPB_VarDictionary;1.0";
     pub static GRAPHICS_3D: &'static str      = "PPB_Graphics3D;1.0";
     pub static INSTANCE: &'static str         = "PPB_Instance;1.0";
     pub static INPUT:    &'static str         = "PPB_InputEvent;1.0";
@@ -72,7 +76,9 @@ mod globals {
     pub static mut VAR:          Option<&'static super::Var> = None;
     pub static mut CORE:         Option<&'static super::Core> = None;
     pub static mut CONSOLE:      Option<&'static super::Console> = None;
+    pub static mut ARRAY:        Option<&'static super::VarArray> = None;
     pub static mut ARRAY_BUFFER: Option<&'static super::VarArrayBuffer> = None;
+    pub static mut DICTIONARY:   Option<&'static super::VarDictionary>  = None;
     pub static mut GRAPHICS_3D:  Option<&'static super::Graphics3D> = None;
     pub static mut MESSAGING:    Option<&'static super::Messaging> = None;
     pub static mut MESSAGE_LOOP: Option<&'static super::MessageLoop> = None;
@@ -98,7 +104,9 @@ pub fn initialize_globals(b: ffi::PPB_GetInterface) {
         globals::VAR           = get_interface(consts::VAR);
         globals::CONSOLE       = get_interface(consts::CONSOLE);
         globals::CORE          = get_interface(consts::CORE);
+        globals::ARRAY         = get_interface(consts::VAR_ARRAY);
         globals::ARRAY_BUFFER  = get_interface(consts::VAR_ARRAY_BUFFER);
+        globals::DICTIONARY    = get_interface(consts::VAR_DICTIONARY);
         globals::GRAPHICS_3D   = get_interface(consts::GRAPHICS_3D);
         globals::MESSAGING     = get_interface(consts::MESSAGING);
         globals::MESSAGE_LOOP  = get_interface(consts::MESSAGELOOP);
@@ -166,8 +174,12 @@ get_fun!    (pub fn get_core() -> Core { CORE });
 get_fun_opt!(pub fn get_core_opt() -> Core { CORE });
 get_fun!    (pub fn get_console() -> Console { CONSOLE });
 get_fun_opt!(pub fn get_console_opt() -> Console { CONSOLE });
+get_fun!    (pub fn get_array() -> VarArray { ARRAY });
+get_fun_opt!(pub fn get_array_opt() -> VarArray { ARRAY });
 get_fun!    (pub fn get_array_buffer() -> VarArrayBuffer { ARRAY_BUFFER });
 get_fun_opt!(pub fn get_array_buffer_opt() -> VarArrayBuffer { ARRAY_BUFFER });
+get_fun!    (pub fn get_dictionary() -> VarDictionary { DICTIONARY });
+get_fun_opt!(pub fn get_dictionary_opt() -> VarDictionary { DICTIONARY });
 get_fun!    (pub fn get_graphics_3d() -> Graphics3D { GRAPHICS_3D });
 get_fun_opt!(pub fn get_graphics_3d_opt() -> Graphics3D { GRAPHICS_3D });
 get_fun!    (pub fn get_messaging() -> Messaging { MESSAGING });
@@ -280,6 +292,30 @@ impl ConsoleIf for ffi::Struct_PPB_Console_1_0 {
         impl_fun!(self.LogWithSource => (inst, lvl, *src, *msg))
     }
 }
+pub trait VarArrayIf {
+    fn create(&self) -> Struct_PP_Var;
+    fn get(&self, array: &Struct_PP_Var, index: libc::uint32_t) -> Struct_PP_Var;
+    fn set(&self, array: &Struct_PP_Var, index: libc::uint32_t, value: &Struct_PP_Var) -> libc::int32_t;
+    fn get_len(&self, array: &Struct_PP_Var) -> libc::uint32_t;
+    fn set_len(&self, array: &Struct_PP_Var, new_len: libc::uint32_t) -> libc::int32_t;
+}
+impl VarArrayIf for ffi::Struct_PPB_VarArray_1_0 {
+    fn create(&self) -> Struct_PP_Var {
+        impl_fun!(self.Create => ())
+    }
+    fn get(&self, array: &Struct_PP_Var, index: libc::uint32_t) -> Struct_PP_Var {
+        impl_fun!(self.Get => (*array, index))
+    }
+    fn set(&self, array: &Struct_PP_Var, index: libc::uint32_t, value: &Struct_PP_Var) -> libc::int32_t {
+        impl_fun!(self.Set => (*array, index, *value))
+    }
+    fn get_len(&self, array: &Struct_PP_Var) -> libc::uint32_t {
+        impl_fun!(self.GetLength => (*array, index))
+    }
+    fn set_len(&self, array: &Struct_PP_Var, new_len: libc::uint32_t) -> libc::int32_t {
+        impl_fun!(self.SetLength => (*array, new_len))
+    }
+}
 pub trait VarArrayBufferIf {
     fn create(&self, len: uint) -> Struct_PP_Var;
     fn byte_len(&self, var: &Struct_PP_Var) -> Option<uint>;
@@ -305,6 +341,35 @@ impl VarArrayBufferIf for ffi::Struct_PPB_VarArrayBuffer_1_0 {
         impl_fun!(self.Unmap => (*var))
     }
 }
+pub trait VarDictionaryIf {
+    fn create(&self) -> Struct_PP_Var;
+    fn get(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> Struct_PP_Var;
+    fn set(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var, value: &Struct_PP_Var) -> libc::int32_t;
+    fn has_key(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> libc::int32_t;
+    fn delete(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var);
+    fn get_keys(&self, dict: &Struct_PP_Var) -> Struct_PP_Var;
+}
+impl VarDictionaryIf for ffi::Struct_PPB_VarDictionary_1_0 {
+    fn create(&self) -> Struct_PP_Var {
+        impl_fun!(self.Create => ())
+    }
+    fn get(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> Struct_PP_Var {
+        impl_fun!(self.Get => (*dict, *key))
+    }
+    fn set(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var, value: &Struct_PP_Var) -> libc::int32_t {
+        impl_fun!(self.Set => (*dict, *key, *value))
+    }
+    fn has_key(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> libc::int32_t {
+        impl_fun!(self.HasKey => (*dict, *key))
+    }
+    fn delete(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) {
+        impl_fun!(self.Delete => (*dict, *key))
+    }
+    fn get_keys(&self, dict: &Struct_PP_Var) -> Struct_PP_Var {
+        impl_fun!(self.GetKeys => (*dict))
+    }
+}
+
 pub trait MessagingIf {
     fn post_message(self, instance: PP_Instance, msg: Struct_PP_Var);
 }
