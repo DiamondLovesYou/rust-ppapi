@@ -16,8 +16,7 @@ path = "src/lib/lib.rs"
 doc = true
 
 [dependencies.hyper]
-git = "https://github.com/DiamondLovesYou/hyper.git"
-branch = "lint-fixes"
+version = "*"
 
 [dependencies.log]
 version = "*"
