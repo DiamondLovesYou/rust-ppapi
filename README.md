@@ -12,7 +12,7 @@ You'll need to build and install [the PNaCl/NaCl Rust fork](https://github.com/D
 Then run:
 
 ```bash
-export NACL_SDK_ROOT=path/to/pepper_37-38
+export NACL_SDK_ROOT=path/to/pepper_39
 ```
 
 Lastly, run:
