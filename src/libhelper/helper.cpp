@@ -7,12 +7,20 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 /// This file is here to handle thing that the ppapi has either inlined or delegated to macros.
+
+#ifdef __BINDGEN__
+#include "builtin_defines.hpp" // For bindgen.
+#endif
+
 #include "ppapi.hpp"
 #include "stdio.h"
 
 #include "ppapi/c/pp_completion_callback.h"
 
+#ifdef __cplusplus
 extern "C" {
+#endif
+
   PP_CompletionCallback make_completion_callback(PP_CompletionCallback_Func func,
                                                  void* user_data) {
     return PP_MakeCompletionCallback(func, user_data);
@@ -103,11 +111,6 @@ extern "C" {
     return v.value.as_id;
   }
 
-
-  FILE* stdout_file() {
-    return stdin;
-  }
-  FILE* stderr_file() {
-    return stderr;
-  }
+#ifdef __cplusplus
 }
+#endif

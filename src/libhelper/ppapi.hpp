@@ -78,6 +78,9 @@
 #include <ppapi/c/ppp_graphics_3d.h>
 #include <ppapi/c/ppp_input_event.h>
 #include <ppapi/c/ppp_instance.h>
+#if PPAPI_RELEASE >= 39
+#include <ppapi/c/ppp_message_handler.h>
+#endif
 #include <ppapi/c/ppp_messaging.h>
 #include <ppapi/c/ppp_mouse_lock.h>
 #if PPAPI_RELEASE <= 34
