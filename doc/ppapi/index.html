@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `ppapi` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, ppapi">
+
+    <title>ppapi - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'></p>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>ppapi</a><wbr><a class='stability Experimental' title=''>Experimental</a></span><span class='out-of-band'><a href='stability.html'>[stability]</a> <span id='render-detail'>
+            <a id="collapse-all" href="#">[-]
+            </a>&nbsp;<a id="expand-all" href="#">[+]</a>
+        </span><a id='src-0' href='../src/ppapi/lib.rs.html#9-2173'>[src]</a></span></h1>
+<div class='docblock'><p>Rust idiomatic wrapper for the Pepper API.</p>
+
+<p>To use, you will need to implement at least these two functions:</p>
+<pre class='rust '>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>no_main</span>]</span>
+<span class='attribute'>#[<span class='ident'>no_managle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_instance_created</span>(<span class='ident'>instance</span>: <span class='ident'>Instance</span>,
+                                     <span class='ident'>args</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span>) {
+}
+<span class='attribute'>#[<span class='ident'>no_managle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_instance_destroyed</span>() {
+}
+</pre>
+
+<p>All instances will be created from a new task/thread. The task takes its
+name from the id attribute on the embed object used to create the
+instance. Failing will cause rust-ppapi to cleanup the task, though the
+plugin will continue to run. Currently there is no way to automatically
+restart an instance if it fails.</p>
+
+<p>The other callbacks consist of:</p>
+<pre class='rust '>
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_document_loaded</span>(<span class='ident'>loader</span>: <span class='ident'>ppapi</span>::<span class='ident'>UrlLoader</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+}
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_change_view</span>(<span class='ident'>view</span>: <span class='ident'>ppapi</span>::<span class='ident'>View</span>) {
+}
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_change_focus</span>(<span class='ident'>has_focus</span>: <span class='ident'>bool</span>) {
+}
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_message</span>(<span class='ident'>msg</span>: <span class='ident'>ppapi</span>::<span class='ident'>AnyVar</span>) {
+}
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_input</span>(<span class='ident'>event</span>: <span class='ident'>ppapi</span>::<span class='ident'>input</span>::<span class='ident'>Class</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+}
+<span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
+<span class='kw'>pub</span> <span class='kw'>extern</span> <span class='kw'>fn</span> <span class='ident'>ppapi_on_graphics_context_lost</span>() {
+}
+</pre>
+
+<p>These are all optional. If implemented, they will be called from the instance&#39;s task.</p>
+
+<p>More info:</p>
+
+<ul>
+<li><a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aff2dd72f7aab6335cacf8bc3a66ccbba">ppapi_instance_created</a></li>
+<li><a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a99edbb91abde255fec3bc3e1f9c8ba82">ppapi_instance_destroyed</a></li>
+<li><a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#a2fba2c9d06044a48e73a649b04398e1d">ppapi_on_document_loaded</a></li>
+<li><a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#aa028a7b17d62242ac56b6ab4b55dc047">ppapi_on_change_view</a></li>
+<li><a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___instance__1__1.html#abf4a481156b605938416bf873bd2c782">ppapi_on_change_focus</a></li>
+<li><a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___messaging__1__0.html#a558ca784cf11eaba479ff8621ae2c507">ppapi_on_message</a></li>
+<li><a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___input_event__0__1.html#ae684a39a2bf6b58aee0f7420aab43150">ppapi_on_input</a></li>
+<li><a href="https://developer.chrome.com/native-client/pepper_stable/c/struct_p_p_p___graphics3_d__1__0.html#ae7aba86d10d1b8c4c7a41bac3af64b0a">ppapi_on_graphics_context_lost</a></li>
+</ul>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>pub use font::<a class='struct' href='../ppapi/font/struct.Font.html' title='ppapi::font::Font'>Font</a>;</code></td></tr><tr><td><code>pub use gles::<a class='struct' href='../ppapi/gles/struct.Context3d.html' title='ppapi::gles::Context3d'>Context3d</a>;</code></td></tr><tr><td><code>pub use input::{<a class='struct' href='../ppapi/input/struct.KeyboardInputEvent.html' title='ppapi::input::KeyboardInputEvent'>KeyboardInputEvent</a>, <a class='struct' href='../ppapi/input/struct.MouseInputEvent.html' title='ppapi::input::MouseInputEvent'>MouseInputEvent</a>, <a class='struct' href='../ppapi/input/struct.WheelInputEvent.html' title='ppapi::input::WheelInputEvent'>WheelInputEvent</a>, <a class='struct' href='../ppapi/input/struct.TouchInputEvent.html' title='ppapi::input::TouchInputEvent'>TouchInputEvent</a>, <a class='struct' href='../ppapi/input/struct.IMEInputEvent.html' title='ppapi::input::IMEInputEvent'>IMEInputEvent</a>};</code></td></tr><tr><td><code>pub use imagedata::<a class='struct' href='../ppapi/imagedata/struct.ImageData.html' title='ppapi::imagedata::ImageData'>ImageData</a>;</code></td></tr><tr><td><code>pub use url::{<a class='struct' href='../ppapi/url/struct.UrlLoader.html' title='ppapi::url::UrlLoader'>UrlLoader</a>, <a class='struct' href='../ppapi/url/struct.UrlRequestInfo.html' title='ppapi::url::UrlRequestInfo'>UrlRequestInfo</a>, <a class='struct' href='../ppapi/url/struct.UrlResponseInfo.html' title='ppapi::url::UrlResponseInfo'>UrlResponseInfo</a>};</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='entry/index.html'
+                               title='ppapi::entry'>entry</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='ffi/index.html'
+                               title='ppapi::ffi'>ffi</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='font/index.html'
+                               title='ppapi::font'>font</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='fs/index.html'
+                               title='ppapi::fs'>fs</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='gles/index.html'
+                               title='ppapi::gles'>gles</a></td>
+                        <td class='docblock short'><p>A module to wrap OpenGLES 2.0 functions from the PPAPI</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='imagedata/index.html'
+                               title='ppapi::imagedata'>imagedata</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='input/index.html'
+                               title='ppapi::input'>input</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='pp/index.html'
+                               title='ppapi::pp'>pp</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='ppb/index.html'
+                               title='ppapi::ppb'>ppb</a></td>
+                        <td class='docblock short'><p>PPB related interfaces. Many interfaces have convenience functions to remove much
+of the verbose-ness of the originals.</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='mod' href='url/index.html'
+                               title='ppapi::url'>url</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.ArrayBufferVar.html'
+                               title='ppapi::ArrayBufferVar'>ArrayBufferVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.ArrayVar.html'
+                               title='ppapi::ArrayVar'>ArrayVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.ArrayVarIter.html'
+                               title='ppapi::ArrayVarIter'>ArrayVarIter</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.Console.html'
+                               title='ppapi::Console'>Console</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.Context2d.html'
+                               title='ppapi::Context2d'>Context2d</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.DictEntries.html'
+                               title='ppapi::DictEntries'>DictEntries</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.DictionaryVar.html'
+                               title='ppapi::DictionaryVar'>DictionaryVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.Instance.html'
+                               title='ppapi::Instance'>Instance</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.MessageLoop.html'
+                               title='ppapi::MessageLoop'>MessageLoop</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.Messaging.html'
+                               title='ppapi::Messaging'>Messaging</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.NullVar.html'
+                               title='ppapi::NullVar'>NullVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.ObjectVar.html'
+                               title='ppapi::ObjectVar'>ObjectVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.Size.html'
+                               title='ppapi::Size'>Size</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.StringVar.html'
+                               title='ppapi::StringVar'>StringVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.UndefinedVar.html'
+                               title='ppapi::UndefinedVar'>UndefinedVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='struct' href='struct.View.html'
+                               title='ppapi::View'>View</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='enum' href='enum.AnyVar.html'
+                               title='ppapi::AnyVar'>AnyVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='enum' href='enum.Code.html'
+                               title='ppapi::Code'>Code</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='enum' href='enum.ResourceType.html'
+                               title='ppapi::ResourceType'>ResourceType</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.ByRefVar.html'
+                               title='ppapi::ByRefVar'>ByRefVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.Callback.html'
+                               title='ppapi::Callback'>Callback</a></td>
+                        <td class='docblock short'><p>INTERNAL</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.ContextResource.html'
+                               title='ppapi::ContextResource'>ContextResource</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.FromVar.html'
+                               title='ppapi::FromVar'>FromVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.Resource.html'
+                               title='ppapi::Resource'>Resource</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.ToFFIBool.html'
+                               title='ppapi::ToFFIBool'>ToFFIBool</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.ToOption.html'
+                               title='ppapi::ToOption'>ToOption</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.ToStringVar.html'
+                               title='ppapi::ToStringVar'>ToStringVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.ToVar.html'
+                               title='ppapi::ToVar'>ToVar</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.UnwrapOr.html'
+                               title='ppapi::UnwrapOr'>UnwrapOr</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.Var.html'
+                               title='ppapi::Var'>Var</a></td>
+                        <td class='docblock short'><p>by default all functions return false/None so one doesn&#39;t have to impl all of them.</p>
+</td>
+                    </tr>
+                </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='fn' href='fn.PPP_InitializeModule.html'
+                               title='ppapi::PPP_InitializeModule'>PPP_InitializeModule</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='fn' href='fn.PPP_ShutdownModule.html'
+                               title='ppapi::PPP_ShutdownModule'>PPP_ShutdownModule</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='fn' href='fn.is_main_thread.html'
+                               title='ppapi::is_main_thread'>is_main_thread</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='fn' href='fn.mount.html'
+                               title='ppapi::mount'>mount</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='type' href='type.FloatPoint.html'
+                               title='ppapi::FloatPoint'>FloatPoint</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='type' href='type.Point.html'
+                               title='ppapi::Point'>Point</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='type' href='type.Rect.html'
+                               title='ppapi::Rect'>Rect</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='type' href='type.Result.html'
+                               title='ppapi::Result'>Result</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='type' href='type.Ticks.html'
+                               title='ppapi::Ticks'>Ticks</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='type' href='type.Time.html'
+                               title='ppapi::Time'>Time</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='type' href='type.TouchPoint.html'
+                               title='ppapi::TouchPoint'>TouchPoint</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "ppapi";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script async src="../search-index.js"></script>
+</body>
+</html>

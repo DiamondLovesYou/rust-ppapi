@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `traits` mod in crate `ppapi`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, traits">
+
+    <title>ppapi::gles::traits - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>ppapi</a>::<wbr><a href='../index.html'>gles</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='../consts/index.html'>consts</a><a class='mod current' href='../traits/index.html'>traits</a><a class='mod ' href='../types/index.html'>types</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='../struct.Blending.html'>Blending</a><a class='struct ' href='../struct.BoundBuffer.html'>BoundBuffer</a><a class='struct ' href='../struct.BoundShaderProgram.html'>BoundShaderProgram</a><a class='struct ' href='../struct.BoundTexBuffer.html'>BoundTexBuffer</a><a class='struct ' href='../struct.ByteType.html'>ByteType</a><a class='struct ' href='../struct.CompileError.html'>CompileError</a><a class='struct ' href='../struct.CompilingShader.html'>CompilingShader</a><a class='struct ' href='../struct.Context3d.html'>Context3d</a><a class='struct ' href='../struct.DynamicBufferUsage.html'>DynamicBufferUsage</a><a class='struct ' href='../struct.Extensions.html'>Extensions</a><a class='struct ' href='../struct.FloatType.html'>FloatType</a><a class='struct ' href='../struct.FragmentShader.html'>FragmentShader</a><a class='struct ' href='../struct.FrameBuffer.html'>FrameBuffer</a><a class='struct ' href='../struct.IndexBuffer.html'>IndexBuffer</a><a class='struct ' href='../struct.LineLoopGeometryMode.html'>LineLoopGeometryMode</a><a class='struct ' href='../struct.LineStripGeometryMode.html'>LineStripGeometryMode</a><a class='struct ' href='../struct.LinesGeometryMode.html'>LinesGeometryMode</a><a class='struct ' href='../struct.LinkError.html'>LinkError</a><a class='struct ' href='../struct.LinkingShaderProgram.html'>LinkingShaderProgram</a><a class='struct ' href='../struct.MaxColorAttachments.html'>MaxColorAttachments</a><a class='struct ' href='../struct.MaxCombinedTextureImageUnits.html'>MaxCombinedTextureImageUnits</a><a class='struct ' href='../struct.MaxCubeMapTextureSize.html'>MaxCubeMapTextureSize</a><a class='struct ' href='../struct.MaxFragmentUniformVectors.html'>MaxFragmentUniformVectors</a><a class='struct ' href='../struct.MaxRenderBufferSize.html'>MaxRenderBufferSize</a><a class='struct ' href='../struct.MaxTextureImageUnits.html'>MaxTextureImageUnits</a><a class='struct ' href='../struct.MaxTextureSize.html'>MaxTextureSize</a><a class='struct ' href='../struct.MaxVaryingVectors.html'>MaxVaryingVectors</a><a class='struct ' href='../struct.MaxVertexAttribs.html'>MaxVertexAttribs</a><a class='struct ' href='../struct.MaxVertexImageUnits.html'>MaxVertexImageUnits</a><a class='struct ' href='../struct.MaxVertexUniformVectors.html'>MaxVertexUniformVectors</a><a class='struct ' href='../struct.PointsGeometryMode.html'>PointsGeometryMode</a><a class='struct ' href='../struct.RenderBuffer.html'>RenderBuffer</a><a class='struct ' href='../struct.Renderer.html'>Renderer</a><a class='struct ' href='../struct.ShaderProgram.html'>ShaderProgram</a><a class='struct ' href='../struct.ShadingLanguageVersion.html'>ShadingLanguageVersion</a><a class='struct ' href='../struct.ShortType.html'>ShortType</a><a class='struct ' href='../struct.StaticBufferUsage.html'>StaticBufferUsage</a><a class='struct ' href='../struct.StreamBufferUsage.html'>StreamBufferUsage</a><a class='struct ' href='../struct.TextureBuffer.html'>TextureBuffer</a><a class='struct ' href='../struct.TriangleFanGeometryMode.html'>TriangleFanGeometryMode</a><a class='struct ' href='../struct.TriangleStripGeometryMode.html'>TriangleStripGeometryMode</a><a class='struct ' href='../struct.TrianglesGeometryMode.html'>TrianglesGeometryMode</a><a class='struct ' href='../struct.UByteType.html'>UByteType</a><a class='struct ' href='../struct.UShortType.html'>UShortType</a><a class='struct ' href='../struct.UnlinkedShaderProgram.html'>UnlinkedShaderProgram</a><a class='struct ' href='../struct.Vendor.html'>Vendor</a><a class='struct ' href='../struct.Version.html'>Version</a><a class='struct ' href='../struct.VertexBuffer.html'>VertexBuffer</a><a class='struct ' href='../struct.VertexShader.html'>VertexShader</a></div><div class='block enum'><h2>Enums</h2><a class='enum ' href='../enum.BlendingEq_.html'>BlendingEq_</a><a class='enum ' href='../enum.BlendingFun_.html'>BlendingFun_</a><a class='enum ' href='../enum.BufferObject.html'>BufferObject</a><a class='enum ' href='../enum.BufferOption.html'>BufferOption</a><a class='enum ' href='../enum.BufferType.html'>BufferType</a><a class='enum ' href='../enum.GeometryMode.html'>GeometryMode</a><a class='enum ' href='../enum.TexFormat.html'>TexFormat</a><a class='enum ' href='../enum.VertexAttribType.html'>VertexAttribType</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='../trait.GetQuery.html'>GetQuery</a><a class='trait ' href='../trait.GetQueryType.html'>GetQueryType</a><a class='trait ' href='../trait.ShaderUnwrap.html'>ShaderUnwrap</a><a class='trait ' href='../trait.UniformFun.html'>UniformFun</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>ppapi</a>::<wbr><a href='../index.html'>gles</a>::<wbr><a class='mod' href=''>traits</a><wbr><a class='stability Experimental' title=''>Experimental</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="collapse-all" href="#">[-]
+            </a>&nbsp;<a id="expand-all" href="#">[+]</a>
+        </span><a id='src-39974' href='../../../src/ppapi/gles.rs.html#366-633'>[src]</a></span></h1>
+<h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.BindableBuffer.html'
+                               title='ppapi::gles::traits::BindableBuffer'>BindableBuffer</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.Buffer.html'
+                               title='ppapi::gles::traits::Buffer'>Buffer</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.CompileShader.html'
+                               title='ppapi::gles::traits::CompileShader'>CompileShader</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.DropBuffer.html'
+                               title='ppapi::gles::traits::DropBuffer'>DropBuffer</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.GenBuffer.html'
+                               title='ppapi::gles::traits::GenBuffer'>GenBuffer</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.GenShader.html'
+                               title='ppapi::gles::traits::GenShader'>GenShader</a></td>
+                        <td class='docblock short'><p>utility trait for CompileShader below.
+INTERNEL</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.GeometryMode.html'
+                               title='ppapi::gles::traits::GeometryMode'>GeometryMode</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.IndexElementType.html'
+                               title='ppapi::gles::traits::IndexElementType'>IndexElementType</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.Usage.html'
+                               title='ppapi::gles::traits::Usage'>Usage</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Experimental' title='Experimental'></a><a class='trait' href='trait.VertexAttribType.html'
+                               title='ppapi::gles::traits::VertexAttribType'>VertexAttribType</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "ppapi";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script async src="../../../search-index.js"></script>
+</body>
+</html>
