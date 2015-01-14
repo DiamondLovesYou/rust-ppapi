@@ -4,6 +4,8 @@ Rusted Pepper
 Rust idiomatic bindings to the Pepper API. This API is experimental. Expect it
 to change somewhat.
 
+[Documentation](http://diamondlovesyou.github.io/rust-ppapi/doc/ppapi/index.html)
+
 ## Build
 
 You'll need to build and install [the PNaCl/NaCl Rust fork](https://github.com/DiamondLovesYou/rust) first.
@@ -50,9 +52,6 @@ pub extern fn ppapi_instance_created(_instance: ppapi::Instance,
 pub extern fn ppapi_instance_destroyed() {
 }
 ```
-
-
-## [More Docs](http://diamondlovesyou.github.io/rust-ppapi/docs/ppapi/index.html)
 
 ## [Pepper.js](https://github.com/google/pepper.js)
 
