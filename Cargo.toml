@@ -9,6 +9,8 @@ repository = "https://github.com/DiamondLovesYou/rust-ppapi.git"
 documentation = "http://diamondlovesyou.github.io/rust-ppapi/docs/ppapi/index.html"
 license = "MPL-2.0"
 readme = "README.md"
+keywords = [ "PNaCl", "NaCl", "Pepper" ]
+exclude = [ "*.so", "build.sh" ]
 
 [lib]
 name = "ppapi"
