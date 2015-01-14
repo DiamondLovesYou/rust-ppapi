@@ -21,7 +21,7 @@ use super::StringVar;
 use imagedata;
 
 
-#[deriving(Eq, PartialEq, Clone, Hash, Copy)]
+#[derive(Eq, PartialEq, Clone, Hash, Copy)]
 pub enum Family {
     DefaultFamily,
     SerifFamily,
@@ -48,7 +48,7 @@ impl Family {
     }
 }
 
-#[deriving(Eq, PartialEq, Clone, Hash, Copy)]
+#[derive(Eq, PartialEq, Clone, Hash, Copy)]
 pub enum Weight {
     ValueWeight(u16),
     NormalWeight,
@@ -100,7 +100,7 @@ fn new_metrics_from_ffi(metrics: ffi::Struct_PP_FontMetrics_Dev) -> Metrics {
 }
 
 
-#[deriving(Eq, PartialEq, Clone, Hash)]
+#[derive(Eq, PartialEq, Clone, Hash)]
 pub struct Description {
     face: Option<StringVar>,
     family: Family,
@@ -150,9 +150,9 @@ impl Description {
     }
 }
 
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct Font(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct Font(ffi::PP_Resource);
 
-impl_resource_for!(Font ResourceType::FontRes);
+impl_resource_for!(Font, ResourceType::FontRes);
 
 impl Font {
     pub fn describe(&self) -> Option<(Description, Metrics)> {

@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use super::{Callback, Resource, FileSliceRef, Instance, ToStringVar, ToVar, Code};
+use super::{Callback, Resource, Instance, ToStringVar, ToVar, Code};
 use super::ppb::{get_url_loader, get_url_request};
 use ppb::{URLRequestInfoIf, URLResponseInfoIf, URLLoaderIf};
 use std::io::IoResult;
@@ -17,16 +17,18 @@ use super::ffi;
 use super::ffi::bool_to_var;
 use iurl::Url;
 
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlLoader(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlRequestInfo(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct UrlResponseInfo(ffi::PP_Resource);
+use fs::FileSliceRef;
 
-impl_resource_for!(UrlLoader ResourceType::UrlLoaderRes);
-impl_resource_for!(UrlRequestInfo ResourceType::UrlRequestInfoRes);
-impl_resource_for!(UrlResponseInfo ResourceType::UrlResponseInfoRes);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct UrlLoader(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct UrlRequestInfo(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct UrlResponseInfo(ffi::PP_Resource);
+
+impl_resource_for!(UrlLoader, ResourceType::UrlLoaderRes);
+impl_resource_for!(UrlRequestInfo, ResourceType::UrlRequestInfoRes);
+impl_resource_for!(UrlResponseInfo, ResourceType::UrlResponseInfoRes);
 
 pub type RequestProperties = EnumSet<RequestProperties_>;
-#[deriving(Eq, PartialEq, Clone, Hash, Copy)]
+#[derive(Eq, PartialEq, Clone, Hash, Copy)]
 pub enum RequestProperties_ {
     AllowCrossOriginRequests,
     AllowCredentials,
@@ -76,7 +78,7 @@ impl RequestProperties_ {
         }
     }
 }
-#[deriving(Clone)]
+#[derive(Clone)]
 pub enum Body {
     File(FileSliceRef, Option<super::Time>),
     Blob(Vec<u8>),
@@ -84,7 +86,7 @@ pub enum Body {
 
 pub type Method = http::method::Method;
 
-#[deriving(Clone)]
+#[derive(Clone)]
 pub struct RequestInfo {
     pub url: Url,
 
@@ -189,7 +191,7 @@ impl RequestInfo {
     }
 }
 
-#[deriving(Clone, Hash, Eq, PartialEq)]
+#[derive(Clone, Hash, Eq, PartialEq)]
 pub struct OpenedUrlLoader(UrlLoader);
 impl OpenedUrlLoader {
     fn unwrap_loader<'a>(&'a self) -> &'a UrlLoader {

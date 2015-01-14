@@ -68,17 +68,17 @@ More info:
 #![crate_name = "ppapi"]
 #![crate_type = "rlib"]
 #![experimental]
-#![feature(globs)]
-#![feature(macro_rules)]
-#![feature(phase)]
-#![feature(default_type_params)]
 #![feature(linkage)]
 #![feature(thread_local)]
 #![feature(unboxed_closures)]
+#![feature(int_uint)]
+#![feature(box_syntax)]
+#![feature(unsafe_destructor)]
 
 #![allow(dead_code)]
+#![allow(unstable)]
 
-#[phase(plugin, link)]
+#[macro_use]
 extern crate log;
 extern crate collections;
 extern crate rand;
@@ -96,7 +96,7 @@ use std::ptr;
 use std::ops;
 use std::iter;
 use std::clone;
-use std::{str, string};
+use std::str;
 use std::result;
 use std::collections::HashMap;
 use std::fmt;
@@ -105,7 +105,7 @@ use log::LogRecord;
 
 use ppb::{get_url_loader, get_url_request};
 use ppb::{ViewIf, MessageLoopIf, VarIf, ImageDataIf, URLLoaderIf,
-          URLRequestInfoIf};
+          URLRequestInfoIf, VarDictionaryIf, VarArrayIf};
 
 pub use font::Font;
 pub use gles::Context3d;
@@ -118,9 +118,9 @@ pub use imagedata::ImageData;
 pub use url::{UrlLoader, UrlRequestInfo, UrlResponseInfo};
 
 macro_rules! impl_resource_for(
-    ($ty:ty $type_:expr) => (
+    ($ty:ty, $type_:expr) => (
         unsafe impl Send for $ty {}
-        impl Resource for $ty {
+        impl ::Resource for $ty {
             #[inline]
             fn unwrap(&self) -> ::ffi::PP_Resource {
                 unsafe { ::std::mem::transmute_copy(self) }
@@ -161,16 +161,16 @@ macro_rules! impl_clone_drop_for(
     ($ty:ty) => (
         impl Clone for $ty {
             fn clone(&self) -> $ty {
-                println!("add ref: `{}`", self);
+                use ::Resource;
                 (ppb::get_core().AddRefResource.unwrap())(self.unwrap());
                 unsafe {
-                    mem::transmute_copy(self)
+                    ::std::mem::transmute_copy(self)
                 }
             }
         }
         impl Drop for $ty {
             fn drop(&mut self) {
-                println!("drop ref: `{}`", self);
+                use ::Resource;
                 (ppb::get_core().ReleaseResource.unwrap())(self.unwrap());
             }
         }
@@ -186,6 +186,7 @@ pub mod font;
 pub mod imagedata;
 pub mod input;
 pub mod url;
+pub mod fs;
 
 
 #[cfg(target_os = "nacl")]
@@ -196,21 +197,17 @@ extern {}
 
 pub type Result<T> = result::Result<T, Code>;
 
+// YOU MUST NULL TERMINATE ALL STRINGS PROVIDED.
 pub fn mount<'s, 't, 'f, 'd>(source: &'s str,
                              target: &'t str,
                              filesystem_type: &'f str,
                              data: &'d str) -> Code {
-    let csource = source.to_c_str();
-    let ctarget = target.to_c_str();
-    let cfilesystem_type = filesystem_type.to_c_str();
-    let cdata = data.to_c_str();
-
     match unsafe {
-        ffi::mount(csource.as_ptr(),
-                   ctarget.as_ptr(),
-                   cfilesystem_type.as_ptr(),
+        ffi::mount(source.as_ptr() as *const i8,
+                   target.as_ptr() as *const i8,
+                   filesystem_type.as_ptr() as *const i8,
                    0,
-                   cdata.as_ptr() as *const libc::c_void)
+                   data.as_ptr() as *const libc::c_void)
     } {
         c if c >= 0 => Code::Ok,
         -1 => Code::Failed,
@@ -234,7 +231,7 @@ impl ToFFIBool for bool {
     }
 }
 
-#[deriving(Clone, Eq, PartialEq, Copy)]
+#[derive(Clone, Eq, PartialEq, Copy)]
 pub enum Code {
     Ok                = ffi::PP_OK as int,
     BadResource       = ffi::PP_ERROR_BADRESOURCE as int,
@@ -247,7 +244,7 @@ pub enum Code {
     ContextLost       = ffi::PP_ERROR_CONTEXT_LOST as int,
     CompletionPending = ffi::PP_OK_COMPLETIONPENDING as int,
 }
-impl fmt::Show for Code {
+impl fmt::String for Code {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Code::Ok => f.pad("ok"),
@@ -293,7 +290,14 @@ impl Code {
             Code::ContextLost => ffi::PP_ERROR_CONTEXT_LOST,
         }
     }
-    pub fn to_result<T>(self, ok: |Code| -> T) -> Result<T> {
+    pub fn to_empty_result(self) -> Result<()> {
+        if self.is_ok() {
+            result::Result::Ok(())
+        } else {
+            result::Result::Err(self)
+        }
+    }
+    pub fn to_result<T, F>(self, ok: F) -> Result<T> where F: FnOnce(Code) -> T {
         if self.is_ok() {
             result::Result::Ok(ok(self))
         } else {
@@ -321,7 +325,8 @@ impl Code {
     }
 }
 
-impl ops::Add<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Point {
+impl ops::Add for ffi::Struct_PP_Point {
+    type Output = ffi::Struct_PP_Point;
     fn add(self, rhs: ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
         ffi::Struct_PP_Point {
             x: self.x + rhs.x,
@@ -329,7 +334,8 @@ impl ops::Add<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Poi
         }
     }
 }
-impl ops::Sub<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Point {
+impl ops::Sub for ffi::Struct_PP_Point {
+    type Output = ffi::Struct_PP_Point;
     fn sub(self, rhs: ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
         ffi::Struct_PP_Point {
             x: self.x - rhs.x,
@@ -337,7 +343,8 @@ impl ops::Sub<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Poi
         }
     }
 }
-impl ops::Mul<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Point {
+impl ops::Mul for ffi::Struct_PP_Point {
+    type Output = ffi::Struct_PP_Point;
     fn mul(self, rhs: ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
         ffi::Struct_PP_Point {
             x: self.x * rhs.x,
@@ -345,7 +352,8 @@ impl ops::Mul<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Poi
         }
     }
 }
-impl ops::Div<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Point {
+impl ops::Div for ffi::Struct_PP_Point {
+    type Output = ffi::Struct_PP_Point;
     fn div(self, rhs: ffi::Struct_PP_Point) -> ffi::Struct_PP_Point {
         ffi::Struct_PP_Point {
             x: self.x / rhs.x,
@@ -353,7 +361,8 @@ impl ops::Div<ffi::Struct_PP_Point, ffi::Struct_PP_Point> for ffi::Struct_PP_Poi
         }
     }
 }
-impl ops::Add<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size {
+impl ops::Add for ffi::Struct_PP_Size {
+    type Output = ffi::Struct_PP_Size;
     fn add(self, rhs: ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
         ffi::Struct_PP_Size {
             width: self.width + rhs.width,
@@ -361,7 +370,8 @@ impl ops::Add<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size 
         }
     }
 }
-impl ops::Sub<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size {
+impl ops::Sub for ffi::Struct_PP_Size {
+    type Output = ffi::Struct_PP_Size;
     fn sub(self, rhs: ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
         ffi::Struct_PP_Size {
             width: self.width - rhs.width,
@@ -369,7 +379,8 @@ impl ops::Sub<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size 
         }
     }
 }
-impl ops::Mul<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size {
+impl ops::Mul for ffi::Struct_PP_Size {
+    type Output = ffi::Struct_PP_Size;
     fn mul(self, rhs: ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
         ffi::Struct_PP_Size {
             width: self.width * rhs.width,
@@ -377,7 +388,8 @@ impl ops::Mul<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size 
         }
     }
 }
-impl ops::Div<ffi::Struct_PP_Size, ffi::Struct_PP_Size> for ffi::Struct_PP_Size {
+impl ops::Div for ffi::Struct_PP_Size {
+    type Output = ffi::Struct_PP_Size;
     fn div(self, rhs: ffi::Struct_PP_Size) -> ffi::Struct_PP_Size {
         ffi::Struct_PP_Size {
             width: self.width / rhs.width,
@@ -422,7 +434,7 @@ pub type Ticks = ffi::PP_TimeTicks;
 pub type Time = ffi::PP_Time;
 
 // duplicated here so we don't have such a long name for this.
-#[deriving(Eq, PartialEq, Hash, Clone, Copy)]
+#[derive(Eq, PartialEq, Hash, Clone, Copy)]
 pub struct Size {
     pub width:  u32,
     pub height: u32,
@@ -447,7 +459,7 @@ pub trait ToOption<From> {
     fn to_option(from: &From) -> Option<Self>;
 }
 
-#[deriving(Copy)]
+#[derive(Copy)]
 pub enum ResourceType {
     WheelInputEventRes,
     WebSocketRes,
@@ -471,7 +483,7 @@ pub enum ResourceType {
     Graphics3DRes,
     Graphics2DRes,
     FontRes,
-    FilesystemRes,
+    FileSystemRes,
     FileRefRes,
     FileIoRes,
     AudioConfigRes,
@@ -486,23 +498,16 @@ pub trait Resource {
 pub trait ContextResource {
     fn get_device(&self) -> ffi::PP_Resource;
 }
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct Context2d(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct View(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct MessageLoop(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct FileRef(ffi::PP_Resource);
-#[deriving(Clone, Hash, Eq, PartialEq, Show)]
-pub struct FileSliceRef(FileRef,
-                        Option<i64>,
-                        Option<i64>);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct FileIo(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct Filesystem(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct Context2d(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct View(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct MessageLoop(ffi::PP_Resource);
 
 impl_clone_drop_for!(Context3d);
-impl_resource_for!(Context2d ResourceType::Graphics2DRes);
+impl_resource_for!(Context2d, ResourceType::Graphics2DRes);
 impl_clone_drop_for!(Context2d);
-impl_resource_for!(View ResourceType::ViewRes);
+impl_resource_for!(View, ResourceType::ViewRes);
 impl_clone_drop_for!(View);
-impl_resource_for!(MessageLoop ResourceType::MessageLoopRes);
+impl_resource_for!(MessageLoop, ResourceType::MessageLoopRes);
 impl_clone_drop_for!(MessageLoop);
 impl_clone_drop_for!(KeyboardInputEvent);
 impl_clone_drop_for!(MouseInputEvent);
@@ -510,12 +515,6 @@ impl_clone_drop_for!(WheelInputEvent);
 impl_clone_drop_for!(TouchInputEvent);
 impl_clone_drop_for!(Font);
 impl_clone_drop_for!(ImageData);
-impl_resource_for!(FileRef ResourceType::FileRefRes);
-impl_clone_drop_for!(FileRef);
-impl_resource_for!(FileIo ResourceType::FileIoRes);
-impl_clone_drop_for!(FileIo);
-impl_resource_for!(Filesystem ResourceType::FilesystemRes);
-impl_clone_drop_for!(Filesystem);
 impl_clone_drop_for!(IMEInputEvent);
 impl_clone_drop_for!(UrlLoader);
 impl_clone_drop_for!(UrlRequestInfo);
@@ -603,7 +602,7 @@ impl MessageLoop {
     }
 }
 
-#[deriving(Clone)]
+#[derive(Clone, Show)]
 pub enum AnyVar {
     Null,
     Undefined,
@@ -616,20 +615,33 @@ pub enum AnyVar {
     Dictionary(DictionaryVar),
     ArrayBuffer(ArrayBufferVar),
 }
-#[deriving(Clone, Eq, PartialEq, Copy)]
+#[derive(Clone, Eq, PartialEq, Copy)]
 pub struct NullVar;
-#[deriving(Clone, Eq, PartialEq, Copy)]
+#[derive(Clone, Eq, PartialEq, Copy)]
 pub struct UndefinedVar;
-#[deriving(Eq, PartialEq, Hash)]
+#[derive(Eq, PartialEq, Hash)]
 pub struct StringVar     (i64);
-#[deriving(Eq, PartialEq, Hash)]
+#[derive(Eq, PartialEq, Hash, Show)]
 pub struct ObjectVar     (i64);
-#[deriving(Eq, PartialEq, Hash)]
+#[derive(Eq, PartialEq, Hash, Show)]
 pub struct ArrayVar      (i64);
-#[deriving(Eq, PartialEq, Hash)]
+#[derive(Eq, PartialEq, Hash, Show)]
 pub struct DictionaryVar (i64);
-#[deriving(Eq, PartialEq, Hash)]
+#[derive(Eq, PartialEq, Hash, Show)]
 pub struct ArrayBufferVar(i64);
+
+pub trait UnwrapOr {
+    fn unwrap_or_null(&self) -> AnyVar;
+    fn unwrap_or_undefined(&self) -> AnyVar;
+}
+impl<T: ToVar> UnwrapOr for Option<T> {
+    fn unwrap_or_null(&self) -> AnyVar {
+        self.as_ref().map(|v| v.to_any() ).unwrap_or(AnyVar::Null)
+    }
+    fn unwrap_or_undefined(&self) -> AnyVar {
+        self.as_ref().map(|v| v.to_any() ).unwrap_or(AnyVar::Undefined)
+    }
+}
 
 pub trait ByRefVar {
     fn get_id(&self) -> i64;
@@ -658,7 +670,7 @@ impl<T: ToVar> ToVar for Option<T> {
     }
 }
 /// by default all functions return false/None so one doesn't have to impl all of them.
-pub trait Var: clone::Clone {
+pub trait Var: Clone {
     #[inline] fn is_null(&self) -> bool { false }
     #[inline] fn is_undefined(&self) -> bool { false }
     #[inline] fn is_a_bool(&self) -> bool { false }
@@ -696,7 +708,7 @@ impl Var for AnyVar {
     #[inline]
     fn is_a_resource(&self) -> bool { self.to_var()._type == ffi::PP_VARTYPE_RESOURCE }
 }
-impl clone::Clone for ffi::PP_Var {
+impl Clone for ffi::PP_Var {
     fn clone(&self) -> ffi::PP_Var {
         ppb::get_var().add_ref(self);
         unsafe {
@@ -730,7 +742,7 @@ impl Var for ffi::PP_Var {
 }
 
 macro_rules! impl_clone_drop_for(
-    ($ty:ty -> $is_true_name:ident) => (
+    ($ty:ty, $is_true_name:ident) => (
         impl Drop for $ty {
             fn drop(&mut self) {
                 (ppb::get_var().Release.unwrap())(self.to_var());
@@ -764,14 +776,14 @@ macro_rules! impl_clone_drop_for(
         }
     )
 );
-impl_clone_drop_for!(StringVar -> is_a_string);
-impl_clone_drop_for!(ObjectVar -> is_an_object);
-impl_clone_drop_for!(ArrayVar -> is_an_array);
-impl_clone_drop_for!(DictionaryVar -> is_a_dictionary);
-impl_clone_drop_for!(ArrayBufferVar -> is_an_array_buffer);
+impl_clone_drop_for!(StringVar, is_a_string);
+impl_clone_drop_for!(ObjectVar, is_an_object);
+impl_clone_drop_for!(ArrayVar, is_an_array);
+impl_clone_drop_for!(DictionaryVar, is_a_dictionary);
+impl_clone_drop_for!(ArrayBufferVar, is_an_array_buffer);
 
 macro_rules! impl_var_for(
-    ($ty:ty -> $is_true_name:ident) => (
+    ($ty:ty, $is_true_name:ident) => (
         impl Var for $ty {
             #[inline] fn $is_true_name(&self) -> bool { true }
         }
@@ -792,11 +804,11 @@ macro_rules! impl_var_for(
         }
     )
 );
-impl_var_for!(NullVar -> is_null);
-impl_var_for!(UndefinedVar -> is_undefined);
-impl_var_for!(bool -> is_a_bool);
-impl_var_for!(i32 -> is_an_i32);
-impl_var_for!(f64 -> is_a_f64);
+impl_var_for!(NullVar, is_null);
+impl_var_for!(UndefinedVar, is_undefined);
+impl_var_for!(bool, is_a_bool);
+impl_var_for!(i32, is_an_i32);
+impl_var_for!(f64, is_a_f64);
 
 impl VarCtor for NullVar {
     fn ctor(_: ffi::PP_Var) -> NullVar {
@@ -1028,21 +1040,21 @@ impl_to_var_float!(f64);
 impl<'s> ToVar for &'s bool {
     fn to_var(&self) -> ffi::PP_Var {
         unsafe {
-            ffi::bool_to_var(**self as i32)
+            ffi::bool_to_var(**self as u8)
         }
     }
 }
 impl ToVar for bool {
     fn to_var(&self) -> ffi::PP_Var {
         unsafe {
-            ffi::bool_to_var(*self as i32)
+            ffi::bool_to_var(*self as u8)
         }
     }
 }
 impl ToVar for Box<bool> {
     fn to_var(&self) -> ffi::PP_Var {
         unsafe {
-            ffi::bool_to_var(**self as i32)
+            ffi::bool_to_var(**self as u8)
         }
     }
 }
@@ -1097,8 +1109,8 @@ impl AnyVar {
         unsafe { mem::forget(v.clone()) };
         v
     }
-    #[inline] #[allow(dead_code)]
-    fn is_ref_counted(&self) -> bool {
+    #[inline]
+    pub fn is_ref_counted(&self) -> bool {
         self.is_a_string() ||
             self.is_an_object() ||
             self.is_an_array() ||
@@ -1110,15 +1122,7 @@ impl AnyVar {
 
 impl fmt::Show for StringVar {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let str = unsafe {
-            let mut len: u32 = intrinsics::uninit();
-            let buf = (ppb::get_var().VarToUtf8.unwrap())
-                (self.to_var(),
-                 &mut len as *mut u32);
-            let len = len;
-            string::raw::from_buf_len(buf as *const u8, len as uint)
-        };
-        f.pad(str.as_slice())
+        f.pad(self.as_slice())
     }
 }
 impl StringVar {
@@ -1128,15 +1132,35 @@ impl StringVar {
     }
     pub fn new_from_str(v: &str) -> StringVar {
         let len = v.len();
-        let var = v.with_c_str(|p| {
-            (ppb::get_var().VarFromUtf8.unwrap())
-                (p,
-                 len as u32)
-        });
+        let var = (ppb::get_var().VarFromUtf8.unwrap())
+                (v.as_ptr() as *const i8,
+                 len as u32);
         return StringVar(unsafe { ffi::id_from_var(var) } );
     }
     pub fn new_from_var(v: ffi::PP_Var) -> StringVar {
         StringVar(unsafe { ffi::id_from_var(v) })
+    }
+}
+impl Str for StringVar {
+    fn as_slice<'a>(&'a self) -> &'a str {
+        use std::str::from_utf8_unchecked;
+        use std::slice::from_raw_buf;
+        use std::mem::transmute;
+
+        let f = ppb::get_var().VarToUtf8.unwrap();
+
+        unsafe {
+            let mut len: u32 = intrinsics::uninit();
+            let buf = f(self.to_var(), &mut len as *mut u32);
+            let len = len as uint;
+            let slice = from_raw_buf(transmute(&buf), len);
+            transmute(from_utf8_unchecked(slice))
+        }
+    }
+}
+impl fmt::String for StringVar {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.pad(self.as_slice())
     }
 }
 impl ToVar for ::std::string::String {
@@ -1189,13 +1213,13 @@ impl ArrayVar {
         ppb::get_array().get_len(&self.to_var()) as uint
     }
     pub fn resize(&self, new_len: uint) -> bool {
-        ppb::get_array().set_len(&self.to_var(), new_len as libc::uint32_t) != 0
+        ppb::get_array().set_len(&self.to_var(), new_len as libc::uint32_t)
     }
     pub fn get(&self, index: uint) -> AnyVar {
         AnyVar::new(ppb::get_array().get(&self.to_var(), index as libc::uint32_t))
     }
-    pub fn set<T: ToVar>(&self, index: uint, value: &T) -> bool {
-        ppb::get_array().set(&self.to_var(), index, &value.to_var()) != 0
+    pub fn set<T: ToVar>(&self, index: usize, value: &T) -> bool {
+        ppb::get_array().set(&self.to_var(), index as u32, &value.to_var())
     }
 
     pub fn iter<'a>(&'a self) -> ArrayVarIter<'a> {
@@ -1220,7 +1244,7 @@ impl<'a> Iterator for DictEntries<'a> {
             let k = self.keys.get(self.key_index);
             let k = match k {
                 AnyVar::String(k) => k,
-                k => unreachable!("dictionary keys should always be stored as strings: `{}`", k),
+                k => unreachable!("dictionary keys should always be stored as strings: `{:?}` was not.", k),
             };
             let v = self.dict.get(&k);
             self.key_index = self.key_index + 1;
@@ -1243,14 +1267,14 @@ impl DictionaryVar {
     pub fn len(&self) -> uint {
         self.keys().len()
     }
-    pub fn has_key<T: ToVar>(&self, key: T) -> bool {
-        ppb::get_dictionary().has_key(&self.to_var(), &key.to_var()) != 0
+    pub fn has_key<T: ToVar>(&self, key: &T) -> bool {
+        ppb::get_dictionary().has_key(&self.to_var(), &key.to_var())
     }
-    pub fn get<T: ToVar>(&self, key: T) -> AnyVar {
+    pub fn get<T: ToVar>(&self, key: &T) -> AnyVar {
         AnyVar::new(ppb::get_dictionary().get(&self.to_var(), &key.to_var()))
     }
     pub fn set<T: ToVar, V: ToVar>(&self, key: T, value: V) -> bool {
-        ppb::get_dictionary().set(&self.to_var(), &key.to_var(), &value.to_var()) != 0
+        ppb::get_dictionary().set(&self.to_var(), &key.to_var(), &value.to_var())
     }
     pub fn keys(&self) -> ArrayVar {
         ArrayVar::new_from_var(ppb::get_dictionary().get_keys(&self.to_var()))
@@ -1272,7 +1296,7 @@ impl ArrayBufferVar {
     }
 }
 
-#[deriving(Clone, Eq, PartialEq, Copy)]
+#[derive(Clone, Eq, PartialEq, Copy)]
 pub struct Messaging(ffi::PP_Instance);
 impl Messaging {
     fn unwrap(&self) -> ffi::PP_Instance {
@@ -1281,7 +1305,7 @@ impl Messaging {
     }
 }
 
-#[deriving(Clone, Eq, PartialEq, Copy)]
+#[derive(Clone, Eq, PartialEq, Copy)]
 pub struct Console(ffi::PP_Instance);
 impl Console {
     fn unwrap(&self) -> ffi::PP_Instance {
@@ -1292,15 +1316,21 @@ impl Console {
 
 fn parse_args(argc: u32,
               argk: *mut *const libc::c_char,
-              argv: *mut *const libc::c_char) -> HashMap<::std::string::String, ::std::string::String> {
-    let mut args: HashMap<::std::string::String, ::std::string::String> = HashMap::new();
-    for i in iter::range(0, argc as int) {
-        unsafe {
-            args.insert(string::raw::from_buf(*argk.offset(i) as *const u8),
-                        string::raw::from_buf(*argv.offset(i) as *const u8));
-        }
-    }
-    return args;
+              argv: *mut *const libc::c_char) -> HashMap<String, String> {
+    use std::ffi::c_str_to_bytes;
+    use std::str::from_utf8_unchecked;
+    iter::range(0, argc as int)
+        .map(|i| {
+            let ak = unsafe { *argk.offset(i) };
+            let av = unsafe { *argv.offset(i) };
+            let ak_buf = unsafe { c_str_to_bytes(&ak) };
+            let av_buf = unsafe { c_str_to_bytes(&av) };
+            let ak_str = unsafe { from_utf8_unchecked(ak_buf) };
+            let av_str = unsafe { from_utf8_unchecked(av_buf) };
+
+            (ak_str.to_string(), av_str.to_string())
+        })
+        .collect()
 }
 /// INTERNAL
 pub trait Callback {
@@ -1329,11 +1359,11 @@ fn possibly_warn_code_callback(code: Code) -> bool {
     }
 }
 
-impl<Sized? F> Callback for F
+impl<F: Sized> Callback for F
     where F : FnOnce(Code) + Send
 {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
-        extern "C" fn work_callback<Sized? F>(user: *mut libc::c_void, status: i32)
+        extern "C" fn work_callback<F: Sized>(user: *mut libc::c_void, status: i32)
             where F : FnOnce(Code) + Send
         {
             let work: Box<F> = unsafe { mem::transmute(user) };
@@ -1428,8 +1458,8 @@ impl Writer for StdIo {
             };
             let rest = buf.slice(0, newline_pos + 1);
             self.buffer.push_all(rest);
-            let result = (|| {
-                use std::result::Result::{Ok, Err};
+            let result = (|&mut: | {
+                use std::result::Result::{Ok};
                 use self::ppb::ConsoleInterface;
 
                 try!(self.raw.write(self.buffer.as_slice()));
@@ -1461,7 +1491,7 @@ pub fn is_main_thread() -> bool {
     Some(MessageLoop::get_main_loop()) == MessageLoop::current()
 }
 
-#[deriving(Clone, Hash, Eq, PartialEq, Copy)]
+#[derive(Clone, Hash, Eq, PartialEq, Copy)]
 pub struct Instance {
     instance: ffi::PP_Instance,
 }
@@ -1599,6 +1629,12 @@ impl Instance {
     fn create_url_request_info(&self) -> Option<UrlRequestInfo> {
         get_url_request().create(self.unwrap()).map(|info| UrlRequestInfo::new(info) )
     }
+    pub fn create_file_system(&self, kind: fs::Kind) -> Option<fs::FileSystem> {
+        use ppb::FileSystemIf;
+        ppb::get_file_system().create(self.unwrap(),
+                                      kind as ffi::PP_FileSystemType)
+            .map(|fs| fs::FileSystem::new(fs) )
+    }
 }
 
 impl MessageLoop {
@@ -1646,6 +1682,7 @@ impl MessageLoop {
             .expect("couldn't tell an instance about an on_change_focus event");
     }
     fn on_document_load(&mut self, loader: UrlLoader) -> bool {
+        use std::sync::mpsc::channel;
         let (tx, rx) = channel();
         self.get_ref()
             .post_work(move |: _c: Code| {
@@ -1655,14 +1692,14 @@ impl MessageLoop {
                         transmute(ppapi_on_document_loaded);
 
                     let handled = on_document_loaded(loader);
-                    tx.send(handled);
+                    let _ = tx.send(handled);
                 }
             },
                        0)
             .expect("couldn't tell an instance about an on_change_view event");
 
         // This will block forever if the recieving instance isn't responding to new messages.
-        rx.recv_opt().unwrap_or(false)
+        rx.try_recv().unwrap_or(false)
     }
 }
 
@@ -1680,13 +1717,11 @@ unsafe fn deinitialize_instances() {
 }
 
 fn expect_instances() -> &'static mut InstancesType {
-    use std::hash::RandomSipHasher;
     use core::mem;
     use alloc::heap::allocate;
     unsafe {
         if INSTANCES.is_null() {
-            let hasher = RandomSipHasher::new();
-            let instances: InstancesType = HashMap::with_hasher(hasher);
+            let instances: InstancesType = HashMap::new();
             INSTANCES = allocate(mem::size_of::<InstancesType>(),
                                  mem::align_of::<InstancesType>())
                 as *mut InstancesType;
@@ -1703,9 +1738,11 @@ fn expect_instances() -> &'static mut InstancesType {
     }
 }
 
-fn find_instance<U, Take>(instance: Instance,
-                          take: Take,
-                          f: |&mut MessageLoop, Take| -> U) -> Option<U> {
+fn find_instance<U, Take, F>(instance: Instance,
+                             take: Take,
+                             f: F) -> Option<U>
+    where F: FnOnce(&mut MessageLoop, Take) -> U
+{
     match expect_instances().get_mut(&instance) {
         Some(inst) => Some(f(inst, take)),
         None => {
@@ -1763,6 +1800,7 @@ pub mod entry {
         use std::io::{Writer};
         use std::io::stdio::{set_stderr, set_stdout};
         use std::thread::{Builder};
+        use std::sync::mpsc::channel;
         use super::{StdIo, ConsoleLogger, MessageLoop};
 
         let instance = Instance::new(inst);
@@ -1814,7 +1852,7 @@ pub mod entry {
                                       Code::Ok => {}
                                       _ => {
                                           error!("failed to attach the new instance's message loop");
-                                          tx.send(None);
+                                          let _ = tx.send(None);
                                           return;
                                       }
                                   }
@@ -1831,9 +1869,9 @@ pub mod entry {
                                               |_| {
                                                   if unwinding() {
                                                       error!("failed to initialize instance");
-                                                      tx.send(None);
+                                                      let _ = tx.send(None);
                                                   } else {
-                                                      tx.send(Some(ml.clone()));
+                                                      let _ = tx.send(Some(ml.clone()));
                                                   }
                                               });
 
@@ -1862,10 +1900,13 @@ pub mod entry {
                      });
 
                      success = rx.recv()
-                         .map(|&: ml| {
-                             let last = expect_instances().insert(instance, ml.clone());
+                         .ok()
+                         .and_then(|ml| ml )
+                         .map(|&: ml: MessageLoop| {
+                             let last = expect_instances().insert(instance, ml);
                              if last.is_some() {
                                  error!("instance already exists; replacing.");
+                                 error!("this is in all likelyhood very leaky.");
                                  last.unwrap().on_destroy();
                              }
                              true
@@ -2126,7 +2167,6 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
 #[allow(non_snake_case)]
 pub extern "C" fn PPP_ShutdownModule() {
     use self::entry::try_block;
-    // FIXME
     let _ = try_block(|| { unsafe {
         deinitialize_instances();
     }} );

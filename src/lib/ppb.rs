@@ -14,7 +14,7 @@ use core::mem;
 use core::mem::uninitialized;
 use libc;
 use std::ptr::PtrExt;
-use std::{intrinsics, string};
+use std::intrinsics;
 
 use super::ffi;
 use super::ffi::{Struct_PP_Var, PP_Instance, PP_LogLevel, PP_Resource,
@@ -24,11 +24,11 @@ use super::{Ticks, Time, ToFFIBool, Code, Result, ToVar};
 pub type Var = ffi::PPB_Var;
 pub type Core = ffi::PPB_Core;
 pub type Console = ffi::PPB_Console;
-pub type VarArray = ffi::PPB_VarArray;
+pub type VarArray = ffi::Struct_PPB_VarArray_1_0;
 pub type VarArrayBuffer = ffi::PPB_VarArrayBuffer;
-pub type VarDictionary  = ffi::PPB_VarDictionary;
+pub type VarDictionary  = ffi::Struct_PPB_VarDictionary_1_0;
 pub type Graphics3D = ffi::PPB_Graphics3D;
-pub type Messaging = ffi::PPB_Messaging;
+pub type Messaging = ffi::Struct_PPB_Messaging_1_2;
 pub type MessageLoop = ffi::PPB_MessageLoop;
 pub type Instance = ffi::PPB_Instance;
 pub type InputEvent = ffi::PPB_InputEvent;
@@ -43,32 +43,36 @@ pub type ImageData = ffi::PPB_ImageData;
 pub type UrlLoader = ffi::PPB_URLLoader;
 pub type UrlRequestInfo = ffi::PPB_URLRequestInfo;
 pub type UrlResponseInfo = ffi::PPB_URLResponseInfo;
-pub type View = ffi::PPB_View;
+pub type View = ffi::Struct_PPB_View_1_2;
+pub type FileSystem = ffi::Struct_PPB_FileSystem_1_0;
+pub type FileRef = ffi::PPB_FileRef;
 
 mod consts {
-    pub static VAR: &'static str              = "PPB_Var;1.1";
-    pub static CORE: &'static str             = "PPB_Core;1.0";
-    pub static CONSOLE: &'static str          = "PPB_Console;1.0";
-    pub static MESSAGING: &'static str        = "PPB_Messaging;1.0";
-    pub static MESSAGELOOP: &'static str      = "PPB_MessageLoop;1.0";
-    pub static VAR_ARRAY: &'static str        = "PPB_VarArray;1.0";
-    pub static VAR_ARRAY_BUFFER: &'static str = "PPB_VarArrayBuffer;1.0";
-    pub static VAR_DICTIONARY: &'static str   = "PPB_VarDictionary;1.0";
-    pub static GRAPHICS_3D: &'static str      = "PPB_Graphics3D;1.0";
-    pub static INSTANCE: &'static str         = "PPB_Instance;1.0";
-    pub static INPUT:    &'static str         = "PPB_InputEvent;1.0";
-    pub static KEYBOARD: &'static str         = "PPB_KeyboardInputEvent;1.2";
-    pub static MOUSE:    &'static str         = "PPB_MouseInputEvent;1.1";
-    pub static WHEEL:    &'static str         = "PPB_WheelInputEvent;1.0";
-    pub static TOUCH:    &'static str         = "PPB_TouchInputEvent;1.0";
-    pub static IME:      &'static str         = "PPB_IMEInputEvent;1.0";
-    pub static GLES2:    &'static str         = "PPB_OpenGLES2;1.0";
-    pub static FONTDEV:  &'static str         = "PPB_Font(Dev);0.6";
-    pub static IMAGEDATA:&'static str         = "PPB_ImageData;1.0";
-    pub static URL_LOADER: &'static str       = "PPB_URLLoader;1.0";
-    pub static URL_REQUEST: &'static str      = "PPB_URLRequestInfo;1.0";
-    pub static URL_RESPONSE: &'static str     = "PPB_URLResponseInfo;1.0";
-    pub static VIEW:     &'static str         = "PPB_View;1.1";
+    pub static VAR: &'static str              = "PPB_Var;1.1\0";
+    pub static CORE: &'static str             = "PPB_Core;1.0\0";
+    pub static CONSOLE: &'static str          = "PPB_Console;1.0\0";
+    pub static MESSAGING: &'static str        = "PPB_Messaging;1.2\0";
+    pub static MESSAGELOOP: &'static str      = "PPB_MessageLoop;1.0\0";
+    pub static VAR_ARRAY: &'static str        = "PPB_VarArray;1.0\0";
+    pub static VAR_ARRAY_BUFFER: &'static str = "PPB_VarArrayBuffer;1.0\0";
+    pub static VAR_DICTIONARY: &'static str   = "PPB_VarDictionary;1.0\0";
+    pub static GRAPHICS_3D: &'static str      = "PPB_Graphics3D;1.0\0";
+    pub static INSTANCE: &'static str         = "PPB_Instance;1.0\0";
+    pub static INPUT:    &'static str         = "PPB_InputEvent;1.0\0";
+    pub static KEYBOARD: &'static str         = "PPB_KeyboardInputEvent;1.2\0";
+    pub static MOUSE:    &'static str         = "PPB_MouseInputEvent;1.1\0";
+    pub static WHEEL:    &'static str         = "PPB_WheelInputEvent;1.0\0";
+    pub static TOUCH:    &'static str         = "PPB_TouchInputEvent;1.0\0";
+    pub static IME:      &'static str         = "PPB_IMEInputEvent;1.0\0";
+    pub static GLES2:    &'static str         = "PPB_OpenGLES2;1.0\0";
+    pub static FONTDEV:  &'static str         = "PPB_Font(Dev);0.6\0";
+    pub static IMAGEDATA:&'static str         = "PPB_ImageData;1.0\0";
+    pub static URL_LOADER: &'static str       = "PPB_URLLoader;1.0\0";
+    pub static URL_REQUEST: &'static str      = "PPB_URLRequestInfo;1.0\0";
+    pub static URL_RESPONSE: &'static str     = "PPB_URLResponseInfo;1.0\0";
+    pub static VIEW:     &'static str         = "PPB_View;1.2\0";
+    pub static FILESYSTEM: &'static str       = "PPB_FileSystem;1.0\0";
+    pub static FILEREF: &'static str          = "PPB_FileRef;1.2\0";
 }
 mod globals {
     use super::super::ffi;
@@ -96,6 +100,8 @@ mod globals {
     pub static mut URL_REQUEST:  Option<&'static super::UrlRequestInfo> = None;
     pub static mut URL_RESPONSE: Option<&'static super::UrlResponseInfo> = None;
     pub static mut VIEW:         Option<&'static super::View> = None;
+    pub static mut FILESYSTEM:   Option<&'static super::FileSystem> = None;
+
 }
 #[cold] #[inline(never)] #[doc(hidden)]
 pub fn initialize_globals(b: ffi::PPB_GetInterface) {
@@ -124,6 +130,7 @@ pub fn initialize_globals(b: ffi::PPB_GetInterface) {
         globals::URL_REQUEST   = get_interface(consts::URL_REQUEST);
         globals::URL_RESPONSE  = get_interface(consts::URL_RESPONSE);
         globals::VIEW          = get_interface(consts::VIEW);
+        globals::FILESYSTEM    = get_interface(consts::FILESYSTEM);
     }
 }
 /// Get the PPB_GetInterface function pointer.
@@ -134,9 +141,7 @@ pub unsafe fn get_actual_browser() -> extern "C" fn(*const i8) -> *const libc::c
 fn get_interface<T>(name: &'static str) -> Option<&'static T> {
     // we actually have to use a null-terminated str here.
     unsafe {
-        let ptr = name.with_c_str_unchecked(|p| {
-                get_actual_browser()(p) as *const T
-            });
+        let ptr = get_actual_browser()(name.as_ptr() as *const i8) as *const T;
 
         if ptr.is_null() { None }
         else             { Some(mem::transmute(ptr)) }
@@ -214,7 +219,8 @@ get_fun!    (pub fn get_url_response() -> UrlResponseInfo { URL_RESPONSE });
 get_fun_opt!(pub fn get_url_response_opt() -> UrlResponseInfo { URL_RESPONSE });
 get_fun!    (pub fn get_view() -> View { VIEW });
 get_fun_opt!(pub fn get_view_opt() -> View { VIEW });
-
+get_fun!    (pub fn get_file_system() -> FileSystem { FILESYSTEM });
+get_fun_opt!(pub fn get_file_system_opt() -> FileSystem { FILESYSTEM });
 
 macro_rules! impl_fun(
     ($fun:expr => ( $($arg:expr),* ) ) => ({
@@ -267,9 +273,13 @@ impl VarIf for ffi::Struct_PPB_Var_1_2 {
         impl_fun!(self.VarFromUtf8 => (string.as_ptr() as *const i8, string.len() as u32))
     }
     fn var_to_utf8(&self, string: &Struct_PP_Var) -> String {
+        use std::slice::from_raw_buf;
+        use std::str::from_utf8_unchecked;
         let mut len: u32 = unsafe { intrinsics::uninit() };
-        let buf = impl_fun!(self.VarToUtf8 => (*string, &mut len as *mut u32));
-        unsafe { string::raw::from_buf_len(buf as *const u8, len as uint) }
+        let ptr = impl_fun!(self.VarToUtf8 => (*string, &mut len as *mut u32)) as *const u8;
+        let buf = unsafe { from_raw_buf(&ptr, len as usize) };
+        let slice = unsafe { from_utf8_unchecked(buf) };
+        slice.to_string()
     }
 }
 pub trait ConsoleIf {
@@ -295,9 +305,9 @@ impl ConsoleIf for ffi::Struct_PPB_Console_1_0 {
 pub trait VarArrayIf {
     fn create(&self) -> Struct_PP_Var;
     fn get(&self, array: &Struct_PP_Var, index: libc::uint32_t) -> Struct_PP_Var;
-    fn set(&self, array: &Struct_PP_Var, index: libc::uint32_t, value: &Struct_PP_Var) -> libc::int32_t;
+    fn set(&self, array: &Struct_PP_Var, index: libc::uint32_t, value: &Struct_PP_Var) -> bool;
     fn get_len(&self, array: &Struct_PP_Var) -> libc::uint32_t;
-    fn set_len(&self, array: &Struct_PP_Var, new_len: libc::uint32_t) -> libc::int32_t;
+    fn set_len(&self, array: &Struct_PP_Var, new_len: libc::uint32_t) -> bool;
 }
 impl VarArrayIf for ffi::Struct_PPB_VarArray_1_0 {
     fn create(&self) -> Struct_PP_Var {
@@ -306,14 +316,14 @@ impl VarArrayIf for ffi::Struct_PPB_VarArray_1_0 {
     fn get(&self, array: &Struct_PP_Var, index: libc::uint32_t) -> Struct_PP_Var {
         impl_fun!(self.Get => (*array, index))
     }
-    fn set(&self, array: &Struct_PP_Var, index: libc::uint32_t, value: &Struct_PP_Var) -> libc::int32_t {
-        impl_fun!(self.Set => (*array, index, *value))
+    fn set(&self, array: &Struct_PP_Var, index: libc::uint32_t, value: &Struct_PP_Var) -> bool {
+        impl_fun!(self.Set => (*array, index, *value)) != 0
     }
     fn get_len(&self, array: &Struct_PP_Var) -> libc::uint32_t {
-        impl_fun!(self.GetLength => (*array, index))
+        impl_fun!(self.GetLength => (*array))
     }
-    fn set_len(&self, array: &Struct_PP_Var, new_len: libc::uint32_t) -> libc::int32_t {
-        impl_fun!(self.SetLength => (*array, new_len))
+    fn set_len(&self, array: &Struct_PP_Var, new_len: libc::uint32_t) -> bool {
+        impl_fun!(self.SetLength => (*array, new_len)) != 0
     }
 }
 pub trait VarArrayBufferIf {
@@ -344,8 +354,8 @@ impl VarArrayBufferIf for ffi::Struct_PPB_VarArrayBuffer_1_0 {
 pub trait VarDictionaryIf {
     fn create(&self) -> Struct_PP_Var;
     fn get(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> Struct_PP_Var;
-    fn set(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var, value: &Struct_PP_Var) -> libc::int32_t;
-    fn has_key(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> libc::int32_t;
+    fn set(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var, value: &Struct_PP_Var) -> bool;
+    fn has_key(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> bool;
     fn delete(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var);
     fn get_keys(&self, dict: &Struct_PP_Var) -> Struct_PP_Var;
 }
@@ -356,11 +366,11 @@ impl VarDictionaryIf for ffi::Struct_PPB_VarDictionary_1_0 {
     fn get(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> Struct_PP_Var {
         impl_fun!(self.Get => (*dict, *key))
     }
-    fn set(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var, value: &Struct_PP_Var) -> libc::int32_t {
-        impl_fun!(self.Set => (*dict, *key, *value))
+    fn set(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var, value: &Struct_PP_Var) -> bool {
+        impl_fun!(self.Set => (*dict, *key, *value)) != 0
     }
-    fn has_key(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> libc::int32_t {
-        impl_fun!(self.HasKey => (*dict, *key))
+    fn has_key(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) -> bool {
+        impl_fun!(self.HasKey => (*dict, *key)) != 0
     }
     fn delete(&self, dict: &Struct_PP_Var, key: &Struct_PP_Var) {
         impl_fun!(self.Delete => (*dict, *key))
@@ -373,7 +383,7 @@ impl VarDictionaryIf for ffi::Struct_PPB_VarDictionary_1_0 {
 pub trait MessagingIf {
     fn post_message(self, instance: PP_Instance, msg: Struct_PP_Var);
 }
-impl MessagingIf for ffi::Struct_PPB_Messaging_1_0 {
+impl MessagingIf for ffi::Struct_PPB_Messaging_1_2 {
     fn post_message(self, instance: PP_Instance, msg: Struct_PP_Var) {
         impl_fun!(self.PostMessage => (instance, msg))
     }
@@ -763,6 +773,8 @@ impl Graphics3DIf for ffi::Struct_PPB_Graphics3D_1_0 {
     fn attribs(&self,
                ctxt: PP_Resource,
                attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Result<Vec<u32>> {
+        use std::ops::Rem;
+
         let mut attribs: Vec<ffi::PP_Graphics3DAttrib> = attribs
             .into_iter()
             .flat_map(|attrib| {
@@ -820,7 +832,7 @@ pub trait ViewIf {
     fn device_scale(&self, res: PP_Resource) -> f32;
     fn css_scale(&self, res: PP_Resource) -> f32;
 }
-impl ViewIf for ffi::Struct_PPB_View_1_1 {
+impl ViewIf for ffi::Struct_PPB_View_1_2 {
     fn is(&self, res: PP_Resource) -> bool {
         let r = impl_fun!(self.IsView => (res));
         r != 0
@@ -857,6 +869,30 @@ impl ViewIf for ffi::Struct_PPB_View_1_1 {
     }
     fn css_scale(&self, res: PP_Resource) -> f32 {
         impl_fun!(self.GetCSSScale => (res))
+    }
+}
+pub trait FileSystemIf {
+    fn create(&self, inst: PP_Instance, t: ffi::PP_FileSystemType) -> Option<ffi::PP_Resource>;
+    fn is(&self, res: PP_Resource) -> bool;
+    fn open(&self, sys: PP_Resource, expected_size: libc::int64_t,
+            callback: ffi::PP_CompletionCallback) -> libc::int32_t;
+    fn get_type(&self, res: PP_Resource) -> ffi::PP_FileSystemType;
+}
+impl FileSystemIf for ffi::Struct_PPB_FileSystem_1_0 {
+    fn create(&self, inst: PP_Instance, t: ffi::PP_FileSystemType) -> Option<ffi::PP_Resource> {
+        let res = impl_fun!(self.Create => (inst, t));
+        if res == 0 { None }
+        else        { Some(res) }
+    }
+    fn is(&self, res: PP_Resource) -> bool {
+        (impl_fun!(self.IsFileSystem => (res))) != 0
+    }
+    fn open(&self, sys: PP_Resource, expected_size: libc::int64_t,
+            callback: ffi::PP_CompletionCallback) -> libc::int32_t {
+        impl_fun!(self.Open => (sys, expected_size, callback))
+    }
+    fn get_type(&self, res: PP_Resource) -> ffi::PP_FileSystemType {
+        impl_fun!(self.GetType => (res))
     }
 }
 

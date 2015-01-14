@@ -8,18 +8,17 @@
 
 use libc::c_void;
 use std::ops;
-use std::rc::Rc;
 
 use super::ffi;
 use super::{Resource};
 use super::ppb;
 use ppb::ImageDataIf;
 
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct ImageData(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct ImageData(ffi::PP_Resource);
 
-impl_resource_for!(ImageData ResourceType::ImageDataRes);
+impl_resource_for!(ImageData, ResourceType::ImageDataRes);
 
-#[deriving(Eq, PartialEq, Hash, Clone, Copy)]
+#[derive(Eq, PartialEq, Hash, Clone, Copy)]
 pub enum Format {
     BGRA = ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL as int,
     RGBA = ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL as int,
@@ -44,7 +43,7 @@ impl Format {
     }
 }
 
-#[deriving(Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct Description {
     pub format: Format,
     pub size: super::Size,
@@ -66,29 +65,25 @@ impl Description {
     }
 }
 
-pub struct Map_ {
-    pub img: ImageData,
+pub struct MappedImage<'a> {
+    img: &'a ImageData,
     pub desc: Description,
     ptr: *mut c_void,
 }
-pub type Map = Rc<Map_>;
-pub trait MapImpl {
-    fn with_imm_vec<U>(&self, f: |&Vec<u8>, &Description| -> U) -> U;
+pub trait MappedSlice<'a> {
+    fn as_imm_slice(&self) -> &'a [u8];
 }
-impl MapImpl for Rc<Map_> {
-    fn with_imm_vec<U>(&self, f: |&Vec<u8>, &Description| -> U) -> U {
-        use core::mem::forget;
-        let size = ((**self).desc.size.height * (**self).desc.line_stride) as uint;
-        let v = unsafe { Vec::from_raw_parts((**self).ptr as *mut u8, size, size) };
-        let ret = f(&v, &(**self).desc);
-        unsafe {
-            forget(v);
-        }
-        ret
+impl<'a> MappedSlice<'a> for MappedImage<'a> {
+    fn as_imm_slice(&self) -> &'a [u8] {
+        use std::slice::from_raw_buf;
+        use std::mem::transmute;
+        let size = (self.desc.size.height * self.desc.line_stride) as usize;
+
+        unsafe { from_raw_buf(transmute(&self.ptr), size) }
     }
 }
-
-impl ops::Drop for Map_ {
+#[unsafe_destructor]
+impl<'a> ops::Drop for MappedImage<'a> {
     fn drop(&mut self) {
         ppb::get_image_data().unmap(&self.img.unwrap());
     }
@@ -104,11 +99,11 @@ impl ImageData {
             .describe(self.unwrap())
             .map(|desc| Description::from_ffi(desc) )
     }
-    pub fn map(&self) -> Map {
-        Rc::new(Map_ {
-            img: self.clone(),
+    pub fn map<'a>(&'a self) -> MappedImage<'a> {
+        MappedImage {
+            img: self,
             desc: self.describe().unwrap(),
             ptr: ppb::get_image_data().map(&self.unwrap()),
-        })
+        }
     }
 }

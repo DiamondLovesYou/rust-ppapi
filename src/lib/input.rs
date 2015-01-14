@@ -15,21 +15,21 @@ use collections::enum_set;
 use collections::enum_set::{CLike, EnumSet};
 use std::{iter, intrinsics, clone, hash};
 
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct KeyboardInputEvent(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct MouseInputEvent(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct WheelInputEvent(ffi::PP_Resource);
-#[deriving(Hash, Eq, PartialEq, Show)] pub struct TouchInputEvent(ffi::PP_Resource);
-#[deriving(Eq, Show)]
+#[derive(Hash, Eq, PartialEq, Show)] pub struct KeyboardInputEvent(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct MouseInputEvent(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct WheelInputEvent(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Show)] pub struct TouchInputEvent(ffi::PP_Resource);
+#[derive(Eq, Show)]
 pub struct IMEInputEvent {
     res: ffi::PP_Resource,
     pub string: String,
     segments_len: uint,
 }
 
-impl_resource_for!(TouchInputEvent ResourceType::TouchInputEventRes);
-impl_resource_for!(WheelInputEvent ResourceType::WheelInputEventRes);
-impl_resource_for!(MouseInputEvent ResourceType::MouseInputEventRes);
-impl_resource_for!(KeyboardInputEvent ResourceType::KeyboardInputEventRes);
+impl_resource_for!(TouchInputEvent, ResourceType::TouchInputEventRes);
+impl_resource_for!(WheelInputEvent, ResourceType::WheelInputEventRes);
+impl_resource_for!(MouseInputEvent, ResourceType::MouseInputEventRes);
+impl_resource_for!(KeyboardInputEvent, ResourceType::KeyboardInputEventRes);
 
 impl IMEInputEvent {
     pub fn new(res: ffi::PP_Resource) -> IMEInputEvent {
@@ -56,13 +56,13 @@ impl PartialEq for IMEInputEvent {
         self.res == rhs.res
     }
 }
-impl<T: hash::Writer> hash::Hash<T> for IMEInputEvent {
+impl<T: hash::Writer + hash::Hasher> hash::Hash<T> for IMEInputEvent {
     fn hash(&self, s: &mut T) {
         self.res.hash(s)
     }
 }
 
-#[deriving(Clone, Show)]
+#[derive(Clone, Show)]
 pub enum Class {
     Keyboard(Event<KeyboardInputEvent, KeyboardEvent>),
     Mouse   (Event<MouseInputEvent,    MouseEvent>),
@@ -269,7 +269,7 @@ impl InputEvent for Class {
         }
     }
 }
-#[deriving(Clone, Show)]
+#[derive(Clone, Show)]
 pub struct Event<Res, Class> {
     pub res: Res,
     pub timestamp: Ticks,
@@ -292,7 +292,7 @@ impl<Res: Resource, Class> InputEvent for Event<Res, Class> {
         self.timestamp
     }
 }
-#[deriving(Clone, Hash, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Hash, Eq, PartialEq, Show, Copy)]
 pub enum Modifiers_ {
     ShiftKey,
     ControlKey,
@@ -363,19 +363,19 @@ fn modifiers_from_bitset(set: u32) -> Modifiers {
     if set & 0b1000000000000 != 0 { e.insert(Modifiers_::IsRight); }
     e
 }
-#[deriving(Clone, Hash, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Hash, Eq, PartialEq, Show, Copy)]
 pub enum Move {
     Enter,
     Leave,
     Move,
 }
 
-#[deriving(Clone, Hash, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Hash, Eq, PartialEq, Show, Copy)]
 pub enum Press {
     Down,
     Up,
 }
-#[deriving(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Show, Copy)]
 pub enum MouseEvent {
     Press       (Press, MouseClickEvent),
     ContextMenu (MouseClickEvent),
@@ -394,7 +394,7 @@ impl MouseEvent {
         }
     }
 }
-#[deriving(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Show, Copy)]
 pub enum MouseButton {
     Left,
     Middle,
@@ -410,26 +410,26 @@ impl MouseButton {
         }
     }
 }
-#[deriving(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Show, Copy)]
 pub struct MouseClickEvent {
     point: FloatPoint,
     button: MouseButton,
     click_count: i32,
 }
-#[deriving(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Show, Copy)]
 pub struct MouseMoveEvent {
     point: FloatPoint,
     delta: FloatPoint,
     click_count: i32,
 }
 
-#[deriving(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Show, Copy)]
 pub enum KeyboardEvent {
     Press(Press, i32),
     Char(char),
 }
 
-#[deriving(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Show, Copy)]
 pub struct WheelEvent {
     delta: FloatPoint,
     ticks: FloatPoint,
@@ -495,7 +495,7 @@ impl WheelInputEvent {
         (ppb::get_wheel_event().GetScrollByPage.unwrap())(self.unwrap()) != ffi::PP_FALSE
     }
 }
-#[deriving(Clone, Eq, PartialEq, Hash, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Hash, Show, Copy)]
 pub enum TouchListType {
     Touches,
     Delta,
@@ -510,12 +510,12 @@ impl TouchListType {
         }
     }
 }
-#[deriving(Clone)]
+#[derive(Clone)]
 pub struct TouchList {
     event: TouchInputEvent,
     list_type: TouchListType,
 }
-#[deriving(Clone)]
+#[derive(Clone)]
 pub struct TouchListIterator {
     list: TouchList,
     current: uint,
@@ -559,14 +559,15 @@ impl TouchList {
              self.list_type.to_ffi()) as uint
     }
 }
-impl iter::Iterator<TouchPoint> for TouchListIterator {
+impl iter::Iterator for TouchListIterator {
+    type Item = TouchPoint;
     fn next(&mut self) -> Option<TouchPoint> {
         if self.current >= self.size { None }
         else                         { self.current += 1;
                                        Some(self.list.get(self.current - 1)) }
     }
 }
-impl iter::RandomAccessIterator<TouchPoint> for TouchListIterator {
+impl iter::RandomAccessIterator for TouchListIterator {
     fn indexable(&self) -> uint {
         self.size
     }
@@ -656,13 +657,14 @@ impl<'a> clone::Clone for IMESegmentIterator<'a> {
         }
     }
 }
-impl<'a> iter::Iterator<&'a str> for IMESegmentIterator<'a> {
+impl<'a> iter::Iterator for IMESegmentIterator<'a> {
+    type Item = &'a str;
     fn next(&mut self) -> Option<&'a str> {
         self.current += 1;
         self.event.segment_str(self.current - 1)
     }
 }
-impl<'a> iter::RandomAccessIterator<&'a str> for IMESegmentIterator<'a> {
+impl<'a> iter::RandomAccessIterator for IMESegmentIterator<'a> {
     fn indexable(&self) -> uint {
         self.event.segments_len()
     }

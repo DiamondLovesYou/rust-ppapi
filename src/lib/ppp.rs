@@ -6,7 +6,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use std::c_str;
 use std::ptr;
 use libc::{c_char, c_void};
 
@@ -43,9 +42,12 @@ mod globals {
 #[allow(non_snake_case)]
 pub extern "C" fn PPP_GetInterface(interface_name: *const c_char) -> *const c_void {
     use core::mem::transmute;
+    use std::ffi::c_str_to_bytes;
+    use std::str::from_utf8_unchecked;
+
+    let interface_name_buf: &[u8] = unsafe { c_str_to_bytes(&interface_name) };
+    let name = unsafe { from_utf8_unchecked(interface_name_buf) };
     unsafe {
-        let c_name = c_str::CString::new(interface_name, false);
-        let name = c_name.as_str().expect("Naughty browser");
         if name == consts::INSTANCE {
             transmute(&globals::INSTANCE)
         } else if name == consts::MESSAGING {
@@ -55,7 +57,7 @@ pub extern "C" fn PPP_GetInterface(interface_name: *const c_char) -> *const c_vo
         } else if name == consts::GRAPHICS {
             transmute(&globals::GRAPHICS)
         } else {
-            warn!("PPAPI requested unknown interface: `{}`",
+            warn!("PPAPI requested an unknown interface: `{}`",
                   name);
             ptr::null()
         }
