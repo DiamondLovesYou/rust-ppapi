@@ -17,14 +17,11 @@ name = "ppapi"
 path = "src/lib/lib.rs"
 doc = true
 
-[dependencies.hyper]
-version = "*"
-
-[dependencies.log]
-version = "*"
-
-[dependencies.openssl]
-version = "*"
+[dependencies]
+hyper = "*"
+log = "*"
+openssl = "*"
+url = "*"
 
 [build-dependencies.pnacl-build-helper]
 version = "*"
