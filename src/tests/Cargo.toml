@@ -1,0 +1,17 @@
+[package]
+name = "ppapi-tests"
+description = "Integration tests that run inside Chrome. This requires a bit of magic, including getting Cargo to not build ppapi proper for the host. This package contains no usable library."
+version = "0.0.0"
+authors = [ "Richard Diamond <wichard@vitalitystudios.com>" ]
+license = "MPL-2.0"
+build = "build.rs"
+
+[[lib]]
+name = "dont-use"
+path = "lib.rs"
+
+[build-dependencies]
+pnacl-build-helper = "*"
+
+[dev-dependencies.ppapi-tester]
+path = "../ppapi-tester"
