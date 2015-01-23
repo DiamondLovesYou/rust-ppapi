@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+  <!--
+  Copyright (c) 2013 The Native Client Authors. All rights reserved.
+  Use of this source code is governed by a BSD-style license that can be
+  found in the LICENSE file.
+  -->
+
+<head>
+
+  <title>hello_tutorial</title>
+
+  <script type="text/javascript">
+    module = null;  // Global application object.
+    statusText = 'NO-STATUS';
+
+    // Indicate load success.
+    function moduleDidLoad() {
+      module = document.getElementById('listener');
+      updateStatus('SUCCESS');
+    }
+
+    // Loading progress (chrome internal IR -> nexe translation):
+    function moduleProgress(event) {
+      if(event.lengthComputable && event.total > 0) {
+        var loaded = event.loaded / event.total * 100.0;
+        loaded = Math.round(loaded)
+        updateStatus('COMPILING(' + loaded + '% done)...');
+      }
+    }
+
+    function handleMessage(message_event) {
+      if (message_event.data === 'success' ||
+          message_event.data === 'failure') {
+        window.close();
+      }
+    }
+
+    // If the page loads before the Native Client module loads, then set the
+    // status message indicating that the module is still loading.  Otherwise,
+    // do not change the status message.
+    function pageDidLoad() {
+      if (module == null) {
+        updateStatus('LOADING...');
+      } else {
+        // It's possible that the Native Client module onload event fired
+        // before the page's onload event.  In this case, the status message
+        // will reflect 'SUCCESS', but won't be displayed.  This call will
+        // display the current message.
+        updateStatus();
+      }
+    }
+
+    // Set the global status message.  If the element with id 'statusField'
+    // exists, then set its HTML to the status message as well.
+    // opt_message The message test.  If this is null or undefined, then
+    // attempt to set the element with id 'statusField' to the value of
+    // |statusText|.
+    function updateStatus(opt_message) {
+      if (opt_message)
+        statusText = opt_message;
+      var statusField = document.getElementById('statusField');
+      if (statusField) {
+        statusField.innerHTML = statusText;
+      }
+    }
+  </script>
+</head>
+<body onload="pageDidLoad()">
+  <p>
+    <!--
+    Load the published pexe.
+    Note: Since this module does not use any real-estate in the browser, its
+    width and height are set to 0.
+
+    Note: The <embed> element is wrapped inside a <div>, which has both a 'load'
+    and a 'message' event listener attached.  This wrapping method is used
+    instead of attaching the event listeners directly to the <embed> element to
+    ensure that the listeners are active before the NaCl module 'load' event
+    fires.  This also allows you to use PPB_Messaging.PostMessage() (in C) or
+    pp::Instance.PostMessage() (in C++) from within the initialization code in
+    your module.
+    -->
+    <div id="listener">
+      <script type="text/javascript">
+        var embed = document.createElement('embed');
+        embed.setAttribute('src', 'manifest.nmf');
+        embed.setAttribute('type', 'application/x-pnacl');
+
+        var listener = document.getElementById('listener');
+        listener.addEventListener('load', moduleDidLoad, true);
+        listener.addEventListener('message', handleMessage, true);
+        listener.addEventListener('progress', moduleProgress, true);
+        listener.appendChild(embed);
+      </script>
+    </div>
+  </p>
+
+  <h2>Status <code id="statusField">NO-STATUS</code></h2>
+</body>
+</html>
