@@ -56,9 +56,6 @@ fn expand_test(ecx: &mut ExtCtxt,
     // pretty printed original to a pexe and invokes chrome to simulate being
     // embedding in a website.
 
-    println!("============");
-    println!("{:?}", item);
-
     #[derive(PartialEq)]
     enum HasTestSignature {
         Yes,
@@ -87,7 +84,7 @@ fn expand_test(ecx: &mut ExtCtxt,
 
     // first check that the annotated item is, in fact, a function:
     match has_correct_signature(&*item) {
-        HasTestSignature::Yes => { println!("sig is fine"); },
+        HasTestSignature::Yes => { },
         HasTestSignature::No => {
             ecx.span_err(sp, "function must be typed: fn(instance: \
                          ppapi::Instance, args: HashMap<String, String>) -> ()");

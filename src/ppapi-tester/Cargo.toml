@@ -1,6 +1,6 @@
 [package]
 name = "ppapi-tester"
-version = "0.0.0"
+version = "0.0.1"
 authors = [ "Richard Diamond <wichard@vitalitystudios.com>" ]
 repository = "https://github.com/DiamondLovesYou/rust-ppapi.git"
 license = "MPL-2.0"
