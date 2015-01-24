@@ -1431,6 +1431,40 @@ impl_get_query_ret_type!(Renderer               => consts::RENDERER             
 impl_get_query_ret_type!(Version                => consts::VERSION                  => &'static str);
 impl_get_query_ret_type!(ShadingLanguageVersion => consts::SHADING_LANGUAGE_VERSION => &'static str);
 
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
+pub enum Context3dAttrib {
+    Width(u32),
+    Height(u32),
+    AlphaSize(u32),
+    RedSize(u32),
+    BlueSize(u32),
+    GreenSize(u32),
+    DepthSize(u32),
+    StencilSize(u32),
+    Samples(u32),
+    SampleBuffers(u32),
+    SwapBehaviour(u32),
+}
+
+impl Context3dAttrib {
+    pub fn to_ffi(&self) -> (u32, u32) {
+        use self::Context3dAttrib::*;
+        match self {
+            &Width(v) => (ffi::PP_GRAPHICS3DATTRIB_WIDTH, v),
+            &Height(v) => (ffi::PP_GRAPHICS3DATTRIB_HEIGHT, v),
+            &AlphaSize(v) => (ffi::PP_GRAPHICS3DATTRIB_ALPHA_SIZE, v),
+            &RedSize(v) => (ffi::PP_GRAPHICS3DATTRIB_RED_SIZE, v),
+            &BlueSize(v) => (ffi::PP_GRAPHICS3DATTRIB_BLUE_SIZE, v),
+            &GreenSize(v) => (ffi::PP_GRAPHICS3DATTRIB_GREEN_SIZE, v),
+            &DepthSize(v) => (ffi::PP_GRAPHICS3DATTRIB_DEPTH_SIZE, v),
+            &StencilSize(v) => (ffi::PP_GRAPHICS3DATTRIB_STENCIL_SIZE, v),
+            &Samples(v) => (ffi::PP_GRAPHICS3DATTRIB_SAMPLES, v),
+            &SampleBuffers(v) => (ffi::PP_GRAPHICS3DATTRIB_SAMPLE_BUFFERS, v),
+            &SwapBehaviour(v) => (ffi::PP_GRAPHICS3DATTRIB_SWAP_BEHAVIOR, v),
+        }
+    }
+}
+
 impl_resource_for!(Context3d, ResourceType::Graphics3DRes);
 
 impl Context3d {
@@ -1514,6 +1548,15 @@ impl Context3d {
     pub fn clear(&self, mask: libc::c_uint) {
         call_gl_fun!(get_gles2() => Clear => (self,
                                               mask))
+    }
+    // Out of memory errors will be provided on the next swap_buffers callback.
+    pub fn resize_buffers(&self, width: u32, height: u32) -> super::Code {
+        use libc;
+        use ppb::Graphics3DIf;
+        let iface = ppb::get_graphics_3d();
+        iface.resize_buffers(self.unwrap(),
+                             width as libc::int32_t,
+                             height as libc::int32_t)
     }
     pub fn swap_buffers<T: Callback>(&self, next_frame: T) {
         use super::{Callback, PostToSelf};

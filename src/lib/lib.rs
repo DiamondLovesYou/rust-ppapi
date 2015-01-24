@@ -1534,14 +1534,18 @@ impl Instance {
 
     pub fn create_3d_context(&self,
                              share_with: Option<Context3d>,
-                             attribs: &[(u32, u32)]) -> result::Result<Context3d, Code> {
-        let mut a = Vec::with_capacity(attribs.len() * 2 + 1);
-        for &(k, v) in attribs.iter() {
-            a.push(k);
-            a.push(v);
-        }
-        a.push(ffi::PP_GRAPHICS3DATTRIB_NONE);
+                             attribs: &[gles::Context3dAttrib]) -> result::Result<Context3d, Code> {
+        let mut a = Vec::with_capacity(attribs.len() + 1);
+        let attrs_to_ffi = attribs
+            .iter()
+            .map(|attr| attr.to_ffi() );
+        a.extend(attrs_to_ffi);
+
+        // only one is needed; le shurg.
+        a.push((ffi::PP_GRAPHICS3DATTRIB_NONE,
+                ffi::PP_GRAPHICS3DATTRIB_NONE));
         let a = a;
+
         let share_with = share_with
             .map(|ctxt| {
                 ctxt.unwrap()
