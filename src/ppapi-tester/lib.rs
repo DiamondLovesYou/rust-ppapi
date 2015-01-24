@@ -1,27 +1,24 @@
-
-// Provides the ```pnacl_test! {}``` macro.
-// Usage:
+// Copyright (c) 2014 Richard Diamond & contributors.
 //
-// try one:
-// ```rust
-// pnacl_test! {
-//    fn test_name() {
-//        extern crate ppapi;
-//        use std::collections::HashMap;
-//        #[no_mangle]
-//        pub extern fn ppapi_instance_created(_instance: ppapi::Instance,
-//                                             _args: HashMap<String, String>) {
-//            // Test logic here.
-//        }
-//    }
-// }
-// ```
-// try two:
-// ```rust
-// #[ppapi_test]
-// fn test_name(instance: ppapi::Instance) {
-// }
-// ```
+// This file is part of the Rust PPApi project.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+
+//! Provides the ```pnacl_test! {}``` macro.
+//! Usage:
+//! ```rust
+//! #[ppapi_test]
+//! fn test_name(instance: ppapi::Instance, args: HashMap<String, String>) {
+//!    // Put the test here.
+//! }
+//! ```
+//!
+//! In the future I plan allowing #[ppapi_test] on modules so callbacks can be
+//! tested as well.
+//!
 
 #![crate_name = "ppapi-tester"]
 #![crate_type = "dylib"]
