@@ -25,7 +25,7 @@ use ffi;
 pub struct Context3d(ffi::PP_Resource);
 
 // for debugging purposes:
-impl fmt::String for Context3d {
+impl fmt::Display for Context3d {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
     }
@@ -1063,7 +1063,7 @@ impl<'ctxt, T: ShaderUnwrap> CompileError<'ctxt, T> {
                          &mut actual_len as *mut types::Size,
                          info_buf.as_mut_ptr() as *mut i8));
         let actual_len: uint = actual_len as uint;
-        Some(String::from_utf8_lossy(info_buf.slice_to(actual_len)).to_string())
+        Some(String::from_utf8_lossy(&info_buf[..actual_len]).to_string())
     }
 }
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
@@ -1127,7 +1127,7 @@ impl<'ctxt> LinkError<'ctxt> {
                          &mut actual_len as *mut types::Size,
                          info_buf.as_mut_ptr() as *mut i8));
         let actual_len: uint = actual_len as uint;
-        Some(String::from_utf8_lossy(info_buf.slice_to(actual_len)).to_string())
+        Some(String::from_utf8_lossy(&info_buf[..actual_len]).to_string())
     }
 }
 

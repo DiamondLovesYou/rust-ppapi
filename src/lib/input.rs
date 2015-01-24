@@ -394,7 +394,7 @@ impl MouseEvent {
         }
     }
 }
-#[derive(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Debug, Copy)]
 pub enum MouseButton {
     Left,
     Middle,
@@ -410,26 +410,26 @@ impl MouseButton {
         }
     }
 }
-#[derive(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Debug, Copy)]
 pub struct MouseClickEvent {
     point: FloatPoint,
     button: MouseButton,
     click_count: i32,
 }
-#[derive(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Debug, Copy)]
 pub struct MouseMoveEvent {
     point: FloatPoint,
     delta: FloatPoint,
     click_count: i32,
 }
 
-#[derive(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Debug, Copy)]
 pub enum KeyboardEvent {
     Press(Press, i32),
     Char(char),
 }
 
-#[derive(Clone, Eq, PartialEq, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Debug, Copy)]
 pub struct WheelEvent {
     delta: FloatPoint,
     ticks: FloatPoint,
@@ -495,7 +495,7 @@ impl WheelInputEvent {
         (ppb::get_wheel_event().GetScrollByPage.unwrap())(self.unwrap()) != ffi::PP_FALSE
     }
 }
-#[derive(Clone, Eq, PartialEq, Hash, Show, Copy)]
+#[derive(Clone, Eq, PartialEq, Hash, Debug, Copy)]
 pub enum TouchListType {
     Touches,
     Delta,
@@ -599,7 +599,7 @@ impl IMEInputEvent {
         if index < self.segments_len() {
             let segment = self.segment_offset(index);
             let (start, end) = segment.expect("WAT. #1");
-            Some(self.string.as_slice().slice(start, end))
+            Some(&self.string[start .. end])
         } else {
             None
         }
@@ -629,7 +629,7 @@ impl IMEInputEvent {
     }
     pub fn selection_str<'a>(&'a self) -> &'a str {
         let (start, end) = self.selection_offset();
-        self.string.as_slice().slice(start as uint, end as uint)
+        &self.string[start as uint .. end as uint]
     }
     pub fn target_segment_index(&self) -> Option<uint> {
         match (ppb::get_ime_event().GetTargetSegment.unwrap())

@@ -88,6 +88,7 @@ extern crate "url" as iurl;
 extern crate libc;
 extern crate core;
 extern crate alloc;
+extern crate finally;
 
 use std::{mem, cmp, io};
 use std::mem::transmute;
@@ -244,7 +245,7 @@ pub enum Code {
     ContextLost       = ffi::PP_ERROR_CONTEXT_LOST as int,
     CompletionPending = ffi::PP_OK_COMPLETIONPENDING as int,
 }
-impl fmt::String for Code {
+impl fmt::Display for Code {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Code::Ok => f.pad("ok"),
@@ -420,9 +421,9 @@ impl clone::Clone for ffi::Struct_PP_FloatPoint {
     }
 }
 
-impl fmt::Show for ffi::Struct_PP_FloatPoint {
+impl fmt::Debug for ffi::Struct_PP_FloatPoint {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "({}, {})", self.x, self.y)
+        write!(f, "FloatPoint({}, {})", self.x, self.y)
     }
 }
 
@@ -1120,7 +1121,14 @@ impl AnyVar {
     }
 }
 
-impl fmt::Show for StringVar {
+impl fmt::Debug for StringVar {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "StringVar({}) = \"{}\"",
+               self.get_id(),
+               self)
+    }
+}
+impl fmt::Display for StringVar {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.pad(self.as_slice())
     }
@@ -1156,11 +1164,6 @@ impl Str for StringVar {
             let slice = from_raw_buf(transmute(&buf), len);
             transmute(from_utf8_unchecked(slice))
         }
-    }
-}
-impl fmt::String for StringVar {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.pad(self.as_slice())
     }
 }
 impl ToVar for ::std::string::String {
@@ -1456,7 +1459,7 @@ impl Writer for StdIo {
                     return result::Result::Ok(());
                 }
             };
-            let rest = buf.slice(0, newline_pos + 1);
+            let rest = &buf[0 .. newline_pos + 1];
             self.buffer.push_all(rest);
             let result = (|&mut: | {
                 use std::result::Result::{Ok};
@@ -1464,7 +1467,7 @@ impl Writer for StdIo {
 
                 try!(self.raw.write(self.buffer.as_slice()));
 
-                str::from_utf8(self.buffer.slice_to(self.buffer.len() - 1))
+                str::from_utf8(&self.buffer[.. self.buffer.len() - 1])
                     .ok()
                     .and_then(|&:s| c_ref.map(|c| (c, s) ) )
                     .map(|(c, s)| {
@@ -1476,7 +1479,7 @@ impl Writer for StdIo {
             if buf.len() < newline_pos + 2 {
                 return result;
             }
-            buf = buf.slice_from(newline_pos + 2);
+            buf = &buf[newline_pos + 2 ..];
             if result.is_err() || buf.len() == 0 {
                 return result;
             }
@@ -1762,9 +1765,9 @@ pub mod entry {
     use super::{ffi};
     use super::url::UrlLoader;
 
+    use finally::try_finally;
     use libc::c_char;
     use std::any::Any;
-    use std::finally::try_finally;
     use std::mem::transmute;
     use std::rt::unwind::try;
 
