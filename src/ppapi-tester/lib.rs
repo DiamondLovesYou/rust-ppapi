@@ -164,7 +164,7 @@ fn expand_test(ecx: &mut ExtCtxt,
                 // the source to the real test:
                 const REAL_TEST: &'static str = $wrapper_str;
 
-                let tmp = TempDir::new("ppapi-test")
+                let tmp = TempDir::new(stringify!($test_name))
                     .ok().expect("need temp directory for test artifacts");
 
                 let url = format!("file://{}",
