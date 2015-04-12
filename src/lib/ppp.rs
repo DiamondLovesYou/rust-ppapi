@@ -41,12 +41,12 @@ mod globals {
 #[doc(hidden)]
 #[allow(non_snake_case)]
 pub extern "C" fn PPP_GetInterface(interface_name: *const c_char) -> *const c_void {
-    use core::mem::transmute;
-    use std::ffi::c_str_to_bytes;
+    use std::mem::transmute;
+    use std::ffi::CStr;
     use std::str::from_utf8_unchecked;
 
-    let interface_name_buf: &[u8] = unsafe { c_str_to_bytes(&interface_name) };
-    let name = unsafe { from_utf8_unchecked(interface_name_buf) };
+    let interface_name_buf = unsafe { CStr::from_ptr(interface_name) };
+    let name = unsafe { from_utf8_unchecked(interface_name_buf.to_bytes()) };
     unsafe {
         if name == consts::INSTANCE {
             transmute(&globals::INSTANCE)

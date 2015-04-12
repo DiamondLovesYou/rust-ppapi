@@ -54,7 +54,7 @@ pub type PPB_GetInterface = extern "C" fn(interface_name: *const ::libc::c_char)
                               -> *const ::libc::c_void;
 pub type PP_Module = int32_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Module {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Module_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -77,7 +77,7 @@ pub const PP_FALSE: ::libc::c_uint = 0;
 pub const PP_TRUE: ::libc::c_uint = 1;
 pub type PP_Bool = Enum_Unnamed1;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Bool {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Bool_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -88,7 +88,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Bool {
 }
 pub type PP_Instance = int32_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Instance {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Instance_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -99,7 +99,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Instance {
 }
 pub type PP_Resource = int32_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Resource {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Resource_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -110,7 +110,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Resource {
 }
 pub type PP_Time = ::libc::c_double;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Time {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Time_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -121,7 +121,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Time {
 }
 pub type PP_TimeTicks = ::libc::c_double;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TimeTicks {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TimeTicks_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -132,7 +132,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TimeTicks {
 }
 pub type PP_TimeDelta = ::libc::c_double;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TimeDelta {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TimeDelta_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -153,7 +153,6 @@ pub type PPB_Audio_Callback_1_0 =
                                buffer_size_in_bytes: uint32_t,
                                user_data: *mut ::libc::c_void)>;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Audio_1_1 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -176,7 +175,6 @@ impl ::std::default::Default for Struct_PPB_Audio_1_1 {
 }
 pub type PPB_Audio = Struct_PPB_Audio_1_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Audio_1_0 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -214,7 +212,6 @@ pub const PP_AUDIOBUFFER_SAMPLESIZE_UNKNOWN: ::libc::c_uint = 0;
 pub const PP_AUDIOBUFFER_SAMPLESIZE_16_BITS: ::libc::c_uint = 2;
 pub type PP_AudioBuffer_SampleSize = Enum_Unnamed3;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_AudioBuffer_0_1 {
     pub IsAudioBuffer: ::std::option::Option<extern "C" fn
                                                  (resource: PP_Resource)
@@ -260,7 +257,7 @@ pub const PP_AUDIOSAMPLERATE_44100: ::libc::c_uint = 44100;
 pub const PP_AUDIOSAMPLERATE_48000: ::libc::c_uint = 48000;
 pub type PP_AudioSampleRate = Enum_Unnamed5;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_AudioSampleRate {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_AudioSampleRate_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -271,7 +268,6 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_AudioSampleRate
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_AudioConfig_1_1 {
     pub CreateStereo16Bit: ::std::option::Option<extern "C" fn
                                                      (instance: PP_Instance,
@@ -308,7 +304,6 @@ impl ::std::default::Default for Struct_PPB_AudioConfig_1_1 {
 }
 pub type PPB_AudioConfig = Struct_PPB_AudioConfig_1_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_AudioConfig_1_0 {
     pub CreateStereo16Bit: ::std::option::Option<extern "C" fn
                                                      (instance: PP_Instance,
@@ -352,7 +347,7 @@ pub const PP_VARTYPE_ARRAY_BUFFER: ::libc::c_uint = 9;
 pub const PP_VARTYPE_RESOURCE: ::libc::c_uint = 10;
 pub type PP_VarType = Enum_Unnamed6;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_VarType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_VarType_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -362,7 +357,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_VarType {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Union_PP_VarValue {
     pub _bindgen_data_: [u64; 1us],
 }
@@ -394,7 +389,7 @@ impl ::std::default::Default for Struct_PP_Var {
     fn default() -> Struct_PP_Var { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Var {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Var_is_not_16_bytes_wide: [::libc::c_char; 1us],
 }
@@ -410,7 +405,7 @@ pub const PP_LOGLEVEL_WARNING: ::libc::c_uint = 2;
 pub const PP_LOGLEVEL_ERROR: ::libc::c_uint = 3;
 pub type PP_LogLevel = Enum_Unnamed7;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_LogLevel {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_LogLevel_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -420,7 +415,6 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_LogLevel {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Console_1_0 {
     pub Log: ::std::option::Option<extern "C" fn
                                        (instance: PP_Instance,
@@ -444,7 +438,7 @@ pub const PP_COMPLETIONCALLBACK_FLAG_NONE: ::libc::c_uint = 0;
 pub const PP_COMPLETIONCALLBACK_FLAG_OPTIONAL: ::libc::c_uint = 1;
 pub type PP_CompletionCallback_Flag = Enum_Unnamed8;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_CompletionCallback_Flag {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CompletionCallback_Flag_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -455,7 +449,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PP_CompletionCallback {
     pub func: PP_CompletionCallback_Func,
     pub user_data: *mut ::libc::c_void,
@@ -464,6 +457,11 @@ pub struct Struct_PP_CompletionCallback {
 impl ::std::default::Default for Struct_PP_CompletionCallback {
     fn default() -> Struct_PP_CompletionCallback {
         unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::clone::Clone for Struct_PP_CompletionCallback {
+    fn clone(&self) -> Struct_PP_CompletionCallback {
+        unsafe { ::std::mem::transmute_copy(self) }
     }
 }
 pub type size_t = ::libc::c_uint;
@@ -483,7 +481,7 @@ pub type blkcnt_t = __blkcnt_t;
 pub type __time_t = int64_t;
 pub type time_t = __time_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_timespec {
     pub tv_sec: time_t,
     pub tv_nsec: ::libc::c_long,
@@ -495,7 +493,6 @@ pub type _fpos_t = ::libc::c_long;
 pub type _ssize_t = ::libc::c_int;
 pub type wint_t = ::libc::c_int;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Core_1_0 {
     pub AddRefResource: ::std::option::Option<extern "C" fn
                                                   (resource: PP_Resource)>,
@@ -522,7 +519,6 @@ pub type PP_ArrayOutput_GetDataBuffer =
                                element_size: uint32_t)
                               -> *mut ::libc::c_void>;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PP_ArrayOutput {
     pub GetDataBuffer: PP_ArrayOutput_GetDataBuffer,
     pub user_data: *mut ::libc::c_void,
@@ -536,7 +532,7 @@ pub const PP_FILETYPE_DIRECTORY: ::libc::c_uint = 1;
 pub const PP_FILETYPE_OTHER: ::libc::c_uint = 2;
 pub type PP_FileType = Enum_Unnamed18;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileType_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -553,7 +549,7 @@ pub const PP_FILESYSTEMTYPE_LOCALTEMPORARY: ::libc::c_uint = 3;
 pub const PP_FILESYSTEMTYPE_ISOLATED: ::libc::c_uint = 4;
 pub type PP_FileSystemType = Enum_Unnamed19;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileSystemType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileSystemType_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -564,7 +560,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileSystemType
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_FileInfo {
     pub size: int64_t,
     pub _type: PP_FileType,
@@ -577,7 +573,7 @@ impl ::std::default::Default for Struct_PP_FileInfo {
     fn default() -> Struct_PP_FileInfo { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileInfo {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileInfo_is_not_40_bytes_wide: [::libc::c_char; 1us],
 }
@@ -595,7 +591,7 @@ pub const PP_FILEOPENFLAG_EXCLUSIVE: ::libc::c_uint = 16;
 pub const PP_FILEOPENFLAG_APPEND: ::libc::c_uint = 32;
 pub type PP_FileOpenFlags = Enum_Unnamed20;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileOpenFlags_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -605,7 +601,6 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_FileIO_1_1 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -674,7 +669,6 @@ impl ::std::default::Default for Struct_PPB_FileIO_1_1 {
 }
 pub type PPB_FileIO = Struct_PPB_FileIO_1_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_FileIO_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -738,7 +732,6 @@ pub const PP_MAKEDIRECTORYFLAG_WITH_ANCESTORS: ::libc::c_uint = 1;
 pub const PP_MAKEDIRECTORYFLAG_EXCLUSIVE: ::libc::c_uint = 2;
 pub type PP_MakeDirectoryFlags = Enum_Unnamed21;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_FileRef_1_2 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (file_system: PP_Resource,
@@ -800,7 +793,6 @@ impl ::std::default::Default for Struct_PPB_FileRef_1_2 {
 }
 pub type PPB_FileRef = Struct_PPB_FileRef_1_2;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_FileRef_1_0 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (file_system: PP_Resource,
@@ -846,7 +838,6 @@ impl ::std::default::Default for Struct_PPB_FileRef_1_0 {
     fn default() -> Struct_PPB_FileRef_1_0 { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_FileRef_1_1 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (file_system: PP_Resource,
@@ -906,7 +897,6 @@ impl ::std::default::Default for Struct_PPB_FileRef_1_1 {
     fn default() -> Struct_PPB_FileRef_1_1 { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_FileSystem_1_0 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -931,7 +921,7 @@ impl ::std::default::Default for Struct_PPB_FileSystem_1_0 {
 }
 pub type PPB_FileSystem = Struct_PPB_FileSystem_1_0;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Size {
     pub width: int32_t,
     pub height: int32_t,
@@ -940,7 +930,7 @@ impl ::std::default::Default for Struct_PP_Size {
     fn default() -> Struct_PP_Size { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Size {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Size_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -950,7 +940,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Size {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_FloatSize {
     pub width: ::libc::c_float,
     pub height: ::libc::c_float,
@@ -959,7 +949,6 @@ impl ::std::default::Default for Struct_PP_FloatSize {
     fn default() -> Struct_PP_FloatSize { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Fullscreen_1_0 {
     pub IsFullscreen: ::std::option::Option<extern "C" fn
                                                 (instance: PP_Instance)
@@ -996,8 +985,13 @@ impl ::std::default::Default for Struct_PP_GamepadSampleData {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PP_GamepadSampleData {
+    fn clone(&self) -> Struct_PP_GamepadSampleData {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_GamepadSampleData {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_GamepadSampleData_is_not_472_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1008,7 +1002,7 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_GamepadsSampleData {
     pub length: uint32_t,
     pub unused_pad_: [::libc::c_char; 4us],
@@ -1020,7 +1014,7 @@ impl ::std::default::Default for Struct_PP_GamepadsSampleData {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_GamepadsSampleData {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_GamepadsSampleData_is_not_1896_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1031,7 +1025,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Gamepad_1_0 {
     pub Sample: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1043,7 +1036,7 @@ impl ::std::default::Default for Struct_PPB_Gamepad_1_0 {
 }
 pub type PPB_Gamepad = Struct_PPB_Gamepad_1_0;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Point {
     pub x: int32_t,
     pub y: int32_t,
@@ -1052,7 +1045,7 @@ impl ::std::default::Default for Struct_PP_Point {
     fn default() -> Struct_PP_Point { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Point {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Point_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1062,7 +1055,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Point {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_FloatPoint {
     pub x: ::libc::c_float,
     pub y: ::libc::c_float,
@@ -1071,7 +1064,7 @@ impl ::std::default::Default for Struct_PP_FloatPoint {
     fn default() -> Struct_PP_FloatPoint { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FloatPoint {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FloatPoint_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1081,7 +1074,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FloatPoint {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Rect {
     pub point: Struct_PP_Point,
     pub size: Struct_PP_Size,
@@ -1090,7 +1083,7 @@ impl ::std::default::Default for Struct_PP_Rect {
     fn default() -> Struct_PP_Rect { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Rect {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Rect_is_not_16_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1100,7 +1093,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Rect {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_FloatRect {
     pub point: Struct_PP_FloatPoint,
     pub size: Struct_PP_FloatSize,
@@ -1109,7 +1102,6 @@ impl ::std::default::Default for Struct_PP_FloatRect {
     fn default() -> Struct_PP_FloatRect { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Graphics2D_1_1 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1157,7 +1149,6 @@ impl ::std::default::Default for Struct_PPB_Graphics2D_1_1 {
 }
 pub type PPB_Graphics2D = Struct_PPB_Graphics2D_1_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Graphics2D_1_0 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1219,7 +1210,7 @@ pub const PP_GRAPHICS3DATTRIB_GPU_PREFERENCE_PERFORMANCE: ::libc::c_uint =
     69634;
 pub type PP_Graphics3DAttrib = Enum_Unnamed22;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Graphics3DAttrib {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Graphics3DAttrib_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1230,7 +1221,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Graphics3D_1_0 {
     pub GetAttribMaxValue: ::std::option::Option<extern "C" fn
                                                      (instance: PP_Resource,
@@ -1278,7 +1268,7 @@ pub const PP_NETADDRESS_FAMILY_IPV4: ::libc::c_uint = 1;
 pub const PP_NETADDRESS_FAMILY_IPV6: ::libc::c_uint = 2;
 pub type PP_NetAddress_Family = Enum_Unnamed23;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_Family {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_Family_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1289,7 +1279,7 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_NetAddress_IPv4 {
     pub port: uint16_t,
     pub addr: [uint8_t; 4us],
@@ -1300,7 +1290,7 @@ impl ::std::default::Default for Struct_PP_NetAddress_IPv4 {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv4 {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_IPv4_is_not_6_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1311,7 +1301,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv4
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_NetAddress_IPv6 {
     pub port: uint16_t,
     pub addr: [uint8_t; 16us],
@@ -1322,7 +1312,7 @@ impl ::std::default::Default for Struct_PP_NetAddress_IPv6 {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv6 {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_IPv6_is_not_18_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1372,12 +1362,17 @@ impl ::std::default::Default for Struct_PPB_NetAddress_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_NetAddress_1_0 {
+    fn clone(&self) -> Struct_PPB_NetAddress_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_NetAddress = Struct_PPB_NetAddress_1_0;
 pub type Enum_Unnamed24 = ::libc::c_uint;
 pub const PP_HOSTRESOLVER_FLAG_CANONNAME: ::libc::c_uint = 1;
 pub type PP_HostResolver_Flag = Enum_Unnamed24;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_HostResolver_Flag {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_HostResolver_Flag_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1388,7 +1383,7 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_HostResolver_Hint {
     pub family: PP_NetAddress_Family,
     pub flags: int32_t,
@@ -1399,7 +1394,7 @@ impl ::std::default::Default for Struct_PP_HostResolver_Hint {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_HostResolver_Hint {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_HostResolver_Hint_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1410,7 +1405,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_HostResolver_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -1444,13 +1438,18 @@ impl ::std::default::Default for Struct_PPB_HostResolver_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_HostResolver_1_0 {
+    fn clone(&self) -> Struct_PPB_HostResolver_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_HostResolver = Struct_PPB_HostResolver_1_0;
 pub type Enum_Unnamed25 = ::libc::c_uint;
 pub const PP_IMAGEDATAFORMAT_BGRA_PREMUL: ::libc::c_uint = 0;
 pub const PP_IMAGEDATAFORMAT_RGBA_PREMUL: ::libc::c_uint = 1;
 pub type PP_ImageDataFormat = Enum_Unnamed25;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_ImageDataFormat {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_ImageDataFormat_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1461,7 +1460,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_ImageDataFormat
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_ImageDataDesc {
     pub format: PP_ImageDataFormat,
     pub size: Struct_PP_Size,
@@ -1473,7 +1472,7 @@ impl ::std::default::Default for Struct_PP_ImageDataDesc {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_ImageDataDesc {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_ImageDataDesc_is_not_16_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1483,7 +1482,6 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_ImageDataDesc {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_ImageData_1_0 {
     pub GetNativeImageDataFormat: ::std::option::Option<extern "C" fn()
                                                             ->
@@ -1515,9 +1513,14 @@ impl ::std::default::Default for Struct_PPB_ImageData_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_ImageData_1_0 {
+    fn clone(&self) -> Struct_PPB_ImageData_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_ImageData = Struct_PPB_ImageData_1_0;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_TouchPoint {
     pub id: uint32_t,
     pub position: Struct_PP_FloatPoint,
@@ -1529,7 +1532,7 @@ impl ::std::default::Default for Struct_PP_TouchPoint {
     fn default() -> Struct_PP_TouchPoint { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TouchPoint {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchPoint_is_not_28_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1561,7 +1564,7 @@ pub const PP_INPUTEVENT_TYPE_TOUCHEND: ::libc::c_int = 17;
 pub const PP_INPUTEVENT_TYPE_TOUCHCANCEL: ::libc::c_int = 18;
 pub type PP_InputEvent_Type = Enum_Unnamed26;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Type_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1587,7 +1590,7 @@ pub const PP_INPUTEVENT_MODIFIER_ISLEFT: ::libc::c_uint = 2048;
 pub const PP_INPUTEVENT_MODIFIER_ISRIGHT: ::libc::c_uint = 4096;
 pub type PP_InputEvent_Modifier = Enum_Unnamed27;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Modifier {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Modifier_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1604,7 +1607,7 @@ pub const PP_INPUTEVENT_MOUSEBUTTON_MIDDLE: ::libc::c_int = 1;
 pub const PP_INPUTEVENT_MOUSEBUTTON_RIGHT: ::libc::c_int = 2;
 pub type PP_InputEvent_MouseButton = Enum_Unnamed28;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_MouseButton {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_MouseButton_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1622,7 +1625,7 @@ pub const PP_INPUTEVENT_CLASS_TOUCH: ::libc::c_uint = 8;
 pub const PP_INPUTEVENT_CLASS_IME: ::libc::c_uint = 16;
 pub type PP_InputEvent_Class = Enum_Unnamed29;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Class {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Class_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1633,7 +1636,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_InputEvent_1_0 {
     pub RequestInputEvents: ::std::option::Option<extern "C" fn
                                                       (instance: PP_Instance,
@@ -1666,9 +1668,13 @@ impl ::std::default::Default for Struct_PPB_InputEvent_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_InputEvent_1_0 {
+    fn clone(&self) -> Struct_PPB_InputEvent_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_InputEvent = Struct_PPB_InputEvent_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_MouseInputEvent_1_1 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1704,9 +1710,13 @@ impl ::std::default::Default for Struct_PPB_MouseInputEvent_1_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_MouseInputEvent_1_1 {
+    fn clone(&self) -> Struct_PPB_MouseInputEvent_1_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_MouseInputEvent = Struct_PPB_MouseInputEvent_1_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_MouseInputEvent_1_0 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1737,8 +1747,12 @@ impl ::std::default::Default for Struct_PPB_MouseInputEvent_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_MouseInputEvent_1_0 {
+    fn clone(&self) -> Struct_PPB_MouseInputEvent_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_WheelInputEvent_1_0 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1768,9 +1782,13 @@ impl ::std::default::Default for Struct_PPB_WheelInputEvent_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_WheelInputEvent_1_0 {
+    fn clone(&self) -> Struct_PPB_WheelInputEvent_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_WheelInputEvent = Struct_PPB_WheelInputEvent_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_KeyboardInputEvent_1_2 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1800,9 +1818,13 @@ impl ::std::default::Default for Struct_PPB_KeyboardInputEvent_1_2 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_KeyboardInputEvent_1_2 {
+    fn clone(&self) -> Struct_PPB_KeyboardInputEvent_1_2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_KeyboardInputEvent = Struct_PPB_KeyboardInputEvent_1_2;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_KeyboardInputEvent_1_0 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1829,13 +1851,18 @@ impl ::std::default::Default for Struct_PPB_KeyboardInputEvent_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_KeyboardInputEvent_1_0 {
+    fn clone(&self) -> Struct_PPB_KeyboardInputEvent_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type Enum_Unnamed30 = ::libc::c_uint;
 pub const PP_TOUCHLIST_TYPE_TOUCHES: ::libc::c_uint = 0;
 pub const PP_TOUCHLIST_TYPE_CHANGEDTOUCHES: ::libc::c_uint = 1;
 pub const PP_TOUCHLIST_TYPE_TARGETTOUCHES: ::libc::c_uint = 2;
 pub type PP_TouchListType = Enum_Unnamed30;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TouchListType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchListType_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -1845,7 +1872,6 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TouchListType {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_TouchInputEvent_1_0 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1881,9 +1907,13 @@ impl ::std::default::Default for Struct_PPB_TouchInputEvent_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_TouchInputEvent_1_0 {
+    fn clone(&self) -> Struct_PPB_TouchInputEvent_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_TouchInputEvent = Struct_PPB_TouchInputEvent_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_IMEInputEvent_1_0 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -1921,9 +1951,13 @@ impl ::std::default::Default for Struct_PPB_IMEInputEvent_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_IMEInputEvent_1_0 {
+    fn clone(&self) -> Struct_PPB_IMEInputEvent_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_IMEInputEvent = Struct_PPB_IMEInputEvent_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Instance_1_0 {
     pub BindGraphics: ::std::option::Option<extern "C" fn
                                                 (instance: PP_Instance,
@@ -1938,6 +1972,11 @@ impl ::std::default::Default for Struct_PPB_Instance_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_Instance_1_0 {
+    fn clone(&self) -> Struct_PPB_Instance_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_Instance = Struct_PPB_Instance_1_0;
 pub type Enum_Unnamed31 = ::libc::c_uint;
 pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_NONE: ::libc::c_uint = 0;
@@ -1948,7 +1987,6 @@ pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_CHANNELS: ::libc::c_uint = 4;
 pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_DURATION: ::libc::c_uint = 5;
 pub type PP_MediaStreamAudioTrack_Attrib = Enum_Unnamed31;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_MediaStreamAudioTrack_0_1 {
     pub IsMediaStreamAudioTrack: ::std::option::Option<extern "C" fn
                                                            (resource:
@@ -1988,6 +2026,11 @@ impl ::std::default::Default for Struct_PPB_MediaStreamAudioTrack_0_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_MediaStreamAudioTrack_0_1 {
+    fn clone(&self) -> Struct_PPB_MediaStreamAudioTrack_0_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_MediaStreamAudioTrack = Struct_PPB_MediaStreamAudioTrack_0_1;
 pub type Enum_Unnamed32 = ::libc::c_uint;
 pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_NONE: ::libc::c_uint = 0;
@@ -1997,7 +2040,6 @@ pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_HEIGHT: ::libc::c_uint = 3;
 pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_FORMAT: ::libc::c_uint = 4;
 pub type PP_MediaStreamVideoTrack_Attrib = Enum_Unnamed32;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_MediaStreamVideoTrack_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -2048,8 +2090,12 @@ impl ::std::default::Default for Struct_PPB_MediaStreamVideoTrack_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_MediaStreamVideoTrack_1_0 {
+    fn clone(&self) -> Struct_PPB_MediaStreamVideoTrack_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_MediaStreamVideoTrack_0_1 {
     pub IsMediaStreamVideoTrack: ::std::option::Option<extern "C" fn
                                                            (resource:
@@ -2089,9 +2135,13 @@ impl ::std::default::Default for Struct_PPB_MediaStreamVideoTrack_0_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_MediaStreamVideoTrack_0_1 {
+    fn clone(&self) -> Struct_PPB_MediaStreamVideoTrack_0_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_MediaStreamVideoTrack = Struct_PPB_MediaStreamVideoTrack_0_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_MessageLoop_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -2119,9 +2169,13 @@ impl ::std::default::Default for Struct_PPB_MessageLoop_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_MessageLoop_1_0 {
+    fn clone(&self) -> Struct_PPB_MessageLoop_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_MessageLoop = Struct_PPB_MessageLoop_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_MessageHandler_0_2 {
     pub HandleMessage: ::std::option::Option<extern "C" fn
                                                  (instance: PP_Instance,
@@ -2147,9 +2201,13 @@ impl ::std::default::Default for Struct_PPP_MessageHandler_0_2 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_MessageHandler_0_2 {
+    fn clone(&self) -> Struct_PPP_MessageHandler_0_2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_MessageHandler = Struct_PPP_MessageHandler_0_2;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Messaging_1_2 {
     pub PostMessage: ::std::option::Option<extern "C" fn
                                                (instance: PP_Instance,
@@ -2173,9 +2231,13 @@ impl ::std::default::Default for Struct_PPB_Messaging_1_2 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_Messaging_1_2 {
+    fn clone(&self) -> Struct_PPB_Messaging_1_2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_Messaging = Struct_PPB_Messaging_1_2;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Messaging_1_0 {
     pub PostMessage: ::std::option::Option<extern "C" fn
                                                (instance: PP_Instance,
@@ -2184,6 +2246,11 @@ pub struct Struct_PPB_Messaging_1_0 {
 impl ::std::default::Default for Struct_PPB_Messaging_1_0 {
     fn default() -> Struct_PPB_Messaging_1_0 {
         unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::clone::Clone for Struct_PPB_Messaging_1_0 {
+    fn clone(&self) -> Struct_PPB_Messaging_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
     }
 }
 pub type Enum_PP_MouseCursor_Type = ::libc::c_int;
@@ -2232,7 +2299,7 @@ pub const PP_MOUSECURSOR_TYPE_ZOOMOUT: ::libc::c_int = 40;
 pub const PP_MOUSECURSOR_TYPE_GRAB: ::libc::c_int = 41;
 pub const PP_MOUSECURSOR_TYPE_GRABBING: ::libc::c_int = 42;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_MouseCursor_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_MouseCursor_Type_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -2243,7 +2310,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_MouseCursor_1_0 {
     pub SetCursor: ::std::option::Option<extern "C" fn
                                              (instance: PP_Instance,
@@ -2258,9 +2324,13 @@ impl ::std::default::Default for Struct_PPB_MouseCursor_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_MouseCursor_1_0 {
+    fn clone(&self) -> Struct_PPB_MouseCursor_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_MouseCursor = Struct_PPB_MouseCursor_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_MouseLock_1_0 {
     pub LockMouse: ::std::option::Option<extern "C" fn
                                              (instance: PP_Instance,
@@ -2275,6 +2345,11 @@ impl ::std::default::Default for Struct_PPB_MouseLock_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_MouseLock_1_0 {
+    fn clone(&self) -> Struct_PPB_MouseLock_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_MouseLock = Struct_PPB_MouseLock_1_0;
 pub type Enum_Unnamed33 = ::libc::c_uint;
 pub const PP_NETWORKLIST_TYPE_UNKNOWN: ::libc::c_uint = 0;
@@ -2283,7 +2358,7 @@ pub const PP_NETWORKLIST_TYPE_WIFI: ::libc::c_uint = 2;
 pub const PP_NETWORKLIST_TYPE_CELLULAR: ::libc::c_uint = 3;
 pub type PP_NetworkList_Type = Enum_Unnamed33;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetworkList_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_Type_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -2298,7 +2373,7 @@ pub const PP_NETWORKLIST_STATE_DOWN: ::libc::c_uint = 0;
 pub const PP_NETWORKLIST_STATE_UP: ::libc::c_uint = 1;
 pub type PP_NetworkList_State = Enum_Unnamed34;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetworkList_State {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_State_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -2309,7 +2384,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_NetworkList_1_0 {
     pub IsNetworkList: ::std::option::Option<extern "C" fn
                                                  (resource: PP_Resource)
@@ -2347,9 +2421,13 @@ impl ::std::default::Default for Struct_PPB_NetworkList_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_NetworkList_1_0 {
+    fn clone(&self) -> Struct_PPB_NetworkList_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_NetworkList = Struct_PPB_NetworkList_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_NetworkMonitor_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -2370,9 +2448,13 @@ impl ::std::default::Default for Struct_PPB_NetworkMonitor_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_NetworkMonitor_1_0 {
+    fn clone(&self) -> Struct_PPB_NetworkMonitor_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_NetworkMonitor = Struct_PPB_NetworkMonitor_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_NetworkProxy_1_0 {
     pub GetProxyForURL: ::std::option::Option<extern "C" fn
                                                   (instance: PP_Instance,
@@ -2386,6 +2468,11 @@ pub struct Struct_PPB_NetworkProxy_1_0 {
 impl ::std::default::Default for Struct_PPB_NetworkProxy_1_0 {
     fn default() -> Struct_PPB_NetworkProxy_1_0 {
         unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::clone::Clone for Struct_PPB_NetworkProxy_1_0 {
+    fn clone(&self) -> Struct_PPB_NetworkProxy_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
     }
 }
 pub type PPB_NetworkProxy = Struct_PPB_NetworkProxy_1_0;
@@ -2407,7 +2494,6 @@ pub type GLclampx = ::libc::c_int;
 pub type GLintptr = ::libc::c_long;
 pub type GLsizeiptr = ::libc::c_long;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2_1_0 {
     pub ActiveTexture: ::std::option::Option<extern "C" fn
                                                  (context: PP_Resource,
@@ -3109,8 +3195,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2_1_0 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2 {
     pub ActiveTexture: ::std::option::Option<extern "C" fn
                                                  (context: PP_Resource,
@@ -3810,8 +3900,12 @@ pub struct Struct_PPB_OpenGLES2 {
 impl ::std::default::Default for Struct_PPB_OpenGLES2 {
     fn default() -> Struct_PPB_OpenGLES2 { unsafe { ::std::mem::zeroed() } }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2InstancedArrays_1_0 {
     pub DrawArraysInstancedANGLE: ::std::option::Option<extern "C" fn
                                                             (context:
@@ -3843,8 +3937,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2InstancedArrays_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2InstancedArrays_1_0 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2InstancedArrays_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2InstancedArrays {
     pub DrawArraysInstancedANGLE: ::std::option::Option<extern "C" fn
                                                             (context:
@@ -3876,8 +3974,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2InstancedArrays {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2InstancedArrays {
+    fn clone(&self) -> Struct_PPB_OpenGLES2InstancedArrays {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
     pub BlitFramebufferEXT: ::std::option::Option<extern "C" fn
                                                       (context: PP_Resource,
@@ -3897,8 +3999,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2FramebufferBlit {
     pub BlitFramebufferEXT: ::std::option::Option<extern "C" fn
                                                       (context: PP_Resource,
@@ -3918,8 +4024,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2FramebufferBlit {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2FramebufferBlit {
+    fn clone(&self) -> Struct_PPB_OpenGLES2FramebufferBlit {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2FramebufferMultisample_1_0 {
     pub RenderbufferStorageMultisampleEXT: ::std::option::Option<extern "C" fn
                                                                      (context:
@@ -3941,8 +4051,12 @@ impl ::std::default::Default for
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2FramebufferMultisample_1_0 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2FramebufferMultisample_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2FramebufferMultisample {
     pub RenderbufferStorageMultisampleEXT: ::std::option::Option<extern "C" fn
                                                                      (context:
@@ -3963,8 +4077,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2FramebufferMultisample {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2FramebufferMultisample {
+    fn clone(&self) -> Struct_PPB_OpenGLES2FramebufferMultisample {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0 {
     pub EnableFeatureCHROMIUM: ::std::option::Option<extern "C" fn
                                                          (context:
@@ -3979,8 +4097,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2ChromiumEnableFeature {
     pub EnableFeatureCHROMIUM: ::std::option::Option<extern "C" fn
                                                          (context:
@@ -3994,8 +4116,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumEnableFeature {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2ChromiumEnableFeature {
+    fn clone(&self) -> Struct_PPB_OpenGLES2ChromiumEnableFeature {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
     pub MapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn
                                                             (context:
@@ -4036,8 +4162,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2ChromiumMapSub {
     pub MapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn
                                                             (context:
@@ -4078,8 +4208,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumMapSub {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2ChromiumMapSub {
+    fn clone(&self) -> Struct_PPB_OpenGLES2ChromiumMapSub {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2Query_1_0 {
     pub GenQueriesEXT: ::std::option::Option<extern "C" fn
                                                  (context: PP_Resource,
@@ -4116,8 +4250,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2Query_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2Query_1_0 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2Query_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2Query {
     pub GenQueriesEXT: ::std::option::Option<extern "C" fn
                                                  (context: PP_Resource,
@@ -4154,8 +4292,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2Query {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2Query {
+    fn clone(&self) -> Struct_PPB_OpenGLES2Query {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
     pub GenVertexArraysOES: ::std::option::Option<extern "C" fn
                                                       (context: PP_Resource,
@@ -4180,8 +4322,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2VertexArrayObject {
     pub GenVertexArraysOES: ::std::option::Option<extern "C" fn
                                                       (context: PP_Resource,
@@ -4206,13 +4352,18 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2VertexArrayObject {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2VertexArrayObject {
+    fn clone(&self) -> Struct_PPB_OpenGLES2VertexArrayObject {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type Enum_Unnamed35 = ::libc::c_uint;
 pub const PP_TCPSOCKET_OPTION_NO_DELAY: ::libc::c_uint = 0;
 pub const PP_TCPSOCKET_OPTION_SEND_BUFFER_SIZE: ::libc::c_uint = 1;
 pub const PP_TCPSOCKET_OPTION_RECV_BUFFER_SIZE: ::libc::c_uint = 2;
 pub type PP_TCPSocket_Option = Enum_Unnamed35;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TCPSocket_Option {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TCPSocket_Option_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -4223,7 +4374,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_TCPSocket_1_2 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -4289,9 +4439,13 @@ impl ::std::default::Default for Struct_PPB_TCPSocket_1_2 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_TCPSocket_1_2 {
+    fn clone(&self) -> Struct_PPB_TCPSocket_1_2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_TCPSocket = Struct_PPB_TCPSocket_1_2;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_TCPSocket_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -4338,8 +4492,12 @@ impl ::std::default::Default for Struct_PPB_TCPSocket_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_TCPSocket_1_0 {
+    fn clone(&self) -> Struct_PPB_TCPSocket_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_TCPSocket_1_1 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -4405,6 +4563,11 @@ impl ::std::default::Default for Struct_PPB_TCPSocket_1_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_TCPSocket_1_1 {
+    fn clone(&self) -> Struct_PPB_TCPSocket_1_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type Enum_Unnamed36 = ::libc::c_uint;
 pub const PP_TEXTINPUT_TYPE_NONE: ::libc::c_uint = 0;
 pub const PP_TEXTINPUT_TYPE_TEXT: ::libc::c_uint = 1;
@@ -4416,7 +4579,7 @@ pub const PP_TEXTINPUT_TYPE_TELEPHONE: ::libc::c_uint = 6;
 pub const PP_TEXTINPUT_TYPE_URL: ::libc::c_uint = 7;
 pub type PP_TextInput_Type = Enum_Unnamed36;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TextInput_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TextInput_Type_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -4427,7 +4590,6 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TextInput_Type
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_TextInputController_1_0 {
     pub SetTextInputType: ::std::option::Option<extern "C" fn
                                                     (instance: PP_Instance,
@@ -4452,6 +4614,11 @@ impl ::std::default::Default for Struct_PPB_TextInputController_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_TextInputController_1_0 {
+    fn clone(&self) -> Struct_PPB_TextInputController_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_TextInputController = Struct_PPB_TextInputController_1_0;
 pub type Enum_Unnamed37 = ::libc::c_uint;
 pub const PP_UDPSOCKET_OPTION_ADDRESS_REUSE: ::libc::c_uint = 0;
@@ -4460,7 +4627,7 @@ pub const PP_UDPSOCKET_OPTION_SEND_BUFFER_SIZE: ::libc::c_uint = 2;
 pub const PP_UDPSOCKET_OPTION_RECV_BUFFER_SIZE: ::libc::c_uint = 3;
 pub type PP_UDPSocket_Option = Enum_Unnamed37;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_UDPSocket_Option {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_UDPSocket_Option_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -4471,7 +4638,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_UDPSocket_1_1 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -4517,9 +4683,13 @@ impl ::std::default::Default for Struct_PPB_UDPSocket_1_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_UDPSocket_1_1 {
+    fn clone(&self) -> Struct_PPB_UDPSocket_1_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_UDPSocket = Struct_PPB_UDPSocket_1_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_UDPSocket_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -4565,8 +4735,12 @@ impl ::std::default::Default for Struct_PPB_UDPSocket_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_UDPSocket_1_0 {
+    fn clone(&self) -> Struct_PPB_UDPSocket_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_URLLoader_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -4621,6 +4795,11 @@ impl ::std::default::Default for Struct_PPB_URLLoader_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_URLLoader_1_0 {
+    fn clone(&self) -> Struct_PPB_URLLoader_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_URLLoader = Struct_PPB_URLLoader_1_0;
 pub type Enum_Unnamed38 = ::libc::c_uint;
 pub const PP_URLREQUESTPROPERTY_URL: ::libc::c_uint = 0;
@@ -4643,7 +4822,7 @@ pub const PP_URLREQUESTPROPERTY_PREFETCHBUFFERLOWERTHRESHOLD: ::libc::c_uint =
 pub const PP_URLREQUESTPROPERTY_CUSTOMUSERAGENT: ::libc::c_uint = 13;
 pub type PP_URLRequestProperty = Enum_Unnamed38;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_URLRequestProperty {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLRequestProperty_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -4654,7 +4833,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_URLRequestInfo_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -4686,6 +4864,11 @@ impl ::std::default::Default for Struct_PPB_URLRequestInfo_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_URLRequestInfo_1_0 {
+    fn clone(&self) -> Struct_PPB_URLRequestInfo_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_URLRequestInfo = Struct_PPB_URLRequestInfo_1_0;
 pub type Enum_Unnamed39 = ::libc::c_uint;
 pub const PP_URLRESPONSEPROPERTY_URL: ::libc::c_uint = 0;
@@ -4696,7 +4879,7 @@ pub const PP_URLRESPONSEPROPERTY_STATUSLINE: ::libc::c_uint = 4;
 pub const PP_URLRESPONSEPROPERTY_HEADERS: ::libc::c_uint = 5;
 pub type PP_URLResponseProperty = Enum_Unnamed39;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_URLResponseProperty {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLResponseProperty_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -4707,7 +4890,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_URLResponseInfo_1_0 {
     pub IsURLResponseInfo: ::std::option::Option<extern "C" fn
                                                      (resource: PP_Resource)
@@ -4726,9 +4908,13 @@ impl ::std::default::Default for Struct_PPB_URLResponseInfo_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_URLResponseInfo_1_0 {
+    fn clone(&self) -> Struct_PPB_URLResponseInfo_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_URLResponseInfo = Struct_PPB_URLResponseInfo_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Var_1_2 {
     pub AddRef: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
     pub Release: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
@@ -4749,9 +4935,13 @@ pub struct Struct_PPB_Var_1_2 {
 impl ::std::default::Default for Struct_PPB_Var_1_2 {
     fn default() -> Struct_PPB_Var_1_2 { unsafe { ::std::mem::zeroed() } }
 }
+impl ::std::clone::Clone for Struct_PPB_Var_1_2 {
+    fn clone(&self) -> Struct_PPB_Var_1_2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_Var = Struct_PPB_Var_1_2;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Var_1_0 {
     pub AddRef: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
     pub Release: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
@@ -4768,8 +4958,12 @@ pub struct Struct_PPB_Var_1_0 {
 impl ::std::default::Default for Struct_PPB_Var_1_0 {
     fn default() -> Struct_PPB_Var_1_0 { unsafe { ::std::mem::zeroed() } }
 }
+impl ::std::clone::Clone for Struct_PPB_Var_1_0 {
+    fn clone(&self) -> Struct_PPB_Var_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Var_1_1 {
     pub AddRef: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
     pub Release: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
@@ -4785,8 +4979,12 @@ pub struct Struct_PPB_Var_1_1 {
 impl ::std::default::Default for Struct_PPB_Var_1_1 {
     fn default() -> Struct_PPB_Var_1_1 { unsafe { ::std::mem::zeroed() } }
 }
+impl ::std::clone::Clone for Struct_PPB_Var_1_1 {
+    fn clone(&self) -> Struct_PPB_Var_1_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_VarArray_1_0 {
     pub Create: ::std::option::Option<extern "C" fn() -> Struct_PP_Var>,
     pub Get: ::std::option::Option<extern "C" fn
@@ -4806,9 +5004,13 @@ impl ::std::default::Default for Struct_PPB_VarArray_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_VarArray_1_0 {
+    fn clone(&self) -> Struct_PPB_VarArray_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_VarArray = Struct_PPB_VarArray_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_VarArrayBuffer_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(size_in_bytes: uint32_t)
                                           -> Struct_PP_Var>,
@@ -4825,9 +5027,13 @@ impl ::std::default::Default for Struct_PPB_VarArrayBuffer_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_VarArrayBuffer_1_0 {
+    fn clone(&self) -> Struct_PPB_VarArrayBuffer_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_VarArrayBuffer = Struct_PPB_VarArrayBuffer_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_VarDictionary_1_0 {
     pub Create: ::std::option::Option<extern "C" fn() -> Struct_PP_Var>,
     pub Get: ::std::option::Option<extern "C" fn
@@ -4851,9 +5057,13 @@ impl ::std::default::Default for Struct_PPB_VarDictionary_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_VarDictionary_1_0 {
+    fn clone(&self) -> Struct_PPB_VarDictionary_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_VarDictionary = Struct_PPB_VarDictionary_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_View_1_2 {
     pub IsView: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                           -> PP_Bool>,
@@ -4888,9 +5098,13 @@ pub struct Struct_PPB_View_1_2 {
 impl ::std::default::Default for Struct_PPB_View_1_2 {
     fn default() -> Struct_PPB_View_1_2 { unsafe { ::std::mem::zeroed() } }
 }
+impl ::std::clone::Clone for Struct_PPB_View_1_2 {
+    fn clone(&self) -> Struct_PPB_View_1_2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_View = Struct_PPB_View_1_2;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_View_1_0 {
     pub IsView: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                           -> PP_Bool>,
@@ -4914,8 +5128,12 @@ pub struct Struct_PPB_View_1_0 {
 impl ::std::default::Default for Struct_PPB_View_1_0 {
     fn default() -> Struct_PPB_View_1_0 { unsafe { ::std::mem::zeroed() } }
 }
+impl ::std::clone::Clone for Struct_PPB_View_1_0 {
+    fn clone(&self) -> Struct_PPB_View_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_View_1_1 {
     pub IsView: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                           -> PP_Bool>,
@@ -4945,6 +5163,11 @@ pub struct Struct_PPB_View_1_1 {
 impl ::std::default::Default for Struct_PPB_View_1_1 {
     fn default() -> Struct_PPB_View_1_1 { unsafe { ::std::mem::zeroed() } }
 }
+impl ::std::clone::Clone for Struct_PPB_View_1_1 {
+    fn clone(&self) -> Struct_PPB_View_1_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type Enum_Unnamed40 = ::libc::c_int;
 pub const PP_WEBSOCKETREADYSTATE_INVALID: ::libc::c_int = -1;
 pub const PP_WEBSOCKETREADYSTATE_CONNECTING: ::libc::c_int = 0;
@@ -4953,7 +5176,7 @@ pub const PP_WEBSOCKETREADYSTATE_CLOSING: ::libc::c_int = 2;
 pub const PP_WEBSOCKETREADYSTATE_CLOSED: ::libc::c_int = 3;
 pub type PP_WebSocketReadyState = Enum_Unnamed40;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_WebSocketReadyState {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketReadyState_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -4984,7 +5207,7 @@ pub const PP_WEBSOCKETSTATUSCODE_USER_PRIVATE_MIN: ::libc::c_uint = 4000;
 pub const PP_WEBSOCKETSTATUSCODE_USER_PRIVATE_MAX: ::libc::c_uint = 4999;
 pub type PP_WebSocketCloseCode = Enum_Unnamed41;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_WebSocketCloseCode {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketCloseCode_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -4995,7 +5218,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_WebSocket_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -5057,9 +5279,14 @@ impl ::std::default::Default for Struct_PPB_WebSocket_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_WebSocket_1_0 {
+    fn clone(&self) -> Struct_PPB_WebSocket_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_WebSocket = Struct_PPB_WebSocket_1_0;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_DirectoryEntry {
     pub file_ref: PP_Resource,
     pub file_type: PP_FileType,
@@ -5070,7 +5297,7 @@ impl ::std::default::Default for Struct_PP_DirectoryEntry {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_DirectoryEntry {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_DirectoryEntry_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5121,7 +5348,7 @@ pub const PP_ERROR_ADDRESS_IN_USE: ::libc::c_int = -108;
 pub const PP_ERROR_MESSAGE_TOO_BIG: ::libc::c_int = -109;
 pub const PP_ERROR_NAME_NOT_RESOLVED: ::libc::c_int = -110;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_InputEvent_Key {
     pub modifier: uint32_t,
     pub key_code: uint32_t,
@@ -5132,7 +5359,7 @@ impl ::std::default::Default for Struct_PP_InputEvent_Key {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Key {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Key_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5143,7 +5370,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_InputEvent_Key
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_InputEvent_Character {
     pub modifier: uint32_t,
     pub text: [::libc::c_char; 5us],
@@ -5154,7 +5381,7 @@ impl ::std::default::Default for Struct_PP_InputEvent_Character {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Character {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Character_is_not_12_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5165,7 +5392,7 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_InputEvent_Mouse {
     pub modifier: uint32_t,
     pub button: PP_InputEvent_MouseButton,
@@ -5179,7 +5406,7 @@ impl ::std::default::Default for Struct_PP_InputEvent_Mouse {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Mouse {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Mouse_is_not_20_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5190,7 +5417,7 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_InputEvent_Wheel {
     pub modifier: uint32_t,
     pub delta_x: ::libc::c_float,
@@ -5205,7 +5432,7 @@ impl ::std::default::Default for Struct_PP_InputEvent_Wheel {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Wheel {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Wheel_is_not_24_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5216,7 +5443,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_Graphics3D_1_0 {
     pub Graphics3DContextLost: ::std::option::Option<extern "C" fn
                                                          (instance:
@@ -5227,9 +5453,13 @@ impl ::std::default::Default for Struct_PPP_Graphics3D_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_Graphics3D_1_0 {
+    fn clone(&self) -> Struct_PPP_Graphics3D_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_Graphics3D = Struct_PPP_Graphics3D_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_InputEvent_0_1 {
     pub HandleInputEvent: ::std::option::Option<extern "C" fn
                                                     (instance: PP_Instance,
@@ -5241,9 +5471,13 @@ impl ::std::default::Default for Struct_PPP_InputEvent_0_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_InputEvent_0_1 {
+    fn clone(&self) -> Struct_PPP_InputEvent_0_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_InputEvent = Struct_PPP_InputEvent_0_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_Instance_1_1 {
     pub DidCreate: ::std::option::Option<extern "C" fn
                                              (instance: PP_Instance,
@@ -5272,9 +5506,13 @@ impl ::std::default::Default for Struct_PPP_Instance_1_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_Instance_1_1 {
+    fn clone(&self) -> Struct_PPP_Instance_1_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_Instance = Struct_PPP_Instance_1_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_Instance_1_0 {
     pub DidCreate: ::std::option::Option<extern "C" fn
                                              (instance: PP_Instance,
@@ -5306,8 +5544,12 @@ impl ::std::default::Default for Struct_PPP_Instance_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_Instance_1_0 {
+    fn clone(&self) -> Struct_PPP_Instance_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_Messaging_1_0 {
     pub HandleMessage: ::std::option::Option<extern "C" fn
                                                  (instance: PP_Instance,
@@ -5318,9 +5560,13 @@ impl ::std::default::Default for Struct_PPP_Messaging_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_Messaging_1_0 {
+    fn clone(&self) -> Struct_PPP_Messaging_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_Messaging = Struct_PPP_Messaging_1_0;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_MouseLock_1_0 {
     pub MouseLockLost: ::std::option::Option<extern "C" fn
                                                  (instance: PP_Instance)>,
@@ -5328,6 +5574,11 @@ pub struct Struct_PPP_MouseLock_1_0 {
 impl ::std::default::Default for Struct_PPP_MouseLock_1_0 {
     fn default() -> Struct_PPP_MouseLock_1_0 {
         unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::clone::Clone for Struct_PPP_MouseLock_1_0 {
+    fn clone(&self) -> Struct_PPP_MouseLock_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
     }
 }
 pub type PPP_MouseLock = Struct_PPP_MouseLock_1_0;
@@ -5377,7 +5628,7 @@ pub const PP_CURSORTYPE_ZOOMOUT: ::libc::c_int = 40;
 pub const PP_CURSORTYPE_GRAB: ::libc::c_int = 41;
 pub const PP_CURSORTYPE_GRABBING: ::libc::c_int = 42;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_CursorType_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CursorType_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5388,7 +5639,6 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_CursorType_Dev
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_CursorControl_Dev_0_4 {
     pub SetCursor: ::std::option::Option<extern "C" fn
                                              (instance: PP_Instance,
@@ -5414,13 +5664,18 @@ impl ::std::default::Default for Struct_PPB_CursorControl_Dev_0_4 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_CursorControl_Dev_0_4 {
+    fn clone(&self) -> Struct_PPB_CursorControl_Dev_0_4 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_CursorControl_Dev = Struct_PPB_CursorControl_Dev_0_4;
 pub type Enum_Unnamed43 = ::libc::c_uint;
 pub const PP_FILECHOOSERMODE_OPEN: ::libc::c_uint = 0;
 pub const PP_FILECHOOSERMODE_OPENMULTIPLE: ::libc::c_uint = 1;
 pub type PP_FileChooserMode_Dev = Enum_Unnamed43;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileChooserMode_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileChooserMode_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5431,7 +5686,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_FileChooser_Dev_0_6 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -5453,9 +5707,13 @@ impl ::std::default::Default for Struct_PPB_FileChooser_Dev_0_6 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_FileChooser_Dev_0_6 {
+    fn clone(&self) -> Struct_PPB_FileChooser_Dev_0_6 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_FileChooser_Dev = Struct_PPB_FileChooser_Dev_0_6;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_FileChooser_Dev_0_5 {
     pub Create: ::std::option::Option<extern "C" fn
                                           (instance: PP_Instance,
@@ -5479,6 +5737,11 @@ impl ::std::default::Default for Struct_PPB_FileChooser_Dev_0_5 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_FileChooser_Dev_0_5 {
+    fn clone(&self) -> Struct_PPB_FileChooser_Dev_0_5 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type Enum_Unnamed44 = ::libc::c_uint;
 pub const PP_FONTFAMILY_DEFAULT: ::libc::c_uint = 0;
 pub const PP_FONTFAMILY_SERIF: ::libc::c_uint = 1;
@@ -5486,7 +5749,7 @@ pub const PP_FONTFAMILY_SANSSERIF: ::libc::c_uint = 2;
 pub const PP_FONTFAMILY_MONOSPACE: ::libc::c_uint = 3;
 pub type PP_FontFamily_Dev = Enum_Unnamed44;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontFamily_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5510,7 +5773,7 @@ pub const PP_FONTWEIGHT_NORMAL: ::libc::c_uint = 3;
 pub const PP_FONTWEIGHT_BOLD: ::libc::c_uint = 6;
 pub type PP_FontWeight_Dev = Enum_Unnamed45;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontWeight_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5521,7 +5784,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FontWeight_Dev
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_FontDescription_Dev {
     pub face: Struct_PP_Var,
     pub family: PP_FontFamily_Dev,
@@ -5539,7 +5802,7 @@ impl ::std::default::Default for Struct_PP_FontDescription_Dev {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontDescription_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontDescription_Dev_is_not_48_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5550,7 +5813,7 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_FontMetrics_Dev {
     pub height: int32_t,
     pub ascent: int32_t,
@@ -5564,7 +5827,7 @@ impl ::std::default::Default for Struct_PP_FontMetrics_Dev {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontMetrics_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontMetrics_Dev_is_not_20_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5575,7 +5838,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FontMetrics_Dev
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_TextRun_Dev {
     pub text: Struct_PP_Var,
     pub rtl: PP_Bool,
@@ -5585,7 +5848,7 @@ impl ::std::default::Default for Struct_PP_TextRun_Dev {
     fn default() -> Struct_PP_TextRun_Dev { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TextRun_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TextRun_Dev_is_not_24_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5595,7 +5858,6 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TextRun_Dev {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Font_Dev_0_6 {
     pub GetFontFamilies: ::std::option::Option<extern "C" fn
                                                    (instance: PP_Instance)
@@ -5650,9 +5912,13 @@ impl ::std::default::Default for Struct_PPB_Font_Dev_0_6 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_Font_Dev_0_6 {
+    fn clone(&self) -> Struct_PPB_Font_Dev_0_6 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_Font_Dev = Struct_PPB_Font_Dev_0_6;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Memory_Dev_0_1 {
     pub MemAlloc: ::std::option::Option<extern "C" fn(num_bytes: uint32_t)
                                             -> *mut ::libc::c_void>,
@@ -5664,9 +5930,13 @@ impl ::std::default::Default for Struct_PPB_Memory_Dev_0_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_Memory_Dev_0_1 {
+    fn clone(&self) -> Struct_PPB_Memory_Dev_0_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_Memory_Dev = Struct_PPB_Memory_Dev_0_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
     pub DrawBuffersEXT: ::std::option::Option<extern "C" fn
                                                   (context: PP_Resource,
@@ -5678,8 +5948,12 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
+    fn clone(&self) -> Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2DrawBuffers_Dev {
     pub DrawBuffersEXT: ::std::option::Option<extern "C" fn
                                                   (context: PP_Resource,
@@ -5691,6 +5965,11 @@ impl ::std::default::Default for Struct_PPB_OpenGLES2DrawBuffers_Dev {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2DrawBuffers_Dev {
+    fn clone(&self) -> Struct_PPB_OpenGLES2DrawBuffers_Dev {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type Enum_Unnamed46 = ::libc::c_uint;
 pub const PP_PRINTORIENTATION_NORMAL: ::libc::c_uint = 0;
 pub const PP_PRINTORIENTATION_ROTATED_90_CW: ::libc::c_uint = 1;
@@ -5698,7 +5977,7 @@ pub const PP_PRINTORIENTATION_ROTATED_180: ::libc::c_uint = 2;
 pub const PP_PRINTORIENTATION_ROTATED_90_CCW: ::libc::c_uint = 3;
 pub type PP_PrintOrientation_Dev = Enum_Unnamed46;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintOrientation_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOrientation_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5715,7 +5994,7 @@ pub const PP_PRINTOUTPUTFORMAT_POSTSCRIPT: ::libc::c_uint = 4;
 pub const PP_PRINTOUTPUTFORMAT_EMF: ::libc::c_uint = 8;
 pub type PP_PrintOutputFormat_Dev = Enum_Unnamed47;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintOutputFormat_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOutputFormat_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5731,7 +6010,7 @@ pub const PP_PRINTSCALINGOPTION_FIT_TO_PRINTABLE_AREA: ::libc::c_uint = 1;
 pub const PP_PRINTSCALINGOPTION_SOURCE_SIZE: ::libc::c_uint = 2;
 pub type PP_PrintScalingOption_Dev = Enum_Unnamed48;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintScalingOption_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintScalingOption_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5748,7 +6027,7 @@ pub const PP_PRINTDUPLEXMODE_LONG_EDGE: ::libc::c_uint = 2;
 pub const PP_PRINTDUPLEXMODE_SHORT_EDGE: ::libc::c_uint = 3;
 pub type PP_PrintDuplexMode_Dev = Enum_Unnamed49;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintDuplexMode_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintDuplexMode_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5759,7 +6038,7 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_PrintSettings_Dev {
     pub printable_area: Struct_PP_Rect,
     pub content_area: Struct_PP_Rect,
@@ -5776,7 +6055,7 @@ impl ::std::default::Default for Struct_PP_PrintSettings_Dev {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintSettings_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintSettings_Dev_is_not_60_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5787,7 +6066,7 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_PrintRange_Dev {
     pub from: int32_t,
     pub to: int32_t,
@@ -5798,7 +6077,7 @@ impl ::std::default::Default for Struct_PP_PrintRange_Dev {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintRange_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintRange_Dev_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5809,7 +6088,6 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_PrintRange_Dev
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Printing_Dev_0_7 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
@@ -5827,10 +6105,14 @@ impl ::std::default::Default for Struct_PPB_Printing_Dev_0_7 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_Printing_Dev_0_7 {
+    fn clone(&self) -> Struct_PPB_Printing_Dev_0_7 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_Printing_Dev = Struct_PPB_Printing_Dev_0_7;
 pub type PP_TraceEventTime = int64_t;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Trace_Event_Dev_0_2 {
     pub GetCategoryEnabled: ::std::option::Option<extern "C" fn
                                                       (category_name:
@@ -5881,9 +6163,13 @@ impl ::std::default::Default for Struct_PPB_Trace_Event_Dev_0_2 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_Trace_Event_Dev_0_2 {
+    fn clone(&self) -> Struct_PPB_Trace_Event_Dev_0_2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_Trace_Event_Dev = Struct_PPB_Trace_Event_Dev_0_2;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Trace_Event_Dev_0_1 {
     pub GetCategoryEnabled: ::std::option::Option<extern "C" fn
                                                       (category_name:
@@ -5910,6 +6196,11 @@ impl ::std::default::Default for Struct_PPB_Trace_Event_Dev_0_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_Trace_Event_Dev_0_1 {
+    fn clone(&self) -> Struct_PPB_Trace_Event_Dev_0_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type Enum_Unnamed50 = ::libc::c_uint;
 pub const PP_TRUETYPEFONTFAMILY_SERIF: ::libc::c_uint = 0;
 pub const PP_TRUETYPEFONTFAMILY_SANSSERIF: ::libc::c_uint = 1;
@@ -5918,7 +6209,7 @@ pub const PP_TRUETYPEFONTFAMILY_FANTASY: ::libc::c_uint = 3;
 pub const PP_TRUETYPEFONTFAMILY_MONOSPACE: ::libc::c_uint = 4;
 pub type PP_TrueTypeFontFamily_Dev = Enum_Unnamed50;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontFamily_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5933,7 +6224,7 @@ pub const PP_TRUETYPEFONTSTYLE_NORMAL: ::libc::c_uint = 0;
 pub const PP_TRUETYPEFONTSTYLE_ITALIC: ::libc::c_uint = 1;
 pub type PP_TrueTypeFontStyle_Dev = Enum_Unnamed51;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontStyle_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontStyle_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5955,7 +6246,7 @@ pub const PP_TRUETYPEFONTWEIGHT_ULTRABOLD: ::libc::c_uint = 800;
 pub const PP_TRUETYPEFONTWEIGHT_HEAVY: ::libc::c_uint = 900;
 pub type PP_TrueTypeFontWeight_Dev = Enum_Unnamed52;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWeight_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -5977,7 +6268,7 @@ pub const PP_TRUETYPEFONTWIDTH_EXTRAEXPANDED: ::libc::c_uint = 7;
 pub const PP_TRUETYPEFONTWIDTH_ULTRAEXPANDED: ::libc::c_uint = 8;
 pub type PP_TrueTypeFontWidth_Dev = Enum_Unnamed53;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWidth_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWidth_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -6009,7 +6300,7 @@ pub const PP_TRUETYPEFONTCHARSET_EASTEUROPE: ::libc::c_uint = 238;
 pub const PP_TRUETYPEFONTCHARSET_OEM: ::libc::c_uint = 255;
 pub type PP_TrueTypeFontCharset_Dev = Enum_Unnamed54;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontCharset_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontCharset_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
 }
@@ -6020,7 +6311,7 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_TrueTypeFontDesc_Dev {
     pub family: Struct_PP_Var,
     pub generic_family: PP_TrueTypeFontFamily_Dev,
@@ -6036,7 +6327,7 @@ impl ::std::default::Default for Struct_PP_TrueTypeFontDesc_Dev {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontDesc_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontDesc_Dev_is_not_40_bytes_wide: [::libc::c_char; 1us],
 }
@@ -6047,7 +6338,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_TrueTypeFont_Dev_0_1 {
     pub GetFontFamilies: ::std::option::Option<extern "C" fn
                                                    (instance: PP_Instance,
@@ -6100,9 +6390,13 @@ impl ::std::default::Default for Struct_PPB_TrueTypeFont_Dev_0_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_TrueTypeFont_Dev_0_1 {
+    fn clone(&self) -> Struct_PPB_TrueTypeFont_Dev_0_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_TrueTypeFont_Dev = Struct_PPB_TrueTypeFont_Dev_0_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_View_Dev_0_1 {
     pub GetDeviceScale: ::std::option::Option<extern "C" fn
                                                   (resource: PP_Resource)
@@ -6116,9 +6410,13 @@ impl ::std::default::Default for Struct_PPB_View_Dev_0_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_View_Dev_0_1 {
+    fn clone(&self) -> Struct_PPB_View_Dev_0_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_View_Dev = Struct_PPB_View_Dev_0_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPB_Zoom_Dev_0_2 {
     pub ZoomChanged: ::std::option::Option<extern "C" fn
                                                (instance: PP_Instance,
@@ -6135,9 +6433,13 @@ impl ::std::default::Default for Struct_PPB_Zoom_Dev_0_2 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPB_Zoom_Dev_0_2 {
+    fn clone(&self) -> Struct_PPB_Zoom_Dev_0_2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPB_Zoom_Dev = Struct_PPB_Zoom_Dev_0_2;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_NetworkState_Dev_0_1 {
     pub SetOnLine: ::std::option::Option<extern "C" fn(is_online: PP_Bool)>,
 }
@@ -6146,9 +6448,14 @@ impl ::std::default::Default for Struct_PPP_NetworkState_Dev_0_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_NetworkState_Dev_0_1 {
+    fn clone(&self) -> Struct_PPP_NetworkState_Dev_0_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_NetworkState_Dev = Struct_PPP_NetworkState_Dev_0_1;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_PrintPageNumberRange_Dev {
     pub first_page_number: uint32_t,
     pub last_page_number: uint32_t,
@@ -6159,7 +6466,7 @@ impl ::std::default::Default for Struct_PP_PrintPageNumberRange_Dev {
     }
 }
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintPageNumberRange_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintPageNumberRange_Dev_is_not_8_bytes_wide: [::libc::c_char; 1us],
 }
@@ -6170,7 +6477,6 @@ impl ::std::default::Default for
     }
 }
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_Printing_Dev_0_6 {
     pub QuerySupportedFormats: ::std::option::Option<extern "C" fn
                                                          (instance:
@@ -6197,9 +6503,13 @@ impl ::std::default::Default for Struct_PPP_Printing_Dev_0_6 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_Printing_Dev_0_6 {
+    fn clone(&self) -> Struct_PPP_Printing_Dev_0_6 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_Printing_Dev = Struct_PPP_Printing_Dev_0_6;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_Scrollbar_Dev_0_3 {
     pub ValueChanged: ::std::option::Option<extern "C" fn
                                                 (instance: PP_Instance,
@@ -6215,9 +6525,13 @@ impl ::std::default::Default for Struct_PPP_Scrollbar_Dev_0_3 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_Scrollbar_Dev_0_3 {
+    fn clone(&self) -> Struct_PPP_Scrollbar_Dev_0_3 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_Scrollbar_Dev = Struct_PPP_Scrollbar_Dev_0_3;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_Scrollbar_Dev_0_2 {
     pub ValueChanged: ::std::option::Option<extern "C" fn
                                                 (instance: PP_Instance,
@@ -6229,8 +6543,12 @@ impl ::std::default::Default for Struct_PPP_Scrollbar_Dev_0_2 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_Scrollbar_Dev_0_2 {
+    fn clone(&self) -> Struct_PPP_Scrollbar_Dev_0_2 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_Selection_Dev_0_3 {
     pub GetSelectedText: ::std::option::Option<extern "C" fn
                                                    (instance: PP_Instance,
@@ -6242,9 +6560,13 @@ impl ::std::default::Default for Struct_PPP_Selection_Dev_0_3 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_Selection_Dev_0_3 {
+    fn clone(&self) -> Struct_PPP_Selection_Dev_0_3 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_Selection_Dev = Struct_PPP_Selection_Dev_0_3;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_TextInput_Dev_0_1 {
     pub RequestSurroundingText: ::std::option::Option<extern "C" fn
                                                           (instance:
@@ -6257,9 +6579,13 @@ impl ::std::default::Default for Struct_PPP_TextInput_Dev_0_1 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::clone::Clone for Struct_PPP_TextInput_Dev_0_1 {
+    fn clone(&self) -> Struct_PPP_TextInput_Dev_0_1 {
+        unsafe { ::std::mem::transmute_copy(self) }
+    }
+}
 pub type PPP_TextInput_Dev = Struct_PPP_TextInput_Dev_0_1;
 #[repr(C)]
-#[derive(Copy)]
 pub struct Struct_PPP_Zoom_Dev_0_3 {
     pub Zoom: ::std::option::Option<extern "C" fn
                                         (instance: PP_Instance,
@@ -6269,6 +6595,11 @@ pub struct Struct_PPP_Zoom_Dev_0_3 {
 impl ::std::default::Default for Struct_PPP_Zoom_Dev_0_3 {
     fn default() -> Struct_PPP_Zoom_Dev_0_3 {
         unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::clone::Clone for Struct_PPP_Zoom_Dev_0_3 {
+    fn clone(&self) -> Struct_PPP_Zoom_Dev_0_3 {
+        unsafe { ::std::mem::transmute_copy(self) }
     }
 }
 pub type PPP_Zoom_Dev = Struct_PPP_Zoom_Dev_0_3;
@@ -6291,7 +6622,7 @@ pub type _uint = ::libc::c_uint;
 pub type ulong = ::libc::c_ulong;
 pub type clock_t = ::libc::c_ulong;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_itimerspec {
     pub it_interval: Struct_timespec,
     pub it_value: Struct_timespec,
@@ -6313,7 +6644,7 @@ pub type mode_t = ::libc::c_uint;
 pub type nlink_t = __nlink_t;
 pub type fd_mask = ::libc::c_long;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__types_fd_set {
     pub fds_bits: [fd_mask; 2us],
 }

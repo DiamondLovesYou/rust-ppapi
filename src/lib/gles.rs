@@ -21,7 +21,7 @@ use super::ppb;
 use super::ppb::get_gles2;
 use ffi;
 
-#[derive(Hash, Eq, PartialEq, Show)]
+#[derive(Hash, Eq, PartialEq, Debug)]
 pub struct Context3d(ffi::PP_Resource);
 
 // for debugging purposes:
@@ -359,7 +359,7 @@ macro_rules! call_gl_fun(
         let e = $expr.$fun;
         let f = if e.is_none() { failure() }
                 else { e.unwrap() };
-        println!("{}({})", stringify!($fun), $ctxt);
+        println!("{}({:?})", stringify!($fun), $ctxt);
         f( $ctxt.unwrap() )
     })
 );
@@ -372,7 +372,7 @@ pub mod traits {
                 VertexBuffer, IndexBuffer, TextureBuffer, FrameBuffer,
                 RenderBuffer};
     use std::clone::Clone;
-    use std::string::CowString;
+    use std::borrow::Cow;
     use std::borrow::ToOwned;
     use libc::c_void;
 
@@ -491,7 +491,7 @@ pub mod traits {
 
     pub trait GenBuffer {
         fn gen_single(ctxt: &Context3d) -> Self;
-        fn gen_multiple(ctxt: &Context3d, count: uint) -> Vec<Self>;
+        fn gen_multiple(ctxt: &Context3d, count: usize) -> Vec<Self>;
     }
 
     macro_rules! impl_gen_buffer(
@@ -600,11 +600,13 @@ pub mod traits {
         }
     }
     pub trait CompileShader: GenShader + super::ShaderUnwrap + Sized {
-        fn new(ctxt: &Context3d, src: &Vec<CowString>) -> super::CompilingShader<Self> {
+        fn new<'a>(ctxt: &Context3d, src: &Vec<Cow<'a, str>>)
+                   -> super::CompilingShader<Self>
+        {
             use libc::c_char;
             let this: Self = GenShader::gen_single(ctxt);
             let mut src_ptrs: Vec<*const c_char> = src.iter()
-                .map(|s| s.as_slice().as_ptr() as *const c_char )
+                .map(|s| s.as_ref().as_ptr() as *const c_char )
                 .collect();
             let src_lens: Vec<types::Int> = src.iter()
                 .map(|s| s.len() as types::Int)
@@ -628,7 +630,7 @@ pub mod traits {
     }
     pub trait IndexElementType {
         fn get_index_element_type_enum(&self) -> types::Enum;
-        fn ptr_offset(&self, offset: uint) -> *const c_void;
+        fn ptr_offset(&self, offset: usize) -> *const c_void;
     }
 }
 trait Ctor {
@@ -705,7 +707,7 @@ pub enum BufferType {
 }
 pub enum BufferOption<'a, T: 'a> {
     BufferSome(&'a Vec<T>),
-    BufferNone(uint),
+    BufferNone(usize),
 }
 impl<'a, T> clone::Clone for BufferOption<'a, T> {
     fn clone(&self) -> BufferOption<'a, T> {
@@ -734,14 +736,14 @@ impl<'a, T> BufferOption<'a, T> {
 trait OptPointerOffset {
     fn to_ptr_offset(&self) -> *const libc::c_void;
 }
-impl OptPointerOffset for Option<uint> {
+impl OptPointerOffset for Option<usize> {
     fn to_ptr_offset(&self) -> *const libc::c_void {
         use libc::c_char;
         match self {
             &Some(sb) => {
                 let p: *const c_char = ptr::null();
                 unsafe {
-                    p.offset(sb as int) as *const c_void
+                    p.offset(sb as isize) as *const c_void
                 }
             }
             &None => ptr::null(),
@@ -753,13 +755,13 @@ impl OptPointerOffset for Option<uint> {
 pub struct BoundBuffer<T>(T);
 pub type BoundVertBuffer = BoundBuffer<VertexBuffer>;
 pub type BoundIdxBuffer  = BoundBuffer<IndexBuffer>;
-#[derive(Copy)] pub struct PointsGeometryMode;
-#[derive(Copy)] pub struct LineStripGeometryMode;
-#[derive(Copy)] pub struct LineLoopGeometryMode;
-#[derive(Copy)] pub struct LinesGeometryMode;
-#[derive(Copy)] pub struct TriangleStripGeometryMode;
-#[derive(Copy)] pub struct TriangleFanGeometryMode;
-#[derive(Copy)] pub struct TrianglesGeometryMode;
+#[derive(Copy, Clone)] pub struct PointsGeometryMode;
+#[derive(Copy, Clone)] pub struct LineStripGeometryMode;
+#[derive(Copy, Clone)] pub struct LineLoopGeometryMode;
+#[derive(Copy, Clone)] pub struct LinesGeometryMode;
+#[derive(Copy, Clone)] pub struct TriangleStripGeometryMode;
+#[derive(Copy, Clone)] pub struct TriangleFanGeometryMode;
+#[derive(Copy, Clone)] pub struct TrianglesGeometryMode;
 
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Copy)]
 pub enum GeometryMode {
@@ -819,12 +821,12 @@ impl BoundBuffer<VertexBuffer> {
     }
     pub fn vertex_attribute<T: traits::VertexAttribType>(&self,
                                                          ctxt: &Context3d,
-                                                         index: uint,
-                                                         size: uint,
+                                                         index: usize,
+                                                         size: usize,
                                                          ty: T,
                                                          normalized: bool,
-                                                         stride: uint,
-                                                         offset: Option<uint>) {
+                                                         stride: usize,
+                                                         offset: Option<usize>) {
         call_gl_fun!(get_gles2() => VertexAttribPointer => (ctxt,
                                                             index as types::UInt,
                                                             size  as types::Int,
@@ -837,8 +839,8 @@ impl BoundBuffer<VertexBuffer> {
     pub fn draw_slice<T: traits::GeometryMode>(&self,
                                                ctxt: &Context3d,
                                                mode: T,
-                                               slice_start: uint,
-                                               slice_len: uint) {
+                                               slice_start: usize,
+                                               slice_len: usize) {
         call_gl_fun!(get_gles2() => DrawArrays => (ctxt,
                                                    mode.get_geo_mode_enum(),
                                                    slice_start as types::Int,
@@ -846,12 +848,12 @@ impl BoundBuffer<VertexBuffer> {
 
     }
 }
-#[derive(Copy)] pub struct ByteType;
-#[derive(Copy)] pub struct UByteType;
-#[derive(Copy)] pub struct ShortType;
-#[derive(Copy)] pub struct UShortType;
+#[derive(Copy, Clone)] pub struct ByteType;
+#[derive(Copy, Clone)] pub struct UByteType;
+#[derive(Copy, Clone)] pub struct ShortType;
+#[derive(Copy, Clone)] pub struct UShortType;
 // Omitted: FIXED. Isn't recommended by Chrome.
-#[derive(Copy)] pub struct FloatType;
+#[derive(Copy, Clone)] pub struct FloatType;
 
 // For use as a value type.
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Copy)]
@@ -894,7 +896,7 @@ macro_rules! impl_idx_elem_type(
             fn get_index_element_type_enum(&self) -> types::Enum {
                 $expr
             }
-            fn ptr_offset(&self, offset: uint) -> *const c_void {
+            fn ptr_offset(&self, offset: usize) -> *const c_void {
                 (offset * $bytes) as *const c_void
             }
         }
@@ -918,8 +920,8 @@ impl BoundBuffer<IndexBuffer> {
                                                                                ctxt: &Context3d,
                                                                                mode: T,
                                                                                ty:   U,
-                                                                               slice_start: uint,
-                                                                               slice_len: uint) {
+                                                                               slice_start: usize,
+                                                                               slice_len: usize) {
         call_gl_fun!(get_gles2() => DrawElements => (ctxt,
                                                      mode.get_geo_mode_enum(),
                                                      slice_len as types::Size,
@@ -1017,9 +1019,9 @@ impl BoundBuffer<FrameBuffer> {
     }
 }
 
-#[derive(Copy)] pub struct StaticBufferUsage;
-#[derive(Copy)] pub struct StreamBufferUsage;
-#[derive(Copy)] pub struct DynamicBufferUsage;
+#[derive(Copy, Clone)] pub struct StaticBufferUsage;
+#[derive(Copy, Clone)] pub struct StreamBufferUsage;
+#[derive(Copy, Clone)] pub struct DynamicBufferUsage;
 
 #[derive(Clone, PartialEq, Eq, Copy)]
 pub enum BlendingFun_ {
@@ -1054,7 +1056,7 @@ impl<'ctxt, T: ShaderUnwrap> CompileError<'ctxt, T> {
     }
     fn detail(&self) -> Option<String> {
         let info_len = self.ctxt.get_shader_param(&self.shader, consts::INFO_LOG_LENGTH);
-        let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as uint);
+        let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as usize);
         let mut actual_len: types::Size = unsafe { uninitialized() };
         call_gl_fun!(get_gles2() => GetShaderInfoLog
                      => (self.ctxt,
@@ -1062,7 +1064,7 @@ impl<'ctxt, T: ShaderUnwrap> CompileError<'ctxt, T> {
                          info_buf.capacity() as types::Size,
                          &mut actual_len as *mut types::Size,
                          info_buf.as_mut_ptr() as *mut i8));
-        let actual_len: uint = actual_len as uint;
+        let actual_len: usize = actual_len as usize;
         Some(String::from_utf8_lossy(&info_buf[..actual_len]).to_string())
     }
 }
@@ -1118,7 +1120,7 @@ impl<'ctxt> LinkError<'ctxt> {
     }
     fn detail(&self) -> Option<String> {
         let info_len = self.ctxt.get_program_param(&self.program, consts::INFO_LOG_LENGTH);
-        let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as uint);
+        let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as usize);
         let mut actual_len: types::Size = unsafe { uninitialized() };
         call_gl_fun!(get_gles2() => GetProgramInfoLog
                      => (self.ctxt,
@@ -1126,7 +1128,7 @@ impl<'ctxt> LinkError<'ctxt> {
                          info_buf.capacity() as types::Size,
                          &mut actual_len as *mut types::Size,
                          info_buf.as_mut_ptr() as *mut i8));
-        let actual_len: uint = actual_len as uint;
+        let actual_len: usize = actual_len as usize;
         Some(String::from_utf8_lossy(&info_buf[..actual_len]).to_string())
     }
 }
@@ -1289,7 +1291,7 @@ impl<'a> BoundShaderProgram<'a> {
 impl UnlinkedShaderProgram {
     pub fn bind_attrib_locale(&mut self,
                               ctxt: &Context3d,
-                              index: uint,
+                              index: usize,
                               name: &str) {
         call_gl_fun!(get_gles2() => BindAttribLocation => (ctxt,
                                                            self.inner().unwrap(),
@@ -1311,22 +1313,22 @@ impl UnlinkedShaderProgram {
     }
 }
 
-#[derive(Copy)] pub struct MaxVertexAttribs;
-#[derive(Copy)] pub struct MaxVertexUniformVectors;
-#[derive(Copy)] pub struct MaxVaryingVectors;
-#[derive(Copy)] pub struct MaxCombinedTextureImageUnits;
-#[derive(Copy)] pub struct MaxVertexImageUnits;
-#[derive(Copy)] pub struct MaxTextureImageUnits;
-#[derive(Copy)] pub struct MaxFragmentUniformVectors;
-#[derive(Copy)] pub struct MaxCubeMapTextureSize;
-#[derive(Copy)] pub struct MaxRenderBufferSize;
-#[derive(Copy)] pub struct MaxTextureSize;
-#[derive(Copy)] pub struct MaxColorAttachments;
-#[derive(Copy)] pub struct Vendor;
-#[derive(Copy)] pub struct Extensions;
-#[derive(Copy)] pub struct Renderer;
-#[derive(Copy)] pub struct Version;
-#[derive(Copy)] pub struct ShadingLanguageVersion;
+#[derive(Copy, Clone)] pub struct MaxVertexAttribs;
+#[derive(Copy, Clone)] pub struct MaxVertexUniformVectors;
+#[derive(Copy, Clone)] pub struct MaxVaryingVectors;
+#[derive(Copy, Clone)] pub struct MaxCombinedTextureImageUnits;
+#[derive(Copy, Clone)] pub struct MaxVertexImageUnits;
+#[derive(Copy, Clone)] pub struct MaxTextureImageUnits;
+#[derive(Copy, Clone)] pub struct MaxFragmentUniformVectors;
+#[derive(Copy, Clone)] pub struct MaxCubeMapTextureSize;
+#[derive(Copy, Clone)] pub struct MaxRenderBufferSize;
+#[derive(Copy, Clone)] pub struct MaxTextureSize;
+#[derive(Copy, Clone)] pub struct MaxColorAttachments;
+#[derive(Copy, Clone)] pub struct Vendor;
+#[derive(Copy, Clone)] pub struct Extensions;
+#[derive(Copy, Clone)] pub struct Renderer;
+#[derive(Copy, Clone)] pub struct Version;
+#[derive(Copy, Clone)] pub struct ShadingLanguageVersion;
 
 /// INTERNEL
 pub trait GetQueryType {
@@ -1361,30 +1363,36 @@ impl GetQueryType for types::Int {
 }
 impl GetQueryType for &'static str {
     fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> &'static str {
-        use std::ffi::c_str_to_bytes;
+        use std::ffi::CStr;
         use std::str::from_utf8_unchecked;
-        use core::mem::transmute;
+        use std::mem::transmute;
         let str_ptr = call_gl_fun!(get_gles2() => GetString => (ctxt,
                                                                 pname)) as *const i8;
         if str_ptr.is_null() {
             panic!("Got null when I queried for `{}`", pstr);
         }
-        let str_buf: &'static [u8] = unsafe { c_str_to_bytes(transmute(&str_ptr)) };
+        let str_buf: &'static [u8] = unsafe {
+            let str = CStr::from_ptr(str_ptr);
+            transmute(str.to_bytes())
+        };
         unsafe { from_utf8_unchecked(str_buf) }
     }
 }
 impl GetQueryType for Vec<&'static str> {
     fn get(ctxt: &Context3d, pname: types::Enum, pstr: &'static str) -> Vec<&'static str> {
-        use std::ffi::c_str_to_bytes;
+        use std::ffi::CStr;
         use std::str::from_utf8_unchecked;
-        use core::mem::transmute;
+        use std::mem::transmute;
         let str_ptr = call_gl_fun!(get_gles2() => GetString => (ctxt,
                                                                 pname)) as *const i8;
         if str_ptr.is_null() {
             panic!("Got null when I queried for `{}`", pstr);
         }
 
-        let str_buf: &[u8] = unsafe { c_str_to_bytes(&str_ptr) };
+        let str_buf: &[u8] = unsafe {
+            let str = CStr::from_ptr(str_ptr);
+            transmute(str.to_bytes())
+        };
         let str: &'static str = unsafe { transmute(from_utf8_unchecked(str_buf)) };
         str.split(' ')
             .collect()
@@ -1564,7 +1572,7 @@ impl Context3d {
         let interface = ppb::get_graphics_3d();
 
         let cb = next_frame.to_ffi_callback();
-        let r = interface.swap_buffers(self.unwrap(), cb);
+        let r = interface.swap_buffers(self.unwrap(), cb.clone());
         if !r.is_ok() {
             cb.post_to_self(r);
         }

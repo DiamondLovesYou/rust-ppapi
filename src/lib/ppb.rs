@@ -10,10 +10,9 @@
 //! of the verbose-ness of the originals.
 
 #![allow(missing_docs)]
-use core::mem;
-use core::mem::uninitialized;
+use std::mem;
+use std::mem::uninitialized;
 use libc;
-use std::ptr::PtrExt;
 use std::intrinsics;
 
 use super::ffi;
@@ -273,11 +272,11 @@ impl VarIf for ffi::Struct_PPB_Var_1_2 {
         impl_fun!(self.VarFromUtf8 => (string.as_ptr() as *const i8, string.len() as u32))
     }
     fn var_to_utf8(&self, string: &Struct_PP_Var) -> String {
-        use std::slice::from_raw_buf;
+        use std::slice::from_raw_parts;
         use std::str::from_utf8_unchecked;
         let mut len: u32 = unsafe { intrinsics::uninit() };
         let ptr = impl_fun!(self.VarToUtf8 => (*string, &mut len as *mut u32)) as *const u8;
-        let buf = unsafe { from_raw_buf(&ptr, len as usize) };
+        let buf = unsafe { from_raw_parts(ptr, len as usize) };
         let slice = unsafe { from_utf8_unchecked(buf) };
         slice.to_string()
     }
@@ -327,19 +326,19 @@ impl VarArrayIf for ffi::Struct_PPB_VarArray_1_0 {
     }
 }
 pub trait VarArrayBufferIf {
-    fn create(&self, len: uint) -> Struct_PP_Var;
-    fn byte_len(&self, var: &Struct_PP_Var) -> Option<uint>;
+    fn create(&self, len: usize) -> Struct_PP_Var;
+    fn byte_len(&self, var: &Struct_PP_Var) -> Option<usize>;
     fn map(&self, var: &Struct_PP_Var) -> *mut libc::c_void;
     fn unmap(&self, var: &Struct_PP_Var);
 }
 impl VarArrayBufferIf for ffi::Struct_PPB_VarArrayBuffer_1_0 {
-    fn create(&self, len: uint) -> Struct_PP_Var {
+    fn create(&self, len: usize) -> Struct_PP_Var {
         impl_fun!(self.Create => (len as u32))
     }
-    fn byte_len(&self, var: &Struct_PP_Var) -> Option<uint> {
-        let mut len = unsafe { intrinsics::uninit() };
+    fn byte_len(&self, var: &Struct_PP_Var) -> Option<usize> {
+        let mut len: libc::uint32_t = unsafe { intrinsics::uninit() };
         if impl_fun!(self.ByteLength => (*var, &mut len as *mut libc::uint32_t)) != 0 {
-            Some(len as uint)
+            Some(len as usize)
         } else {
             None
         }
@@ -381,10 +380,10 @@ impl VarDictionaryIf for ffi::Struct_PPB_VarDictionary_1_0 {
 }
 
 pub trait MessagingIf {
-    fn post_message(self, instance: PP_Instance, msg: Struct_PP_Var);
+    fn post_message(&self, instance: PP_Instance, msg: Struct_PP_Var);
 }
 impl MessagingIf for ffi::Struct_PPB_Messaging_1_2 {
-    fn post_message(self, instance: PP_Instance, msg: Struct_PP_Var) {
+    fn post_message(&self, instance: PP_Instance, msg: Struct_PP_Var) {
         impl_fun!(self.PostMessage => (instance, msg))
     }
 }
@@ -788,7 +787,7 @@ impl Graphics3DIf for ffi::Struct_PPB_Graphics3D_1_0 {
         if r.is_ok() {
             Ok(attribs.into_iter()
                .enumerate()
-               .fold(vec!(), |mut fold: Vec<u32>, (i, v): (uint, u32)| {
+               .fold(vec!(), |mut fold: Vec<u32>, (i, v): (usize, u32)| {
                    if i.rem(2) != 0 {
                        fold.push(v);
                        fold

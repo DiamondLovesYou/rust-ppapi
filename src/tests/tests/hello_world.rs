@@ -8,7 +8,7 @@
 
 #![feature(plugin)]
 
-#[macro_use] #[plugin] #[no_link]
+#[plugin] #[no_link]
 extern crate "ppapi-tester" as _ppapi_tester;
 
 #[ppapi_test]

@@ -7,6 +7,6 @@ license = "MPL-2.0"
 description = "Compiler plugin to run integration tests in Google Chrome, where Pepper is available."
 
 [lib]
-name = "ppapi-tester"
+name = "ppapi_tester"
 path = "lib.rs"
 plugin = true

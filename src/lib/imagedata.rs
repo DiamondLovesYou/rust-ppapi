@@ -14,14 +14,14 @@ use super::{Resource};
 use super::ppb;
 use ppb::ImageDataIf;
 
-#[derive(Hash, Eq, PartialEq, Show)] pub struct ImageData(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Debug)] pub struct ImageData(ffi::PP_Resource);
 
 impl_resource_for!(ImageData, ResourceType::ImageDataRes);
 
 #[derive(Eq, PartialEq, Hash, Clone, Copy)]
 pub enum Format {
-    BGRA = ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL as int,
-    RGBA = ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL as int,
+    BGRA = ffi::PP_IMAGEDATAFORMAT_BGRA_PREMUL as isize,
+    RGBA = ffi::PP_IMAGEDATAFORMAT_RGBA_PREMUL as isize,
 }
 impl Format {
     fn from_ffi(v: ffi::PP_ImageDataFormat) -> Format {
@@ -56,7 +56,7 @@ pub struct Description {
 }
 impl Description {
     pub fn from_ffi(desc: ffi::Struct_PP_ImageDataDesc) -> Description {
-        use core::mem::transmute;
+        use std::mem::transmute;
         Description {
             format: Format::from_ffi(desc.format),
             size:   unsafe { transmute(desc.size) },
@@ -75,11 +75,11 @@ pub trait MappedSlice<'a> {
 }
 impl<'a> MappedSlice<'a> for MappedImage<'a> {
     fn as_imm_slice(&self) -> &'a [u8] {
-        use std::slice::from_raw_buf;
+        use std::slice::from_raw_parts;
         use std::mem::transmute;
         let size = (self.desc.size.height * self.desc.line_stride) as usize;
 
-        unsafe { from_raw_buf(transmute(&self.ptr), size) }
+        unsafe { from_raw_parts(transmute(&self.ptr), size) }
     }
 }
 #[unsafe_destructor]

@@ -67,13 +67,16 @@ More info:
 
 #![crate_name = "ppapi"]
 #![crate_type = "rlib"]
-#![experimental]
 #![feature(linkage)]
 #![feature(thread_local)]
 #![feature(unboxed_closures)]
-#![feature(int_uint)]
 #![feature(box_syntax)]
 #![feature(unsafe_destructor)]
+#![feature(collections)]
+#![feature(alloc)]
+#![feature(core)]
+#![feature(scoped_tls)]
+#![feature(std_misc)]
 
 #![allow(dead_code)]
 #![allow(unstable)]
@@ -81,23 +84,19 @@ More info:
 #[macro_use]
 extern crate log;
 extern crate collections;
-extern crate rand;
-extern crate serialize;
-extern crate "hyper" as http;
-extern crate "url" as iurl;
+extern crate hyper as http;
+extern crate url as iurl;
 extern crate libc;
-extern crate core;
 extern crate alloc;
 extern crate finally;
 
-use std::{mem, cmp, io};
+use std::{mem, cmp};
 use std::mem::transmute;
 use std::intrinsics;
 use std::ptr;
 use std::ops;
 use std::iter;
 use std::clone;
-use std::str;
 use std::result;
 use std::collections::HashMap;
 use std::fmt;
@@ -190,10 +189,9 @@ pub mod url;
 pub mod fs;
 
 
-#[cfg(target_os = "nacl")]
-#[link(name = "ppapi_stub", kind = "static")]
-extern {}
+#[cfg(feature = "pepper")]
 #[link(name = "helper", kind = "static")]
+#[link(name = "ppapi_stub", kind = "static")]
 extern {}
 
 pub type Result<T> = result::Result<T, Code>;
@@ -234,16 +232,26 @@ impl ToFFIBool for bool {
 
 #[derive(Clone, Eq, PartialEq, Copy)]
 pub enum Code {
-    Ok                = ffi::PP_OK as int,
-    BadResource       = ffi::PP_ERROR_BADRESOURCE as int,
-    BadArgument       = ffi::PP_ERROR_BADARGUMENT as int,
-    WrongThread       = ffi::PP_ERROR_WRONG_THREAD as int,
-    InProgress        = ffi::PP_ERROR_INPROGRESS as int,
-    Failed            = ffi::PP_ERROR_FAILED as int,
-    NotSupported      = ffi::PP_ERROR_NOTSUPPORTED as int,
-    NoMemory          = ffi::PP_ERROR_NOMEMORY as int,
-    ContextLost       = ffi::PP_ERROR_CONTEXT_LOST as int,
-    CompletionPending = ffi::PP_OK_COMPLETIONPENDING as int,
+    Ok                = ffi::PP_OK as isize,
+    BadResource       = ffi::PP_ERROR_BADRESOURCE as isize,
+    BadArgument       = ffi::PP_ERROR_BADARGUMENT as isize,
+    WrongThread       = ffi::PP_ERROR_WRONG_THREAD as isize,
+    InProgress        = ffi::PP_ERROR_INPROGRESS as isize,
+    Failed            = ffi::PP_ERROR_FAILED as isize,
+    NotSupported      = ffi::PP_ERROR_NOTSUPPORTED as isize,
+    NoMemory          = ffi::PP_ERROR_NOMEMORY as isize,
+    NoSpace           = ffi::PP_ERROR_NOSPACE as isize,
+    NoQuota           = ffi::PP_ERROR_NOQUOTA as isize,
+    ContextLost       = ffi::PP_ERROR_CONTEXT_LOST as isize,
+    CompletionPending = ffi::PP_OK_COMPLETIONPENDING as isize,
+    FileNotFound      = ffi::PP_ERROR_FILENOTFOUND as isize,
+    FileExists        = ffi::PP_ERROR_FILEEXISTS as isize,
+    NoAccess          = ffi::PP_ERROR_NOACCESS as isize,
+    ConnectionRefused = ffi::PP_ERROR_CONNECTION_REFUSED as isize,
+    ConnectionReset   = ffi::PP_ERROR_CONNECTION_RESET as isize,
+    ConnectionAborted = ffi::PP_ERROR_CONNECTION_ABORTED as isize,
+    ConnectionClosed  = ffi::PP_ERROR_CONNECTION_CLOSED as isize,
+    TimedOut          = ffi::PP_ERROR_TIMEDOUT as isize,
 }
 impl fmt::Display for Code {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -258,6 +266,16 @@ impl fmt::Display for Code {
             Code::NoMemory    => f.pad("no memory"),
             Code::ContextLost => f.pad("context lost"),
             Code::CompletionPending => f.pad("completion callback pending"),
+            Code::NoSpace     => f.pad("no space left"),
+            Code::NoQuota     => f.pad("no space left in quota"),
+            Code::FileNotFound => f.pad("file not found"),
+            Code::FileExists  => f.pad("file exists"),
+            Code::NoAccess    => f.pad("insufficient privileges"),
+            Code::ConnectionRefused => f.pad("connection attempt refused"),
+            Code::ConnectionReset => f.pad("connection reset"),
+            Code::ConnectionAborted => f.pad("connection aborted"),
+            Code::ConnectionClosed => f.pad("connection closed"),
+            Code::TimedOut    => f.pad("operation timed out"),
         }
     }
 }
@@ -274,7 +292,17 @@ impl Code {
             ffi::PP_ERROR_NOTSUPPORTED => Code::NotSupported,
             ffi::PP_ERROR_NOMEMORY => Code::NoMemory,
             ffi::PP_ERROR_CONTEXT_LOST => Code::ContextLost,
-            _ => panic!("Invalid code!"),
+            ffi::PP_ERROR_FILENOTFOUND => Code::FileNotFound,
+            ffi::PP_ERROR_FILEEXISTS => Code::FileExists,
+            ffi::PP_ERROR_NOACCESS => Code::NoAccess,
+            ffi::PP_ERROR_CONNECTION_REFUSED => Code::ConnectionRefused,
+            ffi::PP_ERROR_CONNECTION_RESET => Code::ConnectionReset,
+            ffi::PP_ERROR_CONNECTION_ABORTED => Code::ConnectionAborted,
+            ffi::PP_ERROR_CONNECTION_CLOSED => Code::ConnectionClosed,
+            ffi::PP_ERROR_TIMEDOUT | ffi::PP_ERROR_CONNECTION_TIMEDOUT =>
+                Code::TimedOut,
+
+            _ => unreachable!("unexpected invalid or unknown code: `{}`", code),
         }
     }
     pub fn to_i32(self) -> i32 {
@@ -289,6 +317,16 @@ impl Code {
             Code::NotSupported=> ffi::PP_ERROR_NOTSUPPORTED,
             Code::NoMemory    => ffi::PP_ERROR_NOMEMORY,
             Code::ContextLost => ffi::PP_ERROR_CONTEXT_LOST,
+            Code::NoSpace     => ffi::PP_ERROR_NOSPACE,
+            Code::NoQuota     => ffi::PP_ERROR_NOQUOTA,
+            Code::FileNotFound => ffi::PP_ERROR_FILENOTFOUND,
+            Code::FileExists  => ffi::PP_ERROR_FILEEXISTS,
+            Code::NoAccess    => ffi::PP_ERROR_NOACCESS,
+            Code::ConnectionRefused => ffi::PP_ERROR_CONNECTION_REFUSED,
+            Code::ConnectionReset => ffi::PP_ERROR_CONNECTION_RESET,
+            Code::ConnectionAborted => ffi::PP_ERROR_CONNECTION_ABORTED,
+            Code::ConnectionClosed => ffi::PP_ERROR_CONNECTION_CLOSED,
+            Code::TimedOut    => ffi::PP_ERROR_TIMEDOUT,
         }
     }
     pub fn to_empty_result(self) -> Result<()> {
@@ -412,14 +450,6 @@ impl cmp::PartialEq for ffi::Struct_PP_FloatPoint {
     }
 }
 impl cmp::Eq for ffi::Struct_PP_FloatPoint {}
-impl clone::Clone for ffi::Struct_PP_FloatPoint {
-    fn clone(&self) -> ffi::Struct_PP_FloatPoint {
-        ffi::Struct_PP_FloatPoint {
-            x: self.x,
-            y: self.y,
-        }
-    }
-}
 
 impl fmt::Debug for ffi::Struct_PP_FloatPoint {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -451,7 +481,7 @@ impl Size {
     // if Self && ffi::PP_Size aren't the same size rustc will refuse
     // to compile this mod, though with a not very helpful message.
     fn to_ffi(self) -> ffi::PP_Size {
-        use core::mem::transmute;
+        use std::mem::transmute;
         unsafe { transmute(self) }
     }
 }
@@ -460,7 +490,7 @@ pub trait ToOption<From> {
     fn to_option(from: &From) -> Option<Self>;
 }
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub enum ResourceType {
     WheelInputEventRes,
     WebSocketRes,
@@ -499,9 +529,9 @@ pub trait Resource {
 pub trait ContextResource {
     fn get_device(&self) -> ffi::PP_Resource;
 }
-#[derive(Hash, Eq, PartialEq, Show)] pub struct Context2d(ffi::PP_Resource);
-#[derive(Hash, Eq, PartialEq, Show)] pub struct View(ffi::PP_Resource);
-#[derive(Hash, Eq, PartialEq, Show)] pub struct MessageLoop(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Debug)] pub struct Context2d(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Debug)] pub struct View(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Debug)] pub struct MessageLoop(ffi::PP_Resource);
 
 impl_clone_drop_for!(Context3d);
 impl_resource_for!(Context2d, ResourceType::Graphics2DRes);
@@ -603,7 +633,7 @@ impl MessageLoop {
     }
 }
 
-#[derive(Clone, Show)]
+#[derive(Clone, Debug)]
 pub enum AnyVar {
     Null,
     Undefined,
@@ -622,13 +652,13 @@ pub struct NullVar;
 pub struct UndefinedVar;
 #[derive(Eq, PartialEq, Hash)]
 pub struct StringVar     (i64);
-#[derive(Eq, PartialEq, Hash, Show)]
+#[derive(Eq, PartialEq, Hash, Debug)]
 pub struct ObjectVar     (i64);
-#[derive(Eq, PartialEq, Hash, Show)]
+#[derive(Eq, PartialEq, Hash, Debug)]
 pub struct ArrayVar      (i64);
-#[derive(Eq, PartialEq, Hash, Show)]
+#[derive(Eq, PartialEq, Hash, Debug)]
 pub struct DictionaryVar (i64);
-#[derive(Eq, PartialEq, Hash, Show)]
+#[derive(Eq, PartialEq, Hash, Debug)]
 pub struct ArrayBufferVar(i64);
 
 pub trait UnwrapOr {
@@ -890,7 +920,7 @@ impl Var for ::std::string::String {
 }
 impl ToStringVar for ::std::string::String {
     #[inline] fn to_string_var(&self) -> StringVar {
-        StringVar::new_from_str(self.as_slice())
+        StringVar::new_from_str(self.as_ref())
     }
 }
 impl<'a, T: ToVar> Var for &'a [T] {
@@ -1130,12 +1160,12 @@ impl fmt::Debug for StringVar {
 }
 impl fmt::Display for StringVar {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.pad(self.as_slice())
+        f.pad(self.as_ref())
     }
 }
 impl StringVar {
     pub fn new<T: Str>(v: &T) -> StringVar {
-        let string = v.as_slice();
+        let string = v.as_ref();
         StringVar::new_from_str(string)
     }
     pub fn new_from_str(v: &str) -> StringVar {
@@ -1152,7 +1182,7 @@ impl StringVar {
 impl Str for StringVar {
     fn as_slice<'a>(&'a self) -> &'a str {
         use std::str::from_utf8_unchecked;
-        use std::slice::from_raw_buf;
+        use std::slice::from_raw_parts;
         use std::mem::transmute;
 
         let f = ppb::get_var().VarToUtf8.unwrap();
@@ -1160,8 +1190,8 @@ impl Str for StringVar {
         unsafe {
             let mut len: u32 = intrinsics::uninit();
             let buf = f(self.to_var(), &mut len as *mut u32);
-            let len = len as uint;
-            let slice = from_raw_buf(transmute(&buf), len);
+            let len = len as usize;
+            let slice = from_raw_parts(transmute(&buf), len);
             transmute(from_utf8_unchecked(slice))
         }
     }
@@ -1169,7 +1199,7 @@ impl Str for StringVar {
 impl ToVar for ::std::string::String {
     fn to_var(&self) -> ffi::PP_Var {
         (ppb::get_var().VarFromUtf8.unwrap())
-            (self.as_slice().as_ptr() as *const i8,
+            (self.as_ref().as_ptr() as *const i8,
              self.len() as u32)
     }
 }
@@ -1187,8 +1217,8 @@ impl ObjectVar {
 }
 pub struct ArrayVarIter<'a> {
     var: &'a ArrayVar,
-    index: uint,
-    len: uint,
+    index: usize,
+    len: usize,
 }
 impl<'a> Iterator for ArrayVarIter<'a> {
     type Item = AnyVar;
@@ -1200,7 +1230,7 @@ impl<'a> Iterator for ArrayVarIter<'a> {
             Some(v)
         }
     }
-    fn size_hint(&self) -> (uint, Option<uint>) {
+    fn size_hint(&self) -> (usize, Option<usize>) {
         (self.len, Some(self.len))
     }
 }
@@ -1212,13 +1242,13 @@ impl ArrayVar {
     pub fn new() -> ArrayVar {
         ArrayVar::new_from_var(ppb::get_array().create())
     }
-    pub fn len(&self) -> uint {
-        ppb::get_array().get_len(&self.to_var()) as uint
+    pub fn len(&self) -> usize {
+        ppb::get_array().get_len(&self.to_var()) as usize
     }
-    pub fn resize(&self, new_len: uint) -> bool {
+    pub fn resize(&self, new_len: usize) -> bool {
         ppb::get_array().set_len(&self.to_var(), new_len as libc::uint32_t)
     }
-    pub fn get(&self, index: uint) -> AnyVar {
+    pub fn get(&self, index: usize) -> AnyVar {
         AnyVar::new(ppb::get_array().get(&self.to_var(), index as libc::uint32_t))
     }
     pub fn set<T: ToVar>(&self, index: usize, value: &T) -> bool {
@@ -1236,8 +1266,8 @@ impl ArrayVar {
 pub struct DictEntries<'a> {
     dict: &'a DictionaryVar,
     keys: ArrayVar,
-    key_index: uint,
-    len: uint,
+    key_index: usize,
+    len: usize,
 }
 impl<'a> Iterator for DictEntries<'a> {
     type Item = (StringVar, AnyVar);
@@ -1254,7 +1284,7 @@ impl<'a> Iterator for DictEntries<'a> {
             Some((k, v))
         }
     }
-    fn size_hint(&self) -> (uint, Option<uint>) {
+    fn size_hint(&self) -> (usize, Option<usize>) {
         (self.len, Some(self.len))
     }
 }
@@ -1267,7 +1297,7 @@ impl DictionaryVar {
     pub fn new() -> DictionaryVar {
         DictionaryVar::new_from_var(ppb::get_dictionary().create())
     }
-    pub fn len(&self) -> uint {
+    pub fn len(&self) -> usize {
         self.keys().len()
     }
     pub fn has_key<T: ToVar>(&self, key: &T) -> bool {
@@ -1320,16 +1350,18 @@ impl Console {
 fn parse_args(argc: u32,
               argk: *mut *const libc::c_char,
               argv: *mut *const libc::c_char) -> HashMap<String, String> {
-    use std::ffi::c_str_to_bytes;
+    use std::ffi::CStr;
     use std::str::from_utf8_unchecked;
-    iter::range(0, argc as int)
+    let argc = if argc == 0 { 0 }
+               else { argc as isize - 1 };
+    iter::range_inclusive(0, argc)
         .map(|i| {
             let ak = unsafe { *argk.offset(i) };
             let av = unsafe { *argv.offset(i) };
-            let ak_buf = unsafe { c_str_to_bytes(&ak) };
-            let av_buf = unsafe { c_str_to_bytes(&av) };
-            let ak_str = unsafe { from_utf8_unchecked(ak_buf) };
-            let av_str = unsafe { from_utf8_unchecked(av_buf) };
+            let ak_buf = unsafe { CStr::from_ptr(ak) };
+            let av_buf = unsafe { CStr::from_ptr(av) };
+            let ak_str = unsafe { from_utf8_unchecked(ak_buf.to_bytes()) };
+            let av_str = unsafe { from_utf8_unchecked(av_buf.to_bytes()) };
 
             (ak_str.to_string(), av_str.to_string())
         })
@@ -1345,7 +1377,7 @@ trait PostToSelf: Send {
 unsafe impl Send for ffi::Struct_PP_CompletionCallback {}
 impl PostToSelf for ffi::Struct_PP_CompletionCallback {
     fn post_to_self(self, code: Code) {
-        MessageLoop::post_to_self(move |: _c: Code| {
+        MessageLoop::post_to_self(move |_c: Code| {
             unsafe {
                 ffi::run_completion_callback(self,
                                              code.to_i32())
@@ -1402,87 +1434,56 @@ impl Callback for InternalCallbacksOperatorFn {
 }
 
 struct ConsoleLogger {
-    console: Console,
+    filter_levels: HashMap<Instance, log::LogLevelFilter>,
+    current_filter: log::MaxLogLevelFilter,
 }
 impl ConsoleLogger {
-    fn new(instance: &Instance) -> ConsoleLogger {
+    fn new(filter: log::MaxLogLevelFilter) -> ConsoleLogger {
         ConsoleLogger {
-            console: instance.console(),
+            filter_levels: HashMap::new(),
+            current_filter: filter,
         }
     }
-}
-impl log::Logger for ConsoleLogger {
-    fn log(&mut self, record: &LogRecord) {
-        use self::ppb::ConsoleInterface;
-        let level = match record.level {
-            log::LogLevel(log::ERROR) => ffi::PP_LOGLEVEL_ERROR,
-            log::LogLevel(log::WARN)  => ffi::PP_LOGLEVEL_WARNING,
-            log::LogLevel(log::INFO)  => ffi::PP_LOGLEVEL_TIP,
-            log::LogLevel(_)          => ffi::PP_LOGLEVEL_LOG,
-        };
-
-        let str = format!("{} ({}:{}): {}",
-                          record.module_path,
-                          record.file,
-                          record.line,
-                          record.args)
-            .to_string_var();
-        self.console.log(level,
-                         str);
+    fn console(&self) -> Option<Console> {
+        Instance::opt_current()
+            .map(|c| c.console() )
+    }
+    fn current_instance_filter_level(&self) -> log::LogLevelFilter {
+        Instance::opt_current()
+            .and_then(|instance| {
+                self.filter_levels.get(&instance)
+            })
+            .map(|&filter| filter )
+            .unwrap_or(log::LogLevelFilter::Error)
     }
 }
-struct StdIo {
-    level: ffi::PP_LogLevel,
-    raw: io::stdio::StdWriter,
-    console: Option<Console>,
-    buffer: Vec<u8>,
-}
-impl Writer for StdIo {
-    fn write(&mut self, mut buf: &[u8]) -> io::IoResult<()> {
-        // Don't write newlines to the console. Also, don't write anything to the console
-        // until we get a newline.
+impl log::Log for ConsoleLogger {
+    fn enabled(&self, _md: &log::LogMetadata) -> bool {
+        //let filter_level = self.current_instance_filter_level(
+        // TODO
+        true
+    }
+    fn log(&self, record: &LogRecord) {
+        use self::ppb::ConsoleInterface;
+        use log::LogLevel;
+        let level = match record.level() {
+            LogLevel::Error => ffi::PP_LOGLEVEL_ERROR,
+            LogLevel::Warn  => ffi::PP_LOGLEVEL_WARNING,
+            LogLevel::Info  => ffi::PP_LOGLEVEL_TIP,
+            _               => ffi::PP_LOGLEVEL_LOG,
+        };
 
-        let console = self.console
-            .clone()
-            .or_else(|| {
-                Instance::opt_current()
-                    .map(|i| i.console() )
-            });
-        let c_ref = console.as_ref();
+        let loc = record.location();
 
-        loop {
-            let newline_pos_opt = buf.iter().position(|&c| c == '\n' as u8 );
-            let newline_pos = match newline_pos_opt {
-                Some(pos) => pos,
-                None => {
-                    self.buffer.push_all(buf);
-                    return result::Result::Ok(());
-                }
-            };
-            let rest = &buf[0 .. newline_pos + 1];
-            self.buffer.push_all(rest);
-            let result = (|&mut: | {
-                use std::result::Result::{Ok};
-                use self::ppb::ConsoleInterface;
-
-                try!(self.raw.write(self.buffer.as_slice()));
-
-                str::from_utf8(&self.buffer[.. self.buffer.len() - 1])
-                    .ok()
-                    .and_then(|&:s| c_ref.map(|c| (c, s) ) )
-                    .map(|(c, s)| {
-                        c.log(self.level, s)
-                    });
-                Ok(())
-            })();
-            self.buffer.truncate(0);
-            if buf.len() < newline_pos + 2 {
-                return result;
-            }
-            buf = &buf[newline_pos + 2 ..];
-            if result.is_err() || buf.len() == 0 {
-                return result;
-            }
+        let str = format!("{} ({}:{}): {}",
+                          loc.module_path(),
+                          loc.file(),
+                          loc.line(),
+                          record.args())
+            .to_string_var();
+        match self.console() {
+            Some(console) => console.log(level, str),
+            None => {},
         }
     }
 }
@@ -1664,7 +1665,7 @@ impl MessageLoop {
 
     fn on_change_view(&mut self, view: View) {
         self.get_ref()
-            .post_work(move |: _c: Code| {
+            .post_work(move |_c: Code| {
                 unsafe {
                     assert!(!ppapi_on_change_view.is_null());
                     let on_change_view: fn(View) =
@@ -1677,7 +1678,7 @@ impl MessageLoop {
     }
     fn on_change_focus(&mut self, has_focus: bool) {
         self.get_ref()
-            .post_work(move |: _c: Code| {
+            .post_work(move |_c: Code| {
                 unsafe {
                     assert!(!ppapi_on_change_focus.is_null());
                     let on_change_focus: fn(bool) =
@@ -1692,7 +1693,7 @@ impl MessageLoop {
         use std::sync::mpsc::channel;
         let (tx, rx) = channel();
         self.get_ref()
-            .post_work(move |: _c: Code| {
+            .post_work(move |_c: Code| {
                 unsafe {
                     assert!(!ppapi_on_document_loaded.is_null());
                     let on_document_loaded: fn(UrlLoader) -> bool =
@@ -1724,7 +1725,7 @@ unsafe fn deinitialize_instances() {
 }
 
 fn expect_instances() -> &'static mut InstancesType {
-    use core::mem;
+    use std::mem;
     use alloc::heap::allocate;
     unsafe {
         if INSTANCES.is_null() {
@@ -1791,7 +1792,7 @@ pub mod entry {
     pub fn try_block_with_ret<U, F: FnOnce() -> U>(f: F) -> Result<U, Box<Any + Send>> {
         let mut ret: Option<U> = None;
         let mut f = Some(f);
-        let try_res = try_block(|&mut:| {
+        let try_res = try_block(|| {
             let f = f.take().unwrap();
             ret = Some(f());
         });
@@ -1802,26 +1803,19 @@ pub mod entry {
                                  argc: u32,
                                  argk: *mut *const c_char,
                                  argv: *mut *const c_char) -> ffi::PP_Bool {
-        use log::set_logger;
-        use std::io;
-        use std::io::{Writer};
-        use std::io::stdio::{set_stderr, set_stdout};
         use std::thread::{Builder};
         use std::sync::mpsc::channel;
-        use super::{StdIo, ConsoleLogger, MessageLoop};
+        use super::{MessageLoop};
 
         let instance = Instance::new(inst);
         // Dat nesting.
         let success = CURRENT_INSTANCE.set
             (&instance,
              || {
-                 let logger = ConsoleLogger::new(&instance);
-                 // TODO: I think this should be set only for the first created instance,
-                 // not all of them.
-                 set_logger(box logger);
-
                  let mut success = false;
-                 let _ = try_block(|&mut:| {
+                 let _ = try_block(|| {
+                     // TODO: technically `nacl_io` isn't capable of providing
+                     // io functions for multiple instances..
                      instance.initialize_nacl_io();
 
                      let args = super::parse_args(argc, argk, argv);
@@ -1831,29 +1825,11 @@ pub mod entry {
 
                      let (tx, rx) = channel();
 
-                     let _ = builder.spawn(move |:| {
+                     let _ = builder.spawn(move || {
                          let mut args = Some(args.clone());
                          CURRENT_INSTANCE.set
                              (&instance,
-                              |:| {
-                                  let console = instance.console();
-                                  let stdout = StdIo {
-                                      level:   ffi::PP_LOGLEVEL_LOG,
-                                      raw:     io::stdio::stdout_raw(),
-                                      console: Some(console.clone()),
-                                      buffer:  Vec::new(),
-                                  };
-                                  let stderr = StdIo {
-                                      level:   ffi::PP_LOGLEVEL_ERROR,
-                                      raw:     io::stdio::stderr_raw(),
-                                      console: Some(console.clone()),
-                                      buffer:  Vec::new(),
-                                  };
-                                  let logger = ConsoleLogger::new(&instance);
-                                  set_stdout(box stdout as Box<Writer + Send>);
-                                  set_stderr(box stderr as Box<Writer + Send>);
-                                  set_logger(box logger);
-
+                              || {
                                   let ml = instance.create_msg_loop();
                                   match ml.attach_to_current_thread() {
                                       Code::Ok => {}
@@ -1865,13 +1841,14 @@ pub mod entry {
                                   }
 
                                   fn unwinding() -> bool {
-                                      use std::thread::Thread;
-                                      Thread::panicking()
+                                      use std::thread;
+                                      thread::panicking()
                                   }
 
                                   try_finally(&mut (), args.take().unwrap(),
                                               |_, args| unsafe {
-                                                  super::ppapi_instance_created(instance.clone(), args)
+                                                  super::ppapi_instance_created
+                                                      (instance.clone(), args)
                                               },
                                               |_| {
                                                   if unwinding() {
@@ -1896,7 +1873,7 @@ pub mod entry {
                                       panic!("please shutdown the loop; I may add pausing \
                                               for some sort of pattern later");
                                   } else {
-                                      let cb = move |&: _c: Code| {
+                                      let cb = move |_c: Code| {
                                           super::expect_instances()
                                               .remove(&instance);
                                       };
@@ -1909,7 +1886,7 @@ pub mod entry {
                      success = rx.recv()
                          .ok()
                          .and_then(|ml| ml )
-                         .map(|&: ml: MessageLoop| {
+                         .map(|ml: MessageLoop| {
                              let last = expect_instances().insert(instance, ml);
                              if last.is_some() {
                                  error!("instance already exists; replacing.");
@@ -1947,7 +1924,7 @@ pub mod entry {
             (&instance,
              || {
                  if !super::ppapi_on_change_view.is_null() {
-                     let _ = try_block(|&:| {
+                     let _ = try_block(|| {
                          debug!("did_change_view");
                          find_instance(instance,
                                        view,
@@ -1968,7 +1945,7 @@ pub mod entry {
             (&instance,
              || {
                  if !super::ppapi_on_change_focus.is_null() {
-                     let _ = try_block(|&:| {
+                     let _ = try_block(|| {
                          debug!("did_change_focus");
 
                          find_instance(instance,
@@ -1992,7 +1969,7 @@ pub mod entry {
                      return false;
                  }
 
-                 let handled = try_block_with_ret(|&:| {
+                 let handled = try_block_with_ret(|| {
                      debug!("handle_document_load");
 
                      find_instance(instance,
@@ -2134,25 +2111,10 @@ mod test {
 // The true entry point of any module. DO NOT CALL THIS YOURSELF. It is used by Pepper.
 pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
                                        gbi: ffi::PPB_GetInterface) -> libc::int32_t {
-    use std::io::stdio::{set_stderr, set_stdout, stdout_raw, stderr_raw};
     use self::entry::try_block;
+    use log::set_logger;
 
     static MAIN_TASK_NAME: &'static str = "main module task";
-
-    let stdout = StdIo {
-        level:   ffi::PP_LOGLEVEL_LOG,
-        raw:     stdout_raw(),
-        console: None,
-        buffer:  Vec::new(),
-    };
-    let stderr = StdIo {
-        level:   ffi::PP_LOGLEVEL_ERROR,
-        raw:     stderr_raw(),
-        console: None,
-        buffer:  Vec::new(),
-    };
-    set_stdout(box stdout);
-    set_stderr(box stderr);
 
     // We can't fail! before this block!
     let result = try_block(|| {
@@ -2161,7 +2123,12 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
     });
 
     match result {
-        result::Result::Ok(()) => ffi::PP_OK,
+        result::Result::Ok(()) => {
+            set_logger(move |f| box ConsoleLogger::new(f) )
+                .unwrap();
+
+            ffi::PP_OK
+        }
         result::Result::Err(_) => {
             // Nb: this gets printed to chrome's stdout if it is running on a console.
             // Otherwise it falls into a black hole and is eaten.

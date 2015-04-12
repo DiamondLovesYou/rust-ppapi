@@ -9,7 +9,7 @@
 use super::{Callback, Resource, Instance, ToStringVar, ToVar, Code};
 use super::ppb::{get_url_loader, get_url_request};
 use ppb::{URLRequestInfoIf, URLResponseInfoIf, URLLoaderIf};
-use std::io::IoResult;
+use std::io::Result;
 use collections::enum_set::{CLike, EnumSet};
 use http;
 use http::header::Headers;
@@ -19,9 +19,9 @@ use iurl::Url;
 
 use fs::FileSliceRef;
 
-#[derive(Hash, Eq, PartialEq, Show)] pub struct UrlLoader(ffi::PP_Resource);
-#[derive(Hash, Eq, PartialEq, Show)] pub struct UrlRequestInfo(ffi::PP_Resource);
-#[derive(Hash, Eq, PartialEq, Show)] pub struct UrlResponseInfo(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Debug)] pub struct UrlLoader(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Debug)] pub struct UrlRequestInfo(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Debug)] pub struct UrlResponseInfo(ffi::PP_Resource);
 
 impl_resource_for!(UrlLoader, ResourceType::UrlLoaderRes);
 impl_resource_for!(UrlRequestInfo, ResourceType::UrlRequestInfoRes);
@@ -38,7 +38,7 @@ pub enum RequestProperties_ {
     StreamToFile,
 }
 impl CLike for RequestProperties_ {
-    fn to_uint(&self) -> uint {
+    fn to_usize(&self) -> usize {
         match self {
             &RequestProperties_::AllowCrossOriginRequests => 0,
             &RequestProperties_::AllowCredentials => 1,
@@ -48,7 +48,7 @@ impl CLike for RequestProperties_ {
             &RequestProperties_::StreamToFile => 5,
         }
     }
-    fn from_uint(v: uint) -> RequestProperties_ {
+    fn from_usize(v: usize) -> RequestProperties_ {
         match v {
             0 => RequestProperties_::AllowCrossOriginRequests,
             1 => RequestProperties_::AllowCredentials,
@@ -134,7 +134,7 @@ impl RequestInfo {
     }
 
     // todo remove those asserts.
-    pub fn to_ffi(self) -> IoResult<UrlRequestInfo> {
+    pub fn to_ffi(self) -> Result<UrlRequestInfo> {
         let instance = Instance::current();
         let request = get_url_request();
         let res = instance.create_url_request_info().unwrap();
@@ -222,13 +222,13 @@ impl Resource for OpenedUrlLoader {
 
 impl UrlLoader {
     // TODO: this is messy. Do it generically.
-    pub fn open<F: FnOnce<(Code, OpenedUrlLoader),()> + Send>(&self,
-                                                              ffi_info: UrlRequestInfo,
-                                                              callback: F) -> super::Result<OpenedUrlLoader> {
+    pub fn open<F: FnOnce(Code, OpenedUrlLoader) + Send>(&self,
+                                                         ffi_info: UrlRequestInfo,
+                                                         callback: F) -> super::Result<OpenedUrlLoader> {
         let loader = get_url_loader();
         let open_loader = OpenedUrlLoader(self.clone());
         let open_loader2 = open_loader.clone();
-        let cb = move |: c: Code| {
+        let cb = move |c: Code| {
             callback(c, open_loader2);
         };
         loader.open(self.unwrap(),

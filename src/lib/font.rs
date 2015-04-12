@@ -9,7 +9,6 @@
 use std::intrinsics::uninit;
 use std::result::Result::{Ok};
 use std::ptr;
-use std::ptr::PtrExt;
 use std::collections::HashSet;
 
 use super::{ppb, ffi};
@@ -87,14 +86,6 @@ impl Weight {
     }
 }
 pub type Metrics = ffi::Struct_PP_FontMetrics_Dev;
-impl Clone for super::ffi::Struct_PP_FontMetrics_Dev {
-    fn clone(&self) -> Metrics {
-        use core::mem::transmute_copy;
-        unsafe {
-            transmute_copy(self)
-        }
-    }
-}
 fn new_metrics_from_ffi(metrics: ffi::Struct_PP_FontMetrics_Dev) -> Metrics {
     metrics
 }
@@ -150,7 +141,7 @@ impl Description {
     }
 }
 
-#[derive(Hash, Eq, PartialEq, Show)] pub struct Font(ffi::PP_Resource);
+#[derive(Hash, Eq, PartialEq, Debug)] pub struct Font(ffi::PP_Resource);
 
 impl_resource_for!(Font, ResourceType::FontRes);
 
@@ -234,7 +225,7 @@ impl Font {
                  pos_ptr,
                  color,
                  clip_ptr,
-                 image_data_is_opaque as ffi::PP_Bool) != -1 as u32 {
+                 image_data_is_opaque as ffi::PP_Bool) as i32 != -1 {
                 super::Code::Ok
             } else { super::Code::Failed }
         }
@@ -254,7 +245,7 @@ impl Font {
                 (self.unwrap(),
                  &text_run as *const Struct_PP_TextRun_Dev,
                  position);
-        if result == -1 as u32 {
+        if result as i32 == -1 {
             None
         } else {
             Some(result)
@@ -276,8 +267,8 @@ impl Font {
                 (self.unwrap(),
                  &text_run as *const Struct_PP_TextRun_Dev,
                  char_offset);
-        if result == -1 { None }
-        else            { Some(result) }
+        if result as i32 == -1 { None }
+        else                   { Some(result) }
     }
 }
 pub trait FontFamilies {

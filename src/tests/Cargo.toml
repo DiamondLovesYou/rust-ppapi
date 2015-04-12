@@ -6,8 +6,8 @@ authors = [ "Richard Diamond <wichard@vitalitystudios.com>" ]
 license = "MPL-2.0"
 build = "build.rs"
 
-[[lib]]
-name = "dont-use"
+[lib]
+name = "dont_use"
 path = "lib.rs"
 
 [build-dependencies]

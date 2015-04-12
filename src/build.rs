@@ -6,9 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#![allow(unstable)]
-
-extern crate "pnacl-build-helper" as helper;
+extern crate pnacl_build_helper as helper;
 
 pub fn main() {
     let mut a = helper::Archive::new("helper");

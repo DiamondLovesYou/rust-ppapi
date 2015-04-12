@@ -18,11 +18,16 @@ path = "src/lib/lib.rs"
 doc = true
 
 [dependencies]
-hyper = "*"
 log = "*"
 openssl = "*"
 url = "*"
 finally = "*"
+hyper = "*"
+libc = "0.1.6"
 
 [build-dependencies.pnacl-build-helper]
 version = "*"
+
+[features]
+default = ["pepper"]
+pepper = []
