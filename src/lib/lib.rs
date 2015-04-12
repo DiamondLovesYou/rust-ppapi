@@ -79,7 +79,6 @@ More info:
 #![feature(std_misc)]
 
 #![allow(dead_code)]
-#![allow(unstable)]
 
 #[macro_use]
 extern crate log;
@@ -1164,9 +1163,8 @@ impl fmt::Display for StringVar {
     }
 }
 impl StringVar {
-    pub fn new<T: Str>(v: &T) -> StringVar {
-        let string = v.as_ref();
-        StringVar::new_from_str(string)
+    pub fn new<T: AsRef<str>>(v: T) -> StringVar {
+        StringVar::new_from_str(v.as_ref())
     }
     pub fn new_from_str(v: &str) -> StringVar {
         let len = v.len();
@@ -1179,8 +1177,8 @@ impl StringVar {
         StringVar(unsafe { ffi::id_from_var(v) })
     }
 }
-impl Str for StringVar {
-    fn as_slice<'a>(&'a self) -> &'a str {
+impl AsRef<str> for StringVar {
+    fn as_ref<'a>(&'a self) -> &'a str {
         use std::str::from_utf8_unchecked;
         use std::slice::from_raw_parts;
         use std::mem::transmute;
@@ -1198,9 +1196,8 @@ impl Str for StringVar {
 }
 impl ToVar for ::std::string::String {
     fn to_var(&self) -> ffi::PP_Var {
-        (ppb::get_var().VarFromUtf8.unwrap())
-            (self.as_ref().as_ptr() as *const i8,
-             self.len() as u32)
+        StringVar::new(self)
+            .to_var()
     }
 }
 impl<'a> ToVar for &'a str {

@@ -276,11 +276,12 @@ pub trait FontFamilies {
 }
 impl FontFamilies for super::Instance {
     fn get_font_families(&self) -> HashSet<String> {
+        use std::borrow::ToOwned;
         let mut dest = HashSet::new();
         let fam_str = (ppb::get_font().GetFontFamilies.unwrap())(self.instance);
-        let fam_str = StringVar::new_from_var(fam_str).to_string();
-        for font in fam_str.as_slice().split('\0') {
-            dest.insert(font.to_string());
+        let fam_str = StringVar::new_from_var(fam_str);
+        for font in fam_str.as_ref().split('\0') {
+            dest.insert(font.to_owned());
         }
         dest
     }
