@@ -56,7 +56,7 @@ pub type PP_Module = int32_t;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Module {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Module_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Module_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Module {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_Module {
@@ -79,7 +79,7 @@ pub type PP_Bool = Enum_Unnamed1;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Bool {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Bool_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Bool_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Bool {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_Bool {
@@ -90,7 +90,7 @@ pub type PP_Instance = int32_t;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Instance {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Instance_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Instance_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Instance {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_Instance {
@@ -101,7 +101,7 @@ pub type PP_Resource = int32_t;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Resource {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Resource_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Resource_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Resource {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_Resource {
@@ -112,7 +112,7 @@ pub type PP_Time = ::libc::c_double;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Time {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Time_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Time_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Time {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_Time {
@@ -123,7 +123,7 @@ pub type PP_TimeTicks = ::libc::c_double;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TimeTicks {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TimeTicks_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TimeTicks_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TimeTicks {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_TimeTicks {
@@ -134,7 +134,7 @@ pub type PP_TimeDelta = ::libc::c_double;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TimeDelta {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TimeDelta_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TimeDelta_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TimeDelta {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_TimeDelta {
@@ -259,7 +259,7 @@ pub type PP_AudioSampleRate = Enum_Unnamed5;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_AudioSampleRate {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_AudioSampleRate_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_AudioSampleRate_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_AudioSampleRate
  {
@@ -349,7 +349,7 @@ pub type PP_VarType = Enum_Unnamed6;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_VarType {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_VarType_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_VarType_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_VarType {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_VarType {
@@ -359,7 +359,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_VarType {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Union_PP_VarValue {
-    pub _bindgen_data_: [u64; 1us],
+    pub _bindgen_data_: [u64; 1usize],
 }
 impl Union_PP_VarValue {
     pub unsafe fn as_bool(&mut self) -> *mut PP_Bool {
@@ -391,7 +391,7 @@ impl ::std::default::Default for Struct_PP_Var {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Var {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Var_is_not_16_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Var_is_not_16_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Var {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_Var {
@@ -407,7 +407,7 @@ pub type PP_LogLevel = Enum_Unnamed7;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_LogLevel {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_LogLevel_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_LogLevel_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_LogLevel {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_LogLevel {
@@ -440,7 +440,7 @@ pub type PP_CompletionCallback_Flag = Enum_Unnamed8;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_CompletionCallback_Flag {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CompletionCallback_Flag_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CompletionCallback_Flag_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_CompletionCallback_Flag {
@@ -534,7 +534,7 @@ pub type PP_FileType = Enum_Unnamed18;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileType {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileType_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileType_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileType {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_FileType {
@@ -551,7 +551,7 @@ pub type PP_FileSystemType = Enum_Unnamed19;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileSystemType {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileSystemType_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileSystemType_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileSystemType
  {
@@ -575,7 +575,7 @@ impl ::std::default::Default for Struct_PP_FileInfo {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileInfo {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileInfo_is_not_40_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileInfo_is_not_40_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileInfo {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_FileInfo {
@@ -593,7 +593,7 @@ pub type PP_FileOpenFlags = Enum_Unnamed20;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileOpenFlags_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileOpenFlags_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
@@ -932,7 +932,7 @@ impl ::std::default::Default for Struct_PP_Size {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Size {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Size_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Size_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Size {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_Size {
@@ -972,13 +972,13 @@ pub type PPB_Fullscreen = Struct_PPB_Fullscreen_1_0;
 #[derive(Copy)]
 pub struct Struct_PP_GamepadSampleData {
     pub axes_length: uint32_t,
-    pub axes: [::libc::c_float; 16us],
+    pub axes: [::libc::c_float; 16usize],
     pub buttons_length: uint32_t,
-    pub buttons: [::libc::c_float; 32us],
+    pub buttons: [::libc::c_float; 32usize],
     pub timestamp: ::libc::c_double,
-    pub id: [uint16_t; 128us],
+    pub id: [uint16_t; 128usize],
     pub connected: PP_Bool,
-    pub unused_pad_: [::libc::c_char; 4us],
+    pub unused_pad_: [::libc::c_char; 4usize],
 }
 impl ::std::default::Default for Struct_PP_GamepadSampleData {
     fn default() -> Struct_PP_GamepadSampleData {
@@ -993,7 +993,7 @@ impl ::std::clone::Clone for Struct_PP_GamepadSampleData {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_GamepadSampleData {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_GamepadSampleData_is_not_472_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_GamepadSampleData_is_not_472_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_GamepadSampleData {
@@ -1005,8 +1005,8 @@ impl ::std::default::Default for
 #[derive(Copy, Clone)]
 pub struct Struct_PP_GamepadsSampleData {
     pub length: uint32_t,
-    pub unused_pad_: [::libc::c_char; 4us],
-    pub items: [Struct_PP_GamepadSampleData; 4us],
+    pub unused_pad_: [::libc::c_char; 4usize],
+    pub items: [Struct_PP_GamepadSampleData; 4usize],
 }
 impl ::std::default::Default for Struct_PP_GamepadsSampleData {
     fn default() -> Struct_PP_GamepadsSampleData {
@@ -1016,7 +1016,7 @@ impl ::std::default::Default for Struct_PP_GamepadsSampleData {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_GamepadsSampleData {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_GamepadsSampleData_is_not_1896_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_GamepadsSampleData_is_not_1896_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_GamepadsSampleData {
@@ -1047,7 +1047,7 @@ impl ::std::default::Default for Struct_PP_Point {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Point {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Point_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Point_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Point {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_Point {
@@ -1066,7 +1066,7 @@ impl ::std::default::Default for Struct_PP_FloatPoint {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FloatPoint {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FloatPoint_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FloatPoint_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FloatPoint {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_FloatPoint {
@@ -1085,7 +1085,7 @@ impl ::std::default::Default for Struct_PP_Rect {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Rect {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Rect_is_not_16_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Rect_is_not_16_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Rect {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_Rect {
@@ -1212,7 +1212,7 @@ pub type PP_Graphics3DAttrib = Enum_Unnamed22;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Graphics3DAttrib {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Graphics3DAttrib_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Graphics3DAttrib_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_Graphics3DAttrib {
@@ -1270,7 +1270,7 @@ pub type PP_NetAddress_Family = Enum_Unnamed23;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_Family {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_Family_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_Family_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_NetAddress_Family {
@@ -1282,7 +1282,7 @@ impl ::std::default::Default for
 #[derive(Copy, Clone)]
 pub struct Struct_PP_NetAddress_IPv4 {
     pub port: uint16_t,
-    pub addr: [uint8_t; 4us],
+    pub addr: [uint8_t; 4usize],
 }
 impl ::std::default::Default for Struct_PP_NetAddress_IPv4 {
     fn default() -> Struct_PP_NetAddress_IPv4 {
@@ -1292,7 +1292,7 @@ impl ::std::default::Default for Struct_PP_NetAddress_IPv4 {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv4 {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_IPv4_is_not_6_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_IPv4_is_not_6_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv4
  {
@@ -1304,7 +1304,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv4
 #[derive(Copy, Clone)]
 pub struct Struct_PP_NetAddress_IPv6 {
     pub port: uint16_t,
-    pub addr: [uint8_t; 16us],
+    pub addr: [uint8_t; 16usize],
 }
 impl ::std::default::Default for Struct_PP_NetAddress_IPv6 {
     fn default() -> Struct_PP_NetAddress_IPv6 {
@@ -1314,7 +1314,7 @@ impl ::std::default::Default for Struct_PP_NetAddress_IPv6 {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv6 {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_IPv6_is_not_18_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_IPv6_is_not_18_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv6
  {
@@ -1374,7 +1374,7 @@ pub type PP_HostResolver_Flag = Enum_Unnamed24;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_HostResolver_Flag {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_HostResolver_Flag_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_HostResolver_Flag_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_HostResolver_Flag {
@@ -1396,7 +1396,7 @@ impl ::std::default::Default for Struct_PP_HostResolver_Hint {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_HostResolver_Hint {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_HostResolver_Hint_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_HostResolver_Hint_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_HostResolver_Hint {
@@ -1451,7 +1451,7 @@ pub type PP_ImageDataFormat = Enum_Unnamed25;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_ImageDataFormat {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_ImageDataFormat_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_ImageDataFormat_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_ImageDataFormat
  {
@@ -1474,7 +1474,7 @@ impl ::std::default::Default for Struct_PP_ImageDataDesc {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_ImageDataDesc {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_ImageDataDesc_is_not_16_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_ImageDataDesc_is_not_16_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_ImageDataDesc {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_ImageDataDesc {
@@ -1534,7 +1534,7 @@ impl ::std::default::Default for Struct_PP_TouchPoint {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TouchPoint {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchPoint_is_not_28_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchPoint_is_not_28_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TouchPoint {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_TouchPoint {
@@ -1566,7 +1566,7 @@ pub type PP_InputEvent_Type = Enum_Unnamed26;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Type {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Type_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Type_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_InputEvent_Type
  {
@@ -1592,7 +1592,7 @@ pub type PP_InputEvent_Modifier = Enum_Unnamed27;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Modifier {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Modifier_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Modifier_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Modifier {
@@ -1609,7 +1609,7 @@ pub type PP_InputEvent_MouseButton = Enum_Unnamed28;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_MouseButton {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_MouseButton_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_MouseButton_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_MouseButton {
@@ -1627,7 +1627,7 @@ pub type PP_InputEvent_Class = Enum_Unnamed29;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Class {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Class_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Class_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Class {
@@ -1864,7 +1864,7 @@ pub type PP_TouchListType = Enum_Unnamed30;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TouchListType {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchListType_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchListType_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TouchListType {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_TouchListType {
@@ -2301,7 +2301,7 @@ pub const PP_MOUSECURSOR_TYPE_GRABBING: ::libc::c_int = 42;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_MouseCursor_Type {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_MouseCursor_Type_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_MouseCursor_Type_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_MouseCursor_Type {
@@ -2360,7 +2360,7 @@ pub type PP_NetworkList_Type = Enum_Unnamed33;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetworkList_Type {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_Type_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_Type_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_NetworkList_Type {
@@ -2375,7 +2375,7 @@ pub type PP_NetworkList_State = Enum_Unnamed34;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetworkList_State {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_State_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_State_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_NetworkList_State {
@@ -4365,7 +4365,7 @@ pub type PP_TCPSocket_Option = Enum_Unnamed35;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TCPSocket_Option {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TCPSocket_Option_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TCPSocket_Option_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TCPSocket_Option {
@@ -4581,7 +4581,7 @@ pub type PP_TextInput_Type = Enum_Unnamed36;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TextInput_Type {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TextInput_Type_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TextInput_Type_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TextInput_Type
  {
@@ -4629,7 +4629,7 @@ pub type PP_UDPSocket_Option = Enum_Unnamed37;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_UDPSocket_Option {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_UDPSocket_Option_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_UDPSocket_Option_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_UDPSocket_Option {
@@ -4824,7 +4824,7 @@ pub type PP_URLRequestProperty = Enum_Unnamed38;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_URLRequestProperty {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLRequestProperty_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLRequestProperty_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_URLRequestProperty {
@@ -4881,7 +4881,7 @@ pub type PP_URLResponseProperty = Enum_Unnamed39;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_URLResponseProperty {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLResponseProperty_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLResponseProperty_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_URLResponseProperty {
@@ -5178,7 +5178,7 @@ pub type PP_WebSocketReadyState = Enum_Unnamed40;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_WebSocketReadyState {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketReadyState_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketReadyState_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_WebSocketReadyState {
@@ -5209,7 +5209,7 @@ pub type PP_WebSocketCloseCode = Enum_Unnamed41;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_WebSocketCloseCode {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketCloseCode_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketCloseCode_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_WebSocketCloseCode {
@@ -5299,7 +5299,7 @@ impl ::std::default::Default for Struct_PP_DirectoryEntry {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_DirectoryEntry {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_DirectoryEntry_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_DirectoryEntry_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_DirectoryEntry
  {
@@ -5361,7 +5361,7 @@ impl ::std::default::Default for Struct_PP_InputEvent_Key {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Key {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Key_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Key_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_InputEvent_Key
  {
@@ -5373,7 +5373,7 @@ impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_InputEvent_Key
 #[derive(Copy, Clone)]
 pub struct Struct_PP_InputEvent_Character {
     pub modifier: uint32_t,
-    pub text: [::libc::c_char; 5us],
+    pub text: [::libc::c_char; 5usize],
 }
 impl ::std::default::Default for Struct_PP_InputEvent_Character {
     fn default() -> Struct_PP_InputEvent_Character {
@@ -5383,7 +5383,7 @@ impl ::std::default::Default for Struct_PP_InputEvent_Character {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Character {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Character_is_not_12_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Character_is_not_12_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Character {
@@ -5408,7 +5408,7 @@ impl ::std::default::Default for Struct_PP_InputEvent_Mouse {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Mouse {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Mouse_is_not_20_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Mouse_is_not_20_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Mouse {
@@ -5434,7 +5434,7 @@ impl ::std::default::Default for Struct_PP_InputEvent_Wheel {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Wheel {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Wheel_is_not_24_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Wheel_is_not_24_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Wheel {
@@ -5630,7 +5630,7 @@ pub const PP_CURSORTYPE_GRABBING: ::libc::c_int = 42;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_CursorType_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CursorType_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CursorType_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_CursorType_Dev
  {
@@ -5677,7 +5677,7 @@ pub type PP_FileChooserMode_Dev = Enum_Unnamed43;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileChooserMode_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileChooserMode_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileChooserMode_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_FileChooserMode_Dev {
@@ -5751,7 +5751,7 @@ pub type PP_FontFamily_Dev = Enum_Unnamed44;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontFamily_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FontFamily_Dev
  {
@@ -5775,7 +5775,7 @@ pub type PP_FontWeight_Dev = Enum_Unnamed45;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontWeight_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FontWeight_Dev
  {
@@ -5804,7 +5804,7 @@ impl ::std::default::Default for Struct_PP_FontDescription_Dev {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontDescription_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontDescription_Dev_is_not_48_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontDescription_Dev_is_not_48_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_FontDescription_Dev {
@@ -5829,7 +5829,7 @@ impl ::std::default::Default for Struct_PP_FontMetrics_Dev {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontMetrics_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontMetrics_Dev_is_not_20_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontMetrics_Dev_is_not_20_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FontMetrics_Dev
  {
@@ -5850,7 +5850,7 @@ impl ::std::default::Default for Struct_PP_TextRun_Dev {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TextRun_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TextRun_Dev_is_not_24_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TextRun_Dev_is_not_24_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TextRun_Dev {
     fn default() -> Struct_PP_Dummy_Struct_For_PP_TextRun_Dev {
@@ -5979,7 +5979,7 @@ pub type PP_PrintOrientation_Dev = Enum_Unnamed46;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintOrientation_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOrientation_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOrientation_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintOrientation_Dev {
@@ -5996,7 +5996,7 @@ pub type PP_PrintOutputFormat_Dev = Enum_Unnamed47;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintOutputFormat_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOutputFormat_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOutputFormat_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintOutputFormat_Dev {
@@ -6012,7 +6012,7 @@ pub type PP_PrintScalingOption_Dev = Enum_Unnamed48;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintScalingOption_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintScalingOption_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintScalingOption_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintScalingOption_Dev {
@@ -6029,7 +6029,7 @@ pub type PP_PrintDuplexMode_Dev = Enum_Unnamed49;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintDuplexMode_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintDuplexMode_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintDuplexMode_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintDuplexMode_Dev {
@@ -6057,7 +6057,7 @@ impl ::std::default::Default for Struct_PP_PrintSettings_Dev {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintSettings_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintSettings_Dev_is_not_60_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintSettings_Dev_is_not_60_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintSettings_Dev {
@@ -6079,7 +6079,7 @@ impl ::std::default::Default for Struct_PP_PrintRange_Dev {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintRange_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintRange_Dev_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintRange_Dev_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_PrintRange_Dev
  {
@@ -6211,7 +6211,7 @@ pub type PP_TrueTypeFontFamily_Dev = Enum_Unnamed50;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontFamily_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontFamily_Dev {
@@ -6226,7 +6226,7 @@ pub type PP_TrueTypeFontStyle_Dev = Enum_Unnamed51;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontStyle_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontStyle_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontStyle_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontStyle_Dev {
@@ -6248,7 +6248,7 @@ pub type PP_TrueTypeFontWeight_Dev = Enum_Unnamed52;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWeight_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWeight_Dev {
@@ -6270,7 +6270,7 @@ pub type PP_TrueTypeFontWidth_Dev = Enum_Unnamed53;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWidth_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWidth_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWidth_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWidth_Dev {
@@ -6302,7 +6302,7 @@ pub type PP_TrueTypeFontCharset_Dev = Enum_Unnamed54;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontCharset_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontCharset_Dev_is_not_4_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontCharset_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontCharset_Dev {
@@ -6329,7 +6329,7 @@ impl ::std::default::Default for Struct_PP_TrueTypeFontDesc_Dev {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontDesc_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontDesc_Dev_is_not_40_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontDesc_Dev_is_not_40_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontDesc_Dev {
@@ -6468,7 +6468,7 @@ impl ::std::default::Default for Struct_PP_PrintPageNumberRange_Dev {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintPageNumberRange_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintPageNumberRange_Dev_is_not_8_bytes_wide: [::libc::c_char; 1us],
+    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintPageNumberRange_Dev_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintPageNumberRange_Dev {
@@ -6646,7 +6646,7 @@ pub type fd_mask = ::libc::c_long;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Struct__types_fd_set {
-    pub fds_bits: [fd_mask; 2us],
+    pub fds_bits: [fd_mask; 2usize],
 }
 impl ::std::default::Default for Struct__types_fd_set {
     fn default() -> Struct__types_fd_set { unsafe { ::std::mem::zeroed() } }
