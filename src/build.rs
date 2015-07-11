@@ -12,4 +12,5 @@ pub fn main() {
     let mut a = helper::Archive::new("helper");
     a.cxx("src/libhelper/helper.cpp", &["-Os".to_string()]);
     a.archive();
+    helper::print_lib_paths();
 }
