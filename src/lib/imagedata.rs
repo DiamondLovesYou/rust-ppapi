@@ -82,7 +82,6 @@ impl<'a> MappedSlice<'a> for MappedImage<'a> {
         unsafe { from_raw_parts(transmute(&self.ptr), size) }
     }
 }
-#[unsafe_destructor]
 impl<'a> ops::Drop for MappedImage<'a> {
     fn drop(&mut self) {
         ppb::get_image_data().unmap(&self.img.unwrap());

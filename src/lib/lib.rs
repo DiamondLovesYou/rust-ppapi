@@ -70,13 +70,18 @@ More info:
 #![feature(linkage)]
 #![feature(thread_local)]
 #![feature(unboxed_closures)]
-#![feature(box_syntax)]
-#![feature(unsafe_destructor)]
+#![feature(box_syntax)] #![feature(box_patterns)]
 #![feature(collections)]
 #![feature(alloc)]
 #![feature(core)]
 #![feature(scoped_tls)]
-#![feature(std_misc)]
+#![feature(map_in_place)]
+#![feature(enumset)]
+#![feature(iter_idx)]
+#![feature(range_inclusive)]
+#![feature(read_and_zero)]
+#![feature(heap_api)]
+#![feature(catch_panic)]
 
 #![allow(dead_code)]
 
@@ -118,13 +123,15 @@ macro_rules! impl_resource_for(
     ($ty:ty, $type_:expr) => (
         unsafe impl Send for $ty {}
         impl ::Resource for $ty {
-            #[inline]
             fn unwrap(&self) -> ::ffi::PP_Resource {
-                unsafe { ::std::mem::transmute_copy(self) }
+                let res: &::ffi::PP_Resource = unsafe {
+                    ::std::mem::transmute(self)
+                };
+                assert!(*res != 0);
+                *res
             }
-            #[inline]
             fn type_of(&self) -> ::ResourceType {
-                use ResourceType;
+                use ::ResourceType;
                 $type_
             }
         }
@@ -137,19 +144,8 @@ macro_rules! impl_resource_for(
             pub fn new_bumped(res: ::ffi::PP_Resource) -> $ty {
                 let v: $ty = unsafe { ::std::mem::transmute_copy(&res) };
                 // bump the ref count:
-                unsafe { ::std::mem::forget(v.clone()) };
+                ::std::mem::forget(v.clone());
                 v
-            }
-        }
-        impl ::ToOption<::ffi::PP_Resource> for $ty {
-            fn to_option(from: &::ffi::PP_Resource) -> Option<$ty> {
-                if *from == 0 {
-                    None
-                } else {
-                    Some(unsafe {
-                        ::std::mem::transmute_copy(from)
-                    })
-                }
             }
         }
     )
@@ -159,7 +155,7 @@ macro_rules! impl_clone_drop_for(
         impl Clone for $ty {
             fn clone(&self) -> $ty {
                 use ::Resource;
-                (ppb::get_core().AddRefResource.unwrap())(self.unwrap());
+                (::ppb::get_core().AddRefResource.unwrap())(self.unwrap());
                 unsafe {
                     ::std::mem::transmute_copy(self)
                 }
@@ -168,7 +164,7 @@ macro_rules! impl_clone_drop_for(
         impl Drop for $ty {
             fn drop(&mut self) {
                 use ::Resource;
-                (ppb::get_core().ReleaseResource.unwrap())(self.unwrap());
+                (::ppb::get_core().ReleaseResource.unwrap())(self.unwrap());
             }
         }
     )
@@ -184,7 +180,8 @@ pub mod imagedata;
 pub mod input;
 pub mod url;
 pub mod fs;
-
+pub mod media_stream_video_track;
+pub mod video_frame;
 
 #[cfg(feature = "pepper")]
 #[link(name = "helper", kind = "static")]
@@ -227,7 +224,7 @@ impl ToFFIBool for bool {
     }
 }
 
-#[derive(Clone, Eq, PartialEq, Copy)]
+#[derive(Clone, Eq, PartialEq, Copy)] #[must_use]
 pub enum Code {
     Ok                = ffi::PP_OK as isize,
     BadResource       = ffi::PP_ERROR_BADRESOURCE as isize,
@@ -276,9 +273,9 @@ impl fmt::Display for Code {
         }
     }
 }
-impl Code {
-    pub fn from_i32(code: i32) -> Code {
-        match code {
+impl From<i32> for Code {
+    fn from(v: i32) -> Code {
+        match v {
             ffi::PP_OK => Code::Ok,
             ffi::PP_OK_COMPLETIONPENDING => Code::CompletionPending,
             ffi::PP_ERROR_BADRESOURCE => Code::BadResource,
@@ -299,8 +296,13 @@ impl Code {
             ffi::PP_ERROR_TIMEDOUT | ffi::PP_ERROR_CONNECTION_TIMEDOUT =>
                 Code::TimedOut,
 
-            _ => unreachable!("unexpected invalid or unknown code: `{}`", code),
+            _ => unreachable!("unexpected invalid or unknown code: `{}`", v),
         }
+    }
+}
+impl Code {
+    pub fn from_i32(code: i32) -> Code {
+        From::from(code)
     }
     pub fn to_i32(self) -> i32 {
         match self {
@@ -340,6 +342,13 @@ impl Code {
             result::Result::Err(self)
         }
     }
+    pub fn to_valued_result<T>(self, val: T) -> Result<T> {
+        if self.is_ok() {
+            result::Result::Ok(val)
+        } else {
+            result::Result::Err(self)
+        }
+    }
     pub fn is_ok(&self) -> bool {
         match self {
             &Code::Ok | &Code::CompletionPending => true,
@@ -350,6 +359,11 @@ impl Code {
         if !self.is_ok() {
             panic!("Code: `{code:}`, Message: `{msg:}`",
                   code=self, msg=msg)
+        }
+    }
+    pub fn unwrap(self) {
+        if !self.is_ok() {
+            panic!("unexpected error code `{}`", self)
         }
     }
     pub fn map<T>(self, take: T) -> Option<T> {
@@ -482,12 +496,15 @@ impl Size {
         unsafe { transmute(self) }
     }
 }
-
-pub trait ToOption<From> {
-    fn to_option(from: &From) -> Option<Self>;
+#[doc(hidden)]
+impl From<ffi::PP_Size> for Size {
+    fn from(v: ffi::PP_Size) -> Size {
+        use std::mem::transmute;
+        unsafe { transmute(v) }
+    }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ResourceType {
     WheelInputEventRes,
     WebSocketRes,
@@ -516,6 +533,8 @@ pub enum ResourceType {
     FileIoRes,
     AudioConfigRes,
     AudioRes,
+    VideoTrackRes,
+    VideoFrameRes,
 }
 
 pub trait Resource {
@@ -1134,7 +1153,7 @@ impl AnyVar {
     fn new_bumped(var: ffi::PP_Var) -> AnyVar {
         let v = AnyVar::new(var);
         // bump the ref count:
-        unsafe { mem::forget(v.clone()) };
+        mem::forget(v.clone());
         v
     }
     #[inline]
@@ -1172,6 +1191,12 @@ impl StringVar {
         return StringVar(unsafe { ffi::id_from_var(var) } );
     }
     pub fn new_from_var(v: ffi::PP_Var) -> StringVar {
+        From::from(v)
+    }
+}
+#[doc(hidden)]
+impl From<ffi::PP_Var> for StringVar {
+    fn from(v: ffi::PP_Var) -> StringVar {
         StringVar(unsafe { ffi::id_from_var(v) })
     }
 }
@@ -1184,7 +1209,7 @@ impl AsRef<str> for StringVar {
         let f = ppb::get_var().VarToUtf8.unwrap();
 
         unsafe {
-            let mut len: u32 = intrinsics::uninit();
+            let mut len: u32 = mem::uninitialized();
             let buf = f(self.to_var(), &mut len as *mut u32);
             let len = len as usize;
             let slice = from_raw_parts(transmute(&buf), len);
@@ -1362,8 +1387,9 @@ fn parse_args(argc: u32,
         })
         .collect()
 }
-/// INTERNAL
+
 pub trait Callback {
+    #[doc(hidden)]
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback;
 }
 trait PostToSelf: Send {
@@ -1377,7 +1403,8 @@ impl PostToSelf for ffi::Struct_PP_CompletionCallback {
                 ffi::run_completion_callback(self,
                                              code.to_i32())
             }
-        }, 0);
+        }, 0)
+            .unwrap()
     }
 }
 fn possibly_warn_code_callback(code: Code) -> bool {
@@ -1390,7 +1417,7 @@ fn possibly_warn_code_callback(code: Code) -> bool {
 }
 
 impl<F: Sized> Callback for F
-    where F : FnOnce(Code) + Send
+    where F: FnOnce(Code) + Send,
 {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
         extern "C" fn work_callback<F: Sized>(user: *mut libc::c_void, status: i32)
@@ -1401,12 +1428,69 @@ impl<F: Sized> Callback for F
             work.call_once((code,));
         }
         unsafe {
-            ffi::make_completion_callback(work_callback::<F>,
+            ffi::make_completion_callback(Some(work_callback::<F>),
                                           mem::transmute(box self))
         }
     }
 }
 
+/// A completion callback that has arguments which PPAPI writes to before
+/// calling.
+pub trait CallbackArgs<Args> {
+    #[doc(hidden)]
+    fn to_ffi_callback<RawArgs: Send>(self, args: RawArgs,
+                                      args_mapper: fn(RawArgs) -> Args) ->
+        (ffi::Struct_PP_CompletionCallback, &'static mut RawArgs);
+}
+
+impl<F: Sized, Args> CallbackArgs<Args> for F
+    where F: FnOnce(Result<Args>) + Send
+{
+    fn to_ffi_callback<RawArgs: Send>(self, args: RawArgs,
+                                      args_mapper: fn(RawArgs) -> Args) ->
+        (ffi::Struct_PP_CompletionCallback, &'static mut RawArgs)
+    {
+        struct CallbackArgsStorage<RawArgs, Args, F> {
+            args: RawArgs,
+            mapper: fn(RawArgs) -> Args,
+            f: F
+        }
+
+        extern "C" fn work_callback<F: Sized, RawArgs, Args>(user: *mut libc::c_void,
+                                                             status: i32)
+            where F : FnOnce(Result<Args>) + Send
+        {
+            let box CallbackArgsStorage {
+                args, mapper, f,
+            }: Box<CallbackArgsStorage<RawArgs, Args, F>> = unsafe {
+                mem::transmute(user)
+            };
+
+            let code = Code::from_i32(status);
+            let arg = code.to_valued_result(args)
+                .map(|args| mapper(args) );
+            f.call_once((arg, ));
+        }
+
+        let mut store = box CallbackArgsStorage {
+            args: args, mapper: args_mapper, f: self,
+        };
+
+        let args: *mut RawArgs = &mut store.args as *mut _;
+
+        let cc = unsafe {
+            ffi::make_completion_callback(Some(work_callback::<F, RawArgs, Args>),
+                                          mem::transmute(store))
+        };
+
+        (cc, unsafe { mem::transmute(args) })
+    }
+}
+
+
+
+
+// This avoids an allocation.
 struct InternalCallbacksOperatorFn(fn());
 impl Callback for InternalCallbacksOperatorFn {
     fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
@@ -1422,7 +1506,7 @@ impl Callback for InternalCallbacksOperatorFn {
         }
         let InternalCallbacksOperatorFn(work) = self;
         unsafe {
-            ffi::make_completion_callback(work_callback,
+            ffi::make_completion_callback(Some(work_callback),
                                           mem::transmute(work))
         }
     }
@@ -1483,7 +1567,7 @@ impl log::Log for ConsoleLogger {
     }
 }
 
-__scoped_thread_local_inner!(static CURRENT_INSTANCE: Instance);
+scoped_thread_local!(static CURRENT_INSTANCE: Instance);
 static mut FIRST_INSTANCE: Option<Instance> = None;
 
 pub fn is_main_thread() -> bool {
@@ -1519,7 +1603,7 @@ impl Instance {
     fn initialize_nacl_io(&self) {
         unsafe {
             ffi::nacl_io_init_ppapi(self.instance,
-                                    ppb::get_actual_browser());
+                                    Some(ppb::get_actual_browser()));
         }
     }
 
@@ -1764,13 +1848,16 @@ pub mod entry {
     use libc::c_char;
     use std::any::Any;
     use std::mem::transmute;
-    use std::rt::unwind::try;
 
     // We need to catch all failures in our callbacks,
     // lest an exception (failure) in one instance terminates all
     // instances and crashes the whole plugin.
-    pub fn try_block<F: FnOnce()>(f: F) -> Result<(), Box<Any + Send>> {
-        let result = unsafe { try(f) };
+    pub fn try_block<U: Send, F: FnOnce() -> U + Send + 'static>(f: F) ->
+        Result<U, Box<Any + Send>>
+    {
+        use std::thread::catch_panic;
+
+        let result = catch_panic(f);
         // if we're unwinding, the instance had a failure, and we need
         // to destory the instance.
         // Note that this can be called before an instance is ever inserted
@@ -1783,36 +1870,28 @@ pub mod entry {
         }
         result
     }
-    pub fn try_block_with_ret<U, F: FnOnce() -> U>(f: F) -> Result<U, Box<Any + Send>> {
-        let mut ret: Option<U> = None;
-        let mut f = Some(f);
-        let try_res = try_block(|| {
-            let f = f.take().unwrap();
-            ret = Some(f());
-        });
-        try_res.map(|()| ret.take().unwrap() )
-    }
 
     pub extern "C" fn did_create(inst: ffi::PP_Instance,
                                  argc: u32,
                                  argk: *mut *const c_char,
                                  argv: *mut *const c_char) -> ffi::PP_Bool {
-        use std::thread::{Builder};
+        use std::thread::{Builder, catch_panic};
         use std::sync::mpsc::channel;
         use super::{MessageLoop};
+
+        let args = super::parse_args(argc, argk, argv);
 
         let instance = Instance::new(inst);
         // Dat nesting.
         let success = CURRENT_INSTANCE.set
-            (&instance,
-             || {
+            (&instance.clone(),
+             move || {
                  let mut success = false;
-                 let _ = try_block(|| {
+                 let _ = try_block(move || {
                      // TODO: technically `nacl_io` isn't capable of providing
                      // io functions for multiple instances..
                      instance.initialize_nacl_io();
 
-                     let args = super::parse_args(argc, argk, argv);
                      let builder = Builder::new()
                          .name(args.get("id").cloned().unwrap())
                          .stack_size(0);
@@ -1876,7 +1955,8 @@ pub mod entry {
                                               .remove(&instance);
                                       };
                                       MessageLoop::get_main_loop()
-                                          .post_work(cb, 0);
+                                          .post_work(cb, 0)
+                                          .unwrap()
                                   }
                               });
                      });
@@ -1905,7 +1985,7 @@ pub mod entry {
         CURRENT_INSTANCE.set
             (&instance,
              || {
-                 let _ = try_block(|| {
+                 let _ = try_block(move || {
                      debug!("did_destroy");
 
                      find_instance(instance, (), |store, ()| store.on_destroy() );
@@ -1922,7 +2002,7 @@ pub mod entry {
             (&instance,
              || {
                  if !super::ppapi_on_change_view.is_null() {
-                     let _ = try_block(|| {
+                     let _ = try_block(move || {
                          debug!("did_change_view");
                          find_instance(instance,
                                        view,
@@ -1943,7 +2023,7 @@ pub mod entry {
             (&instance,
              || {
                  if !super::ppapi_on_change_focus.is_null() {
-                     let _ = try_block(|| {
+                     let _ = try_block(move || {
                          debug!("did_change_focus");
 
                          find_instance(instance,
@@ -1961,13 +2041,13 @@ pub mod entry {
 
         let handled = CURRENT_INSTANCE.set
             (&instance,
-             || {
+             move || {
                  if super::ppapi_on_document_loaded.is_null() {
                      warn!("plugin is missing 'ppapi_on_document_loaded'");
                      return false;
                  }
 
-                 let handled = try_block_with_ret(|| {
+                 let handled = try_block(move || {
                      debug!("handle_document_load");
 
                      find_instance(instance,
@@ -2093,6 +2173,7 @@ extern {
 
 #[cfg(test)]
 mod test {
+    #![allow(private_no_mangle_fns)]
     use super::Instance;
     use std::collections::HashMap;
     #[no_mangle]
@@ -2106,7 +2187,7 @@ mod test {
 
 #[no_mangle]
 #[allow(non_snake_case)]
-// The true entry point of any module. DO NOT CALL THIS YOURSELF. It is used by Pepper.
+#[doc(hidden)]
 pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
                                        gbi: ffi::PPB_GetInterface) -> libc::int32_t {
     use self::entry::try_block;
@@ -2115,7 +2196,7 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
     static MAIN_TASK_NAME: &'static str = "main module task";
 
     // We can't fail! before this block!
-    let result = try_block(|| {
+    let result = try_block(move || {
         pp::initialize_globals(modu);
         ppb::initialize_globals(gbi);
     });
@@ -2137,6 +2218,7 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
 }
 #[no_mangle]
 #[allow(non_snake_case)]
+#[doc(hidden)]
 pub extern "C" fn PPP_ShutdownModule() {
     use self::entry::try_block;
     let _ = try_block(|| { unsafe {

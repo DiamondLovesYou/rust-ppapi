@@ -37,7 +37,6 @@ mod impl_ {
     #[derive(Hash, Eq, PartialEq, Debug)] pub struct FileSystem(ffi::PP_Resource);
     #[derive(Hash, Eq, PartialEq, Debug)] pub struct FileRef(ffi::PP_Resource);
 
-    #[unstable]
     #[derive(Clone, Hash, Eq, PartialEq, Debug)]
     pub struct FileSliceRef(pub FileRef,
                             pub Option<i64>,
