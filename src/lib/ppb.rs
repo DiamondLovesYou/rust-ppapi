@@ -74,7 +74,7 @@ mod consts {
 }
 mod globals {
     use super::super::ffi;
-    pub static mut BROWSER:      Option<ffi::PPB_GetInterface> = None;
+    pub static mut BROWSER:      ffi::PPB_GetInterface = None;
     pub static mut VAR:          Option<&'static super::Var> = None;
     pub static mut CORE:         Option<&'static super::Core> = None;
     pub static mut CONSOLE:      Option<&'static super::Console> = None;
@@ -104,7 +104,7 @@ mod globals {
 #[cold] #[inline(never)] #[doc(hidden)]
 pub fn initialize_globals(b: ffi::PPB_GetInterface) {
     unsafe {
-        globals::BROWSER       = Some(b);
+        globals::BROWSER       = b;
         globals::VAR           = get_interface(consts::VAR);
         globals::CONSOLE       = get_interface(consts::CONSOLE);
         globals::CORE          = get_interface(consts::CORE);
