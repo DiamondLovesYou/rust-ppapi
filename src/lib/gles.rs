@@ -498,18 +498,17 @@ pub mod traits {
         ($ty:ty, $gen_fun:ident) => {
             impl GenBuffer for $ty {
                 fn gen_single(ctxt: &Context3d) -> $ty {
-                    use std::intrinsics::uninit;
+                    use std::mem;
                     let count = 1i32;
-                    let mut buffers: [types::UInt; 1] = unsafe { uninit() };
+                    let mut buffers: [types::UInt; 1] = unsafe { mem::uninitialized() };
                     (get_gles2().$gen_fun.unwrap())(ctxt.unwrap(),
                                                     count,
                                                     buffers.as_mut_ptr());
                     Ctor::ctor(buffers[0])
                 }
                 fn gen_multiple(ctxt: &Context3d, count: usize) -> Vec<$ty> {
-                    use std::intrinsics::uninit;
-                    let mut buffers: Vec<types::UInt> = Vec::new();
-                    buffers.resize(count, unsafe { uninit() });
+                    let mut buffers: Vec<types::UInt> =
+                        Vec::with_capacity(count);
                     (get_gles2().$gen_fun.unwrap())(ctxt.unwrap(),
                                                     count as i32,
                                                     buffers.as_mut_ptr());

@@ -13,7 +13,7 @@ use ppb::{InputEventIf, KeyboardInputEventIf, MouseInputEventIf,
           TouchInputEventIf, WheelInputEventIf};
 use collections::enum_set;
 use collections::enum_set::{CLike, EnumSet};
-use std::{iter, intrinsics, clone, hash};
+use std::{iter, mem, clone, hash};
 
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct KeyboardInputEvent(ffi::PP_Resource);
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct MouseInputEvent(ffi::PP_Resource);
@@ -80,7 +80,7 @@ pub type TouchClassEvent    = Event<TouchInputEvent,    TouchInputEvent>;
 pub type IMEClassEvent      = Event<IMEInputEvent,      IMEInputEvent>;
 
 impl Class {
-    pub fn new<T: InputEvent + Resource + 'static>(res: T) -> Class {
+    pub fn new<T: InputEvent + Resource>(res: T) -> Class {
         let ticks = res.timestamp();
         let modifiers = res.modifiers();
 
@@ -89,13 +89,9 @@ impl Class {
         // are actually the same. We need this so as to bypass transmute
         // on value types (which fails when the types aren't the same
         // size).
-        fn cast_to_expected<T: 'static, U: 'static>(mut res: T) -> U {
-            use std::mem::{replace, uninitialized};
-            use std::mem::transmute;
-            use std::intrinsics::type_id;
+        fn cast_to_expected<T, U>(mut res: T) -> U {
+            use std::mem::{replace, uninitialized, transmute};
             unsafe {
-                // This *should* never fail, but it's here just in case:
-                assert_eq!(type_id::<T>(), type_id::<U>());
                 let res_ptr: &mut U = transmute(&mut res);
                 replace(res_ptr, uninitialized())
             }
@@ -613,8 +609,8 @@ impl IMEInputEvent {
         }
     }
     pub fn selection_offset(&self) -> (u32, u32) {
-        let mut start: u32 = unsafe { intrinsics::uninit() };
-        let mut end: u32 = unsafe { intrinsics::uninit() };
+        let mut start: u32 = unsafe { mem::uninitialized() };
+        let mut end: u32 = unsafe { mem::uninitialized() };
 
 
         let start_ptr: *mut u32 = &mut start as *mut u32;

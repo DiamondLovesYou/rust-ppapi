@@ -88,9 +88,8 @@ extern crate url as iurl;
 extern crate libc;
 extern crate alloc;
 
-use std::{mem, cmp};
-use std::mem::transmute;
-use std::intrinsics;
+use std::{cmp};
+use std::mem::{self, transmute};
 use std::ptr;
 use std::ops;
 use std::iter;

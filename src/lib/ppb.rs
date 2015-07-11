@@ -13,7 +13,6 @@
 use std::mem;
 use std::mem::uninitialized;
 use libc;
-use std::intrinsics;
 
 use super::ffi;
 use super::ffi::{Struct_PP_Var, PP_Instance, PP_LogLevel, PP_Resource,
@@ -274,7 +273,7 @@ impl VarIf for ffi::Struct_PPB_Var_1_2 {
     fn var_to_utf8(&self, string: &Struct_PP_Var) -> String {
         use std::slice::from_raw_parts;
         use std::str::from_utf8_unchecked;
-        let mut len: u32 = unsafe { intrinsics::uninit() };
+        let mut len: u32 = unsafe { mem::uninitialized() };
         let ptr = impl_fun!(self.VarToUtf8 => (*string, &mut len as *mut u32)) as *const u8;
         let buf = unsafe { from_raw_parts(ptr, len as usize) };
         let slice = unsafe { from_utf8_unchecked(buf) };
@@ -336,7 +335,7 @@ impl VarArrayBufferIf for ffi::Struct_PPB_VarArrayBuffer_1_0 {
         impl_fun!(self.Create => (len as u32))
     }
     fn byte_len(&self, var: &Struct_PP_Var) -> Option<usize> {
-        let mut len: libc::uint32_t = unsafe { intrinsics::uninit() };
+        let mut len: libc::uint32_t = unsafe { mem::uninitialized() };
         if impl_fun!(self.ByteLength => (*var, &mut len as *mut libc::uint32_t)) != 0 {
             Some(len as usize)
         } else {
@@ -467,7 +466,7 @@ impl ImageDataIf for ffi::Struct_PPB_ImageData_1_0 {
         }
     }
     fn describe(&self, img: PP_Resource) -> Option<ffi::Struct_PP_ImageDataDesc> {
-        let mut desc = unsafe { intrinsics::uninit() };
+        let mut desc = unsafe { mem::uninitialized() };
         if impl_fun!(self.Describe => (img,
                                        &mut desc as *mut ffi::Struct_PP_ImageDataDesc)) != 0 {
             Some(desc)

@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use std::intrinsics::uninit;
+use std::mem;
 use std::result::Result::{Ok};
 use std::ptr;
 use std::collections::HashSet;
@@ -129,7 +129,7 @@ impl Description {
         }
     }
     pub unsafe fn to_ffi(&self) -> Struct_PP_FontDescription_Dev {
-        let mut desc: Struct_PP_FontDescription_Dev = uninit();
+        let mut desc: Struct_PP_FontDescription_Dev = mem::uninitialized();
         desc.face = self.face.to_var();
         desc.family = self.family.to_ffi();
         desc.size = self.size;
@@ -149,9 +149,9 @@ impl Font {
     pub fn describe(&self) -> Option<(Description, Metrics)> {
         let mut desc: Struct_PP_FontDescription_Dev = Struct_PP_FontDescription_Dev {
             face: {super::NullVar}.to_var(),
-            .. unsafe { uninit() }
+            .. unsafe { mem::uninitialized() }
         };
-        let mut metr: Struct_PP_FontMetrics_Dev     = unsafe { uninit() };
+        let mut metr: Struct_PP_FontMetrics_Dev     = unsafe { mem::uninitialized() };
 
         match (ppb::get_font().Describe.unwrap())
             (self.unwrap(),
