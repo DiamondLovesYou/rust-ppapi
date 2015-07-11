@@ -55,6 +55,13 @@
 #include <ppapi/c/ppb_var_array.h>
 #include <ppapi/c/ppb_var_array_buffer.h>
 #include <ppapi/c/ppb_var_dictionary.h>
+#if PPAPI_RELEASE >= 44
+#include <ppapi/c/ppb_video_decoder.h>
+#include <ppapi/c/ppb_video_encoder.h>
+#endif
+#if PPAPI_RELEASE >= 34
+#include <ppapi/c/ppb_video_frame.h>
+#endif
 #include <ppapi/c/ppb_view.h>
 #include <ppapi/c/ppb_websocket.h>
 
@@ -127,7 +134,6 @@
 #if PPAPI_RELEASE <= 34
 #include <ppapi/c/dev/ppb_widget_dev.h>
 #endif
-#include <ppapi/c/dev/ppb_zoom_dev.h>
 #include <ppapi/c/dev/pp_cursor_type_dev.h>
 #if PPAPI_RELEASE <= 34
 #include <ppapi/c/dev/ppp_find_dev.h>
@@ -135,15 +141,16 @@
 #include <ppapi/c/dev/ppp_network_state_dev.h>
 #include <ppapi/c/dev/ppp_printing_dev.h>
 #include <ppapi/c/dev/pp_print_settings_dev.h>
+#if PPAPI_RELEASE <= 34
 #include <ppapi/c/dev/ppp_scrollbar_dev.h>
 #include <ppapi/c/dev/ppp_selection_dev.h>
 #include <ppapi/c/dev/ppp_text_input_dev.h>
+#endif
 #if PPAPI_RELEASE <= 34
 #include <ppapi/c/dev/ppp_video_capture_dev.h>
 #include <ppapi/c/dev/ppp_video_decoder_dev.h>
 #include <ppapi/c/dev/ppp_widget_dev.h>
 #endif
-#include <ppapi/c/dev/ppp_zoom_dev.h>
 #if PPAPI_RELEASE <= 34
 #include <ppapi/c/dev/pp_video_capture_dev.h>
 #include <ppapi/c/dev/pp_video_dev.h>

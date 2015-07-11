@@ -50,25 +50,28 @@ pub type intmax_t = ::libc::c_longlong;
 pub type uintmax_t = ::libc::c_ulonglong;
 pub type intptr_t = __intptr_t;
 pub type uintptr_t = __uintptr_t;
-pub type PPB_GetInterface = extern "C" fn(interface_name: *const ::libc::c_char)
-                              -> *const ::libc::c_void;
+
+pub type PPB_GetInterface =
+    ::std::option::Option<extern "C" fn(interface_name: *const ::libc::c_char)
+                              -> *const ::libc::c_void>;
 pub type PP_Module = int32_t;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Module {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Module_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Module {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Module {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Module {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PP_InitializeModule_Func =
-    ::std::option::Option<extern "C" fn
-                              (module: PP_Module,
-                               get_browser_interface: PPB_GetInterface)
-                              -> int32_t>;
-pub type PP_ShutdownModule_Func = ::std::option::Option<extern "C" fn()>;
+    ::std::option::Option<extern "C" fn(module: PP_Module,
+                                        get_browser_interface:
+                                            PPB_GetInterface) -> int32_t>;
+pub type PP_ShutdownModule_Func =
+    ::std::option::Option<extern "C" fn() -> ()>;
 pub type PP_GetInterface_Func =
     ::std::option::Option<extern "C" fn(interface_name: *const ::libc::c_char)
                               -> *const ::libc::c_void>;
@@ -77,124 +80,139 @@ pub const PP_FALSE: ::libc::c_uint = 0;
 pub const PP_TRUE: ::libc::c_uint = 1;
 pub type PP_Bool = Enum_Unnamed1;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Bool {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Bool_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Bool {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Bool {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Bool {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PP_Instance = int32_t;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Instance {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Instance_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Instance {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Instance {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Instance {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PP_Resource = int32_t;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Resource {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Resource_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Resource {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Resource {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Resource {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PP_Time = ::libc::c_double;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Time {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Time_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Time {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Time {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Time {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PP_TimeTicks = ::libc::c_double;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TimeTicks {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TimeTicks_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_TimeTicks {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TimeTicks {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TimeTicks {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PP_TimeDelta = ::libc::c_double;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TimeDelta {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TimeDelta_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_TimeDelta {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TimeDelta {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TimeDelta {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Audio_Callback =
-    ::std::option::Option<extern "C" fn
-                              (sample_buffer: *mut ::libc::c_void,
-                               buffer_size_in_bytes: uint32_t,
-                               latency: PP_TimeDelta,
-                               user_data: *mut ::libc::c_void)>;
+    ::std::option::Option<extern "C" fn(sample_buffer: *mut ::libc::c_void,
+                                        buffer_size_in_bytes: uint32_t,
+                                        latency: PP_TimeDelta,
+                                        user_data: *mut ::libc::c_void)
+                              -> ()>;
 pub type PPB_Audio_Callback_1_0 =
-    ::std::option::Option<extern "C" fn
-                              (sample_buffer: *mut ::libc::c_void,
-                               buffer_size_in_bytes: uint32_t,
-                               user_data: *mut ::libc::c_void)>;
+    ::std::option::Option<extern "C" fn(sample_buffer: *mut ::libc::c_void,
+                                        buffer_size_in_bytes: uint32_t,
+                                        user_data: *mut ::libc::c_void)
+                              -> ()>;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Audio_1_1 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           config: PP_Resource,
-                                           audio_callback: PPB_Audio_Callback,
-                                           user_data: *mut ::libc::c_void)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    config: PP_Resource,
+                                                    audio_callback:
+                                                        PPB_Audio_Callback,
+                                                    user_data:
+                                                        *mut ::libc::c_void)
                                           -> PP_Resource>,
     pub IsAudio: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                            -> PP_Bool>,
-    pub GetCurrentConfig: ::std::option::Option<extern "C" fn
-                                                    (audio: PP_Resource)
+    pub GetCurrentConfig: ::std::option::Option<extern "C" fn(audio:
+                                                                  PP_Resource)
                                                     -> PP_Resource>,
     pub StartPlayback: ::std::option::Option<extern "C" fn(audio: PP_Resource)
                                                  -> PP_Bool>,
     pub StopPlayback: ::std::option::Option<extern "C" fn(audio: PP_Resource)
                                                 -> PP_Bool>,
 }
+impl ::std::clone::Clone for Struct_PPB_Audio_1_1 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_Audio_1_1 {
-    fn default() -> Struct_PPB_Audio_1_1 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Audio = Struct_PPB_Audio_1_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Audio_1_0 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           config: PP_Resource,
-                                           audio_callback:
-                                               PPB_Audio_Callback_1_0,
-                                           user_data: *mut ::libc::c_void)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    config: PP_Resource,
+                                                    audio_callback:
+                                                        PPB_Audio_Callback_1_0,
+                                                    user_data:
+                                                        *mut ::libc::c_void)
                                           -> PP_Resource>,
     pub IsAudio: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                            -> PP_Bool>,
-    pub GetCurrentConfig: ::std::option::Option<extern "C" fn
-                                                    (audio: PP_Resource)
+    pub GetCurrentConfig: ::std::option::Option<extern "C" fn(audio:
+                                                                  PP_Resource)
                                                     -> PP_Resource>,
     pub StartPlayback: ::std::option::Option<extern "C" fn(audio: PP_Resource)
                                                  -> PP_Bool>,
     pub StopPlayback: ::std::option::Option<extern "C" fn(audio: PP_Resource)
                                                 -> PP_Bool>,
 }
+impl ::std::clone::Clone for Struct_PPB_Audio_1_0 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_Audio_1_0 {
-    fn default() -> Struct_PPB_Audio_1_0 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type Enum_Unnamed2 = ::libc::c_uint;
 pub const PP_AUDIOBUFFER_SAMPLERATE_UNKNOWN: ::libc::c_uint = 0;
@@ -212,40 +230,43 @@ pub const PP_AUDIOBUFFER_SAMPLESIZE_UNKNOWN: ::libc::c_uint = 0;
 pub const PP_AUDIOBUFFER_SAMPLESIZE_16_BITS: ::libc::c_uint = 2;
 pub type PP_AudioBuffer_SampleSize = Enum_Unnamed3;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_AudioBuffer_0_1 {
-    pub IsAudioBuffer: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource)
+    pub IsAudioBuffer: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource)
                                                  -> PP_Bool>,
     pub GetTimestamp: ::std::option::Option<extern "C" fn(buffer: PP_Resource)
                                                 -> PP_TimeDelta>,
-    pub SetTimestamp: ::std::option::Option<extern "C" fn
-                                                (buffer: PP_Resource,
-                                                 timestamp: PP_TimeDelta)>,
-    pub GetSampleRate: ::std::option::Option<extern "C" fn
-                                                 (buffer: PP_Resource)
+    pub SetTimestamp: ::std::option::Option<extern "C" fn(buffer: PP_Resource,
+                                                          timestamp:
+                                                              PP_TimeDelta)
+                                                -> ()>,
+    pub GetSampleRate: ::std::option::Option<extern "C" fn(buffer:
+                                                               PP_Resource)
                                                  ->
                                                      PP_AudioBuffer_SampleRate>,
-    pub GetSampleSize: ::std::option::Option<extern "C" fn
-                                                 (buffer: PP_Resource)
+    pub GetSampleSize: ::std::option::Option<extern "C" fn(buffer:
+                                                               PP_Resource)
                                                  ->
                                                      PP_AudioBuffer_SampleSize>,
-    pub GetNumberOfChannels: ::std::option::Option<extern "C" fn
-                                                       (buffer: PP_Resource)
+    pub GetNumberOfChannels: ::std::option::Option<extern "C" fn(buffer:
+                                                                     PP_Resource)
                                                        -> uint32_t>,
-    pub GetNumberOfSamples: ::std::option::Option<extern "C" fn
-                                                      (buffer: PP_Resource)
+    pub GetNumberOfSamples: ::std::option::Option<extern "C" fn(buffer:
+                                                                    PP_Resource)
                                                       -> uint32_t>,
-    pub GetDataBuffer: ::std::option::Option<extern "C" fn
-                                                 (buffer: PP_Resource)
+    pub GetDataBuffer: ::std::option::Option<extern "C" fn(buffer:
+                                                               PP_Resource)
                                                  -> *mut ::libc::c_void>,
-    pub GetDataBufferSize: ::std::option::Option<extern "C" fn
-                                                     (buffer: PP_Resource)
+    pub GetDataBufferSize: ::std::option::Option<extern "C" fn(buffer:
+                                                                   PP_Resource)
                                                      -> uint32_t>,
 }
+impl ::std::clone::Clone for Struct_PPB_AudioBuffer_0_1 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_AudioBuffer_0_1 {
-    fn default() -> Struct_PPB_AudioBuffer_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_AudioBuffer = Struct_PPB_AudioBuffer_0_1;
 pub type Enum_Unnamed4 = ::libc::c_uint;
@@ -257,81 +278,84 @@ pub const PP_AUDIOSAMPLERATE_44100: ::libc::c_uint = 44100;
 pub const PP_AUDIOSAMPLERATE_48000: ::libc::c_uint = 48000;
 pub type PP_AudioSampleRate = Enum_Unnamed5;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_AudioSampleRate {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_AudioSampleRate_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_AudioSampleRate {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_AudioSampleRate
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_AudioSampleRate {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_AudioConfig_1_1 {
-    pub CreateStereo16Bit: ::std::option::Option<extern "C" fn
-                                                     (instance: PP_Instance,
-                                                      sample_rate:
-                                                          PP_AudioSampleRate,
-                                                      sample_frame_count:
-                                                          uint32_t)
+    pub CreateStereo16Bit: ::std::option::Option<extern "C" fn(instance:
+                                                                   PP_Instance,
+                                                               sample_rate:
+                                                                   PP_AudioSampleRate,
+                                                               sample_frame_count:
+                                                                   uint32_t)
                                                      -> PP_Resource>,
-    pub RecommendSampleFrameCount: ::std::option::Option<extern "C" fn
-                                                             (instance:
-                                                                  PP_Instance,
-                                                              sample_rate:
-                                                                  PP_AudioSampleRate,
-                                                              requested_sample_frame_count:
-                                                                  uint32_t)
+    pub RecommendSampleFrameCount: ::std::option::Option<extern "C" fn(instance:
+                                                                           PP_Instance,
+                                                                       sample_rate:
+                                                                           PP_AudioSampleRate,
+                                                                       requested_sample_frame_count:
+                                                                           uint32_t)
                                                              -> uint32_t>,
-    pub IsAudioConfig: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource)
+    pub IsAudioConfig: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource)
                                                  -> PP_Bool>,
-    pub GetSampleRate: ::std::option::Option<extern "C" fn
-                                                 (config: PP_Resource)
+    pub GetSampleRate: ::std::option::Option<extern "C" fn(config:
+                                                               PP_Resource)
                                                  -> PP_AudioSampleRate>,
-    pub GetSampleFrameCount: ::std::option::Option<extern "C" fn
-                                                       (config: PP_Resource)
+    pub GetSampleFrameCount: ::std::option::Option<extern "C" fn(config:
+                                                                     PP_Resource)
                                                        -> uint32_t>,
-    pub RecommendSampleRate: ::std::option::Option<extern "C" fn
-                                                       (instance: PP_Instance)
+    pub RecommendSampleRate: ::std::option::Option<extern "C" fn(instance:
+                                                                     PP_Instance)
                                                        -> PP_AudioSampleRate>,
 }
+impl ::std::clone::Clone for Struct_PPB_AudioConfig_1_1 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_AudioConfig_1_1 {
-    fn default() -> Struct_PPB_AudioConfig_1_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_AudioConfig = Struct_PPB_AudioConfig_1_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_AudioConfig_1_0 {
-    pub CreateStereo16Bit: ::std::option::Option<extern "C" fn
-                                                     (instance: PP_Instance,
-                                                      sample_rate:
-                                                          PP_AudioSampleRate,
-                                                      sample_frame_count:
-                                                          uint32_t)
+    pub CreateStereo16Bit: ::std::option::Option<extern "C" fn(instance:
+                                                                   PP_Instance,
+                                                               sample_rate:
+                                                                   PP_AudioSampleRate,
+                                                               sample_frame_count:
+                                                                   uint32_t)
                                                      -> PP_Resource>,
-    pub RecommendSampleFrameCount: ::std::option::Option<extern "C" fn
-                                                             (sample_rate:
-                                                                  PP_AudioSampleRate,
-                                                              requested_sample_frame_count:
-                                                                  uint32_t)
+    pub RecommendSampleFrameCount: ::std::option::Option<extern "C" fn(sample_rate:
+                                                                           PP_AudioSampleRate,
+                                                                       requested_sample_frame_count:
+                                                                           uint32_t)
                                                              -> uint32_t>,
-    pub IsAudioConfig: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource)
+    pub IsAudioConfig: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource)
                                                  -> PP_Bool>,
-    pub GetSampleRate: ::std::option::Option<extern "C" fn
-                                                 (config: PP_Resource)
+    pub GetSampleRate: ::std::option::Option<extern "C" fn(config:
+                                                               PP_Resource)
                                                  -> PP_AudioSampleRate>,
-    pub GetSampleFrameCount: ::std::option::Option<extern "C" fn
-                                                       (config: PP_Resource)
+    pub GetSampleFrameCount: ::std::option::Option<extern "C" fn(config:
+                                                                     PP_Resource)
                                                        -> uint32_t>,
 }
+impl ::std::clone::Clone for Struct_PPB_AudioConfig_1_0 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_AudioConfig_1_0 {
-    fn default() -> Struct_PPB_AudioConfig_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type Enum_Unnamed6 = ::libc::c_uint;
 pub const PP_VARTYPE_UNDEFINED: ::libc::c_uint = 0;
@@ -347,36 +371,44 @@ pub const PP_VARTYPE_ARRAY_BUFFER: ::libc::c_uint = 9;
 pub const PP_VARTYPE_RESOURCE: ::libc::c_uint = 10;
 pub type PP_VarType = Enum_Unnamed6;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_VarType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_VarType_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_VarType {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_VarType {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_VarType {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Union_PP_VarValue {
     pub _bindgen_data_: [u64; 1usize],
 }
 impl Union_PP_VarValue {
     pub unsafe fn as_bool(&mut self) -> *mut PP_Bool {
-        ::std::mem::transmute(&self._bindgen_data_)
+        let raw: *mut u8 = ::std::mem::transmute(&self._bindgen_data_);
+        ::std::mem::transmute(raw.offset(0))
     }
     pub unsafe fn as_int(&mut self) -> *mut int32_t {
-        ::std::mem::transmute(&self._bindgen_data_)
+        let raw: *mut u8 = ::std::mem::transmute(&self._bindgen_data_);
+        ::std::mem::transmute(raw.offset(0))
     }
     pub unsafe fn as_double(&mut self) -> *mut ::libc::c_double {
-        ::std::mem::transmute(&self._bindgen_data_)
+        let raw: *mut u8 = ::std::mem::transmute(&self._bindgen_data_);
+        ::std::mem::transmute(raw.offset(0))
     }
     pub unsafe fn as_id(&mut self) -> *mut int64_t {
-        ::std::mem::transmute(&self._bindgen_data_)
+        let raw: *mut u8 = ::std::mem::transmute(&self._bindgen_data_);
+        ::std::mem::transmute(raw.offset(0))
     }
 }
+impl ::std::clone::Clone for Union_PP_VarValue {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Union_PP_VarValue {
-    fn default() -> Union_PP_VarValue { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
 #[derive(Copy)]
@@ -386,17 +418,18 @@ pub struct Struct_PP_Var {
     pub value: Union_PP_VarValue,
 }
 impl ::std::default::Default for Struct_PP_Var {
-    fn default() -> Struct_PP_Var { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Var {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Var_is_not_16_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Var {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Var {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Var {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type Enum_Unnamed7 = ::libc::c_uint;
 pub const PP_LOGLEVEL_TIP: ::libc::c_uint = 0;
@@ -405,162 +438,152 @@ pub const PP_LOGLEVEL_WARNING: ::libc::c_uint = 2;
 pub const PP_LOGLEVEL_ERROR: ::libc::c_uint = 3;
 pub type PP_LogLevel = Enum_Unnamed7;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_LogLevel {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_LogLevel_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_LogLevel {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_LogLevel {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_LogLevel {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Console_1_0 {
-    pub Log: ::std::option::Option<extern "C" fn
-                                       (instance: PP_Instance,
-                                        level: PP_LogLevel,
-                                        value: Struct_PP_Var)>,
-    pub LogWithSource: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance,
-                                                  level: PP_LogLevel,
-                                                  source: Struct_PP_Var,
-                                                  value: Struct_PP_Var)>,
+    pub Log: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                 level: PP_LogLevel,
+                                                 value: Struct_PP_Var) -> ()>,
+    pub LogWithSource: ::std::option::Option<extern "C" fn(instance:
+                                                               PP_Instance,
+                                                           level: PP_LogLevel,
+                                                           source:
+                                                               Struct_PP_Var,
+                                                           value:
+                                                               Struct_PP_Var)
+                                                 -> ()>,
+}
+impl ::std::clone::Clone for Struct_PPB_Console_1_0 {
+    fn clone(&self) -> Self { *self }
 }
 impl ::std::default::Default for Struct_PPB_Console_1_0 {
-    fn default() -> Struct_PPB_Console_1_0 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Console = Struct_PPB_Console_1_0;
-pub type PP_CompletionCallback_Func = extern "C" fn
-    (user_data: *mut ::libc::c_void,
-     result: int32_t);
+pub type PP_CompletionCallback_Func =
+    ::std::option::Option<extern "C" fn(user_data: *mut ::libc::c_void,
+                                        result: int32_t) -> ()>;
 pub type Enum_Unnamed8 = ::libc::c_uint;
 pub const PP_COMPLETIONCALLBACK_FLAG_NONE: ::libc::c_uint = 0;
 pub const PP_COMPLETIONCALLBACK_FLAG_OPTIONAL: ::libc::c_uint = 1;
 pub type PP_CompletionCallback_Flag = Enum_Unnamed8;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_CompletionCallback_Flag {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CompletionCallback_Flag_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_CompletionCallback_Flag {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_CompletionCallback_Flag {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_CompletionCallback_Flag {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PP_CompletionCallback {
     pub func: PP_CompletionCallback_Func,
     pub user_data: *mut ::libc::c_void,
     pub flags: int32_t,
 }
-impl ::std::default::Default for Struct_PP_CompletionCallback {
-    fn default() -> Struct_PP_CompletionCallback {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PP_CompletionCallback {
-    fn clone(&self) -> Struct_PP_CompletionCallback {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PP_CompletionCallback {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type size_t = ::libc::c_uint;
-pub type ptrdiff_t = ::libc::c_int;
-pub type __dev_t = int64_t;
-pub type __ino_t = uint64_t;
-pub type __mode_t = uint32_t;
-pub type __nlink_t = uint32_t;
-pub type __uid_t = uint32_t;
-pub type __gid_t = uint32_t;
-pub type _off_t = int64_t;
-pub type _off64_t = int64_t;
-pub type __blksize_t = int32_t;
-pub type blksize_t = __blksize_t;
-pub type __blkcnt_t = int32_t;
-pub type blkcnt_t = __blkcnt_t;
-pub type __time_t = int64_t;
-pub type time_t = __time_t;
 #[repr(C)]
-#[derive(Copy, Clone)]
-pub struct Struct_timespec {
-    pub tv_sec: time_t,
-    pub tv_nsec: ::libc::c_long,
-}
-impl ::std::default::Default for Struct_timespec {
-    fn default() -> Struct_timespec { unsafe { ::std::mem::zeroed() } }
-}
-pub type _fpos_t = ::libc::c_long;
-pub type _ssize_t = ::libc::c_int;
-pub type wint_t = ::libc::c_int;
-#[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Core_1_0 {
-    pub AddRefResource: ::std::option::Option<extern "C" fn
-                                                  (resource: PP_Resource)>,
-    pub ReleaseResource: ::std::option::Option<extern "C" fn
-                                                   (resource: PP_Resource)>,
+    pub AddRefResource: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
+                                                  -> ()>,
+    pub ReleaseResource: ::std::option::Option<extern "C" fn(resource:
+                                                                 PP_Resource)
+                                                   -> ()>,
     pub GetTime: ::std::option::Option<extern "C" fn() -> PP_Time>,
     pub GetTimeTicks: ::std::option::Option<extern "C" fn() -> PP_TimeTicks>,
-    pub CallOnMainThread: ::std::option::Option<extern "C" fn
-                                                    (delay_in_milliseconds:
-                                                         int32_t,
-                                                     callback:
-                                                         Struct_PP_CompletionCallback,
-                                                     result: int32_t)>,
+    pub CallOnMainThread: ::std::option::Option<extern "C" fn(delay_in_milliseconds:
+                                                                  int32_t,
+                                                              callback:
+                                                                  Struct_PP_CompletionCallback,
+                                                              result: int32_t)
+                                                    -> ()>,
     pub IsMainThread: ::std::option::Option<extern "C" fn() -> PP_Bool>,
 }
+impl ::std::clone::Clone for Struct_PPB_Core_1_0 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_Core_1_0 {
-    fn default() -> Struct_PPB_Core_1_0 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Core = Struct_PPB_Core_1_0;
 pub type PP_ArrayOutput_GetDataBuffer =
-    ::std::option::Option<extern "C" fn
-                              (user_data: *mut ::libc::c_void,
-                               element_count: uint32_t,
-                               element_size: uint32_t)
+    ::std::option::Option<extern "C" fn(user_data: *mut ::libc::c_void,
+                                        element_count: uint32_t,
+                                        element_size: uint32_t)
                               -> *mut ::libc::c_void>;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PP_ArrayOutput {
     pub GetDataBuffer: PP_ArrayOutput_GetDataBuffer,
     pub user_data: *mut ::libc::c_void,
 }
-impl ::std::default::Default for Struct_PP_ArrayOutput {
-    fn default() -> Struct_PP_ArrayOutput { unsafe { ::std::mem::zeroed() } }
+impl ::std::clone::Clone for Struct_PP_ArrayOutput {
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed18 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PP_ArrayOutput {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed9 = ::libc::c_uint;
 pub const PP_FILETYPE_REGULAR: ::libc::c_uint = 0;
 pub const PP_FILETYPE_DIRECTORY: ::libc::c_uint = 1;
 pub const PP_FILETYPE_OTHER: ::libc::c_uint = 2;
-pub type PP_FileType = Enum_Unnamed18;
+pub type PP_FileType = Enum_Unnamed9;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileType_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
-impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileType {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FileType {
-        unsafe { ::std::mem::zeroed() }
-    }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FileType {
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed19 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileType {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed10 = ::libc::c_uint;
 pub const PP_FILESYSTEMTYPE_INVALID: ::libc::c_uint = 0;
 pub const PP_FILESYSTEMTYPE_EXTERNAL: ::libc::c_uint = 1;
 pub const PP_FILESYSTEMTYPE_LOCALPERSISTENT: ::libc::c_uint = 2;
 pub const PP_FILESYSTEMTYPE_LOCALTEMPORARY: ::libc::c_uint = 3;
 pub const PP_FILESYSTEMTYPE_ISOLATED: ::libc::c_uint = 4;
-pub type PP_FileSystemType = Enum_Unnamed19;
+pub type PP_FileSystemType = Enum_Unnamed10;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileSystemType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileSystemType_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FileSystemType {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileSystemType
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FileSystemType {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_FileInfo {
     pub size: int64_t,
     pub _type: PP_FileType,
@@ -569,178 +592,186 @@ pub struct Struct_PP_FileInfo {
     pub last_access_time: PP_Time,
     pub last_modified_time: PP_Time,
 }
+impl ::std::clone::Clone for Struct_PP_FileInfo {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_FileInfo {
-    fn default() -> Struct_PP_FileInfo { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileInfo {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileInfo_is_not_40_bytes_wide: [::libc::c_char; 1usize],
 }
-impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileInfo {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FileInfo {
-        unsafe { ::std::mem::zeroed() }
-    }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FileInfo {
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed20 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileInfo {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed11 = ::libc::c_uint;
 pub const PP_FILEOPENFLAG_READ: ::libc::c_uint = 1;
 pub const PP_FILEOPENFLAG_WRITE: ::libc::c_uint = 2;
 pub const PP_FILEOPENFLAG_CREATE: ::libc::c_uint = 4;
 pub const PP_FILEOPENFLAG_TRUNCATE: ::libc::c_uint = 8;
 pub const PP_FILEOPENFLAG_EXCLUSIVE: ::libc::c_uint = 16;
 pub const PP_FILEOPENFLAG_APPEND: ::libc::c_uint = 32;
-pub type PP_FileOpenFlags = Enum_Unnamed20;
+pub type PP_FileOpenFlags = Enum_Unnamed11;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileOpenFlags_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FileOpenFlags {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_FileIO_1_1 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
     pub IsFileIO: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                             -> PP_Bool>,
-    pub Open: ::std::option::Option<extern "C" fn
-                                        (file_io: PP_Resource,
-                                         file_ref: PP_Resource,
-                                         open_flags: int32_t,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Open: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                  file_ref: PP_Resource,
+                                                  open_flags: int32_t,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub Query: ::std::option::Option<extern "C" fn
-                                         (file_io: PP_Resource,
-                                          info: *mut Struct_PP_FileInfo,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Query: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                   info:
+                                                       *mut Struct_PP_FileInfo,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Touch: ::std::option::Option<extern "C" fn
-                                         (file_io: PP_Resource,
-                                          last_access_time: PP_Time,
-                                          last_modified_time: PP_Time,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Touch: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                   last_access_time: PP_Time,
+                                                   last_modified_time:
+                                                       PP_Time,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Read: ::std::option::Option<extern "C" fn
-                                        (file_io: PP_Resource,
-                                         offset: int64_t,
-                                         buffer: *mut ::libc::c_char,
-                                         bytes_to_read: int32_t,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Read: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                  offset: int64_t,
+                                                  buffer: *mut ::libc::c_char,
+                                                  bytes_to_read: int32_t,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub Write: ::std::option::Option<extern "C" fn
-                                         (file_io: PP_Resource,
-                                          offset: int64_t,
-                                          buffer: *const ::libc::c_char,
-                                          bytes_to_write: int32_t,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Write: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                   offset: int64_t,
+                                                   buffer:
+                                                       *const ::libc::c_char,
+                                                   bytes_to_write: int32_t,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub SetLength: ::std::option::Option<extern "C" fn
-                                             (file_io: PP_Resource,
-                                              length: int64_t,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub SetLength: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                       length: int64_t,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
-    pub Flush: ::std::option::Option<extern "C" fn
-                                         (file_io: PP_Resource,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Flush: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(file_io: PP_Resource)>,
-    pub ReadToArray: ::std::option::Option<extern "C" fn
-                                               (file_io: PP_Resource,
-                                                offset: int64_t,
-                                                max_read_length: int32_t,
-                                                output:
-                                                    *mut Struct_PP_ArrayOutput,
-                                                callback:
-                                                    Struct_PP_CompletionCallback)
+    pub Close: ::std::option::Option<extern "C" fn(file_io: PP_Resource)
+                                         -> ()>,
+    pub ReadToArray: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                         offset: int64_t,
+                                                         max_read_length:
+                                                             int32_t,
+                                                         output:
+                                                             *mut Struct_PP_ArrayOutput,
+                                                         callback:
+                                                             Struct_PP_CompletionCallback)
                                                -> int32_t>,
 }
+impl ::std::clone::Clone for Struct_PPB_FileIO_1_1 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_FileIO_1_1 {
-    fn default() -> Struct_PPB_FileIO_1_1 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_FileIO = Struct_PPB_FileIO_1_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_FileIO_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
     pub IsFileIO: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                             -> PP_Bool>,
-    pub Open: ::std::option::Option<extern "C" fn
-                                        (file_io: PP_Resource,
-                                         file_ref: PP_Resource,
-                                         open_flags: int32_t,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Open: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                  file_ref: PP_Resource,
+                                                  open_flags: int32_t,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub Query: ::std::option::Option<extern "C" fn
-                                         (file_io: PP_Resource,
-                                          info: *mut Struct_PP_FileInfo,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Query: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                   info:
+                                                       *mut Struct_PP_FileInfo,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Touch: ::std::option::Option<extern "C" fn
-                                         (file_io: PP_Resource,
-                                          last_access_time: PP_Time,
-                                          last_modified_time: PP_Time,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Touch: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                   last_access_time: PP_Time,
+                                                   last_modified_time:
+                                                       PP_Time,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Read: ::std::option::Option<extern "C" fn
-                                        (file_io: PP_Resource,
-                                         offset: int64_t,
-                                         buffer: *mut ::libc::c_char,
-                                         bytes_to_read: int32_t,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Read: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                  offset: int64_t,
+                                                  buffer: *mut ::libc::c_char,
+                                                  bytes_to_read: int32_t,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub Write: ::std::option::Option<extern "C" fn
-                                         (file_io: PP_Resource,
-                                          offset: int64_t,
-                                          buffer: *const ::libc::c_char,
-                                          bytes_to_write: int32_t,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Write: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                   offset: int64_t,
+                                                   buffer:
+                                                       *const ::libc::c_char,
+                                                   bytes_to_write: int32_t,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub SetLength: ::std::option::Option<extern "C" fn
-                                             (file_io: PP_Resource,
-                                              length: int64_t,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub SetLength: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                       length: int64_t,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
-    pub Flush: ::std::option::Option<extern "C" fn
-                                         (file_io: PP_Resource,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Flush: ::std::option::Option<extern "C" fn(file_io: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(file_io: PP_Resource)>,
+    pub Close: ::std::option::Option<extern "C" fn(file_io: PP_Resource)
+                                         -> ()>,
+}
+impl ::std::clone::Clone for Struct_PPB_FileIO_1_0 {
+    fn clone(&self) -> Self { *self }
 }
 impl ::std::default::Default for Struct_PPB_FileIO_1_0 {
-    fn default() -> Struct_PPB_FileIO_1_0 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed21 = ::libc::c_uint;
+pub type Enum_Unnamed12 = ::libc::c_uint;
 pub const PP_MAKEDIRECTORYFLAG_NONE: ::libc::c_uint = 0;
 pub const PP_MAKEDIRECTORYFLAG_WITH_ANCESTORS: ::libc::c_uint = 1;
 pub const PP_MAKEDIRECTORYFLAG_EXCLUSIVE: ::libc::c_uint = 2;
-pub type PP_MakeDirectoryFlags = Enum_Unnamed21;
+pub type PP_MakeDirectoryFlags = Enum_Unnamed12;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_FileRef_1_2 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (file_system: PP_Resource,
-                                           path: *const ::libc::c_char)
+    pub Create: ::std::option::Option<extern "C" fn(file_system: PP_Resource,
+                                                    path:
+                                                        *const ::libc::c_char)
                                           -> PP_Resource>,
     pub IsFileRef: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                              -> PP_Bool>,
-    pub GetFileSystemType: ::std::option::Option<extern "C" fn
-                                                     (file_ref: PP_Resource)
+    pub GetFileSystemType: ::std::option::Option<extern "C" fn(file_ref:
+                                                                   PP_Resource)
                                                      -> PP_FileSystemType>,
     pub GetName: ::std::option::Option<extern "C" fn(file_ref: PP_Resource)
                                            -> Struct_PP_Var>,
@@ -748,60 +779,61 @@ pub struct Struct_PPB_FileRef_1_2 {
                                            -> Struct_PP_Var>,
     pub GetParent: ::std::option::Option<extern "C" fn(file_ref: PP_Resource)
                                              -> PP_Resource>,
-    pub MakeDirectory: ::std::option::Option<extern "C" fn
-                                                 (directory_ref: PP_Resource,
-                                                  make_directory_flags:
-                                                      int32_t,
-                                                  callback:
-                                                      Struct_PP_CompletionCallback)
+    pub MakeDirectory: ::std::option::Option<extern "C" fn(directory_ref:
+                                                               PP_Resource,
+                                                           make_directory_flags:
+                                                               int32_t,
+                                                           callback:
+                                                               Struct_PP_CompletionCallback)
                                                  -> int32_t>,
-    pub Touch: ::std::option::Option<extern "C" fn
-                                         (file_ref: PP_Resource,
-                                          last_access_time: PP_Time,
-                                          last_modified_time: PP_Time,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Touch: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                   last_access_time: PP_Time,
+                                                   last_modified_time:
+                                                       PP_Time,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Delete: ::std::option::Option<extern "C" fn
-                                          (file_ref: PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Delete: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Rename: ::std::option::Option<extern "C" fn
-                                          (file_ref: PP_Resource,
-                                           new_file_ref: PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Rename: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                    new_file_ref: PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Query: ::std::option::Option<extern "C" fn
-                                         (file_ref: PP_Resource,
-                                          info: *mut Struct_PP_FileInfo,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Query: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                   info:
+                                                       *mut Struct_PP_FileInfo,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub ReadDirectoryEntries: ::std::option::Option<extern "C" fn
-                                                        (file_ref:
-                                                             PP_Resource,
-                                                         output:
-                                                             Struct_PP_ArrayOutput,
-                                                         callback:
-                                                             Struct_PP_CompletionCallback)
+    pub ReadDirectoryEntries: ::std::option::Option<extern "C" fn(file_ref:
+                                                                      PP_Resource,
+                                                                  output:
+                                                                      Struct_PP_ArrayOutput,
+                                                                  callback:
+                                                                      Struct_PP_CompletionCallback)
                                                         -> int32_t>,
 }
+impl ::std::clone::Clone for Struct_PPB_FileRef_1_2 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_FileRef_1_2 {
-    fn default() -> Struct_PPB_FileRef_1_2 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_FileRef = Struct_PPB_FileRef_1_2;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_FileRef_1_0 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (file_system: PP_Resource,
-                                           path: *const ::libc::c_char)
+    pub Create: ::std::option::Option<extern "C" fn(file_system: PP_Resource,
+                                                    path:
+                                                        *const ::libc::c_char)
                                           -> PP_Resource>,
     pub IsFileRef: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                              -> PP_Bool>,
-    pub GetFileSystemType: ::std::option::Option<extern "C" fn
-                                                     (file_ref: PP_Resource)
+    pub GetFileSystemType: ::std::option::Option<extern "C" fn(file_ref:
+                                                                   PP_Resource)
                                                      -> PP_FileSystemType>,
     pub GetName: ::std::option::Option<extern "C" fn(file_ref: PP_Resource)
                                            -> Struct_PP_Var>,
@@ -809,44 +841,47 @@ pub struct Struct_PPB_FileRef_1_0 {
                                            -> Struct_PP_Var>,
     pub GetParent: ::std::option::Option<extern "C" fn(file_ref: PP_Resource)
                                              -> PP_Resource>,
-    pub MakeDirectory: ::std::option::Option<extern "C" fn
-                                                 (directory_ref: PP_Resource,
-                                                  make_ancestors: PP_Bool,
-                                                  callback:
-                                                      Struct_PP_CompletionCallback)
+    pub MakeDirectory: ::std::option::Option<extern "C" fn(directory_ref:
+                                                               PP_Resource,
+                                                           make_ancestors:
+                                                               PP_Bool,
+                                                           callback:
+                                                               Struct_PP_CompletionCallback)
                                                  -> int32_t>,
-    pub Touch: ::std::option::Option<extern "C" fn
-                                         (file_ref: PP_Resource,
-                                          last_access_time: PP_Time,
-                                          last_modified_time: PP_Time,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Touch: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                   last_access_time: PP_Time,
+                                                   last_modified_time:
+                                                       PP_Time,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Delete: ::std::option::Option<extern "C" fn
-                                          (file_ref: PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Delete: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Rename: ::std::option::Option<extern "C" fn
-                                          (file_ref: PP_Resource,
-                                           new_file_ref: PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Rename: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                    new_file_ref: PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
+}
+impl ::std::clone::Clone for Struct_PPB_FileRef_1_0 {
+    fn clone(&self) -> Self { *self }
 }
 impl ::std::default::Default for Struct_PPB_FileRef_1_0 {
-    fn default() -> Struct_PPB_FileRef_1_0 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_FileRef_1_1 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (file_system: PP_Resource,
-                                           path: *const ::libc::c_char)
+    pub Create: ::std::option::Option<extern "C" fn(file_system: PP_Resource,
+                                                    path:
+                                                        *const ::libc::c_char)
                                           -> PP_Resource>,
     pub IsFileRef: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                              -> PP_Bool>,
-    pub GetFileSystemType: ::std::option::Option<extern "C" fn
-                                                     (file_ref: PP_Resource)
+    pub GetFileSystemType: ::std::option::Option<extern "C" fn(file_ref:
+                                                                   PP_Resource)
                                                      -> PP_FileSystemType>,
     pub GetName: ::std::option::Option<extern "C" fn(file_ref: PP_Resource)
                                            -> Struct_PP_Var>,
@@ -854,118 +889,130 @@ pub struct Struct_PPB_FileRef_1_1 {
                                            -> Struct_PP_Var>,
     pub GetParent: ::std::option::Option<extern "C" fn(file_ref: PP_Resource)
                                              -> PP_Resource>,
-    pub MakeDirectory: ::std::option::Option<extern "C" fn
-                                                 (directory_ref: PP_Resource,
-                                                  make_ancestors: PP_Bool,
-                                                  callback:
-                                                      Struct_PP_CompletionCallback)
+    pub MakeDirectory: ::std::option::Option<extern "C" fn(directory_ref:
+                                                               PP_Resource,
+                                                           make_ancestors:
+                                                               PP_Bool,
+                                                           callback:
+                                                               Struct_PP_CompletionCallback)
                                                  -> int32_t>,
-    pub Touch: ::std::option::Option<extern "C" fn
-                                         (file_ref: PP_Resource,
-                                          last_access_time: PP_Time,
-                                          last_modified_time: PP_Time,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Touch: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                   last_access_time: PP_Time,
+                                                   last_modified_time:
+                                                       PP_Time,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Delete: ::std::option::Option<extern "C" fn
-                                          (file_ref: PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Delete: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Rename: ::std::option::Option<extern "C" fn
-                                          (file_ref: PP_Resource,
-                                           new_file_ref: PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Rename: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                    new_file_ref: PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Query: ::std::option::Option<extern "C" fn
-                                         (file_ref: PP_Resource,
-                                          info: *mut Struct_PP_FileInfo,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Query: ::std::option::Option<extern "C" fn(file_ref: PP_Resource,
+                                                   info:
+                                                       *mut Struct_PP_FileInfo,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub ReadDirectoryEntries: ::std::option::Option<extern "C" fn
-                                                        (file_ref:
-                                                             PP_Resource,
-                                                         output:
-                                                             Struct_PP_ArrayOutput,
-                                                         callback:
-                                                             Struct_PP_CompletionCallback)
+    pub ReadDirectoryEntries: ::std::option::Option<extern "C" fn(file_ref:
+                                                                      PP_Resource,
+                                                                  output:
+                                                                      Struct_PP_ArrayOutput,
+                                                                  callback:
+                                                                      Struct_PP_CompletionCallback)
                                                         -> int32_t>,
 }
+impl ::std::clone::Clone for Struct_PPB_FileRef_1_1 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_FileRef_1_1 {
-    fn default() -> Struct_PPB_FileRef_1_1 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_FileSystem_1_0 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           _type: PP_FileSystemType)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    _type: PP_FileSystemType)
                                           -> PP_Resource>,
-    pub IsFileSystem: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource)
+    pub IsFileSystem: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
                                                 -> PP_Bool>,
-    pub Open: ::std::option::Option<extern "C" fn
-                                        (file_system: PP_Resource,
-                                         expected_size: int64_t,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Open: ::std::option::Option<extern "C" fn(file_system: PP_Resource,
+                                                  expected_size: int64_t,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
     pub GetType: ::std::option::Option<extern "C" fn(file_system: PP_Resource)
                                            -> PP_FileSystemType>,
 }
+impl ::std::clone::Clone for Struct_PPB_FileSystem_1_0 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_FileSystem_1_0 {
-    fn default() -> Struct_PPB_FileSystem_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_FileSystem = Struct_PPB_FileSystem_1_0;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Size {
     pub width: int32_t,
     pub height: int32_t,
 }
+impl ::std::clone::Clone for Struct_PP_Size {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Size {
-    fn default() -> Struct_PP_Size { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Size {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Size_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Size {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Size {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Size {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_FloatSize {
     pub width: ::libc::c_float,
     pub height: ::libc::c_float,
 }
+impl ::std::clone::Clone for Struct_PP_FloatSize {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_FloatSize {
-    fn default() -> Struct_PP_FloatSize { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Fullscreen_1_0 {
-    pub IsFullscreen: ::std::option::Option<extern "C" fn
-                                                (instance: PP_Instance)
+    pub IsFullscreen: ::std::option::Option<extern "C" fn(instance:
+                                                              PP_Instance)
                                                 -> PP_Bool>,
-    pub SetFullscreen: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance,
-                                                  fullscreen: PP_Bool)
+    pub SetFullscreen: ::std::option::Option<extern "C" fn(instance:
+                                                               PP_Instance,
+                                                           fullscreen:
+                                                               PP_Bool)
                                                  -> PP_Bool>,
-    pub GetScreenSize: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance,
-                                                  size: *mut Struct_PP_Size)
+    pub GetScreenSize: ::std::option::Option<extern "C" fn(instance:
+                                                               PP_Instance,
+                                                           size:
+                                                               *mut Struct_PP_Size)
                                                  -> PP_Bool>,
 }
+impl ::std::clone::Clone for Struct_PPB_Fullscreen_1_0 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_Fullscreen_1_0 {
-    fn default() -> Struct_PPB_Fullscreen_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Fullscreen = Struct_PPB_Fullscreen_1_0;
 #[repr(C)]
@@ -980,215 +1027,251 @@ pub struct Struct_PP_GamepadSampleData {
     pub connected: PP_Bool,
     pub unused_pad_: [::libc::c_char; 4usize],
 }
-impl ::std::default::Default for Struct_PP_GamepadSampleData {
-    fn default() -> Struct_PP_GamepadSampleData {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PP_GamepadSampleData {
-    fn clone(&self) -> Struct_PP_GamepadSampleData {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PP_GamepadSampleData {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_GamepadSampleData {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_GamepadSampleData_is_not_472_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_GamepadSampleData {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_GamepadSampleData {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_GamepadSampleData {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_GamepadsSampleData {
     pub length: uint32_t,
     pub unused_pad_: [::libc::c_char; 4usize],
     pub items: [Struct_PP_GamepadSampleData; 4usize],
 }
+impl ::std::clone::Clone for Struct_PP_GamepadsSampleData {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_GamepadsSampleData {
-    fn default() -> Struct_PP_GamepadsSampleData {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_GamepadsSampleData {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_GamepadsSampleData_is_not_1896_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_GamepadsSampleData
+ {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_GamepadsSampleData {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_GamepadsSampleData {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Gamepad_1_0 {
-    pub Sample: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           data:
-                                               *mut Struct_PP_GamepadsSampleData)>,
+    pub Sample: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    data:
+                                                        *mut Struct_PP_GamepadsSampleData)
+                                          -> ()>,
+}
+impl ::std::clone::Clone for Struct_PPB_Gamepad_1_0 {
+    fn clone(&self) -> Self { *self }
 }
 impl ::std::default::Default for Struct_PPB_Gamepad_1_0 {
-    fn default() -> Struct_PPB_Gamepad_1_0 { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Gamepad = Struct_PPB_Gamepad_1_0;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Point {
     pub x: int32_t,
     pub y: int32_t,
 }
+impl ::std::clone::Clone for Struct_PP_Point {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Point {
-    fn default() -> Struct_PP_Point { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Point {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Point_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Point {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Point {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Point {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_FloatPoint {
     pub x: ::libc::c_float,
     pub y: ::libc::c_float,
 }
+impl ::std::clone::Clone for Struct_PP_FloatPoint {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_FloatPoint {
-    fn default() -> Struct_PP_FloatPoint { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FloatPoint {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FloatPoint_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FloatPoint {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FloatPoint {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FloatPoint {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Rect {
     pub point: Struct_PP_Point,
     pub size: Struct_PP_Size,
 }
+impl ::std::clone::Clone for Struct_PP_Rect {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Rect {
-    fn default() -> Struct_PP_Rect { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Rect {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Rect_is_not_16_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Rect {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_Rect {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Rect {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_FloatRect {
     pub point: Struct_PP_FloatPoint,
     pub size: Struct_PP_FloatSize,
 }
+impl ::std::clone::Clone for Struct_PP_FloatRect {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_FloatRect {
-    fn default() -> Struct_PP_FloatRect { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Graphics2D_1_1 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           size: *const Struct_PP_Size,
-                                           is_always_opaque: PP_Bool)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    size:
+                                                        *const Struct_PP_Size,
+                                                    is_always_opaque: PP_Bool)
                                           -> PP_Resource>,
-    pub IsGraphics2D: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource)
+    pub IsGraphics2D: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
                                                 -> PP_Bool>,
-    pub Describe: ::std::option::Option<extern "C" fn
-                                            (graphics_2d: PP_Resource,
-                                             size: *mut Struct_PP_Size,
-                                             is_always_opaque: *mut PP_Bool)
+    pub Describe: ::std::option::Option<extern "C" fn(graphics_2d:
+                                                          PP_Resource,
+                                                      size:
+                                                          *mut Struct_PP_Size,
+                                                      is_always_opaque:
+                                                          *mut PP_Bool)
                                             -> PP_Bool>,
-    pub PaintImageData: ::std::option::Option<extern "C" fn
-                                                  (graphics_2d: PP_Resource,
-                                                   image_data: PP_Resource,
-                                                   top_left:
-                                                       *const Struct_PP_Point,
-                                                   src_rect:
-                                                       *const Struct_PP_Rect)>,
-    pub Scroll: ::std::option::Option<extern "C" fn
-                                          (graphics_2d: PP_Resource,
-                                           clip_rect: *const Struct_PP_Rect,
-                                           amount: *const Struct_PP_Point)>,
-    pub ReplaceContents: ::std::option::Option<extern "C" fn
-                                                   (graphics_2d: PP_Resource,
-                                                    image_data: PP_Resource)>,
-    pub Flush: ::std::option::Option<extern "C" fn
-                                         (graphics_2d: PP_Resource,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub PaintImageData: ::std::option::Option<extern "C" fn(graphics_2d:
+                                                                PP_Resource,
+                                                            image_data:
+                                                                PP_Resource,
+                                                            top_left:
+                                                                *const Struct_PP_Point,
+                                                            src_rect:
+                                                                *const Struct_PP_Rect)
+                                                  -> ()>,
+    pub Scroll: ::std::option::Option<extern "C" fn(graphics_2d: PP_Resource,
+                                                    clip_rect:
+                                                        *const Struct_PP_Rect,
+                                                    amount:
+                                                        *const Struct_PP_Point)
+                                          -> ()>,
+    pub ReplaceContents: ::std::option::Option<extern "C" fn(graphics_2d:
+                                                                 PP_Resource,
+                                                             image_data:
+                                                                 PP_Resource)
+                                                   -> ()>,
+    pub Flush: ::std::option::Option<extern "C" fn(graphics_2d: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub SetScale: ::std::option::Option<extern "C" fn
-                                            (resource: PP_Resource,
-                                             scale: ::libc::c_float)
+    pub SetScale: ::std::option::Option<extern "C" fn(resource: PP_Resource,
+                                                      scale: ::libc::c_float)
                                             -> PP_Bool>,
     pub GetScale: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                             -> ::libc::c_float>,
 }
+impl ::std::clone::Clone for Struct_PPB_Graphics2D_1_1 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_Graphics2D_1_1 {
-    fn default() -> Struct_PPB_Graphics2D_1_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Graphics2D = Struct_PPB_Graphics2D_1_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Graphics2D_1_0 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           size: *const Struct_PP_Size,
-                                           is_always_opaque: PP_Bool)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    size:
+                                                        *const Struct_PP_Size,
+                                                    is_always_opaque: PP_Bool)
                                           -> PP_Resource>,
-    pub IsGraphics2D: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource)
+    pub IsGraphics2D: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
                                                 -> PP_Bool>,
-    pub Describe: ::std::option::Option<extern "C" fn
-                                            (graphics_2d: PP_Resource,
-                                             size: *mut Struct_PP_Size,
-                                             is_always_opaque: *mut PP_Bool)
+    pub Describe: ::std::option::Option<extern "C" fn(graphics_2d:
+                                                          PP_Resource,
+                                                      size:
+                                                          *mut Struct_PP_Size,
+                                                      is_always_opaque:
+                                                          *mut PP_Bool)
                                             -> PP_Bool>,
-    pub PaintImageData: ::std::option::Option<extern "C" fn
-                                                  (graphics_2d: PP_Resource,
-                                                   image_data: PP_Resource,
-                                                   top_left:
-                                                       *const Struct_PP_Point,
-                                                   src_rect:
-                                                       *const Struct_PP_Rect)>,
-    pub Scroll: ::std::option::Option<extern "C" fn
-                                          (graphics_2d: PP_Resource,
-                                           clip_rect: *const Struct_PP_Rect,
-                                           amount: *const Struct_PP_Point)>,
-    pub ReplaceContents: ::std::option::Option<extern "C" fn
-                                                   (graphics_2d: PP_Resource,
-                                                    image_data: PP_Resource)>,
-    pub Flush: ::std::option::Option<extern "C" fn
-                                         (graphics_2d: PP_Resource,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub PaintImageData: ::std::option::Option<extern "C" fn(graphics_2d:
+                                                                PP_Resource,
+                                                            image_data:
+                                                                PP_Resource,
+                                                            top_left:
+                                                                *const Struct_PP_Point,
+                                                            src_rect:
+                                                                *const Struct_PP_Rect)
+                                                  -> ()>,
+    pub Scroll: ::std::option::Option<extern "C" fn(graphics_2d: PP_Resource,
+                                                    clip_rect:
+                                                        *const Struct_PP_Rect,
+                                                    amount:
+                                                        *const Struct_PP_Point)
+                                          -> ()>,
+    pub ReplaceContents: ::std::option::Option<extern "C" fn(graphics_2d:
+                                                                 PP_Resource,
+                                                             image_data:
+                                                                 PP_Resource)
+                                                   -> ()>,
+    pub Flush: ::std::option::Option<extern "C" fn(graphics_2d: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_Graphics2D_1_0 {
-    fn default() -> Struct_PPB_Graphics2D_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+impl ::std::clone::Clone for Struct_PPB_Graphics2D_1_0 {
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed22 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PPB_Graphics2D_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed13 = ::libc::c_uint;
 pub const PP_GRAPHICS3DATTRIB_ALPHA_SIZE: ::libc::c_uint = 12321;
 pub const PP_GRAPHICS3DATTRIB_BLUE_SIZE: ::libc::c_uint = 12322;
 pub const PP_GRAPHICS3DATTRIB_GREEN_SIZE: ::libc::c_uint = 12323;
@@ -1208,319 +1291,323 @@ pub const PP_GRAPHICS3DATTRIB_GPU_PREFERENCE_LOW_POWER: ::libc::c_uint =
     69633;
 pub const PP_GRAPHICS3DATTRIB_GPU_PREFERENCE_PERFORMANCE: ::libc::c_uint =
     69634;
-pub type PP_Graphics3DAttrib = Enum_Unnamed22;
+pub type PP_Graphics3DAttrib = Enum_Unnamed13;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_Graphics3DAttrib {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_Graphics3DAttrib_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_Graphics3DAttrib {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_Graphics3DAttrib {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_Graphics3DAttrib {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Graphics3D_1_0 {
-    pub GetAttribMaxValue: ::std::option::Option<extern "C" fn
-                                                     (instance: PP_Resource,
-                                                      attribute: int32_t,
-                                                      value: *mut int32_t)
+    pub GetAttribMaxValue: ::std::option::Option<extern "C" fn(instance:
+                                                                   PP_Resource,
+                                                               attribute:
+                                                                   int32_t,
+                                                               value:
+                                                                   *mut int32_t)
                                                      -> int32_t>,
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           share_context: PP_Resource,
-                                           attrib_list: *const int32_t)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    share_context:
+                                                        PP_Resource,
+                                                    attrib_list:
+                                                        *const int32_t)
                                           -> PP_Resource>,
-    pub IsGraphics3D: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource)
+    pub IsGraphics3D: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
                                                 -> PP_Bool>,
-    pub GetAttribs: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               attrib_list: *mut int32_t)
+    pub GetAttribs: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        attrib_list:
+                                                            *mut int32_t)
                                               -> int32_t>,
-    pub SetAttribs: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               attrib_list: *const int32_t)
+    pub SetAttribs: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        attrib_list:
+                                                            *const int32_t)
                                               -> int32_t>,
     pub GetError: ::std::option::Option<extern "C" fn(context: PP_Resource)
                                             -> int32_t>,
-    pub ResizeBuffers: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  width: int32_t,
-                                                  height: int32_t)
+    pub ResizeBuffers: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           width: int32_t,
+                                                           height: int32_t)
                                                  -> int32_t>,
-    pub SwapBuffers: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                callback:
-                                                    Struct_PP_CompletionCallback)
+    pub SwapBuffers: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         callback:
+                                                             Struct_PP_CompletionCallback)
                                                -> int32_t>,
 }
+impl ::std::clone::Clone for Struct_PPB_Graphics3D_1_0 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PPB_Graphics3D_1_0 {
-    fn default() -> Struct_PPB_Graphics3D_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Graphics3D = Struct_PPB_Graphics3D_1_0;
-pub type Enum_Unnamed23 = ::libc::c_uint;
+pub type Enum_Unnamed14 = ::libc::c_uint;
 pub const PP_NETADDRESS_FAMILY_UNSPECIFIED: ::libc::c_uint = 0;
 pub const PP_NETADDRESS_FAMILY_IPV4: ::libc::c_uint = 1;
 pub const PP_NETADDRESS_FAMILY_IPV6: ::libc::c_uint = 2;
-pub type PP_NetAddress_Family = Enum_Unnamed23;
+pub type PP_NetAddress_Family = Enum_Unnamed14;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_Family {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_Family_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_NetAddress_Family {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_NetAddress_Family {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_NetAddress_Family {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_NetAddress_IPv4 {
     pub port: uint16_t,
     pub addr: [uint8_t; 4usize],
 }
+impl ::std::clone::Clone for Struct_PP_NetAddress_IPv4 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_NetAddress_IPv4 {
-    fn default() -> Struct_PP_NetAddress_IPv4 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv4 {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_IPv4_is_not_6_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv4 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv4
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv4 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_NetAddress_IPv6 {
     pub port: uint16_t,
     pub addr: [uint8_t; 16usize],
 }
+impl ::std::clone::Clone for Struct_PP_NetAddress_IPv6 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_NetAddress_IPv6 {
-    fn default() -> Struct_PP_NetAddress_IPv6 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv6 {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetAddress_IPv6_is_not_18_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv6 {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv6
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_NetAddress_IPv6 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
 #[derive(Copy)]
 pub struct Struct_PPB_NetAddress_1_0 {
-    pub CreateFromIPv4Address: ::std::option::Option<extern "C" fn
-                                                         (instance:
-                                                              PP_Instance,
-                                                          ipv4_addr:
-                                                              *const Struct_PP_NetAddress_IPv4)
+    pub CreateFromIPv4Address: ::std::option::Option<extern "C" fn(instance:
+                                                                       PP_Instance,
+                                                                   ipv4_addr:
+                                                                       *const Struct_PP_NetAddress_IPv4)
                                                          -> PP_Resource>,
-    pub CreateFromIPv6Address: ::std::option::Option<extern "C" fn
-                                                         (instance:
-                                                              PP_Instance,
-                                                          ipv6_addr:
-                                                              *const Struct_PP_NetAddress_IPv6)
+    pub CreateFromIPv6Address: ::std::option::Option<extern "C" fn(instance:
+                                                                       PP_Instance,
+                                                                   ipv6_addr:
+                                                                       *const Struct_PP_NetAddress_IPv6)
                                                          -> PP_Resource>,
-    pub IsNetAddress: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource)
+    pub IsNetAddress: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
                                                 -> PP_Bool>,
     pub GetFamily: ::std::option::Option<extern "C" fn(addr: PP_Resource)
                                              -> PP_NetAddress_Family>,
-    pub DescribeAsString: ::std::option::Option<extern "C" fn
-                                                    (addr: PP_Resource,
-                                                     include_port: PP_Bool)
+    pub DescribeAsString: ::std::option::Option<extern "C" fn(addr:
+                                                                  PP_Resource,
+                                                              include_port:
+                                                                  PP_Bool)
                                                     -> Struct_PP_Var>,
-    pub DescribeAsIPv4Address: ::std::option::Option<extern "C" fn
-                                                         (addr: PP_Resource,
-                                                          ipv4_addr:
-                                                              *mut Struct_PP_NetAddress_IPv4)
+    pub DescribeAsIPv4Address: ::std::option::Option<extern "C" fn(addr:
+                                                                       PP_Resource,
+                                                                   ipv4_addr:
+                                                                       *mut Struct_PP_NetAddress_IPv4)
                                                          -> PP_Bool>,
-    pub DescribeAsIPv6Address: ::std::option::Option<extern "C" fn
-                                                         (addr: PP_Resource,
-                                                          ipv6_addr:
-                                                              *mut Struct_PP_NetAddress_IPv6)
+    pub DescribeAsIPv6Address: ::std::option::Option<extern "C" fn(addr:
+                                                                       PP_Resource,
+                                                                   ipv6_addr:
+                                                                       *mut Struct_PP_NetAddress_IPv6)
                                                          -> PP_Bool>,
-}
-impl ::std::default::Default for Struct_PPB_NetAddress_1_0 {
-    fn default() -> Struct_PPB_NetAddress_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
 }
 impl ::std::clone::Clone for Struct_PPB_NetAddress_1_0 {
-    fn clone(&self) -> Struct_PPB_NetAddress_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_NetAddress_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_NetAddress = Struct_PPB_NetAddress_1_0;
-pub type Enum_Unnamed24 = ::libc::c_uint;
+pub type Enum_Unnamed15 = ::libc::c_uint;
 pub const PP_HOSTRESOLVER_FLAG_CANONNAME: ::libc::c_uint = 1;
-pub type PP_HostResolver_Flag = Enum_Unnamed24;
+pub type PP_HostResolver_Flag = Enum_Unnamed15;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_HostResolver_Flag {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_HostResolver_Flag_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_HostResolver_Flag {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_HostResolver_Flag {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_HostResolver_Flag {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_HostResolver_Hint {
     pub family: PP_NetAddress_Family,
     pub flags: int32_t,
 }
+impl ::std::clone::Clone for Struct_PP_HostResolver_Hint {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_HostResolver_Hint {
-    fn default() -> Struct_PP_HostResolver_Hint {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_HostResolver_Hint {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_HostResolver_Hint_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_HostResolver_Hint {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_HostResolver_Hint {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_HostResolver_Hint {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_HostResolver_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsHostResolver: ::std::option::Option<extern "C" fn
-                                                  (resource: PP_Resource)
+    pub IsHostResolver: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
                                                   -> PP_Bool>,
-    pub Resolve: ::std::option::Option<extern "C" fn
-                                           (host_resolver: PP_Resource,
-                                            host: *const ::libc::c_char,
-                                            port: uint16_t,
-                                            hint:
-                                                *const Struct_PP_HostResolver_Hint,
-                                            callback:
-                                                Struct_PP_CompletionCallback)
+    pub Resolve: ::std::option::Option<extern "C" fn(host_resolver:
+                                                         PP_Resource,
+                                                     host:
+                                                         *const ::libc::c_char,
+                                                     port: uint16_t,
+                                                     hint:
+                                                         *const Struct_PP_HostResolver_Hint,
+                                                     callback:
+                                                         Struct_PP_CompletionCallback)
                                            -> int32_t>,
-    pub GetCanonicalName: ::std::option::Option<extern "C" fn
-                                                    (host_resolver:
-                                                         PP_Resource)
+    pub GetCanonicalName: ::std::option::Option<extern "C" fn(host_resolver:
+                                                                  PP_Resource)
                                                     -> Struct_PP_Var>,
-    pub GetNetAddressCount: ::std::option::Option<extern "C" fn
-                                                      (host_resolver:
-                                                           PP_Resource)
+    pub GetNetAddressCount: ::std::option::Option<extern "C" fn(host_resolver:
+                                                                    PP_Resource)
                                                       -> uint32_t>,
-    pub GetNetAddress: ::std::option::Option<extern "C" fn
-                                                 (host_resolver: PP_Resource,
-                                                  index: uint32_t)
+    pub GetNetAddress: ::std::option::Option<extern "C" fn(host_resolver:
+                                                               PP_Resource,
+                                                           index: uint32_t)
                                                  -> PP_Resource>,
 }
-impl ::std::default::Default for Struct_PPB_HostResolver_1_0 {
-    fn default() -> Struct_PPB_HostResolver_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_HostResolver_1_0 {
-    fn clone(&self) -> Struct_PPB_HostResolver_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_HostResolver_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_HostResolver = Struct_PPB_HostResolver_1_0;
-pub type Enum_Unnamed25 = ::libc::c_uint;
+pub type Enum_Unnamed16 = ::libc::c_uint;
 pub const PP_IMAGEDATAFORMAT_BGRA_PREMUL: ::libc::c_uint = 0;
 pub const PP_IMAGEDATAFORMAT_RGBA_PREMUL: ::libc::c_uint = 1;
-pub type PP_ImageDataFormat = Enum_Unnamed25;
+pub type PP_ImageDataFormat = Enum_Unnamed16;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_ImageDataFormat {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_ImageDataFormat_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_ImageDataFormat {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_ImageDataFormat
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_ImageDataFormat {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_ImageDataDesc {
     pub format: PP_ImageDataFormat,
     pub size: Struct_PP_Size,
     pub stride: int32_t,
 }
+impl ::std::clone::Clone for Struct_PP_ImageDataDesc {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_ImageDataDesc {
-    fn default() -> Struct_PP_ImageDataDesc {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_ImageDataDesc {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_ImageDataDesc_is_not_16_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_ImageDataDesc {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_ImageDataDesc {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_ImageDataDesc {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_ImageData_1_0 {
     pub GetNativeImageDataFormat: ::std::option::Option<extern "C" fn()
                                                             ->
                                                                 PP_ImageDataFormat>,
-    pub IsImageDataFormatSupported: ::std::option::Option<extern "C" fn
-                                                              (format:
-                                                                   PP_ImageDataFormat)
+    pub IsImageDataFormatSupported: ::std::option::Option<extern "C" fn(format:
+                                                                            PP_ImageDataFormat)
                                                               -> PP_Bool>,
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           format: PP_ImageDataFormat,
-                                           size: *const Struct_PP_Size,
-                                           init_to_zero: PP_Bool)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    format:
+                                                        PP_ImageDataFormat,
+                                                    size:
+                                                        *const Struct_PP_Size,
+                                                    init_to_zero: PP_Bool)
                                           -> PP_Resource>,
-    pub IsImageData: ::std::option::Option<extern "C" fn
-                                               (image_data: PP_Resource)
+    pub IsImageData: ::std::option::Option<extern "C" fn(image_data:
+                                                             PP_Resource)
                                                -> PP_Bool>,
-    pub Describe: ::std::option::Option<extern "C" fn
-                                            (image_data: PP_Resource,
-                                             desc:
-                                                 *mut Struct_PP_ImageDataDesc)
+    pub Describe: ::std::option::Option<extern "C" fn(image_data: PP_Resource,
+                                                      desc:
+                                                          *mut Struct_PP_ImageDataDesc)
                                             -> PP_Bool>,
     pub Map: ::std::option::Option<extern "C" fn(image_data: PP_Resource)
                                        -> *mut ::libc::c_void>,
-    pub Unmap: ::std::option::Option<extern "C" fn(image_data: PP_Resource)>,
-}
-impl ::std::default::Default for Struct_PPB_ImageData_1_0 {
-    fn default() -> Struct_PPB_ImageData_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub Unmap: ::std::option::Option<extern "C" fn(image_data: PP_Resource)
+                                         -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_ImageData_1_0 {
-    fn clone(&self) -> Struct_PPB_ImageData_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_ImageData_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_ImageData = Struct_PPB_ImageData_1_0;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_TouchPoint {
     pub id: uint32_t,
     pub position: Struct_PP_FloatPoint,
@@ -1528,20 +1615,24 @@ pub struct Struct_PP_TouchPoint {
     pub rotation_angle: ::libc::c_float,
     pub pressure: ::libc::c_float,
 }
+impl ::std::clone::Clone for Struct_PP_TouchPoint {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_TouchPoint {
-    fn default() -> Struct_PP_TouchPoint { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TouchPoint {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchPoint_is_not_28_bytes_wide: [::libc::c_char; 1usize],
 }
-impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TouchPoint {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TouchPoint {
-        unsafe { ::std::mem::zeroed() }
-    }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_TouchPoint {
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed26 = ::libc::c_int;
+impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TouchPoint {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed17 = ::libc::c_int;
 pub const PP_INPUTEVENT_TYPE_UNDEFINED: ::libc::c_int = -1;
 pub const PP_INPUTEVENT_TYPE_MOUSEDOWN: ::libc::c_int = 0;
 pub const PP_INPUTEVENT_TYPE_MOUSEUP: ::libc::c_int = 1;
@@ -1562,19 +1653,20 @@ pub const PP_INPUTEVENT_TYPE_TOUCHSTART: ::libc::c_int = 15;
 pub const PP_INPUTEVENT_TYPE_TOUCHMOVE: ::libc::c_int = 16;
 pub const PP_INPUTEVENT_TYPE_TOUCHEND: ::libc::c_int = 17;
 pub const PP_INPUTEVENT_TYPE_TOUCHCANCEL: ::libc::c_int = 18;
-pub type PP_InputEvent_Type = Enum_Unnamed26;
+pub type PP_InputEvent_Type = Enum_Unnamed17;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Type_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_InputEvent_Type {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_InputEvent_Type
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_InputEvent_Type {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed27 = ::libc::c_uint;
+pub type Enum_Unnamed18 = ::libc::c_uint;
 pub const PP_INPUTEVENT_MODIFIER_SHIFTKEY: ::libc::c_uint = 1;
 pub const PP_INPUTEVENT_MODIFIER_CONTROLKEY: ::libc::c_uint = 2;
 pub const PP_INPUTEVENT_MODIFIER_ALTKEY: ::libc::c_uint = 4;
@@ -1588,73 +1680,78 @@ pub const PP_INPUTEVENT_MODIFIER_CAPSLOCKKEY: ::libc::c_uint = 512;
 pub const PP_INPUTEVENT_MODIFIER_NUMLOCKKEY: ::libc::c_uint = 1024;
 pub const PP_INPUTEVENT_MODIFIER_ISLEFT: ::libc::c_uint = 2048;
 pub const PP_INPUTEVENT_MODIFIER_ISRIGHT: ::libc::c_uint = 4096;
-pub type PP_InputEvent_Modifier = Enum_Unnamed27;
+pub type PP_InputEvent_Modifier = Enum_Unnamed18;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Modifier {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Modifier_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_InputEvent_Modifier
+ {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Modifier {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_InputEvent_Modifier {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed28 = ::libc::c_int;
+pub type Enum_Unnamed19 = ::libc::c_int;
 pub const PP_INPUTEVENT_MOUSEBUTTON_NONE: ::libc::c_int = -1;
 pub const PP_INPUTEVENT_MOUSEBUTTON_LEFT: ::libc::c_int = 0;
 pub const PP_INPUTEVENT_MOUSEBUTTON_MIDDLE: ::libc::c_int = 1;
 pub const PP_INPUTEVENT_MOUSEBUTTON_RIGHT: ::libc::c_int = 2;
-pub type PP_InputEvent_MouseButton = Enum_Unnamed28;
+pub type PP_InputEvent_MouseButton = Enum_Unnamed19;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_MouseButton {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_MouseButton_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_InputEvent_MouseButton {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_MouseButton {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_InputEvent_MouseButton {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed29 = ::libc::c_uint;
+pub type Enum_Unnamed20 = ::libc::c_uint;
 pub const PP_INPUTEVENT_CLASS_MOUSE: ::libc::c_uint = 1;
 pub const PP_INPUTEVENT_CLASS_KEYBOARD: ::libc::c_uint = 2;
 pub const PP_INPUTEVENT_CLASS_WHEEL: ::libc::c_uint = 4;
 pub const PP_INPUTEVENT_CLASS_TOUCH: ::libc::c_uint = 8;
 pub const PP_INPUTEVENT_CLASS_IME: ::libc::c_uint = 16;
-pub type PP_InputEvent_Class = Enum_Unnamed29;
+pub type PP_InputEvent_Class = Enum_Unnamed20;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Class {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Class_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_InputEvent_Class {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Class {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_InputEvent_Class {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_InputEvent_1_0 {
-    pub RequestInputEvents: ::std::option::Option<extern "C" fn
-                                                      (instance: PP_Instance,
-                                                       event_classes:
-                                                           uint32_t)
-                                                      -> int32_t>,
-    pub RequestFilteringInputEvents: ::std::option::Option<extern "C" fn
-                                                               (instance:
+    pub RequestInputEvents: ::std::option::Option<extern "C" fn(instance:
                                                                     PP_Instance,
                                                                 event_classes:
                                                                     uint32_t)
+                                                      -> int32_t>,
+    pub RequestFilteringInputEvents: ::std::option::Option<extern "C" fn(instance:
+                                                                             PP_Instance,
+                                                                         event_classes:
+                                                                             uint32_t)
                                                                -> int32_t>,
-    pub ClearInputEventRequest: ::std::option::Option<extern "C" fn
-                                                          (instance:
-                                                               PP_Instance,
-                                                           event_classes:
-                                                               uint32_t)>,
-    pub IsInputEvent: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource)
+    pub ClearInputEventRequest: ::std::option::Option<extern "C" fn(instance:
+                                                                        PP_Instance,
+                                                                    event_classes:
+                                                                        uint32_t)
+                                                          -> ()>,
+    pub IsInputEvent: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
                                                 -> PP_Bool>,
     pub GetType: ::std::option::Option<extern "C" fn(event: PP_Resource)
                                            -> PP_InputEvent_Type>,
@@ -1663,595 +1760,558 @@ pub struct Struct_PPB_InputEvent_1_0 {
     pub GetModifiers: ::std::option::Option<extern "C" fn(event: PP_Resource)
                                                 -> uint32_t>,
 }
-impl ::std::default::Default for Struct_PPB_InputEvent_1_0 {
-    fn default() -> Struct_PPB_InputEvent_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_InputEvent_1_0 {
-    fn clone(&self) -> Struct_PPB_InputEvent_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_InputEvent_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_InputEvent = Struct_PPB_InputEvent_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_MouseInputEvent_1_1 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           _type: PP_InputEvent_Type,
-                                           time_stamp: PP_TimeTicks,
-                                           modifiers: uint32_t,
-                                           mouse_button:
-                                               PP_InputEvent_MouseButton,
-                                           mouse_position:
-                                               *const Struct_PP_Point,
-                                           click_count: int32_t,
-                                           mouse_movement:
-                                               *const Struct_PP_Point)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    _type: PP_InputEvent_Type,
+                                                    time_stamp: PP_TimeTicks,
+                                                    modifiers: uint32_t,
+                                                    mouse_button:
+                                                        PP_InputEvent_MouseButton,
+                                                    mouse_position:
+                                                        *const Struct_PP_Point,
+                                                    click_count: int32_t,
+                                                    mouse_movement:
+                                                        *const Struct_PP_Point)
                                           -> PP_Resource>,
-    pub IsMouseInputEvent: ::std::option::Option<extern "C" fn
-                                                     (resource: PP_Resource)
+    pub IsMouseInputEvent: ::std::option::Option<extern "C" fn(resource:
+                                                                   PP_Resource)
                                                      -> PP_Bool>,
-    pub GetButton: ::std::option::Option<extern "C" fn
-                                             (mouse_event: PP_Resource)
+    pub GetButton: ::std::option::Option<extern "C" fn(mouse_event:
+                                                           PP_Resource)
                                              -> PP_InputEvent_MouseButton>,
-    pub GetPosition: ::std::option::Option<extern "C" fn
-                                               (mouse_event: PP_Resource)
+    pub GetPosition: ::std::option::Option<extern "C" fn(mouse_event:
+                                                             PP_Resource)
                                                -> Struct_PP_Point>,
-    pub GetClickCount: ::std::option::Option<extern "C" fn
-                                                 (mouse_event: PP_Resource)
+    pub GetClickCount: ::std::option::Option<extern "C" fn(mouse_event:
+                                                               PP_Resource)
                                                  -> int32_t>,
-    pub GetMovement: ::std::option::Option<extern "C" fn
-                                               (mouse_event: PP_Resource)
+    pub GetMovement: ::std::option::Option<extern "C" fn(mouse_event:
+                                                             PP_Resource)
                                                -> Struct_PP_Point>,
-}
-impl ::std::default::Default for Struct_PPB_MouseInputEvent_1_1 {
-    fn default() -> Struct_PPB_MouseInputEvent_1_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
 }
 impl ::std::clone::Clone for Struct_PPB_MouseInputEvent_1_1 {
-    fn clone(&self) -> Struct_PPB_MouseInputEvent_1_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_MouseInputEvent_1_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_MouseInputEvent = Struct_PPB_MouseInputEvent_1_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_MouseInputEvent_1_0 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           _type: PP_InputEvent_Type,
-                                           time_stamp: PP_TimeTicks,
-                                           modifiers: uint32_t,
-                                           mouse_button:
-                                               PP_InputEvent_MouseButton,
-                                           mouse_position:
-                                               *const Struct_PP_Point,
-                                           click_count: int32_t)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    _type: PP_InputEvent_Type,
+                                                    time_stamp: PP_TimeTicks,
+                                                    modifiers: uint32_t,
+                                                    mouse_button:
+                                                        PP_InputEvent_MouseButton,
+                                                    mouse_position:
+                                                        *const Struct_PP_Point,
+                                                    click_count: int32_t)
                                           -> PP_Resource>,
-    pub IsMouseInputEvent: ::std::option::Option<extern "C" fn
-                                                     (resource: PP_Resource)
+    pub IsMouseInputEvent: ::std::option::Option<extern "C" fn(resource:
+                                                                   PP_Resource)
                                                      -> PP_Bool>,
-    pub GetButton: ::std::option::Option<extern "C" fn
-                                             (mouse_event: PP_Resource)
+    pub GetButton: ::std::option::Option<extern "C" fn(mouse_event:
+                                                           PP_Resource)
                                              -> PP_InputEvent_MouseButton>,
-    pub GetPosition: ::std::option::Option<extern "C" fn
-                                               (mouse_event: PP_Resource)
+    pub GetPosition: ::std::option::Option<extern "C" fn(mouse_event:
+                                                             PP_Resource)
                                                -> Struct_PP_Point>,
-    pub GetClickCount: ::std::option::Option<extern "C" fn
-                                                 (mouse_event: PP_Resource)
+    pub GetClickCount: ::std::option::Option<extern "C" fn(mouse_event:
+                                                               PP_Resource)
                                                  -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_MouseInputEvent_1_0 {
-    fn default() -> Struct_PPB_MouseInputEvent_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_MouseInputEvent_1_0 {
-    fn clone(&self) -> Struct_PPB_MouseInputEvent_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_MouseInputEvent_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_WheelInputEvent_1_0 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           time_stamp: PP_TimeTicks,
-                                           modifiers: uint32_t,
-                                           wheel_delta:
-                                               *const Struct_PP_FloatPoint,
-                                           wheel_ticks:
-                                               *const Struct_PP_FloatPoint,
-                                           scroll_by_page: PP_Bool)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    time_stamp: PP_TimeTicks,
+                                                    modifiers: uint32_t,
+                                                    wheel_delta:
+                                                        *const Struct_PP_FloatPoint,
+                                                    wheel_ticks:
+                                                        *const Struct_PP_FloatPoint,
+                                                    scroll_by_page: PP_Bool)
                                           -> PP_Resource>,
-    pub IsWheelInputEvent: ::std::option::Option<extern "C" fn
-                                                     (resource: PP_Resource)
+    pub IsWheelInputEvent: ::std::option::Option<extern "C" fn(resource:
+                                                                   PP_Resource)
                                                      -> PP_Bool>,
-    pub GetDelta: ::std::option::Option<extern "C" fn
-                                            (wheel_event: PP_Resource)
+    pub GetDelta: ::std::option::Option<extern "C" fn(wheel_event:
+                                                          PP_Resource)
                                             -> Struct_PP_FloatPoint>,
-    pub GetTicks: ::std::option::Option<extern "C" fn
-                                            (wheel_event: PP_Resource)
+    pub GetTicks: ::std::option::Option<extern "C" fn(wheel_event:
+                                                          PP_Resource)
                                             -> Struct_PP_FloatPoint>,
-    pub GetScrollByPage: ::std::option::Option<extern "C" fn
-                                                   (wheel_event: PP_Resource)
+    pub GetScrollByPage: ::std::option::Option<extern "C" fn(wheel_event:
+                                                                 PP_Resource)
                                                    -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPB_WheelInputEvent_1_0 {
-    fn default() -> Struct_PPB_WheelInputEvent_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_WheelInputEvent_1_0 {
-    fn clone(&self) -> Struct_PPB_WheelInputEvent_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_WheelInputEvent_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_WheelInputEvent = Struct_PPB_WheelInputEvent_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_KeyboardInputEvent_1_2 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           _type: PP_InputEvent_Type,
-                                           time_stamp: PP_TimeTicks,
-                                           modifiers: uint32_t,
-                                           key_code: uint32_t,
-                                           character_text: Struct_PP_Var,
-                                           code: Struct_PP_Var)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    _type: PP_InputEvent_Type,
+                                                    time_stamp: PP_TimeTicks,
+                                                    modifiers: uint32_t,
+                                                    key_code: uint32_t,
+                                                    character_text:
+                                                        Struct_PP_Var,
+                                                    code: Struct_PP_Var)
                                           -> PP_Resource>,
-    pub IsKeyboardInputEvent: ::std::option::Option<extern "C" fn
-                                                        (resource:
-                                                             PP_Resource)
+    pub IsKeyboardInputEvent: ::std::option::Option<extern "C" fn(resource:
+                                                                      PP_Resource)
                                                         -> PP_Bool>,
-    pub GetKeyCode: ::std::option::Option<extern "C" fn
-                                              (key_event: PP_Resource)
+    pub GetKeyCode: ::std::option::Option<extern "C" fn(key_event:
+                                                            PP_Resource)
                                               -> uint32_t>,
-    pub GetCharacterText: ::std::option::Option<extern "C" fn
-                                                    (character_event:
-                                                         PP_Resource)
+    pub GetCharacterText: ::std::option::Option<extern "C" fn(character_event:
+                                                                  PP_Resource)
                                                     -> Struct_PP_Var>,
     pub GetCode: ::std::option::Option<extern "C" fn(key_event: PP_Resource)
                                            -> Struct_PP_Var>,
 }
-impl ::std::default::Default for Struct_PPB_KeyboardInputEvent_1_2 {
-    fn default() -> Struct_PPB_KeyboardInputEvent_1_2 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_KeyboardInputEvent_1_2 {
-    fn clone(&self) -> Struct_PPB_KeyboardInputEvent_1_2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_KeyboardInputEvent_1_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_KeyboardInputEvent = Struct_PPB_KeyboardInputEvent_1_2;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_KeyboardInputEvent_1_0 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           _type: PP_InputEvent_Type,
-                                           time_stamp: PP_TimeTicks,
-                                           modifiers: uint32_t,
-                                           key_code: uint32_t,
-                                           character_text: Struct_PP_Var)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    _type: PP_InputEvent_Type,
+                                                    time_stamp: PP_TimeTicks,
+                                                    modifiers: uint32_t,
+                                                    key_code: uint32_t,
+                                                    character_text:
+                                                        Struct_PP_Var)
                                           -> PP_Resource>,
-    pub IsKeyboardInputEvent: ::std::option::Option<extern "C" fn
-                                                        (resource:
-                                                             PP_Resource)
+    pub IsKeyboardInputEvent: ::std::option::Option<extern "C" fn(resource:
+                                                                      PP_Resource)
                                                         -> PP_Bool>,
-    pub GetKeyCode: ::std::option::Option<extern "C" fn
-                                              (key_event: PP_Resource)
+    pub GetKeyCode: ::std::option::Option<extern "C" fn(key_event:
+                                                            PP_Resource)
                                               -> uint32_t>,
-    pub GetCharacterText: ::std::option::Option<extern "C" fn
-                                                    (character_event:
-                                                         PP_Resource)
+    pub GetCharacterText: ::std::option::Option<extern "C" fn(character_event:
+                                                                  PP_Resource)
                                                     -> Struct_PP_Var>,
 }
-impl ::std::default::Default for Struct_PPB_KeyboardInputEvent_1_0 {
-    fn default() -> Struct_PPB_KeyboardInputEvent_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_KeyboardInputEvent_1_0 {
-    fn clone(&self) -> Struct_PPB_KeyboardInputEvent_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed30 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PPB_KeyboardInputEvent_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed21 = ::libc::c_uint;
 pub const PP_TOUCHLIST_TYPE_TOUCHES: ::libc::c_uint = 0;
 pub const PP_TOUCHLIST_TYPE_CHANGEDTOUCHES: ::libc::c_uint = 1;
 pub const PP_TOUCHLIST_TYPE_TARGETTOUCHES: ::libc::c_uint = 2;
-pub type PP_TouchListType = Enum_Unnamed30;
+pub type PP_TouchListType = Enum_Unnamed21;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TouchListType {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TouchListType_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_TouchListType {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TouchListType {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TouchListType {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_TouchInputEvent_1_0 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           _type: PP_InputEvent_Type,
-                                           time_stamp: PP_TimeTicks,
-                                           modifiers: uint32_t)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    _type: PP_InputEvent_Type,
+                                                    time_stamp: PP_TimeTicks,
+                                                    modifiers: uint32_t)
                                           -> PP_Resource>,
-    pub AddTouchPoint: ::std::option::Option<extern "C" fn
-                                                 (touch_event: PP_Resource,
-                                                  list: PP_TouchListType,
-                                                  point:
-                                                      *const Struct_PP_TouchPoint)>,
-    pub IsTouchInputEvent: ::std::option::Option<extern "C" fn
-                                                     (resource: PP_Resource)
+    pub AddTouchPoint: ::std::option::Option<extern "C" fn(touch_event:
+                                                               PP_Resource,
+                                                           list:
+                                                               PP_TouchListType,
+                                                           point:
+                                                               *const Struct_PP_TouchPoint)
+                                                 -> ()>,
+    pub IsTouchInputEvent: ::std::option::Option<extern "C" fn(resource:
+                                                                   PP_Resource)
                                                      -> PP_Bool>,
-    pub GetTouchCount: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource,
-                                                  list: PP_TouchListType)
+    pub GetTouchCount: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource,
+                                                           list:
+                                                               PP_TouchListType)
                                                  -> uint32_t>,
-    pub GetTouchByIndex: ::std::option::Option<extern "C" fn
-                                                   (resource: PP_Resource,
-                                                    list: PP_TouchListType,
-                                                    index: uint32_t)
+    pub GetTouchByIndex: ::std::option::Option<extern "C" fn(resource:
+                                                                 PP_Resource,
+                                                             list:
+                                                                 PP_TouchListType,
+                                                             index: uint32_t)
                                                    -> Struct_PP_TouchPoint>,
-    pub GetTouchById: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource,
-                                                 list: PP_TouchListType,
-                                                 touch_id: uint32_t)
+    pub GetTouchById: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource,
+                                                          list:
+                                                              PP_TouchListType,
+                                                          touch_id: uint32_t)
                                                 -> Struct_PP_TouchPoint>,
 }
-impl ::std::default::Default for Struct_PPB_TouchInputEvent_1_0 {
-    fn default() -> Struct_PPB_TouchInputEvent_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_TouchInputEvent_1_0 {
-    fn clone(&self) -> Struct_PPB_TouchInputEvent_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_TouchInputEvent_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_TouchInputEvent = Struct_PPB_TouchInputEvent_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_IMEInputEvent_1_0 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           _type: PP_InputEvent_Type,
-                                           time_stamp: PP_TimeTicks,
-                                           text: Struct_PP_Var,
-                                           segment_number: uint32_t,
-                                           segment_offsets: *const uint32_t,
-                                           target_segment: int32_t,
-                                           selection_start: uint32_t,
-                                           selection_end: uint32_t)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    _type: PP_InputEvent_Type,
+                                                    time_stamp: PP_TimeTicks,
+                                                    text: Struct_PP_Var,
+                                                    segment_number: uint32_t,
+                                                    segment_offsets:
+                                                        *const uint32_t,
+                                                    target_segment: int32_t,
+                                                    selection_start: uint32_t,
+                                                    selection_end: uint32_t)
                                           -> PP_Resource>,
-    pub IsIMEInputEvent: ::std::option::Option<extern "C" fn
-                                                   (resource: PP_Resource)
+    pub IsIMEInputEvent: ::std::option::Option<extern "C" fn(resource:
+                                                                 PP_Resource)
                                                    -> PP_Bool>,
     pub GetText: ::std::option::Option<extern "C" fn(ime_event: PP_Resource)
                                            -> Struct_PP_Var>,
-    pub GetSegmentNumber: ::std::option::Option<extern "C" fn
-                                                    (ime_event: PP_Resource)
+    pub GetSegmentNumber: ::std::option::Option<extern "C" fn(ime_event:
+                                                                  PP_Resource)
                                                     -> uint32_t>,
-    pub GetSegmentOffset: ::std::option::Option<extern "C" fn
-                                                    (ime_event: PP_Resource,
-                                                     index: uint32_t)
+    pub GetSegmentOffset: ::std::option::Option<extern "C" fn(ime_event:
+                                                                  PP_Resource,
+                                                              index: uint32_t)
                                                     -> uint32_t>,
-    pub GetTargetSegment: ::std::option::Option<extern "C" fn
-                                                    (ime_event: PP_Resource)
+    pub GetTargetSegment: ::std::option::Option<extern "C" fn(ime_event:
+                                                                  PP_Resource)
                                                     -> int32_t>,
-    pub GetSelection: ::std::option::Option<extern "C" fn
-                                                (ime_event: PP_Resource,
-                                                 start: *mut uint32_t,
-                                                 end: *mut uint32_t)>,
-}
-impl ::std::default::Default for Struct_PPB_IMEInputEvent_1_0 {
-    fn default() -> Struct_PPB_IMEInputEvent_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub GetSelection: ::std::option::Option<extern "C" fn(ime_event:
+                                                              PP_Resource,
+                                                          start:
+                                                              *mut uint32_t,
+                                                          end: *mut uint32_t)
+                                                -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_IMEInputEvent_1_0 {
-    fn clone(&self) -> Struct_PPB_IMEInputEvent_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_IMEInputEvent_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_IMEInputEvent = Struct_PPB_IMEInputEvent_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Instance_1_0 {
-    pub BindGraphics: ::std::option::Option<extern "C" fn
-                                                (instance: PP_Instance,
-                                                 device: PP_Resource)
+    pub BindGraphics: ::std::option::Option<extern "C" fn(instance:
+                                                              PP_Instance,
+                                                          device: PP_Resource)
                                                 -> PP_Bool>,
-    pub IsFullFrame: ::std::option::Option<extern "C" fn
-                                               (instance: PP_Instance)
+    pub IsFullFrame: ::std::option::Option<extern "C" fn(instance:
+                                                             PP_Instance)
                                                -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPB_Instance_1_0 {
-    fn default() -> Struct_PPB_Instance_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_Instance_1_0 {
-    fn clone(&self) -> Struct_PPB_Instance_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Instance_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Instance = Struct_PPB_Instance_1_0;
-pub type Enum_Unnamed31 = ::libc::c_uint;
+pub type Enum_Unnamed22 = ::libc::c_uint;
 pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_NONE: ::libc::c_uint = 0;
 pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_BUFFERS: ::libc::c_uint = 1;
 pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_SAMPLE_RATE: ::libc::c_uint = 2;
 pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_SAMPLE_SIZE: ::libc::c_uint = 3;
 pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_CHANNELS: ::libc::c_uint = 4;
 pub const PP_MEDIASTREAMAUDIOTRACK_ATTRIB_DURATION: ::libc::c_uint = 5;
-pub type PP_MediaStreamAudioTrack_Attrib = Enum_Unnamed31;
+pub type PP_MediaStreamAudioTrack_Attrib = Enum_Unnamed22;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_MediaStreamAudioTrack_0_1 {
-    pub IsMediaStreamAudioTrack: ::std::option::Option<extern "C" fn
-                                                           (resource:
-                                                                PP_Resource)
+    pub IsMediaStreamAudioTrack: ::std::option::Option<extern "C" fn(resource:
+                                                                         PP_Resource)
                                                            -> PP_Bool>,
-    pub Configure: ::std::option::Option<extern "C" fn
-                                             (audio_track: PP_Resource,
-                                              attrib_list: *const int32_t,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub Configure: ::std::option::Option<extern "C" fn(audio_track:
+                                                           PP_Resource,
+                                                       attrib_list:
+                                                           *const int32_t,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
-    pub GetAttrib: ::std::option::Option<extern "C" fn
-                                             (audio_track: PP_Resource,
-                                              attrib:
-                                                  PP_MediaStreamAudioTrack_Attrib,
-                                              value: *mut int32_t)
+    pub GetAttrib: ::std::option::Option<extern "C" fn(audio_track:
+                                                           PP_Resource,
+                                                       attrib:
+                                                           PP_MediaStreamAudioTrack_Attrib,
+                                                       value: *mut int32_t)
                                              -> int32_t>,
     pub GetId: ::std::option::Option<extern "C" fn(audio_track: PP_Resource)
                                          -> Struct_PP_Var>,
-    pub HasEnded: ::std::option::Option<extern "C" fn
-                                            (audio_track: PP_Resource)
+    pub HasEnded: ::std::option::Option<extern "C" fn(audio_track:
+                                                          PP_Resource)
                                             -> PP_Bool>,
-    pub GetBuffer: ::std::option::Option<extern "C" fn
-                                             (audio_track: PP_Resource,
-                                              buffer: *mut PP_Resource,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub GetBuffer: ::std::option::Option<extern "C" fn(audio_track:
+                                                           PP_Resource,
+                                                       buffer:
+                                                           *mut PP_Resource,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
-    pub RecycleBuffer: ::std::option::Option<extern "C" fn
-                                                 (audio_track: PP_Resource,
-                                                  buffer: PP_Resource)
+    pub RecycleBuffer: ::std::option::Option<extern "C" fn(audio_track:
+                                                               PP_Resource,
+                                                           buffer:
+                                                               PP_Resource)
                                                  -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(audio_track: PP_Resource)>,
-}
-impl ::std::default::Default for Struct_PPB_MediaStreamAudioTrack_0_1 {
-    fn default() -> Struct_PPB_MediaStreamAudioTrack_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub Close: ::std::option::Option<extern "C" fn(audio_track: PP_Resource)
+                                         -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_MediaStreamAudioTrack_0_1 {
-    fn clone(&self) -> Struct_PPB_MediaStreamAudioTrack_0_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_MediaStreamAudioTrack_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_MediaStreamAudioTrack = Struct_PPB_MediaStreamAudioTrack_0_1;
-pub type Enum_Unnamed32 = ::libc::c_uint;
+pub type Enum_Unnamed23 = ::libc::c_uint;
 pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_NONE: ::libc::c_uint = 0;
 pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_BUFFERED_FRAMES: ::libc::c_uint = 1;
 pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_WIDTH: ::libc::c_uint = 2;
 pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_HEIGHT: ::libc::c_uint = 3;
 pub const PP_MEDIASTREAMVIDEOTRACK_ATTRIB_FORMAT: ::libc::c_uint = 4;
-pub type PP_MediaStreamVideoTrack_Attrib = Enum_Unnamed32;
+pub type PP_MediaStreamVideoTrack_Attrib = Enum_Unnamed23;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_MediaStreamVideoTrack_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsMediaStreamVideoTrack: ::std::option::Option<extern "C" fn
-                                                           (resource:
-                                                                PP_Resource)
+    pub IsMediaStreamVideoTrack: ::std::option::Option<extern "C" fn(resource:
+                                                                         PP_Resource)
                                                            -> PP_Bool>,
-    pub Configure: ::std::option::Option<extern "C" fn
-                                             (video_track: PP_Resource,
-                                              attrib_list: *const int32_t,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub Configure: ::std::option::Option<extern "C" fn(video_track:
+                                                           PP_Resource,
+                                                       attrib_list:
+                                                           *const int32_t,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
-    pub GetAttrib: ::std::option::Option<extern "C" fn
-                                             (video_track: PP_Resource,
-                                              attrib:
-                                                  PP_MediaStreamVideoTrack_Attrib,
-                                              value: *mut int32_t)
+    pub GetAttrib: ::std::option::Option<extern "C" fn(video_track:
+                                                           PP_Resource,
+                                                       attrib:
+                                                           PP_MediaStreamVideoTrack_Attrib,
+                                                       value: *mut int32_t)
                                              -> int32_t>,
     pub GetId: ::std::option::Option<extern "C" fn(video_track: PP_Resource)
                                          -> Struct_PP_Var>,
-    pub HasEnded: ::std::option::Option<extern "C" fn
-                                            (video_track: PP_Resource)
+    pub HasEnded: ::std::option::Option<extern "C" fn(video_track:
+                                                          PP_Resource)
                                             -> PP_Bool>,
-    pub GetFrame: ::std::option::Option<extern "C" fn
-                                            (video_track: PP_Resource,
-                                             frame: *mut PP_Resource,
-                                             callback:
-                                                 Struct_PP_CompletionCallback)
+    pub GetFrame: ::std::option::Option<extern "C" fn(video_track:
+                                                          PP_Resource,
+                                                      frame: *mut PP_Resource,
+                                                      callback:
+                                                          Struct_PP_CompletionCallback)
                                             -> int32_t>,
-    pub RecycleFrame: ::std::option::Option<extern "C" fn
-                                                (video_track: PP_Resource,
-                                                 frame: PP_Resource)
+    pub RecycleFrame: ::std::option::Option<extern "C" fn(video_track:
+                                                              PP_Resource,
+                                                          frame: PP_Resource)
                                                 -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(video_track: PP_Resource)>,
-    pub GetEmptyFrame: ::std::option::Option<extern "C" fn
-                                                 (video_track: PP_Resource,
-                                                  frame: *mut PP_Resource,
-                                                  callback:
-                                                      Struct_PP_CompletionCallback)
+    pub Close: ::std::option::Option<extern "C" fn(video_track: PP_Resource)
+                                         -> ()>,
+    pub GetEmptyFrame: ::std::option::Option<extern "C" fn(video_track:
+                                                               PP_Resource,
+                                                           frame:
+                                                               *mut PP_Resource,
+                                                           callback:
+                                                               Struct_PP_CompletionCallback)
                                                  -> int32_t>,
-    pub PutFrame: ::std::option::Option<extern "C" fn
-                                            (video_track: PP_Resource,
-                                             frame: PP_Resource) -> int32_t>,
-}
-impl ::std::default::Default for Struct_PPB_MediaStreamVideoTrack_1_0 {
-    fn default() -> Struct_PPB_MediaStreamVideoTrack_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub PutFrame: ::std::option::Option<extern "C" fn(video_track:
+                                                          PP_Resource,
+                                                      frame: PP_Resource)
+                                            -> int32_t>,
 }
 impl ::std::clone::Clone for Struct_PPB_MediaStreamVideoTrack_1_0 {
-    fn clone(&self) -> Struct_PPB_MediaStreamVideoTrack_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_MediaStreamVideoTrack_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_MediaStreamVideoTrack_0_1 {
-    pub IsMediaStreamVideoTrack: ::std::option::Option<extern "C" fn
-                                                           (resource:
-                                                                PP_Resource)
+    pub IsMediaStreamVideoTrack: ::std::option::Option<extern "C" fn(resource:
+                                                                         PP_Resource)
                                                            -> PP_Bool>,
-    pub Configure: ::std::option::Option<extern "C" fn
-                                             (video_track: PP_Resource,
-                                              attrib_list: *const int32_t,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub Configure: ::std::option::Option<extern "C" fn(video_track:
+                                                           PP_Resource,
+                                                       attrib_list:
+                                                           *const int32_t,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
-    pub GetAttrib: ::std::option::Option<extern "C" fn
-                                             (video_track: PP_Resource,
-                                              attrib:
-                                                  PP_MediaStreamVideoTrack_Attrib,
-                                              value: *mut int32_t)
+    pub GetAttrib: ::std::option::Option<extern "C" fn(video_track:
+                                                           PP_Resource,
+                                                       attrib:
+                                                           PP_MediaStreamVideoTrack_Attrib,
+                                                       value: *mut int32_t)
                                              -> int32_t>,
     pub GetId: ::std::option::Option<extern "C" fn(video_track: PP_Resource)
                                          -> Struct_PP_Var>,
-    pub HasEnded: ::std::option::Option<extern "C" fn
-                                            (video_track: PP_Resource)
+    pub HasEnded: ::std::option::Option<extern "C" fn(video_track:
+                                                          PP_Resource)
                                             -> PP_Bool>,
-    pub GetFrame: ::std::option::Option<extern "C" fn
-                                            (video_track: PP_Resource,
-                                             frame: *mut PP_Resource,
-                                             callback:
-                                                 Struct_PP_CompletionCallback)
+    pub GetFrame: ::std::option::Option<extern "C" fn(video_track:
+                                                          PP_Resource,
+                                                      frame: *mut PP_Resource,
+                                                      callback:
+                                                          Struct_PP_CompletionCallback)
                                             -> int32_t>,
-    pub RecycleFrame: ::std::option::Option<extern "C" fn
-                                                (video_track: PP_Resource,
-                                                 frame: PP_Resource)
+    pub RecycleFrame: ::std::option::Option<extern "C" fn(video_track:
+                                                              PP_Resource,
+                                                          frame: PP_Resource)
                                                 -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(video_track: PP_Resource)>,
-}
-impl ::std::default::Default for Struct_PPB_MediaStreamVideoTrack_0_1 {
-    fn default() -> Struct_PPB_MediaStreamVideoTrack_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub Close: ::std::option::Option<extern "C" fn(video_track: PP_Resource)
+                                         -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_MediaStreamVideoTrack_0_1 {
-    fn clone(&self) -> Struct_PPB_MediaStreamVideoTrack_0_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_MediaStreamVideoTrack_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_MediaStreamVideoTrack = Struct_PPB_MediaStreamVideoTrack_0_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_MessageLoop_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
     pub GetForMainThread: ::std::option::Option<extern "C" fn()
                                                     -> PP_Resource>,
     pub GetCurrent: ::std::option::Option<extern "C" fn() -> PP_Resource>,
-    pub AttachToCurrentThread: ::std::option::Option<extern "C" fn
-                                                         (message_loop:
-                                                              PP_Resource)
+    pub AttachToCurrentThread: ::std::option::Option<extern "C" fn(message_loop:
+                                                                       PP_Resource)
                                                          -> int32_t>,
     pub Run: ::std::option::Option<extern "C" fn(message_loop: PP_Resource)
                                        -> int32_t>,
-    pub PostWork: ::std::option::Option<extern "C" fn
-                                            (message_loop: PP_Resource,
-                                             callback:
-                                                 Struct_PP_CompletionCallback,
-                                             delay_ms: int64_t) -> int32_t>,
-    pub PostQuit: ::std::option::Option<extern "C" fn
-                                            (message_loop: PP_Resource,
-                                             should_destroy: PP_Bool)
+    pub PostWork: ::std::option::Option<extern "C" fn(message_loop:
+                                                          PP_Resource,
+                                                      callback:
+                                                          Struct_PP_CompletionCallback,
+                                                      delay_ms: int64_t)
+                                            -> int32_t>,
+    pub PostQuit: ::std::option::Option<extern "C" fn(message_loop:
+                                                          PP_Resource,
+                                                      should_destroy: PP_Bool)
                                             -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_MessageLoop_1_0 {
-    fn default() -> Struct_PPB_MessageLoop_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_MessageLoop_1_0 {
-    fn clone(&self) -> Struct_PPB_MessageLoop_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_MessageLoop_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_MessageLoop = Struct_PPB_MessageLoop_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPP_MessageHandler_0_2 {
-    pub HandleMessage: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance,
-                                                  user_data:
-                                                      *mut ::libc::c_void,
-                                                  message:
-                                                      *const Struct_PP_Var)>,
-    pub HandleBlockingMessage: ::std::option::Option<extern "C" fn
-                                                         (instance:
-                                                              PP_Instance,
-                                                          user_data:
-                                                              *mut ::libc::c_void,
-                                                          message:
-                                                              *const Struct_PP_Var,
-                                                          response:
-                                                              *mut Struct_PP_Var)>,
-    pub Destroy: ::std::option::Option<extern "C" fn
-                                           (instance: PP_Instance,
-                                            user_data: *mut ::libc::c_void)>,
-}
-impl ::std::default::Default for Struct_PPP_MessageHandler_0_2 {
-    fn default() -> Struct_PPP_MessageHandler_0_2 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-impl ::std::clone::Clone for Struct_PPP_MessageHandler_0_2 {
-    fn clone(&self) -> Struct_PPP_MessageHandler_0_2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
-}
-pub type PPP_MessageHandler = Struct_PPP_MessageHandler_0_2;
-#[repr(C)]
-pub struct Struct_PPB_Messaging_1_2 {
-    pub PostMessage: ::std::option::Option<extern "C" fn
-                                               (instance: PP_Instance,
-                                                message: Struct_PP_Var)>,
-    pub RegisterMessageHandler: ::std::option::Option<extern "C" fn
-                                                          (instance:
+    pub HandleMessage: ::std::option::Option<extern "C" fn(instance:
                                                                PP_Instance,
                                                            user_data:
                                                                *mut ::libc::c_void,
-                                                           handler:
-                                                               *const Struct_PPP_MessageHandler_0_2,
-                                                           message_loop:
-                                                               PP_Resource)
-                                                          -> int32_t>,
-    pub UnregisterMessageHandler: ::std::option::Option<extern "C" fn
-                                                            (instance:
-                                                                 PP_Instance)>,
+                                                           message:
+                                                               *const Struct_PP_Var)
+                                                 -> ()>,
+    pub HandleBlockingMessage: ::std::option::Option<extern "C" fn(instance:
+                                                                       PP_Instance,
+                                                                   user_data:
+                                                                       *mut ::libc::c_void,
+                                                                   message:
+                                                                       *const Struct_PP_Var,
+                                                                   response:
+                                                                       *mut Struct_PP_Var)
+                                                         -> ()>,
+    pub Destroy: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                     user_data:
+                                                         *mut ::libc::c_void)
+                                           -> ()>,
 }
-impl ::std::default::Default for Struct_PPB_Messaging_1_2 {
-    fn default() -> Struct_PPB_Messaging_1_2 {
-        unsafe { ::std::mem::zeroed() }
-    }
+impl ::std::clone::Clone for Struct_PPP_MessageHandler_0_2 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPP_MessageHandler_0_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type PPP_MessageHandler = Struct_PPP_MessageHandler_0_2;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PPB_Messaging_1_2 {
+    pub PostMessage: ::std::option::Option<extern "C" fn(instance:
+                                                             PP_Instance,
+                                                         message:
+                                                             Struct_PP_Var)
+                                               -> ()>,
+    pub RegisterMessageHandler: ::std::option::Option<extern "C" fn(instance:
+                                                                        PP_Instance,
+                                                                    user_data:
+                                                                        *mut ::libc::c_void,
+                                                                    handler:
+                                                                        *const Struct_PPP_MessageHandler_0_2,
+                                                                    message_loop:
+                                                                        PP_Resource)
+                                                          -> int32_t>,
+    pub UnregisterMessageHandler: ::std::option::Option<extern "C" fn(instance:
+                                                                          PP_Instance)
+                                                            -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_Messaging_1_2 {
-    fn clone(&self) -> Struct_PPB_Messaging_1_2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Messaging_1_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Messaging = Struct_PPB_Messaging_1_2;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Messaging_1_0 {
-    pub PostMessage: ::std::option::Option<extern "C" fn
-                                               (instance: PP_Instance,
-                                                message: Struct_PP_Var)>,
-}
-impl ::std::default::Default for Struct_PPB_Messaging_1_0 {
-    fn default() -> Struct_PPB_Messaging_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub PostMessage: ::std::option::Option<extern "C" fn(instance:
+                                                             PP_Instance,
+                                                         message:
+                                                             Struct_PP_Var)
+                                               -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_Messaging_1_0 {
-    fn clone(&self) -> Struct_PPB_Messaging_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Messaging_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type Enum_PP_MouseCursor_Type = ::libc::c_int;
 pub const PP_MOUSECURSOR_TYPE_CUSTOM: ::libc::c_int = -1;
@@ -2299,181 +2359,166 @@ pub const PP_MOUSECURSOR_TYPE_ZOOMOUT: ::libc::c_int = 40;
 pub const PP_MOUSECURSOR_TYPE_GRAB: ::libc::c_int = 41;
 pub const PP_MOUSECURSOR_TYPE_GRABBING: ::libc::c_int = 42;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_MouseCursor_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_MouseCursor_Type_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_MouseCursor_Type {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_MouseCursor_Type {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_MouseCursor_Type {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_MouseCursor_1_0 {
-    pub SetCursor: ::std::option::Option<extern "C" fn
-                                             (instance: PP_Instance,
-                                              _type: Enum_PP_MouseCursor_Type,
-                                              image: PP_Resource,
-                                              hot_spot:
-                                                  *const Struct_PP_Point)
+    pub SetCursor: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                       _type:
+                                                           Enum_PP_MouseCursor_Type,
+                                                       image: PP_Resource,
+                                                       hot_spot:
+                                                           *const Struct_PP_Point)
                                              -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPB_MouseCursor_1_0 {
-    fn default() -> Struct_PPB_MouseCursor_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_MouseCursor_1_0 {
-    fn clone(&self) -> Struct_PPB_MouseCursor_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_MouseCursor_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_MouseCursor = Struct_PPB_MouseCursor_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_MouseLock_1_0 {
-    pub LockMouse: ::std::option::Option<extern "C" fn
-                                             (instance: PP_Instance,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub LockMouse: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
-    pub UnlockMouse: ::std::option::Option<extern "C" fn
-                                               (instance: PP_Instance)>,
-}
-impl ::std::default::Default for Struct_PPB_MouseLock_1_0 {
-    fn default() -> Struct_PPB_MouseLock_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub UnlockMouse: ::std::option::Option<extern "C" fn(instance:
+                                                             PP_Instance)
+                                               -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_MouseLock_1_0 {
-    fn clone(&self) -> Struct_PPB_MouseLock_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_MouseLock_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_MouseLock = Struct_PPB_MouseLock_1_0;
-pub type Enum_Unnamed33 = ::libc::c_uint;
+pub type Enum_Unnamed24 = ::libc::c_uint;
 pub const PP_NETWORKLIST_TYPE_UNKNOWN: ::libc::c_uint = 0;
 pub const PP_NETWORKLIST_TYPE_ETHERNET: ::libc::c_uint = 1;
 pub const PP_NETWORKLIST_TYPE_WIFI: ::libc::c_uint = 2;
 pub const PP_NETWORKLIST_TYPE_CELLULAR: ::libc::c_uint = 3;
-pub type PP_NetworkList_Type = Enum_Unnamed33;
+pub type PP_NetworkList_Type = Enum_Unnamed24;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetworkList_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_Type_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_NetworkList_Type {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_NetworkList_Type {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_NetworkList_Type {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed34 = ::libc::c_uint;
+pub type Enum_Unnamed25 = ::libc::c_uint;
 pub const PP_NETWORKLIST_STATE_DOWN: ::libc::c_uint = 0;
 pub const PP_NETWORKLIST_STATE_UP: ::libc::c_uint = 1;
-pub type PP_NetworkList_State = Enum_Unnamed34;
+pub type PP_NetworkList_State = Enum_Unnamed25;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_NetworkList_State {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_NetworkList_State_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_NetworkList_State {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_NetworkList_State {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_NetworkList_State {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_NetworkList_1_0 {
-    pub IsNetworkList: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource)
+    pub IsNetworkList: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource)
                                                  -> PP_Bool>,
     pub GetCount: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                             -> uint32_t>,
-    pub GetName: ::std::option::Option<extern "C" fn
-                                           (resource: PP_Resource,
-                                            index: uint32_t)
+    pub GetName: ::std::option::Option<extern "C" fn(resource: PP_Resource,
+                                                     index: uint32_t)
                                            -> Struct_PP_Var>,
-    pub GetType: ::std::option::Option<extern "C" fn
-                                           (resource: PP_Resource,
-                                            index: uint32_t)
+    pub GetType: ::std::option::Option<extern "C" fn(resource: PP_Resource,
+                                                     index: uint32_t)
                                            -> PP_NetworkList_Type>,
-    pub GetState: ::std::option::Option<extern "C" fn
-                                            (resource: PP_Resource,
-                                             index: uint32_t)
+    pub GetState: ::std::option::Option<extern "C" fn(resource: PP_Resource,
+                                                      index: uint32_t)
                                             -> PP_NetworkList_State>,
-    pub GetIpAddresses: ::std::option::Option<extern "C" fn
-                                                  (resource: PP_Resource,
-                                                   index: uint32_t,
-                                                   output:
-                                                       Struct_PP_ArrayOutput)
+    pub GetIpAddresses: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource,
+                                                            index: uint32_t,
+                                                            output:
+                                                                Struct_PP_ArrayOutput)
                                                   -> int32_t>,
-    pub GetDisplayName: ::std::option::Option<extern "C" fn
-                                                  (resource: PP_Resource,
-                                                   index: uint32_t)
+    pub GetDisplayName: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource,
+                                                            index: uint32_t)
                                                   -> Struct_PP_Var>,
-    pub GetMTU: ::std::option::Option<extern "C" fn
-                                          (resource: PP_Resource,
-                                           index: uint32_t) -> uint32_t>,
-}
-impl ::std::default::Default for Struct_PPB_NetworkList_1_0 {
-    fn default() -> Struct_PPB_NetworkList_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub GetMTU: ::std::option::Option<extern "C" fn(resource: PP_Resource,
+                                                    index: uint32_t)
+                                          -> uint32_t>,
 }
 impl ::std::clone::Clone for Struct_PPB_NetworkList_1_0 {
-    fn clone(&self) -> Struct_PPB_NetworkList_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_NetworkList_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_NetworkList = Struct_PPB_NetworkList_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_NetworkMonitor_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub UpdateNetworkList: ::std::option::Option<extern "C" fn
-                                                     (network_monitor:
-                                                          PP_Resource,
-                                                      network_list:
-                                                          *mut PP_Resource,
-                                                      callback:
-                                                          Struct_PP_CompletionCallback)
+    pub UpdateNetworkList: ::std::option::Option<extern "C" fn(network_monitor:
+                                                                   PP_Resource,
+                                                               network_list:
+                                                                   *mut PP_Resource,
+                                                               callback:
+                                                                   Struct_PP_CompletionCallback)
                                                      -> int32_t>,
-    pub IsNetworkMonitor: ::std::option::Option<extern "C" fn
-                                                    (resource: PP_Resource)
+    pub IsNetworkMonitor: ::std::option::Option<extern "C" fn(resource:
+                                                                  PP_Resource)
                                                     -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPB_NetworkMonitor_1_0 {
-    fn default() -> Struct_PPB_NetworkMonitor_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_NetworkMonitor_1_0 {
-    fn clone(&self) -> Struct_PPB_NetworkMonitor_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_NetworkMonitor_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_NetworkMonitor = Struct_PPB_NetworkMonitor_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_NetworkProxy_1_0 {
-    pub GetProxyForURL: ::std::option::Option<extern "C" fn
-                                                  (instance: PP_Instance,
-                                                   url: Struct_PP_Var,
-                                                   proxy_string:
-                                                       *mut Struct_PP_Var,
-                                                   callback:
-                                                       Struct_PP_CompletionCallback)
+    pub GetProxyForURL: ::std::option::Option<extern "C" fn(instance:
+                                                                PP_Instance,
+                                                            url:
+                                                                Struct_PP_Var,
+                                                            proxy_string:
+                                                                *mut Struct_PP_Var,
+                                                            callback:
+                                                                Struct_PP_CompletionCallback)
                                                   -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_NetworkProxy_1_0 {
-    fn default() -> Struct_PPB_NetworkProxy_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_NetworkProxy_1_0 {
-    fn clone(&self) -> Struct_PPB_NetworkProxy_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_NetworkProxy_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_NetworkProxy = Struct_PPB_NetworkProxy_1_0;
 pub type GLvoid = ::libc::c_void;
@@ -2494,2081 +2539,2411 @@ pub type GLclampx = ::libc::c_int;
 pub type GLintptr = ::libc::c_long;
 pub type GLsizeiptr = ::libc::c_long;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2_1_0 {
-    pub ActiveTexture: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  texture: GLenum)>,
-    pub AttachShader: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 shader: GLuint)>,
-    pub BindAttribLocation: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       program: GLuint,
-                                                       index: GLuint,
-                                                       name:
-                                                           *const ::libc::c_char)>,
-    pub BindBuffer: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               target: GLenum,
-                                               buffer: GLuint)>,
-    pub BindFramebuffer: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    target: GLenum,
-                                                    framebuffer: GLuint)>,
-    pub BindRenderbuffer: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     target: GLenum,
-                                                     renderbuffer: GLuint)>,
-    pub BindTexture: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                target: GLenum,
-                                                texture: GLuint)>,
-    pub BlendColor: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               red: GLclampf, green: GLclampf,
-                                               blue: GLclampf,
-                                               alpha: GLclampf)>,
-    pub BlendEquation: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  mode: GLenum)>,
-    pub BlendEquationSeparate: ::std::option::Option<extern "C" fn
-                                                         (context:
-                                                              PP_Resource,
-                                                          modeRGB: GLenum,
-                                                          modeAlpha: GLenum)>,
-    pub BlendFunc: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              sfactor: GLenum,
-                                              dfactor: GLenum)>,
-    pub BlendFuncSeparate: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      srcRGB: GLenum,
-                                                      dstRGB: GLenum,
-                                                      srcAlpha: GLenum,
-                                                      dstAlpha: GLenum)>,
-    pub BufferData: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               target: GLenum,
-                                               size: GLsizeiptr,
-                                               data: *const ::libc::c_void,
-                                               usage: GLenum)>,
-    pub BufferSubData: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  offset: GLintptr,
-                                                  size: GLsizeiptr,
-                                                  data:
-                                                      *const ::libc::c_void)>,
-    pub CheckFramebufferStatus: ::std::option::Option<extern "C" fn
-                                                          (context:
+    pub ActiveTexture: ::std::option::Option<extern "C" fn(context:
                                                                PP_Resource,
-                                                           target: GLenum)
-                                                          -> GLenum>,
-    pub Clear: ::std::option::Option<extern "C" fn
-                                         (context: PP_Resource,
-                                          mask: GLbitfield)>,
-    pub ClearColor: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               red: GLclampf, green: GLclampf,
-                                               blue: GLclampf,
-                                               alpha: GLclampf)>,
-    pub ClearDepthf: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                depth: GLclampf)>,
-    pub ClearStencil: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 s: GLint)>,
-    pub ColorMask: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              red: GLboolean,
-                                              green: GLboolean,
-                                              blue: GLboolean,
-                                              alpha: GLboolean)>,
-    pub CompileShader: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  shader: GLuint)>,
-    pub CompressedTexImage2D: ::std::option::Option<extern "C" fn
-                                                        (context: PP_Resource,
+                                                           texture: GLenum)
+                                                 -> ()>,
+    pub AttachShader: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          shader: GLuint)
+                                                -> ()>,
+    pub BindAttribLocation: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                program:
+                                                                    GLuint,
+                                                                index: GLuint,
+                                                                name:
+                                                                    *const ::libc::c_char)
+                                                      -> ()>,
+    pub BindBuffer: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        target: GLenum,
+                                                        buffer: GLuint)
+                                              -> ()>,
+    pub BindFramebuffer: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             target: GLenum,
+                                                             framebuffer:
+                                                                 GLuint)
+                                                   -> ()>,
+    pub BindRenderbuffer: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              target: GLenum,
+                                                              renderbuffer:
+                                                                  GLuint)
+                                                    -> ()>,
+    pub BindTexture: ::std::option::Option<extern "C" fn(context: PP_Resource,
                                                          target: GLenum,
-                                                         level: GLint,
-                                                         internalformat:
-                                                             GLenum,
-                                                         width: GLsizei,
-                                                         height: GLsizei,
-                                                         border: GLint,
-                                                         imageSize: GLsizei,
-                                                         data:
-                                                             *const ::libc::c_void)>,
-    pub CompressedTexSubImage2D: ::std::option::Option<extern "C" fn
-                                                           (context:
+                                                         texture: GLuint)
+                                               -> ()>,
+    pub BlendColor: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        red: GLclampf,
+                                                        green: GLclampf,
+                                                        blue: GLclampf,
+                                                        alpha: GLclampf)
+                                              -> ()>,
+    pub BlendEquation: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           mode: GLenum)
+                                                 -> ()>,
+    pub BlendEquationSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                       PP_Resource,
+                                                                   modeRGB:
+                                                                       GLenum,
+                                                                   modeAlpha:
+                                                                       GLenum)
+                                                         -> ()>,
+    pub BlendFunc: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       sfactor: GLenum,
+                                                       dfactor: GLenum)
+                                             -> ()>,
+    pub BlendFuncSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               srcRGB: GLenum,
+                                                               dstRGB: GLenum,
+                                                               srcAlpha:
+                                                                   GLenum,
+                                                               dstAlpha:
+                                                                   GLenum)
+                                                     -> ()>,
+    pub BufferData: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        target: GLenum,
+                                                        size: GLsizeiptr,
+                                                        data:
+                                                            *const ::libc::c_void,
+                                                        usage: GLenum) -> ()>,
+    pub BufferSubData: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           offset: GLintptr,
+                                                           size: GLsizeiptr,
+                                                           data:
+                                                               *const ::libc::c_void)
+                                                 -> ()>,
+    pub CheckFramebufferStatus: ::std::option::Option<extern "C" fn(context:
+                                                                        PP_Resource,
+                                                                    target:
+                                                                        GLenum)
+                                                          -> GLenum>,
+    pub Clear: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                   mask: GLbitfield) -> ()>,
+    pub ClearColor: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        red: GLclampf,
+                                                        green: GLclampf,
+                                                        blue: GLclampf,
+                                                        alpha: GLclampf)
+                                              -> ()>,
+    pub ClearDepthf: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         depth: GLclampf)
+                                               -> ()>,
+    pub ClearStencil: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          s: GLint) -> ()>,
+    pub ColorMask: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       red: GLboolean,
+                                                       green: GLboolean,
+                                                       blue: GLboolean,
+                                                       alpha: GLboolean)
+                                             -> ()>,
+    pub CompileShader: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           shader: GLuint)
+                                                 -> ()>,
+    pub CompressedTexImage2D: ::std::option::Option<extern "C" fn(context:
+                                                                      PP_Resource,
+                                                                  target:
+                                                                      GLenum,
+                                                                  level:
+                                                                      GLint,
+                                                                  internalformat:
+                                                                      GLenum,
+                                                                  width:
+                                                                      GLsizei,
+                                                                  height:
+                                                                      GLsizei,
+                                                                  border:
+                                                                      GLint,
+                                                                  imageSize:
+                                                                      GLsizei,
+                                                                  data:
+                                                                      *const ::libc::c_void)
+                                                        -> ()>,
+    pub CompressedTexSubImage2D: ::std::option::Option<extern "C" fn(context:
+                                                                         PP_Resource,
+                                                                     target:
+                                                                         GLenum,
+                                                                     level:
+                                                                         GLint,
+                                                                     xoffset:
+                                                                         GLint,
+                                                                     yoffset:
+                                                                         GLint,
+                                                                     width:
+                                                                         GLsizei,
+                                                                     height:
+                                                                         GLsizei,
+                                                                     format:
+                                                                         GLenum,
+                                                                     imageSize:
+                                                                         GLsizei,
+                                                                     data:
+                                                                         *const ::libc::c_void)
+                                                           -> ()>,
+    pub CopyTexImage2D: ::std::option::Option<extern "C" fn(context:
                                                                 PP_Resource,
                                                             target: GLenum,
                                                             level: GLint,
-                                                            xoffset: GLint,
-                                                            yoffset: GLint,
+                                                            internalformat:
+                                                                GLenum,
+                                                            x: GLint,
+                                                            y: GLint,
                                                             width: GLsizei,
                                                             height: GLsizei,
-                                                            format: GLenum,
-                                                            imageSize:
-                                                                GLsizei,
-                                                            data:
-                                                                *const ::libc::c_void)>,
-    pub CopyTexImage2D: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   target: GLenum,
-                                                   level: GLint,
-                                                   internalformat: GLenum,
-                                                   x: GLint, y: GLint,
-                                                   width: GLsizei,
-                                                   height: GLsizei,
-                                                   border: GLint)>,
-    pub CopyTexSubImage2D: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      target: GLenum,
-                                                      level: GLint,
-                                                      xoffset: GLint,
-                                                      yoffset: GLint,
-                                                      x: GLint, y: GLint,
-                                                      width: GLsizei,
-                                                      height: GLsizei)>,
-    pub CreateProgram: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource)
+                                                            border: GLint)
+                                                  -> ()>,
+    pub CopyTexSubImage2D: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               target: GLenum,
+                                                               level: GLint,
+                                                               xoffset: GLint,
+                                                               yoffset: GLint,
+                                                               x: GLint,
+                                                               y: GLint,
+                                                               width: GLsizei,
+                                                               height:
+                                                                   GLsizei)
+                                                     -> ()>,
+    pub CreateProgram: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource)
                                                  -> GLuint>,
-    pub CreateShader: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 _type: GLenum) -> GLuint>,
-    pub CullFace: ::std::option::Option<extern "C" fn
-                                            (context: PP_Resource,
-                                             mode: GLenum)>,
-    pub DeleteBuffers: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  n: GLsizei,
-                                                  buffers: *const GLuint)>,
-    pub DeleteFramebuffers: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       n: GLsizei,
-                                                       framebuffers:
-                                                           *const GLuint)>,
-    pub DeleteProgram: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  program: GLuint)>,
-    pub DeleteRenderbuffers: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
+    pub CreateShader: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          _type: GLenum)
+                                                -> GLuint>,
+    pub CullFace: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                      mode: GLenum) -> ()>,
+    pub DeleteBuffers: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           n: GLsizei,
+                                                           buffers:
+                                                               *const GLuint)
+                                                 -> ()>,
+    pub DeleteFramebuffers: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                n: GLsizei,
+                                                                framebuffers:
+                                                                    *const GLuint)
+                                                      -> ()>,
+    pub DeleteProgram: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           program: GLuint)
+                                                 -> ()>,
+    pub DeleteRenderbuffers: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 n: GLsizei,
+                                                                 renderbuffers:
+                                                                     *const GLuint)
+                                                       -> ()>,
+    pub DeleteShader: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          shader: GLuint)
+                                                -> ()>,
+    pub DeleteTextures: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            n: GLsizei,
+                                                            textures:
+                                                                *const GLuint)
+                                                  -> ()>,
+    pub DepthFunc: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       func: GLenum) -> ()>,
+    pub DepthMask: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       flag: GLboolean)
+                                             -> ()>,
+    pub DepthRangef: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         zNear: GLclampf,
+                                                         zFar: GLclampf)
+                                               -> ()>,
+    pub DetachShader: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          shader: GLuint)
+                                                -> ()>,
+    pub Disable: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                     cap: GLenum) -> ()>,
+    pub DisableVertexAttribArray: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      index:
+                                                                          GLuint)
+                                                            -> ()>,
+    pub DrawArrays: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        mode: GLenum,
+                                                        first: GLint,
+                                                        count: GLsizei)
+                                              -> ()>,
+    pub DrawElements: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          mode: GLenum,
+                                                          count: GLsizei,
+                                                          _type: GLenum,
+                                                          indices:
+                                                              *const ::libc::c_void)
+                                                -> ()>,
+    pub Enable: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                    cap: GLenum) -> ()>,
+    pub EnableVertexAttribArray: ::std::option::Option<extern "C" fn(context:
+                                                                         PP_Resource,
+                                                                     index:
+                                                                         GLuint)
+                                                           -> ()>,
+    pub Finish: ::std::option::Option<extern "C" fn(context: PP_Resource)
+                                          -> ()>,
+    pub Flush: ::std::option::Option<extern "C" fn(context: PP_Resource)
+                                         -> ()>,
+    pub FramebufferRenderbuffer: ::std::option::Option<extern "C" fn(context:
+                                                                         PP_Resource,
+                                                                     target:
+                                                                         GLenum,
+                                                                     attachment:
+                                                                         GLenum,
+                                                                     renderbuffertarget:
+                                                                         GLenum,
+                                                                     renderbuffer:
+                                                                         GLuint)
+                                                           -> ()>,
+    pub FramebufferTexture2D: ::std::option::Option<extern "C" fn(context:
+                                                                      PP_Resource,
+                                                                  target:
+                                                                      GLenum,
+                                                                  attachment:
+                                                                      GLenum,
+                                                                  textarget:
+                                                                      GLenum,
+                                                                  texture:
+                                                                      GLuint,
+                                                                  level:
+                                                                      GLint)
+                                                        -> ()>,
+    pub FrontFace: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       mode: GLenum) -> ()>,
+    pub GenBuffers: ::std::option::Option<extern "C" fn(context: PP_Resource,
                                                         n: GLsizei,
-                                                        renderbuffers:
-                                                            *const GLuint)>,
-    pub DeleteShader: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 shader: GLuint)>,
-    pub DeleteTextures: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   n: GLsizei,
-                                                   textures: *const GLuint)>,
-    pub DepthFunc: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              func: GLenum)>,
-    pub DepthMask: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              flag: GLboolean)>,
-    pub DepthRangef: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                zNear: GLclampf,
-                                                zFar: GLclampf)>,
-    pub DetachShader: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 shader: GLuint)>,
-    pub Disable: ::std::option::Option<extern "C" fn
-                                           (context: PP_Resource,
-                                            cap: GLenum)>,
-    pub DisableVertexAttribArray: ::std::option::Option<extern "C" fn
-                                                            (context:
+                                                        buffers: *mut GLuint)
+                                              -> ()>,
+    pub GenerateMipmap: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            target: GLenum)
+                                                  -> ()>,
+    pub GenFramebuffers: ::std::option::Option<extern "C" fn(context:
                                                                  PP_Resource,
-                                                             index: GLuint)>,
-    pub DrawArrays: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               mode: GLenum, first: GLint,
-                                               count: GLsizei)>,
-    pub DrawElements: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 mode: GLenum, count: GLsizei,
-                                                 _type: GLenum,
-                                                 indices:
-                                                     *const ::libc::c_void)>,
-    pub Enable: ::std::option::Option<extern "C" fn
-                                          (context: PP_Resource,
-                                           cap: GLenum)>,
-    pub EnableVertexAttribArray: ::std::option::Option<extern "C" fn
-                                                           (context:
-                                                                PP_Resource,
-                                                            index: GLuint)>,
-    pub Finish: ::std::option::Option<extern "C" fn(context: PP_Resource)>,
-    pub Flush: ::std::option::Option<extern "C" fn(context: PP_Resource)>,
-    pub FramebufferRenderbuffer: ::std::option::Option<extern "C" fn
-                                                           (context:
-                                                                PP_Resource,
-                                                            target: GLenum,
-                                                            attachment:
-                                                                GLenum,
-                                                            renderbuffertarget:
-                                                                GLenum,
-                                                            renderbuffer:
-                                                                GLuint)>,
-    pub FramebufferTexture2D: ::std::option::Option<extern "C" fn
-                                                        (context: PP_Resource,
-                                                         target: GLenum,
-                                                         attachment: GLenum,
-                                                         textarget: GLenum,
-                                                         texture: GLuint,
-                                                         level: GLint)>,
-    pub FrontFace: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              mode: GLenum)>,
-    pub GenBuffers: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               n: GLsizei,
-                                               buffers: *mut GLuint)>,
-    pub GenerateMipmap: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   target: GLenum)>,
-    pub GenFramebuffers: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    n: GLsizei,
-                                                    framebuffers:
-                                                        *mut GLuint)>,
-    pub GenRenderbuffers: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     n: GLsizei,
-                                                     renderbuffers:
-                                                         *mut GLuint)>,
-    pub GenTextures: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                n: GLsizei,
-                                                textures: *mut GLuint)>,
-    pub GetActiveAttrib: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    program: GLuint,
-                                                    index: GLuint,
-                                                    bufsize: GLsizei,
-                                                    length: *mut GLsizei,
-                                                    size: *mut GLint,
-                                                    _type: *mut GLenum,
-                                                    name:
-                                                        *mut ::libc::c_char)>,
-    pub GetActiveUniform: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     program: GLuint,
-                                                     index: GLuint,
-                                                     bufsize: GLsizei,
-                                                     length: *mut GLsizei,
-                                                     size: *mut GLint,
-                                                     _type: *mut GLenum,
-                                                     name:
-                                                         *mut ::libc::c_char)>,
-    pub GetAttachedShaders: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       program: GLuint,
-                                                       maxcount: GLsizei,
-                                                       count: *mut GLsizei,
-                                                       shaders: *mut GLuint)>,
-    pub GetAttribLocation: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      program: GLuint,
-                                                      name:
-                                                          *const ::libc::c_char)
+                                                             n: GLsizei,
+                                                             framebuffers:
+                                                                 *mut GLuint)
+                                                   -> ()>,
+    pub GenRenderbuffers: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              n: GLsizei,
+                                                              renderbuffers:
+                                                                  *mut GLuint)
+                                                    -> ()>,
+    pub GenTextures: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         n: GLsizei,
+                                                         textures:
+                                                             *mut GLuint)
+                                               -> ()>,
+    pub GetActiveAttrib: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             program: GLuint,
+                                                             index: GLuint,
+                                                             bufsize: GLsizei,
+                                                             length:
+                                                                 *mut GLsizei,
+                                                             size: *mut GLint,
+                                                             _type:
+                                                                 *mut GLenum,
+                                                             name:
+                                                                 *mut ::libc::c_char)
+                                                   -> ()>,
+    pub GetActiveUniform: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              program: GLuint,
+                                                              index: GLuint,
+                                                              bufsize:
+                                                                  GLsizei,
+                                                              length:
+                                                                  *mut GLsizei,
+                                                              size:
+                                                                  *mut GLint,
+                                                              _type:
+                                                                  *mut GLenum,
+                                                              name:
+                                                                  *mut ::libc::c_char)
+                                                    -> ()>,
+    pub GetAttachedShaders: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                program:
+                                                                    GLuint,
+                                                                maxcount:
+                                                                    GLsizei,
+                                                                count:
+                                                                    *mut GLsizei,
+                                                                shaders:
+                                                                    *mut GLuint)
+                                                      -> ()>,
+    pub GetAttribLocation: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               program:
+                                                                   GLuint,
+                                                               name:
+                                                                   *const ::libc::c_char)
                                                      -> GLint>,
-    pub GetBooleanv: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                pname: GLenum,
-                                                params: *mut GLboolean)>,
-    pub GetBufferParameteriv: ::std::option::Option<extern "C" fn
-                                                        (context: PP_Resource,
-                                                         target: GLenum,
+    pub GetBooleanv: ::std::option::Option<extern "C" fn(context: PP_Resource,
                                                          pname: GLenum,
-                                                         params: *mut GLint)>,
+                                                         params:
+                                                             *mut GLboolean)
+                                               -> ()>,
+    pub GetBufferParameteriv: ::std::option::Option<extern "C" fn(context:
+                                                                      PP_Resource,
+                                                                  target:
+                                                                      GLenum,
+                                                                  pname:
+                                                                      GLenum,
+                                                                  params:
+                                                                      *mut GLint)
+                                                        -> ()>,
     pub GetError: ::std::option::Option<extern "C" fn(context: PP_Resource)
                                             -> GLenum>,
-    pub GetFloatv: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              pname: GLenum,
-                                              params: *mut GLfloat)>,
-    pub GetFramebufferAttachmentParameteriv: ::std::option::Option<extern "C" fn
-                                                                       (context:
+    pub GetFloatv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       pname: GLenum,
+                                                       params: *mut GLfloat)
+                                             -> ()>,
+    pub GetFramebufferAttachmentParameteriv: ::std::option::Option<extern "C" fn(context:
+                                                                                     PP_Resource,
+                                                                                 target:
+                                                                                     GLenum,
+                                                                                 attachment:
+                                                                                     GLenum,
+                                                                                 pname:
+                                                                                     GLenum,
+                                                                                 params:
+                                                                                     *mut GLint)
+                                                                       -> ()>,
+    pub GetIntegerv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         pname: GLenum,
+                                                         params: *mut GLint)
+                                               -> ()>,
+    pub GetProgramiv: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          pname: GLenum,
+                                                          params: *mut GLint)
+                                                -> ()>,
+    pub GetProgramInfoLog: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               program:
+                                                                   GLuint,
+                                                               bufsize:
+                                                                   GLsizei,
+                                                               length:
+                                                                   *mut GLsizei,
+                                                               infolog:
+                                                                   *mut ::libc::c_char)
+                                                     -> ()>,
+    pub GetRenderbufferParameteriv: ::std::option::Option<extern "C" fn(context:
                                                                             PP_Resource,
                                                                         target:
-                                                                            GLenum,
-                                                                        attachment:
                                                                             GLenum,
                                                                         pname:
                                                                             GLenum,
                                                                         params:
-                                                                            *mut GLint)>,
-    pub GetIntegerv: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                pname: GLenum,
-                                                params: *mut GLint)>,
-    pub GetProgramiv: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 pname: GLenum,
-                                                 params: *mut GLint)>,
-    pub GetProgramInfoLog: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      program: GLuint,
-                                                      bufsize: GLsizei,
-                                                      length: *mut GLsizei,
-                                                      infolog:
-                                                          *mut ::libc::c_char)>,
-    pub GetRenderbufferParameteriv: ::std::option::Option<extern "C" fn
-                                                              (context:
+                                                                            *mut GLint)
+                                                              -> ()>,
+    pub GetShaderiv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         shader: GLuint,
+                                                         pname: GLenum,
+                                                         params: *mut GLint)
+                                               -> ()>,
+    pub GetShaderInfoLog: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              shader: GLuint,
+                                                              bufsize:
+                                                                  GLsizei,
+                                                              length:
+                                                                  *mut GLsizei,
+                                                              infolog:
+                                                                  *mut ::libc::c_char)
+                                                    -> ()>,
+    pub GetShaderPrecisionFormat: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      shadertype:
+                                                                          GLenum,
+                                                                      precisiontype:
+                                                                          GLenum,
+                                                                      range:
+                                                                          *mut GLint,
+                                                                      precision:
+                                                                          *mut GLint)
+                                                            -> ()>,
+    pub GetShaderSource: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             shader: GLuint,
+                                                             bufsize: GLsizei,
+                                                             length:
+                                                                 *mut GLsizei,
+                                                             source:
+                                                                 *mut ::libc::c_char)
+                                                   -> ()>,
+    pub GetString: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       name: GLenum)
+                                             -> *const GLubyte>,
+    pub GetTexParameterfv: ::std::option::Option<extern "C" fn(context:
                                                                    PP_Resource,
                                                                target: GLenum,
                                                                pname: GLenum,
                                                                params:
-                                                                   *mut GLint)>,
-    pub GetShaderiv: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                shader: GLuint, pname: GLenum,
-                                                params: *mut GLint)>,
-    pub GetShaderInfoLog: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     shader: GLuint,
-                                                     bufsize: GLsizei,
-                                                     length: *mut GLsizei,
-                                                     infolog:
-                                                         *mut ::libc::c_char)>,
-    pub GetShaderPrecisionFormat: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             shadertype:
-                                                                 GLenum,
-                                                             precisiontype:
-                                                                 GLenum,
-                                                             range:
-                                                                 *mut GLint,
-                                                             precision:
-                                                                 *mut GLint)>,
-    pub GetShaderSource: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    shader: GLuint,
-                                                    bufsize: GLsizei,
-                                                    length: *mut GLsizei,
-                                                    source:
-                                                        *mut ::libc::c_char)>,
-    pub GetString: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              name: GLenum)
-                                             -> *const GLubyte>,
-    pub GetTexParameterfv: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      target: GLenum,
-                                                      pname: GLenum,
-                                                      params: *mut GLfloat)>,
-    pub GetTexParameteriv: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      target: GLenum,
-                                                      pname: GLenum,
-                                                      params: *mut GLint)>,
-    pub GetUniformfv: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 location: GLint,
-                                                 params: *mut GLfloat)>,
-    pub GetUniformiv: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 location: GLint,
-                                                 params: *mut GLint)>,
-    pub GetUniformLocation: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       program: GLuint,
-                                                       name:
-                                                           *const ::libc::c_char)
+                                                                   *mut GLfloat)
+                                                     -> ()>,
+    pub GetTexParameteriv: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               target: GLenum,
+                                                               pname: GLenum,
+                                                               params:
+                                                                   *mut GLint)
+                                                     -> ()>,
+    pub GetUniformfv: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          location: GLint,
+                                                          params:
+                                                              *mut GLfloat)
+                                                -> ()>,
+    pub GetUniformiv: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          location: GLint,
+                                                          params: *mut GLint)
+                                                -> ()>,
+    pub GetUniformLocation: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                program:
+                                                                    GLuint,
+                                                                name:
+                                                                    *const ::libc::c_char)
                                                       -> GLint>,
-    pub GetVertexAttribfv: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      index: GLuint,
-                                                      pname: GLenum,
-                                                      params: *mut GLfloat)>,
-    pub GetVertexAttribiv: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      index: GLuint,
-                                                      pname: GLenum,
-                                                      params: *mut GLint)>,
-    pub GetVertexAttribPointerv: ::std::option::Option<extern "C" fn
-                                                           (context:
-                                                                PP_Resource,
-                                                            index: GLuint,
-                                                            pname: GLenum,
-                                                            pointer:
-                                                                *mut *mut ::libc::c_void)>,
-    pub Hint: ::std::option::Option<extern "C" fn
-                                        (context: PP_Resource, target: GLenum,
-                                         mode: GLenum)>,
-    pub IsBuffer: ::std::option::Option<extern "C" fn
-                                            (context: PP_Resource,
-                                             buffer: GLuint) -> GLboolean>,
-    pub IsEnabled: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              cap: GLenum) -> GLboolean>,
-    pub IsFramebuffer: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  framebuffer: GLuint)
+    pub GetVertexAttribfv: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               index: GLuint,
+                                                               pname: GLenum,
+                                                               params:
+                                                                   *mut GLfloat)
+                                                     -> ()>,
+    pub GetVertexAttribiv: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               index: GLuint,
+                                                               pname: GLenum,
+                                                               params:
+                                                                   *mut GLint)
+                                                     -> ()>,
+    pub GetVertexAttribPointerv: ::std::option::Option<extern "C" fn(context:
+                                                                         PP_Resource,
+                                                                     index:
+                                                                         GLuint,
+                                                                     pname:
+                                                                         GLenum,
+                                                                     pointer:
+                                                                         *mut *mut ::libc::c_void)
+                                                           -> ()>,
+    pub Hint: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                  target: GLenum,
+                                                  mode: GLenum) -> ()>,
+    pub IsBuffer: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                      buffer: GLuint)
+                                            -> GLboolean>,
+    pub IsEnabled: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       cap: GLenum)
+                                             -> GLboolean>,
+    pub IsFramebuffer: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           framebuffer:
+                                                               GLuint)
                                                  -> GLboolean>,
-    pub IsProgram: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              program: GLuint) -> GLboolean>,
-    pub IsRenderbuffer: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   renderbuffer: GLuint)
+    pub IsProgram: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       program: GLuint)
+                                             -> GLboolean>,
+    pub IsRenderbuffer: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            renderbuffer:
+                                                                GLuint)
                                                   -> GLboolean>,
-    pub IsShader: ::std::option::Option<extern "C" fn
-                                            (context: PP_Resource,
-                                             shader: GLuint) -> GLboolean>,
-    pub IsTexture: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              texture: GLuint) -> GLboolean>,
-    pub LineWidth: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              width: GLfloat)>,
-    pub LinkProgram: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                program: GLuint)>,
-    pub PixelStorei: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                pname: GLenum, param: GLint)>,
-    pub PolygonOffset: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  factor: GLfloat,
-                                                  units: GLfloat)>,
-    pub ReadPixels: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource, x: GLint,
-                                               y: GLint, width: GLsizei,
-                                               height: GLsizei,
-                                               format: GLenum, _type: GLenum,
-                                               pixels: *mut ::libc::c_void)>,
-    pub ReleaseShaderCompiler: ::std::option::Option<extern "C" fn
-                                                         (context:
-                                                              PP_Resource)>,
-    pub RenderbufferStorage: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
-                                                        target: GLenum,
-                                                        internalformat:
-                                                            GLenum,
+    pub IsShader: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                      shader: GLuint)
+                                            -> GLboolean>,
+    pub IsTexture: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       texture: GLuint)
+                                             -> GLboolean>,
+    pub LineWidth: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       width: GLfloat) -> ()>,
+    pub LinkProgram: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         program: GLuint)
+                                               -> ()>,
+    pub PixelStorei: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         pname: GLenum,
+                                                         param: GLint) -> ()>,
+    pub PolygonOffset: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           factor: GLfloat,
+                                                           units: GLfloat)
+                                                 -> ()>,
+    pub ReadPixels: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        x: GLint, y: GLint,
                                                         width: GLsizei,
-                                                        height: GLsizei)>,
-    pub SampleCoverage: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   value: GLclampf,
-                                                   invert: GLboolean)>,
-    pub Scissor: ::std::option::Option<extern "C" fn
-                                           (context: PP_Resource, x: GLint,
-                                            y: GLint, width: GLsizei,
-                                            height: GLsizei)>,
-    pub ShaderBinary: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 n: GLsizei,
-                                                 shaders: *const GLuint,
-                                                 binaryformat: GLenum,
-                                                 binary:
-                                                     *const ::libc::c_void,
-                                                 length: GLsizei)>,
-    pub ShaderSource: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 shader: GLuint,
-                                                 count: GLsizei,
-                                                 str:
-                                                     *mut *const ::libc::c_char,
-                                                 length: *const GLint)>,
-    pub StencilFunc: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                func: GLenum, _ref: GLint,
-                                                mask: GLuint)>,
-    pub StencilFuncSeparate: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
-                                                        face: GLenum,
-                                                        func: GLenum,
-                                                        _ref: GLint,
-                                                        mask: GLuint)>,
-    pub StencilMask: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                mask: GLuint)>,
-    pub StencilMaskSeparate: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
-                                                        face: GLenum,
-                                                        mask: GLuint)>,
-    pub StencilOp: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              fail: GLenum, zfail: GLenum,
-                                              zpass: GLenum)>,
-    pub StencilOpSeparate: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      face: GLenum,
-                                                      fail: GLenum,
-                                                      zfail: GLenum,
-                                                      zpass: GLenum)>,
-    pub TexImage2D: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               target: GLenum, level: GLint,
-                                               internalformat: GLint,
-                                               width: GLsizei,
-                                               height: GLsizei, border: GLint,
-                                               format: GLenum, _type: GLenum,
-                                               pixels:
-                                                   *const ::libc::c_void)>,
-    pub TexParameterf: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  pname: GLenum,
-                                                  param: GLfloat)>,
-    pub TexParameterfv: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   target: GLenum,
-                                                   pname: GLenum,
-                                                   params: *const GLfloat)>,
-    pub TexParameteri: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  pname: GLenum,
-                                                  param: GLint)>,
-    pub TexParameteriv: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   target: GLenum,
-                                                   pname: GLenum,
-                                                   params: *const GLint)>,
-    pub TexSubImage2D: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  level: GLint,
-                                                  xoffset: GLint,
-                                                  yoffset: GLint,
-                                                  width: GLsizei,
-                                                  height: GLsizei,
-                                                  format: GLenum,
-                                                  _type: GLenum,
-                                                  pixels:
-                                                      *const ::libc::c_void)>,
-    pub Uniform1f: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLfloat)>,
-    pub Uniform1fv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLfloat)>,
-    pub Uniform1i: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLint)>,
-    pub Uniform1iv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLint)>,
-    pub Uniform2f: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLfloat,
-                                              y: GLfloat)>,
-    pub Uniform2fv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLfloat)>,
-    pub Uniform2i: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLint,
-                                              y: GLint)>,
-    pub Uniform2iv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLint)>,
-    pub Uniform3f: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLfloat,
-                                              y: GLfloat, z: GLfloat)>,
-    pub Uniform3fv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLfloat)>,
-    pub Uniform3i: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLint,
-                                              y: GLint, z: GLint)>,
-    pub Uniform3iv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLint)>,
-    pub Uniform4f: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLfloat,
-                                              y: GLfloat, z: GLfloat,
-                                              w: GLfloat)>,
-    pub Uniform4fv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLfloat)>,
-    pub Uniform4i: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLint,
-                                              y: GLint, z: GLint, w: GLint)>,
-    pub Uniform4iv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLint)>,
-    pub UniformMatrix2fv: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     location: GLint,
-                                                     count: GLsizei,
-                                                     transpose: GLboolean,
-                                                     value: *const GLfloat)>,
-    pub UniformMatrix3fv: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     location: GLint,
-                                                     count: GLsizei,
-                                                     transpose: GLboolean,
-                                                     value: *const GLfloat)>,
-    pub UniformMatrix4fv: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     location: GLint,
-                                                     count: GLsizei,
-                                                     transpose: GLboolean,
-                                                     value: *const GLfloat)>,
-    pub UseProgram: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               program: GLuint)>,
-    pub ValidateProgram: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    program: GLuint)>,
-    pub VertexAttrib1f: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   indx: GLuint, x: GLfloat)>,
-    pub VertexAttrib1fv: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    indx: GLuint,
-                                                    values: *const GLfloat)>,
-    pub VertexAttrib2f: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   indx: GLuint, x: GLfloat,
-                                                   y: GLfloat)>,
-    pub VertexAttrib2fv: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    indx: GLuint,
-                                                    values: *const GLfloat)>,
-    pub VertexAttrib3f: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   indx: GLuint, x: GLfloat,
-                                                   y: GLfloat, z: GLfloat)>,
-    pub VertexAttrib3fv: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    indx: GLuint,
-                                                    values: *const GLfloat)>,
-    pub VertexAttrib4f: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   indx: GLuint, x: GLfloat,
-                                                   y: GLfloat, z: GLfloat,
-                                                   w: GLfloat)>,
-    pub VertexAttrib4fv: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    indx: GLuint,
-                                                    values: *const GLfloat)>,
-    pub VertexAttribPointer: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
-                                                        indx: GLuint,
-                                                        size: GLint,
+                                                        height: GLsizei,
+                                                        format: GLenum,
                                                         _type: GLenum,
-                                                        normalized: GLboolean,
-                                                        stride: GLsizei,
-                                                        ptr:
-                                                            *const ::libc::c_void)>,
-    pub Viewport: ::std::option::Option<extern "C" fn
-                                            (context: PP_Resource, x: GLint,
-                                             y: GLint, width: GLsizei,
-                                             height: GLsizei)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2_1_0 {
-    fn default() -> Struct_PPB_OpenGLES2_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+                                                        pixels:
+                                                            *mut ::libc::c_void)
+                                              -> ()>,
+    pub ReleaseShaderCompiler: ::std::option::Option<extern "C" fn(context:
+                                                                       PP_Resource)
+                                                         -> ()>,
+    pub RenderbufferStorage: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 target:
+                                                                     GLenum,
+                                                                 internalformat:
+                                                                     GLenum,
+                                                                 width:
+                                                                     GLsizei,
+                                                                 height:
+                                                                     GLsizei)
+                                                       -> ()>,
+    pub SampleCoverage: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            value: GLclampf,
+                                                            invert: GLboolean)
+                                                  -> ()>,
+    pub Scissor: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                     x: GLint, y: GLint,
+                                                     width: GLsizei,
+                                                     height: GLsizei) -> ()>,
+    pub ShaderBinary: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          n: GLsizei,
+                                                          shaders:
+                                                              *const GLuint,
+                                                          binaryformat:
+                                                              GLenum,
+                                                          binary:
+                                                              *const ::libc::c_void,
+                                                          length: GLsizei)
+                                                -> ()>,
+    pub ShaderSource: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          shader: GLuint,
+                                                          count: GLsizei,
+                                                          str:
+                                                              *mut *const ::libc::c_char,
+                                                          length:
+                                                              *const GLint)
+                                                -> ()>,
+    pub StencilFunc: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         func: GLenum,
+                                                         _ref: GLint,
+                                                         mask: GLuint) -> ()>,
+    pub StencilFuncSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 face: GLenum,
+                                                                 func: GLenum,
+                                                                 _ref: GLint,
+                                                                 mask: GLuint)
+                                                       -> ()>,
+    pub StencilMask: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         mask: GLuint) -> ()>,
+    pub StencilMaskSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 face: GLenum,
+                                                                 mask: GLuint)
+                                                       -> ()>,
+    pub StencilOp: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       fail: GLenum,
+                                                       zfail: GLenum,
+                                                       zpass: GLenum) -> ()>,
+    pub StencilOpSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               face: GLenum,
+                                                               fail: GLenum,
+                                                               zfail: GLenum,
+                                                               zpass: GLenum)
+                                                     -> ()>,
+    pub TexImage2D: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        target: GLenum,
+                                                        level: GLint,
+                                                        internalformat: GLint,
+                                                        width: GLsizei,
+                                                        height: GLsizei,
+                                                        border: GLint,
+                                                        format: GLenum,
+                                                        _type: GLenum,
+                                                        pixels:
+                                                            *const ::libc::c_void)
+                                              -> ()>,
+    pub TexParameterf: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           pname: GLenum,
+                                                           param: GLfloat)
+                                                 -> ()>,
+    pub TexParameterfv: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            target: GLenum,
+                                                            pname: GLenum,
+                                                            params:
+                                                                *const GLfloat)
+                                                  -> ()>,
+    pub TexParameteri: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           pname: GLenum,
+                                                           param: GLint)
+                                                 -> ()>,
+    pub TexParameteriv: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            target: GLenum,
+                                                            pname: GLenum,
+                                                            params:
+                                                                *const GLint)
+                                                  -> ()>,
+    pub TexSubImage2D: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           level: GLint,
+                                                           xoffset: GLint,
+                                                           yoffset: GLint,
+                                                           width: GLsizei,
+                                                           height: GLsizei,
+                                                           format: GLenum,
+                                                           _type: GLenum,
+                                                           pixels:
+                                                               *const ::libc::c_void)
+                                                 -> ()>,
+    pub Uniform1f: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLfloat) -> ()>,
+    pub Uniform1fv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLfloat)
+                                              -> ()>,
+    pub Uniform1i: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLint) -> ()>,
+    pub Uniform1iv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLint)
+                                              -> ()>,
+    pub Uniform2f: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLfloat, y: GLfloat)
+                                             -> ()>,
+    pub Uniform2fv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLfloat)
+                                              -> ()>,
+    pub Uniform2i: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLint, y: GLint)
+                                             -> ()>,
+    pub Uniform2iv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLint)
+                                              -> ()>,
+    pub Uniform3f: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLfloat, y: GLfloat,
+                                                       z: GLfloat) -> ()>,
+    pub Uniform3fv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLfloat)
+                                              -> ()>,
+    pub Uniform3i: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLint, y: GLint,
+                                                       z: GLint) -> ()>,
+    pub Uniform3iv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLint)
+                                              -> ()>,
+    pub Uniform4f: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLfloat, y: GLfloat,
+                                                       z: GLfloat, w: GLfloat)
+                                             -> ()>,
+    pub Uniform4fv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLfloat)
+                                              -> ()>,
+    pub Uniform4i: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLint, y: GLint,
+                                                       z: GLint, w: GLint)
+                                             -> ()>,
+    pub Uniform4iv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLint)
+                                              -> ()>,
+    pub UniformMatrix2fv: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              location: GLint,
+                                                              count: GLsizei,
+                                                              transpose:
+                                                                  GLboolean,
+                                                              value:
+                                                                  *const GLfloat)
+                                                    -> ()>,
+    pub UniformMatrix3fv: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              location: GLint,
+                                                              count: GLsizei,
+                                                              transpose:
+                                                                  GLboolean,
+                                                              value:
+                                                                  *const GLfloat)
+                                                    -> ()>,
+    pub UniformMatrix4fv: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              location: GLint,
+                                                              count: GLsizei,
+                                                              transpose:
+                                                                  GLboolean,
+                                                              value:
+                                                                  *const GLfloat)
+                                                    -> ()>,
+    pub UseProgram: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        program: GLuint)
+                                              -> ()>,
+    pub ValidateProgram: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             program: GLuint)
+                                                   -> ()>,
+    pub VertexAttrib1f: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            indx: GLuint,
+                                                            x: GLfloat)
+                                                  -> ()>,
+    pub VertexAttrib1fv: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             indx: GLuint,
+                                                             values:
+                                                                 *const GLfloat)
+                                                   -> ()>,
+    pub VertexAttrib2f: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            indx: GLuint,
+                                                            x: GLfloat,
+                                                            y: GLfloat)
+                                                  -> ()>,
+    pub VertexAttrib2fv: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             indx: GLuint,
+                                                             values:
+                                                                 *const GLfloat)
+                                                   -> ()>,
+    pub VertexAttrib3f: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            indx: GLuint,
+                                                            x: GLfloat,
+                                                            y: GLfloat,
+                                                            z: GLfloat)
+                                                  -> ()>,
+    pub VertexAttrib3fv: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             indx: GLuint,
+                                                             values:
+                                                                 *const GLfloat)
+                                                   -> ()>,
+    pub VertexAttrib4f: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            indx: GLuint,
+                                                            x: GLfloat,
+                                                            y: GLfloat,
+                                                            z: GLfloat,
+                                                            w: GLfloat)
+                                                  -> ()>,
+    pub VertexAttrib4fv: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             indx: GLuint,
+                                                             values:
+                                                                 *const GLfloat)
+                                                   -> ()>,
+    pub VertexAttribPointer: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 indx: GLuint,
+                                                                 size: GLint,
+                                                                 _type:
+                                                                     GLenum,
+                                                                 normalized:
+                                                                     GLboolean,
+                                                                 stride:
+                                                                     GLsizei,
+                                                                 ptr:
+                                                                     *const ::libc::c_void)
+                                                       -> ()>,
+    pub Viewport: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                      x: GLint, y: GLint,
+                                                      width: GLsizei,
+                                                      height: GLsizei) -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2_1_0 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2 {
-    pub ActiveTexture: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  texture: GLenum)>,
-    pub AttachShader: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 shader: GLuint)>,
-    pub BindAttribLocation: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       program: GLuint,
-                                                       index: GLuint,
-                                                       name:
-                                                           *const ::libc::c_char)>,
-    pub BindBuffer: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               target: GLenum,
-                                               buffer: GLuint)>,
-    pub BindFramebuffer: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    target: GLenum,
-                                                    framebuffer: GLuint)>,
-    pub BindRenderbuffer: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     target: GLenum,
-                                                     renderbuffer: GLuint)>,
-    pub BindTexture: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                target: GLenum,
-                                                texture: GLuint)>,
-    pub BlendColor: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               red: GLclampf, green: GLclampf,
-                                               blue: GLclampf,
-                                               alpha: GLclampf)>,
-    pub BlendEquation: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  mode: GLenum)>,
-    pub BlendEquationSeparate: ::std::option::Option<extern "C" fn
-                                                         (context:
-                                                              PP_Resource,
-                                                          modeRGB: GLenum,
-                                                          modeAlpha: GLenum)>,
-    pub BlendFunc: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              sfactor: GLenum,
-                                              dfactor: GLenum)>,
-    pub BlendFuncSeparate: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      srcRGB: GLenum,
-                                                      dstRGB: GLenum,
-                                                      srcAlpha: GLenum,
-                                                      dstAlpha: GLenum)>,
-    pub BufferData: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               target: GLenum,
-                                               size: GLsizeiptr,
-                                               data: *const ::libc::c_void,
-                                               usage: GLenum)>,
-    pub BufferSubData: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  offset: GLintptr,
-                                                  size: GLsizeiptr,
-                                                  data:
-                                                      *const ::libc::c_void)>,
-    pub CheckFramebufferStatus: ::std::option::Option<extern "C" fn
-                                                          (context:
+    pub ActiveTexture: ::std::option::Option<extern "C" fn(context:
                                                                PP_Resource,
-                                                           target: GLenum)
-                                                          -> GLenum>,
-    pub Clear: ::std::option::Option<extern "C" fn
-                                         (context: PP_Resource,
-                                          mask: GLbitfield)>,
-    pub ClearColor: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               red: GLclampf, green: GLclampf,
-                                               blue: GLclampf,
-                                               alpha: GLclampf)>,
-    pub ClearDepthf: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                depth: GLclampf)>,
-    pub ClearStencil: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 s: GLint)>,
-    pub ColorMask: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              red: GLboolean,
-                                              green: GLboolean,
-                                              blue: GLboolean,
-                                              alpha: GLboolean)>,
-    pub CompileShader: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  shader: GLuint)>,
-    pub CompressedTexImage2D: ::std::option::Option<extern "C" fn
-                                                        (context: PP_Resource,
+                                                           texture: GLenum)
+                                                 -> ()>,
+    pub AttachShader: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          shader: GLuint)
+                                                -> ()>,
+    pub BindAttribLocation: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                program:
+                                                                    GLuint,
+                                                                index: GLuint,
+                                                                name:
+                                                                    *const ::libc::c_char)
+                                                      -> ()>,
+    pub BindBuffer: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        target: GLenum,
+                                                        buffer: GLuint)
+                                              -> ()>,
+    pub BindFramebuffer: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             target: GLenum,
+                                                             framebuffer:
+                                                                 GLuint)
+                                                   -> ()>,
+    pub BindRenderbuffer: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              target: GLenum,
+                                                              renderbuffer:
+                                                                  GLuint)
+                                                    -> ()>,
+    pub BindTexture: ::std::option::Option<extern "C" fn(context: PP_Resource,
                                                          target: GLenum,
-                                                         level: GLint,
-                                                         internalformat:
-                                                             GLenum,
-                                                         width: GLsizei,
-                                                         height: GLsizei,
-                                                         border: GLint,
-                                                         imageSize: GLsizei,
-                                                         data:
-                                                             *const ::libc::c_void)>,
-    pub CompressedTexSubImage2D: ::std::option::Option<extern "C" fn
-                                                           (context:
+                                                         texture: GLuint)
+                                               -> ()>,
+    pub BlendColor: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        red: GLclampf,
+                                                        green: GLclampf,
+                                                        blue: GLclampf,
+                                                        alpha: GLclampf)
+                                              -> ()>,
+    pub BlendEquation: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           mode: GLenum)
+                                                 -> ()>,
+    pub BlendEquationSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                       PP_Resource,
+                                                                   modeRGB:
+                                                                       GLenum,
+                                                                   modeAlpha:
+                                                                       GLenum)
+                                                         -> ()>,
+    pub BlendFunc: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       sfactor: GLenum,
+                                                       dfactor: GLenum)
+                                             -> ()>,
+    pub BlendFuncSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               srcRGB: GLenum,
+                                                               dstRGB: GLenum,
+                                                               srcAlpha:
+                                                                   GLenum,
+                                                               dstAlpha:
+                                                                   GLenum)
+                                                     -> ()>,
+    pub BufferData: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        target: GLenum,
+                                                        size: GLsizeiptr,
+                                                        data:
+                                                            *const ::libc::c_void,
+                                                        usage: GLenum) -> ()>,
+    pub BufferSubData: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           offset: GLintptr,
+                                                           size: GLsizeiptr,
+                                                           data:
+                                                               *const ::libc::c_void)
+                                                 -> ()>,
+    pub CheckFramebufferStatus: ::std::option::Option<extern "C" fn(context:
+                                                                        PP_Resource,
+                                                                    target:
+                                                                        GLenum)
+                                                          -> GLenum>,
+    pub Clear: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                   mask: GLbitfield) -> ()>,
+    pub ClearColor: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        red: GLclampf,
+                                                        green: GLclampf,
+                                                        blue: GLclampf,
+                                                        alpha: GLclampf)
+                                              -> ()>,
+    pub ClearDepthf: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         depth: GLclampf)
+                                               -> ()>,
+    pub ClearStencil: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          s: GLint) -> ()>,
+    pub ColorMask: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       red: GLboolean,
+                                                       green: GLboolean,
+                                                       blue: GLboolean,
+                                                       alpha: GLboolean)
+                                             -> ()>,
+    pub CompileShader: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           shader: GLuint)
+                                                 -> ()>,
+    pub CompressedTexImage2D: ::std::option::Option<extern "C" fn(context:
+                                                                      PP_Resource,
+                                                                  target:
+                                                                      GLenum,
+                                                                  level:
+                                                                      GLint,
+                                                                  internalformat:
+                                                                      GLenum,
+                                                                  width:
+                                                                      GLsizei,
+                                                                  height:
+                                                                      GLsizei,
+                                                                  border:
+                                                                      GLint,
+                                                                  imageSize:
+                                                                      GLsizei,
+                                                                  data:
+                                                                      *const ::libc::c_void)
+                                                        -> ()>,
+    pub CompressedTexSubImage2D: ::std::option::Option<extern "C" fn(context:
+                                                                         PP_Resource,
+                                                                     target:
+                                                                         GLenum,
+                                                                     level:
+                                                                         GLint,
+                                                                     xoffset:
+                                                                         GLint,
+                                                                     yoffset:
+                                                                         GLint,
+                                                                     width:
+                                                                         GLsizei,
+                                                                     height:
+                                                                         GLsizei,
+                                                                     format:
+                                                                         GLenum,
+                                                                     imageSize:
+                                                                         GLsizei,
+                                                                     data:
+                                                                         *const ::libc::c_void)
+                                                           -> ()>,
+    pub CopyTexImage2D: ::std::option::Option<extern "C" fn(context:
                                                                 PP_Resource,
                                                             target: GLenum,
                                                             level: GLint,
-                                                            xoffset: GLint,
-                                                            yoffset: GLint,
+                                                            internalformat:
+                                                                GLenum,
+                                                            x: GLint,
+                                                            y: GLint,
                                                             width: GLsizei,
                                                             height: GLsizei,
-                                                            format: GLenum,
-                                                            imageSize:
-                                                                GLsizei,
-                                                            data:
-                                                                *const ::libc::c_void)>,
-    pub CopyTexImage2D: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   target: GLenum,
-                                                   level: GLint,
-                                                   internalformat: GLenum,
-                                                   x: GLint, y: GLint,
-                                                   width: GLsizei,
-                                                   height: GLsizei,
-                                                   border: GLint)>,
-    pub CopyTexSubImage2D: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      target: GLenum,
-                                                      level: GLint,
-                                                      xoffset: GLint,
-                                                      yoffset: GLint,
-                                                      x: GLint, y: GLint,
-                                                      width: GLsizei,
-                                                      height: GLsizei)>,
-    pub CreateProgram: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource)
+                                                            border: GLint)
+                                                  -> ()>,
+    pub CopyTexSubImage2D: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               target: GLenum,
+                                                               level: GLint,
+                                                               xoffset: GLint,
+                                                               yoffset: GLint,
+                                                               x: GLint,
+                                                               y: GLint,
+                                                               width: GLsizei,
+                                                               height:
+                                                                   GLsizei)
+                                                     -> ()>,
+    pub CreateProgram: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource)
                                                  -> GLuint>,
-    pub CreateShader: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 _type: GLenum) -> GLuint>,
-    pub CullFace: ::std::option::Option<extern "C" fn
-                                            (context: PP_Resource,
-                                             mode: GLenum)>,
-    pub DeleteBuffers: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  n: GLsizei,
-                                                  buffers: *const GLuint)>,
-    pub DeleteFramebuffers: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       n: GLsizei,
-                                                       framebuffers:
-                                                           *const GLuint)>,
-    pub DeleteProgram: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  program: GLuint)>,
-    pub DeleteRenderbuffers: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
+    pub CreateShader: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          _type: GLenum)
+                                                -> GLuint>,
+    pub CullFace: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                      mode: GLenum) -> ()>,
+    pub DeleteBuffers: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           n: GLsizei,
+                                                           buffers:
+                                                               *const GLuint)
+                                                 -> ()>,
+    pub DeleteFramebuffers: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                n: GLsizei,
+                                                                framebuffers:
+                                                                    *const GLuint)
+                                                      -> ()>,
+    pub DeleteProgram: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           program: GLuint)
+                                                 -> ()>,
+    pub DeleteRenderbuffers: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 n: GLsizei,
+                                                                 renderbuffers:
+                                                                     *const GLuint)
+                                                       -> ()>,
+    pub DeleteShader: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          shader: GLuint)
+                                                -> ()>,
+    pub DeleteTextures: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            n: GLsizei,
+                                                            textures:
+                                                                *const GLuint)
+                                                  -> ()>,
+    pub DepthFunc: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       func: GLenum) -> ()>,
+    pub DepthMask: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       flag: GLboolean)
+                                             -> ()>,
+    pub DepthRangef: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         zNear: GLclampf,
+                                                         zFar: GLclampf)
+                                               -> ()>,
+    pub DetachShader: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          shader: GLuint)
+                                                -> ()>,
+    pub Disable: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                     cap: GLenum) -> ()>,
+    pub DisableVertexAttribArray: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      index:
+                                                                          GLuint)
+                                                            -> ()>,
+    pub DrawArrays: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        mode: GLenum,
+                                                        first: GLint,
+                                                        count: GLsizei)
+                                              -> ()>,
+    pub DrawElements: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          mode: GLenum,
+                                                          count: GLsizei,
+                                                          _type: GLenum,
+                                                          indices:
+                                                              *const ::libc::c_void)
+                                                -> ()>,
+    pub Enable: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                    cap: GLenum) -> ()>,
+    pub EnableVertexAttribArray: ::std::option::Option<extern "C" fn(context:
+                                                                         PP_Resource,
+                                                                     index:
+                                                                         GLuint)
+                                                           -> ()>,
+    pub Finish: ::std::option::Option<extern "C" fn(context: PP_Resource)
+                                          -> ()>,
+    pub Flush: ::std::option::Option<extern "C" fn(context: PP_Resource)
+                                         -> ()>,
+    pub FramebufferRenderbuffer: ::std::option::Option<extern "C" fn(context:
+                                                                         PP_Resource,
+                                                                     target:
+                                                                         GLenum,
+                                                                     attachment:
+                                                                         GLenum,
+                                                                     renderbuffertarget:
+                                                                         GLenum,
+                                                                     renderbuffer:
+                                                                         GLuint)
+                                                           -> ()>,
+    pub FramebufferTexture2D: ::std::option::Option<extern "C" fn(context:
+                                                                      PP_Resource,
+                                                                  target:
+                                                                      GLenum,
+                                                                  attachment:
+                                                                      GLenum,
+                                                                  textarget:
+                                                                      GLenum,
+                                                                  texture:
+                                                                      GLuint,
+                                                                  level:
+                                                                      GLint)
+                                                        -> ()>,
+    pub FrontFace: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       mode: GLenum) -> ()>,
+    pub GenBuffers: ::std::option::Option<extern "C" fn(context: PP_Resource,
                                                         n: GLsizei,
-                                                        renderbuffers:
-                                                            *const GLuint)>,
-    pub DeleteShader: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 shader: GLuint)>,
-    pub DeleteTextures: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   n: GLsizei,
-                                                   textures: *const GLuint)>,
-    pub DepthFunc: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              func: GLenum)>,
-    pub DepthMask: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              flag: GLboolean)>,
-    pub DepthRangef: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                zNear: GLclampf,
-                                                zFar: GLclampf)>,
-    pub DetachShader: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 shader: GLuint)>,
-    pub Disable: ::std::option::Option<extern "C" fn
-                                           (context: PP_Resource,
-                                            cap: GLenum)>,
-    pub DisableVertexAttribArray: ::std::option::Option<extern "C" fn
-                                                            (context:
+                                                        buffers: *mut GLuint)
+                                              -> ()>,
+    pub GenerateMipmap: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            target: GLenum)
+                                                  -> ()>,
+    pub GenFramebuffers: ::std::option::Option<extern "C" fn(context:
                                                                  PP_Resource,
-                                                             index: GLuint)>,
-    pub DrawArrays: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               mode: GLenum, first: GLint,
-                                               count: GLsizei)>,
-    pub DrawElements: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 mode: GLenum, count: GLsizei,
-                                                 _type: GLenum,
-                                                 indices:
-                                                     *const ::libc::c_void)>,
-    pub Enable: ::std::option::Option<extern "C" fn
-                                          (context: PP_Resource,
-                                           cap: GLenum)>,
-    pub EnableVertexAttribArray: ::std::option::Option<extern "C" fn
-                                                           (context:
-                                                                PP_Resource,
-                                                            index: GLuint)>,
-    pub Finish: ::std::option::Option<extern "C" fn(context: PP_Resource)>,
-    pub Flush: ::std::option::Option<extern "C" fn(context: PP_Resource)>,
-    pub FramebufferRenderbuffer: ::std::option::Option<extern "C" fn
-                                                           (context:
-                                                                PP_Resource,
-                                                            target: GLenum,
-                                                            attachment:
-                                                                GLenum,
-                                                            renderbuffertarget:
-                                                                GLenum,
-                                                            renderbuffer:
-                                                                GLuint)>,
-    pub FramebufferTexture2D: ::std::option::Option<extern "C" fn
-                                                        (context: PP_Resource,
-                                                         target: GLenum,
-                                                         attachment: GLenum,
-                                                         textarget: GLenum,
-                                                         texture: GLuint,
-                                                         level: GLint)>,
-    pub FrontFace: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              mode: GLenum)>,
-    pub GenBuffers: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               n: GLsizei,
-                                               buffers: *mut GLuint)>,
-    pub GenerateMipmap: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   target: GLenum)>,
-    pub GenFramebuffers: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    n: GLsizei,
-                                                    framebuffers:
-                                                        *mut GLuint)>,
-    pub GenRenderbuffers: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     n: GLsizei,
-                                                     renderbuffers:
-                                                         *mut GLuint)>,
-    pub GenTextures: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                n: GLsizei,
-                                                textures: *mut GLuint)>,
-    pub GetActiveAttrib: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    program: GLuint,
-                                                    index: GLuint,
-                                                    bufsize: GLsizei,
-                                                    length: *mut GLsizei,
-                                                    size: *mut GLint,
-                                                    _type: *mut GLenum,
-                                                    name:
-                                                        *mut ::libc::c_char)>,
-    pub GetActiveUniform: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     program: GLuint,
-                                                     index: GLuint,
-                                                     bufsize: GLsizei,
-                                                     length: *mut GLsizei,
-                                                     size: *mut GLint,
-                                                     _type: *mut GLenum,
-                                                     name:
-                                                         *mut ::libc::c_char)>,
-    pub GetAttachedShaders: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       program: GLuint,
-                                                       maxcount: GLsizei,
-                                                       count: *mut GLsizei,
-                                                       shaders: *mut GLuint)>,
-    pub GetAttribLocation: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      program: GLuint,
-                                                      name:
-                                                          *const ::libc::c_char)
+                                                             n: GLsizei,
+                                                             framebuffers:
+                                                                 *mut GLuint)
+                                                   -> ()>,
+    pub GenRenderbuffers: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              n: GLsizei,
+                                                              renderbuffers:
+                                                                  *mut GLuint)
+                                                    -> ()>,
+    pub GenTextures: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         n: GLsizei,
+                                                         textures:
+                                                             *mut GLuint)
+                                               -> ()>,
+    pub GetActiveAttrib: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             program: GLuint,
+                                                             index: GLuint,
+                                                             bufsize: GLsizei,
+                                                             length:
+                                                                 *mut GLsizei,
+                                                             size: *mut GLint,
+                                                             _type:
+                                                                 *mut GLenum,
+                                                             name:
+                                                                 *mut ::libc::c_char)
+                                                   -> ()>,
+    pub GetActiveUniform: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              program: GLuint,
+                                                              index: GLuint,
+                                                              bufsize:
+                                                                  GLsizei,
+                                                              length:
+                                                                  *mut GLsizei,
+                                                              size:
+                                                                  *mut GLint,
+                                                              _type:
+                                                                  *mut GLenum,
+                                                              name:
+                                                                  *mut ::libc::c_char)
+                                                    -> ()>,
+    pub GetAttachedShaders: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                program:
+                                                                    GLuint,
+                                                                maxcount:
+                                                                    GLsizei,
+                                                                count:
+                                                                    *mut GLsizei,
+                                                                shaders:
+                                                                    *mut GLuint)
+                                                      -> ()>,
+    pub GetAttribLocation: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               program:
+                                                                   GLuint,
+                                                               name:
+                                                                   *const ::libc::c_char)
                                                      -> GLint>,
-    pub GetBooleanv: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                pname: GLenum,
-                                                params: *mut GLboolean)>,
-    pub GetBufferParameteriv: ::std::option::Option<extern "C" fn
-                                                        (context: PP_Resource,
-                                                         target: GLenum,
+    pub GetBooleanv: ::std::option::Option<extern "C" fn(context: PP_Resource,
                                                          pname: GLenum,
-                                                         params: *mut GLint)>,
+                                                         params:
+                                                             *mut GLboolean)
+                                               -> ()>,
+    pub GetBufferParameteriv: ::std::option::Option<extern "C" fn(context:
+                                                                      PP_Resource,
+                                                                  target:
+                                                                      GLenum,
+                                                                  pname:
+                                                                      GLenum,
+                                                                  params:
+                                                                      *mut GLint)
+                                                        -> ()>,
     pub GetError: ::std::option::Option<extern "C" fn(context: PP_Resource)
                                             -> GLenum>,
-    pub GetFloatv: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              pname: GLenum,
-                                              params: *mut GLfloat)>,
-    pub GetFramebufferAttachmentParameteriv: ::std::option::Option<extern "C" fn
-                                                                       (context:
+    pub GetFloatv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       pname: GLenum,
+                                                       params: *mut GLfloat)
+                                             -> ()>,
+    pub GetFramebufferAttachmentParameteriv: ::std::option::Option<extern "C" fn(context:
+                                                                                     PP_Resource,
+                                                                                 target:
+                                                                                     GLenum,
+                                                                                 attachment:
+                                                                                     GLenum,
+                                                                                 pname:
+                                                                                     GLenum,
+                                                                                 params:
+                                                                                     *mut GLint)
+                                                                       -> ()>,
+    pub GetIntegerv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         pname: GLenum,
+                                                         params: *mut GLint)
+                                               -> ()>,
+    pub GetProgramiv: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          pname: GLenum,
+                                                          params: *mut GLint)
+                                                -> ()>,
+    pub GetProgramInfoLog: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               program:
+                                                                   GLuint,
+                                                               bufsize:
+                                                                   GLsizei,
+                                                               length:
+                                                                   *mut GLsizei,
+                                                               infolog:
+                                                                   *mut ::libc::c_char)
+                                                     -> ()>,
+    pub GetRenderbufferParameteriv: ::std::option::Option<extern "C" fn(context:
                                                                             PP_Resource,
                                                                         target:
-                                                                            GLenum,
-                                                                        attachment:
                                                                             GLenum,
                                                                         pname:
                                                                             GLenum,
                                                                         params:
-                                                                            *mut GLint)>,
-    pub GetIntegerv: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                pname: GLenum,
-                                                params: *mut GLint)>,
-    pub GetProgramiv: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 pname: GLenum,
-                                                 params: *mut GLint)>,
-    pub GetProgramInfoLog: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      program: GLuint,
-                                                      bufsize: GLsizei,
-                                                      length: *mut GLsizei,
-                                                      infolog:
-                                                          *mut ::libc::c_char)>,
-    pub GetRenderbufferParameteriv: ::std::option::Option<extern "C" fn
-                                                              (context:
+                                                                            *mut GLint)
+                                                              -> ()>,
+    pub GetShaderiv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         shader: GLuint,
+                                                         pname: GLenum,
+                                                         params: *mut GLint)
+                                               -> ()>,
+    pub GetShaderInfoLog: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              shader: GLuint,
+                                                              bufsize:
+                                                                  GLsizei,
+                                                              length:
+                                                                  *mut GLsizei,
+                                                              infolog:
+                                                                  *mut ::libc::c_char)
+                                                    -> ()>,
+    pub GetShaderPrecisionFormat: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      shadertype:
+                                                                          GLenum,
+                                                                      precisiontype:
+                                                                          GLenum,
+                                                                      range:
+                                                                          *mut GLint,
+                                                                      precision:
+                                                                          *mut GLint)
+                                                            -> ()>,
+    pub GetShaderSource: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             shader: GLuint,
+                                                             bufsize: GLsizei,
+                                                             length:
+                                                                 *mut GLsizei,
+                                                             source:
+                                                                 *mut ::libc::c_char)
+                                                   -> ()>,
+    pub GetString: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       name: GLenum)
+                                             -> *const GLubyte>,
+    pub GetTexParameterfv: ::std::option::Option<extern "C" fn(context:
                                                                    PP_Resource,
                                                                target: GLenum,
                                                                pname: GLenum,
                                                                params:
-                                                                   *mut GLint)>,
-    pub GetShaderiv: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                shader: GLuint, pname: GLenum,
-                                                params: *mut GLint)>,
-    pub GetShaderInfoLog: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     shader: GLuint,
-                                                     bufsize: GLsizei,
-                                                     length: *mut GLsizei,
-                                                     infolog:
-                                                         *mut ::libc::c_char)>,
-    pub GetShaderPrecisionFormat: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             shadertype:
-                                                                 GLenum,
-                                                             precisiontype:
-                                                                 GLenum,
-                                                             range:
-                                                                 *mut GLint,
-                                                             precision:
-                                                                 *mut GLint)>,
-    pub GetShaderSource: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    shader: GLuint,
-                                                    bufsize: GLsizei,
-                                                    length: *mut GLsizei,
-                                                    source:
-                                                        *mut ::libc::c_char)>,
-    pub GetString: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              name: GLenum)
-                                             -> *const GLubyte>,
-    pub GetTexParameterfv: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      target: GLenum,
-                                                      pname: GLenum,
-                                                      params: *mut GLfloat)>,
-    pub GetTexParameteriv: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      target: GLenum,
-                                                      pname: GLenum,
-                                                      params: *mut GLint)>,
-    pub GetUniformfv: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 location: GLint,
-                                                 params: *mut GLfloat)>,
-    pub GetUniformiv: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 program: GLuint,
-                                                 location: GLint,
-                                                 params: *mut GLint)>,
-    pub GetUniformLocation: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       program: GLuint,
-                                                       name:
-                                                           *const ::libc::c_char)
+                                                                   *mut GLfloat)
+                                                     -> ()>,
+    pub GetTexParameteriv: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               target: GLenum,
+                                                               pname: GLenum,
+                                                               params:
+                                                                   *mut GLint)
+                                                     -> ()>,
+    pub GetUniformfv: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          location: GLint,
+                                                          params:
+                                                              *mut GLfloat)
+                                                -> ()>,
+    pub GetUniformiv: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          program: GLuint,
+                                                          location: GLint,
+                                                          params: *mut GLint)
+                                                -> ()>,
+    pub GetUniformLocation: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                program:
+                                                                    GLuint,
+                                                                name:
+                                                                    *const ::libc::c_char)
                                                       -> GLint>,
-    pub GetVertexAttribfv: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      index: GLuint,
-                                                      pname: GLenum,
-                                                      params: *mut GLfloat)>,
-    pub GetVertexAttribiv: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      index: GLuint,
-                                                      pname: GLenum,
-                                                      params: *mut GLint)>,
-    pub GetVertexAttribPointerv: ::std::option::Option<extern "C" fn
-                                                           (context:
-                                                                PP_Resource,
-                                                            index: GLuint,
-                                                            pname: GLenum,
-                                                            pointer:
-                                                                *mut *mut ::libc::c_void)>,
-    pub Hint: ::std::option::Option<extern "C" fn
-                                        (context: PP_Resource, target: GLenum,
-                                         mode: GLenum)>,
-    pub IsBuffer: ::std::option::Option<extern "C" fn
-                                            (context: PP_Resource,
-                                             buffer: GLuint) -> GLboolean>,
-    pub IsEnabled: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              cap: GLenum) -> GLboolean>,
-    pub IsFramebuffer: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  framebuffer: GLuint)
+    pub GetVertexAttribfv: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               index: GLuint,
+                                                               pname: GLenum,
+                                                               params:
+                                                                   *mut GLfloat)
+                                                     -> ()>,
+    pub GetVertexAttribiv: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               index: GLuint,
+                                                               pname: GLenum,
+                                                               params:
+                                                                   *mut GLint)
+                                                     -> ()>,
+    pub GetVertexAttribPointerv: ::std::option::Option<extern "C" fn(context:
+                                                                         PP_Resource,
+                                                                     index:
+                                                                         GLuint,
+                                                                     pname:
+                                                                         GLenum,
+                                                                     pointer:
+                                                                         *mut *mut ::libc::c_void)
+                                                           -> ()>,
+    pub Hint: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                  target: GLenum,
+                                                  mode: GLenum) -> ()>,
+    pub IsBuffer: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                      buffer: GLuint)
+                                            -> GLboolean>,
+    pub IsEnabled: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       cap: GLenum)
+                                             -> GLboolean>,
+    pub IsFramebuffer: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           framebuffer:
+                                                               GLuint)
                                                  -> GLboolean>,
-    pub IsProgram: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              program: GLuint) -> GLboolean>,
-    pub IsRenderbuffer: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   renderbuffer: GLuint)
+    pub IsProgram: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       program: GLuint)
+                                             -> GLboolean>,
+    pub IsRenderbuffer: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            renderbuffer:
+                                                                GLuint)
                                                   -> GLboolean>,
-    pub IsShader: ::std::option::Option<extern "C" fn
-                                            (context: PP_Resource,
-                                             shader: GLuint) -> GLboolean>,
-    pub IsTexture: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              texture: GLuint) -> GLboolean>,
-    pub LineWidth: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              width: GLfloat)>,
-    pub LinkProgram: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                program: GLuint)>,
-    pub PixelStorei: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                pname: GLenum, param: GLint)>,
-    pub PolygonOffset: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  factor: GLfloat,
-                                                  units: GLfloat)>,
-    pub ReadPixels: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource, x: GLint,
-                                               y: GLint, width: GLsizei,
-                                               height: GLsizei,
-                                               format: GLenum, _type: GLenum,
-                                               pixels: *mut ::libc::c_void)>,
-    pub ReleaseShaderCompiler: ::std::option::Option<extern "C" fn
-                                                         (context:
-                                                              PP_Resource)>,
-    pub RenderbufferStorage: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
-                                                        target: GLenum,
-                                                        internalformat:
-                                                            GLenum,
+    pub IsShader: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                      shader: GLuint)
+                                            -> GLboolean>,
+    pub IsTexture: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       texture: GLuint)
+                                             -> GLboolean>,
+    pub LineWidth: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       width: GLfloat) -> ()>,
+    pub LinkProgram: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         program: GLuint)
+                                               -> ()>,
+    pub PixelStorei: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         pname: GLenum,
+                                                         param: GLint) -> ()>,
+    pub PolygonOffset: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           factor: GLfloat,
+                                                           units: GLfloat)
+                                                 -> ()>,
+    pub ReadPixels: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        x: GLint, y: GLint,
                                                         width: GLsizei,
-                                                        height: GLsizei)>,
-    pub SampleCoverage: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   value: GLclampf,
-                                                   invert: GLboolean)>,
-    pub Scissor: ::std::option::Option<extern "C" fn
-                                           (context: PP_Resource, x: GLint,
-                                            y: GLint, width: GLsizei,
-                                            height: GLsizei)>,
-    pub ShaderBinary: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 n: GLsizei,
-                                                 shaders: *const GLuint,
-                                                 binaryformat: GLenum,
-                                                 binary:
-                                                     *const ::libc::c_void,
-                                                 length: GLsizei)>,
-    pub ShaderSource: ::std::option::Option<extern "C" fn
-                                                (context: PP_Resource,
-                                                 shader: GLuint,
-                                                 count: GLsizei,
-                                                 str:
-                                                     *mut *const ::libc::c_char,
-                                                 length: *const GLint)>,
-    pub StencilFunc: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                func: GLenum, _ref: GLint,
-                                                mask: GLuint)>,
-    pub StencilFuncSeparate: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
-                                                        face: GLenum,
-                                                        func: GLenum,
-                                                        _ref: GLint,
-                                                        mask: GLuint)>,
-    pub StencilMask: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                mask: GLuint)>,
-    pub StencilMaskSeparate: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
-                                                        face: GLenum,
-                                                        mask: GLuint)>,
-    pub StencilOp: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              fail: GLenum, zfail: GLenum,
-                                              zpass: GLenum)>,
-    pub StencilOpSeparate: ::std::option::Option<extern "C" fn
-                                                     (context: PP_Resource,
-                                                      face: GLenum,
-                                                      fail: GLenum,
-                                                      zfail: GLenum,
-                                                      zpass: GLenum)>,
-    pub TexImage2D: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               target: GLenum, level: GLint,
-                                               internalformat: GLint,
-                                               width: GLsizei,
-                                               height: GLsizei, border: GLint,
-                                               format: GLenum, _type: GLenum,
-                                               pixels:
-                                                   *const ::libc::c_void)>,
-    pub TexParameterf: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  pname: GLenum,
-                                                  param: GLfloat)>,
-    pub TexParameterfv: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   target: GLenum,
-                                                   pname: GLenum,
-                                                   params: *const GLfloat)>,
-    pub TexParameteri: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  pname: GLenum,
-                                                  param: GLint)>,
-    pub TexParameteriv: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   target: GLenum,
-                                                   pname: GLenum,
-                                                   params: *const GLint)>,
-    pub TexSubImage2D: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  level: GLint,
-                                                  xoffset: GLint,
-                                                  yoffset: GLint,
-                                                  width: GLsizei,
-                                                  height: GLsizei,
-                                                  format: GLenum,
-                                                  _type: GLenum,
-                                                  pixels:
-                                                      *const ::libc::c_void)>,
-    pub Uniform1f: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLfloat)>,
-    pub Uniform1fv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLfloat)>,
-    pub Uniform1i: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLint)>,
-    pub Uniform1iv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLint)>,
-    pub Uniform2f: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLfloat,
-                                              y: GLfloat)>,
-    pub Uniform2fv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLfloat)>,
-    pub Uniform2i: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLint,
-                                              y: GLint)>,
-    pub Uniform2iv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLint)>,
-    pub Uniform3f: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLfloat,
-                                              y: GLfloat, z: GLfloat)>,
-    pub Uniform3fv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLfloat)>,
-    pub Uniform3i: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLint,
-                                              y: GLint, z: GLint)>,
-    pub Uniform3iv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLint)>,
-    pub Uniform4f: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLfloat,
-                                              y: GLfloat, z: GLfloat,
-                                              w: GLfloat)>,
-    pub Uniform4fv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLfloat)>,
-    pub Uniform4i: ::std::option::Option<extern "C" fn
-                                             (context: PP_Resource,
-                                              location: GLint, x: GLint,
-                                              y: GLint, z: GLint, w: GLint)>,
-    pub Uniform4iv: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               location: GLint,
-                                               count: GLsizei,
-                                               v: *const GLint)>,
-    pub UniformMatrix2fv: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     location: GLint,
-                                                     count: GLsizei,
-                                                     transpose: GLboolean,
-                                                     value: *const GLfloat)>,
-    pub UniformMatrix3fv: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     location: GLint,
-                                                     count: GLsizei,
-                                                     transpose: GLboolean,
-                                                     value: *const GLfloat)>,
-    pub UniformMatrix4fv: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     location: GLint,
-                                                     count: GLsizei,
-                                                     transpose: GLboolean,
-                                                     value: *const GLfloat)>,
-    pub UseProgram: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               program: GLuint)>,
-    pub ValidateProgram: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    program: GLuint)>,
-    pub VertexAttrib1f: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   indx: GLuint, x: GLfloat)>,
-    pub VertexAttrib1fv: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    indx: GLuint,
-                                                    values: *const GLfloat)>,
-    pub VertexAttrib2f: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   indx: GLuint, x: GLfloat,
-                                                   y: GLfloat)>,
-    pub VertexAttrib2fv: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    indx: GLuint,
-                                                    values: *const GLfloat)>,
-    pub VertexAttrib3f: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   indx: GLuint, x: GLfloat,
-                                                   y: GLfloat, z: GLfloat)>,
-    pub VertexAttrib3fv: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    indx: GLuint,
-                                                    values: *const GLfloat)>,
-    pub VertexAttrib4f: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   indx: GLuint, x: GLfloat,
-                                                   y: GLfloat, z: GLfloat,
-                                                   w: GLfloat)>,
-    pub VertexAttrib4fv: ::std::option::Option<extern "C" fn
-                                                   (context: PP_Resource,
-                                                    indx: GLuint,
-                                                    values: *const GLfloat)>,
-    pub VertexAttribPointer: ::std::option::Option<extern "C" fn
-                                                       (context: PP_Resource,
-                                                        indx: GLuint,
-                                                        size: GLint,
+                                                        height: GLsizei,
+                                                        format: GLenum,
                                                         _type: GLenum,
-                                                        normalized: GLboolean,
-                                                        stride: GLsizei,
-                                                        ptr:
-                                                            *const ::libc::c_void)>,
-    pub Viewport: ::std::option::Option<extern "C" fn
-                                            (context: PP_Resource, x: GLint,
-                                             y: GLint, width: GLsizei,
-                                             height: GLsizei)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2 {
-    fn default() -> Struct_PPB_OpenGLES2 { unsafe { ::std::mem::zeroed() } }
+                                                        pixels:
+                                                            *mut ::libc::c_void)
+                                              -> ()>,
+    pub ReleaseShaderCompiler: ::std::option::Option<extern "C" fn(context:
+                                                                       PP_Resource)
+                                                         -> ()>,
+    pub RenderbufferStorage: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 target:
+                                                                     GLenum,
+                                                                 internalformat:
+                                                                     GLenum,
+                                                                 width:
+                                                                     GLsizei,
+                                                                 height:
+                                                                     GLsizei)
+                                                       -> ()>,
+    pub SampleCoverage: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            value: GLclampf,
+                                                            invert: GLboolean)
+                                                  -> ()>,
+    pub Scissor: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                     x: GLint, y: GLint,
+                                                     width: GLsizei,
+                                                     height: GLsizei) -> ()>,
+    pub ShaderBinary: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          n: GLsizei,
+                                                          shaders:
+                                                              *const GLuint,
+                                                          binaryformat:
+                                                              GLenum,
+                                                          binary:
+                                                              *const ::libc::c_void,
+                                                          length: GLsizei)
+                                                -> ()>,
+    pub ShaderSource: ::std::option::Option<extern "C" fn(context:
+                                                              PP_Resource,
+                                                          shader: GLuint,
+                                                          count: GLsizei,
+                                                          str:
+                                                              *mut *const ::libc::c_char,
+                                                          length:
+                                                              *const GLint)
+                                                -> ()>,
+    pub StencilFunc: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         func: GLenum,
+                                                         _ref: GLint,
+                                                         mask: GLuint) -> ()>,
+    pub StencilFuncSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 face: GLenum,
+                                                                 func: GLenum,
+                                                                 _ref: GLint,
+                                                                 mask: GLuint)
+                                                       -> ()>,
+    pub StencilMask: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         mask: GLuint) -> ()>,
+    pub StencilMaskSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 face: GLenum,
+                                                                 mask: GLuint)
+                                                       -> ()>,
+    pub StencilOp: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       fail: GLenum,
+                                                       zfail: GLenum,
+                                                       zpass: GLenum) -> ()>,
+    pub StencilOpSeparate: ::std::option::Option<extern "C" fn(context:
+                                                                   PP_Resource,
+                                                               face: GLenum,
+                                                               fail: GLenum,
+                                                               zfail: GLenum,
+                                                               zpass: GLenum)
+                                                     -> ()>,
+    pub TexImage2D: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        target: GLenum,
+                                                        level: GLint,
+                                                        internalformat: GLint,
+                                                        width: GLsizei,
+                                                        height: GLsizei,
+                                                        border: GLint,
+                                                        format: GLenum,
+                                                        _type: GLenum,
+                                                        pixels:
+                                                            *const ::libc::c_void)
+                                              -> ()>,
+    pub TexParameterf: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           pname: GLenum,
+                                                           param: GLfloat)
+                                                 -> ()>,
+    pub TexParameterfv: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            target: GLenum,
+                                                            pname: GLenum,
+                                                            params:
+                                                                *const GLfloat)
+                                                  -> ()>,
+    pub TexParameteri: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           pname: GLenum,
+                                                           param: GLint)
+                                                 -> ()>,
+    pub TexParameteriv: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            target: GLenum,
+                                                            pname: GLenum,
+                                                            params:
+                                                                *const GLint)
+                                                  -> ()>,
+    pub TexSubImage2D: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           level: GLint,
+                                                           xoffset: GLint,
+                                                           yoffset: GLint,
+                                                           width: GLsizei,
+                                                           height: GLsizei,
+                                                           format: GLenum,
+                                                           _type: GLenum,
+                                                           pixels:
+                                                               *const ::libc::c_void)
+                                                 -> ()>,
+    pub Uniform1f: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLfloat) -> ()>,
+    pub Uniform1fv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLfloat)
+                                              -> ()>,
+    pub Uniform1i: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLint) -> ()>,
+    pub Uniform1iv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLint)
+                                              -> ()>,
+    pub Uniform2f: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLfloat, y: GLfloat)
+                                             -> ()>,
+    pub Uniform2fv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLfloat)
+                                              -> ()>,
+    pub Uniform2i: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLint, y: GLint)
+                                             -> ()>,
+    pub Uniform2iv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLint)
+                                              -> ()>,
+    pub Uniform3f: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLfloat, y: GLfloat,
+                                                       z: GLfloat) -> ()>,
+    pub Uniform3fv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLfloat)
+                                              -> ()>,
+    pub Uniform3i: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLint, y: GLint,
+                                                       z: GLint) -> ()>,
+    pub Uniform3iv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLint)
+                                              -> ()>,
+    pub Uniform4f: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLfloat, y: GLfloat,
+                                                       z: GLfloat, w: GLfloat)
+                                             -> ()>,
+    pub Uniform4fv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLfloat)
+                                              -> ()>,
+    pub Uniform4i: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                       location: GLint,
+                                                       x: GLint, y: GLint,
+                                                       z: GLint, w: GLint)
+                                             -> ()>,
+    pub Uniform4iv: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        location: GLint,
+                                                        count: GLsizei,
+                                                        v: *const GLint)
+                                              -> ()>,
+    pub UniformMatrix2fv: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              location: GLint,
+                                                              count: GLsizei,
+                                                              transpose:
+                                                                  GLboolean,
+                                                              value:
+                                                                  *const GLfloat)
+                                                    -> ()>,
+    pub UniformMatrix3fv: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              location: GLint,
+                                                              count: GLsizei,
+                                                              transpose:
+                                                                  GLboolean,
+                                                              value:
+                                                                  *const GLfloat)
+                                                    -> ()>,
+    pub UniformMatrix4fv: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              location: GLint,
+                                                              count: GLsizei,
+                                                              transpose:
+                                                                  GLboolean,
+                                                              value:
+                                                                  *const GLfloat)
+                                                    -> ()>,
+    pub UseProgram: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        program: GLuint)
+                                              -> ()>,
+    pub ValidateProgram: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             program: GLuint)
+                                                   -> ()>,
+    pub VertexAttrib1f: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            indx: GLuint,
+                                                            x: GLfloat)
+                                                  -> ()>,
+    pub VertexAttrib1fv: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             indx: GLuint,
+                                                             values:
+                                                                 *const GLfloat)
+                                                   -> ()>,
+    pub VertexAttrib2f: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            indx: GLuint,
+                                                            x: GLfloat,
+                                                            y: GLfloat)
+                                                  -> ()>,
+    pub VertexAttrib2fv: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             indx: GLuint,
+                                                             values:
+                                                                 *const GLfloat)
+                                                   -> ()>,
+    pub VertexAttrib3f: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            indx: GLuint,
+                                                            x: GLfloat,
+                                                            y: GLfloat,
+                                                            z: GLfloat)
+                                                  -> ()>,
+    pub VertexAttrib3fv: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             indx: GLuint,
+                                                             values:
+                                                                 *const GLfloat)
+                                                   -> ()>,
+    pub VertexAttrib4f: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            indx: GLuint,
+                                                            x: GLfloat,
+                                                            y: GLfloat,
+                                                            z: GLfloat,
+                                                            w: GLfloat)
+                                                  -> ()>,
+    pub VertexAttrib4fv: ::std::option::Option<extern "C" fn(context:
+                                                                 PP_Resource,
+                                                             indx: GLuint,
+                                                             values:
+                                                                 *const GLfloat)
+                                                   -> ()>,
+    pub VertexAttribPointer: ::std::option::Option<extern "C" fn(context:
+                                                                     PP_Resource,
+                                                                 indx: GLuint,
+                                                                 size: GLint,
+                                                                 _type:
+                                                                     GLenum,
+                                                                 normalized:
+                                                                     GLboolean,
+                                                                 stride:
+                                                                     GLsizei,
+                                                                 ptr:
+                                                                     *const ::libc::c_void)
+                                                       -> ()>,
+    pub Viewport: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                      x: GLint, y: GLint,
+                                                      width: GLsizei,
+                                                      height: GLsizei) -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2InstancedArrays_1_0 {
-    pub DrawArraysInstancedANGLE: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             mode: GLenum,
-                                                             first: GLint,
-                                                             count: GLsizei,
-                                                             primcount:
-                                                                 GLsizei)>,
-    pub DrawElementsInstancedANGLE: ::std::option::Option<extern "C" fn
-                                                              (context:
-                                                                   PP_Resource,
-                                                               mode: GLenum,
-                                                               count: GLsizei,
-                                                               _type: GLenum,
-                                                               indices:
-                                                                   *const ::libc::c_void,
-                                                               primcount:
-                                                                   GLsizei)>,
-    pub VertexAttribDivisorANGLE: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             index: GLuint,
-                                                             divisor:
-                                                                 GLuint)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2InstancedArrays_1_0 {
-    fn default() -> Struct_PPB_OpenGLES2InstancedArrays_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub DrawArraysInstancedANGLE: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      mode:
+                                                                          GLenum,
+                                                                      first:
+                                                                          GLint,
+                                                                      count:
+                                                                          GLsizei,
+                                                                      primcount:
+                                                                          GLsizei)
+                                                            -> ()>,
+    pub DrawElementsInstancedANGLE: ::std::option::Option<extern "C" fn(context:
+                                                                            PP_Resource,
+                                                                        mode:
+                                                                            GLenum,
+                                                                        count:
+                                                                            GLsizei,
+                                                                        _type:
+                                                                            GLenum,
+                                                                        indices:
+                                                                            *const ::libc::c_void,
+                                                                        primcount:
+                                                                            GLsizei)
+                                                              -> ()>,
+    pub VertexAttribDivisorANGLE: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      index:
+                                                                          GLuint,
+                                                                      divisor:
+                                                                          GLuint)
+                                                            -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2InstancedArrays_1_0 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2InstancedArrays_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2InstancedArrays_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2InstancedArrays {
-    pub DrawArraysInstancedANGLE: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             mode: GLenum,
-                                                             first: GLint,
-                                                             count: GLsizei,
-                                                             primcount:
-                                                                 GLsizei)>,
-    pub DrawElementsInstancedANGLE: ::std::option::Option<extern "C" fn
-                                                              (context:
-                                                                   PP_Resource,
-                                                               mode: GLenum,
-                                                               count: GLsizei,
-                                                               _type: GLenum,
-                                                               indices:
-                                                                   *const ::libc::c_void,
-                                                               primcount:
-                                                                   GLsizei)>,
-    pub VertexAttribDivisorANGLE: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             index: GLuint,
-                                                             divisor:
-                                                                 GLuint)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2InstancedArrays {
-    fn default() -> Struct_PPB_OpenGLES2InstancedArrays {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub DrawArraysInstancedANGLE: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      mode:
+                                                                          GLenum,
+                                                                      first:
+                                                                          GLint,
+                                                                      count:
+                                                                          GLsizei,
+                                                                      primcount:
+                                                                          GLsizei)
+                                                            -> ()>,
+    pub DrawElementsInstancedANGLE: ::std::option::Option<extern "C" fn(context:
+                                                                            PP_Resource,
+                                                                        mode:
+                                                                            GLenum,
+                                                                        count:
+                                                                            GLsizei,
+                                                                        _type:
+                                                                            GLenum,
+                                                                        indices:
+                                                                            *const ::libc::c_void,
+                                                                        primcount:
+                                                                            GLsizei)
+                                                              -> ()>,
+    pub VertexAttribDivisorANGLE: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      index:
+                                                                          GLuint,
+                                                                      divisor:
+                                                                          GLuint)
+                                                            -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2InstancedArrays {
-    fn clone(&self) -> Struct_PPB_OpenGLES2InstancedArrays {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2InstancedArrays {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
-    pub BlitFramebufferEXT: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       srcX0: GLint,
-                                                       srcY0: GLint,
-                                                       srcX1: GLint,
-                                                       srcY1: GLint,
-                                                       dstX0: GLint,
-                                                       dstY0: GLint,
-                                                       dstX1: GLint,
-                                                       dstY1: GLint,
-                                                       mask: GLbitfield,
-                                                       filter: GLenum)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
-    fn default() -> Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub BlitFramebufferEXT: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                srcX0: GLint,
+                                                                srcY0: GLint,
+                                                                srcX1: GLint,
+                                                                srcY1: GLint,
+                                                                dstX0: GLint,
+                                                                dstY0: GLint,
+                                                                dstX1: GLint,
+                                                                dstY1: GLint,
+                                                                mask:
+                                                                    GLbitfield,
+                                                                filter:
+                                                                    GLenum)
+                                                      -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2FramebufferBlit_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2FramebufferBlit {
-    pub BlitFramebufferEXT: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       srcX0: GLint,
-                                                       srcY0: GLint,
-                                                       srcX1: GLint,
-                                                       srcY1: GLint,
-                                                       dstX0: GLint,
-                                                       dstY0: GLint,
-                                                       dstX1: GLint,
-                                                       dstY1: GLint,
-                                                       mask: GLbitfield,
-                                                       filter: GLenum)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2FramebufferBlit {
-    fn default() -> Struct_PPB_OpenGLES2FramebufferBlit {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub BlitFramebufferEXT: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                srcX0: GLint,
+                                                                srcY0: GLint,
+                                                                srcX1: GLint,
+                                                                srcY1: GLint,
+                                                                dstX0: GLint,
+                                                                dstY0: GLint,
+                                                                dstX1: GLint,
+                                                                dstY1: GLint,
+                                                                mask:
+                                                                    GLbitfield,
+                                                                filter:
+                                                                    GLenum)
+                                                      -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2FramebufferBlit {
-    fn clone(&self) -> Struct_PPB_OpenGLES2FramebufferBlit {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2FramebufferBlit {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2FramebufferMultisample_1_0 {
-    pub RenderbufferStorageMultisampleEXT: ::std::option::Option<extern "C" fn
-                                                                     (context:
-                                                                          PP_Resource,
-                                                                      target:
-                                                                          GLenum,
-                                                                      samples:
-                                                                          GLsizei,
-                                                                      internalformat:
-                                                                          GLenum,
-                                                                      width:
-                                                                          GLsizei,
-                                                                      height:
-                                                                          GLsizei)>,
+    pub RenderbufferStorageMultisampleEXT: ::std::option::Option<extern "C" fn(context:
+                                                                                   PP_Resource,
+                                                                               target:
+                                                                                   GLenum,
+                                                                               samples:
+                                                                                   GLsizei,
+                                                                               internalformat:
+                                                                                   GLenum,
+                                                                               width:
+                                                                                   GLsizei,
+                                                                               height:
+                                                                                   GLsizei)
+                                                                     -> ()>,
+}
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2FramebufferMultisample_1_0 {
+    fn clone(&self) -> Self { *self }
 }
 impl ::std::default::Default for
  Struct_PPB_OpenGLES2FramebufferMultisample_1_0 {
-    fn default() -> Struct_PPB_OpenGLES2FramebufferMultisample_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-impl ::std::clone::Clone for Struct_PPB_OpenGLES2FramebufferMultisample_1_0 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2FramebufferMultisample_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2FramebufferMultisample {
-    pub RenderbufferStorageMultisampleEXT: ::std::option::Option<extern "C" fn
-                                                                     (context:
-                                                                          PP_Resource,
-                                                                      target:
-                                                                          GLenum,
-                                                                      samples:
-                                                                          GLsizei,
-                                                                      internalformat:
-                                                                          GLenum,
-                                                                      width:
-                                                                          GLsizei,
-                                                                      height:
-                                                                          GLsizei)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2FramebufferMultisample {
-    fn default() -> Struct_PPB_OpenGLES2FramebufferMultisample {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub RenderbufferStorageMultisampleEXT: ::std::option::Option<extern "C" fn(context:
+                                                                                   PP_Resource,
+                                                                               target:
+                                                                                   GLenum,
+                                                                               samples:
+                                                                                   GLsizei,
+                                                                               internalformat:
+                                                                                   GLenum,
+                                                                               width:
+                                                                                   GLsizei,
+                                                                               height:
+                                                                                   GLsizei)
+                                                                     -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2FramebufferMultisample {
-    fn clone(&self) -> Struct_PPB_OpenGLES2FramebufferMultisample {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2FramebufferMultisample {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0 {
-    pub EnableFeatureCHROMIUM: ::std::option::Option<extern "C" fn
-                                                         (context:
-                                                              PP_Resource,
-                                                          feature:
-                                                              *const ::libc::c_char)
+    pub EnableFeatureCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                       PP_Resource,
+                                                                   feature:
+                                                                       *const ::libc::c_char)
                                                          -> GLboolean>,
+}
+impl ::std::clone::Clone for Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0 {
+    fn clone(&self) -> Self { *self }
 }
 impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0
  {
-    fn default() -> Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-impl ::std::clone::Clone for Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2ChromiumEnableFeature_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2ChromiumEnableFeature {
-    pub EnableFeatureCHROMIUM: ::std::option::Option<extern "C" fn
-                                                         (context:
-                                                              PP_Resource,
-                                                          feature:
-                                                              *const ::libc::c_char)
+    pub EnableFeatureCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                       PP_Resource,
+                                                                   feature:
+                                                                       *const ::libc::c_char)
                                                          -> GLboolean>,
 }
-impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumEnableFeature {
-    fn default() -> Struct_PPB_OpenGLES2ChromiumEnableFeature {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2ChromiumEnableFeature {
-    fn clone(&self) -> Struct_PPB_OpenGLES2ChromiumEnableFeature {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumEnableFeature {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
-    pub MapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             target: GLuint,
-                                                             offset: GLintptr,
-                                                             size: GLsizeiptr,
-                                                             access: GLenum)
+    pub MapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      target:
+                                                                          GLuint,
+                                                                      offset:
+                                                                          GLintptr,
+                                                                      size:
+                                                                          GLsizeiptr,
+                                                                      access:
+                                                                          GLenum)
                                                             ->
                                                                 *mut ::libc::c_void>,
-    pub UnmapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn
-                                                              (context:
-                                                                   PP_Resource,
-                                                               mem:
-                                                                   *const ::libc::c_void)>,
-    pub MapTexSubImage2DCHROMIUM: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             target: GLenum,
-                                                             level: GLint,
-                                                             xoffset: GLint,
-                                                             yoffset: GLint,
-                                                             width: GLsizei,
-                                                             height: GLsizei,
-                                                             format: GLenum,
-                                                             _type: GLenum,
-                                                             access: GLenum)
+    pub UnmapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                            PP_Resource,
+                                                                        mem:
+                                                                            *const ::libc::c_void)
+                                                              -> ()>,
+    pub MapTexSubImage2DCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      target:
+                                                                          GLenum,
+                                                                      level:
+                                                                          GLint,
+                                                                      xoffset:
+                                                                          GLint,
+                                                                      yoffset:
+                                                                          GLint,
+                                                                      width:
+                                                                          GLsizei,
+                                                                      height:
+                                                                          GLsizei,
+                                                                      format:
+                                                                          GLenum,
+                                                                      _type:
+                                                                          GLenum,
+                                                                      access:
+                                                                          GLenum)
                                                             ->
                                                                 *mut ::libc::c_void>,
-    pub UnmapTexSubImage2DCHROMIUM: ::std::option::Option<extern "C" fn
-                                                              (context:
-                                                                   PP_Resource,
-                                                               mem:
-                                                                   *const ::libc::c_void)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
-    fn default() -> Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub UnmapTexSubImage2DCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                            PP_Resource,
+                                                                        mem:
+                                                                            *const ::libc::c_void)
+                                                              -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumMapSub_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2ChromiumMapSub {
-    pub MapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             target: GLuint,
-                                                             offset: GLintptr,
-                                                             size: GLsizeiptr,
-                                                             access: GLenum)
+    pub MapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      target:
+                                                                          GLuint,
+                                                                      offset:
+                                                                          GLintptr,
+                                                                      size:
+                                                                          GLsizeiptr,
+                                                                      access:
+                                                                          GLenum)
                                                             ->
                                                                 *mut ::libc::c_void>,
-    pub UnmapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn
-                                                              (context:
-                                                                   PP_Resource,
-                                                               mem:
-                                                                   *const ::libc::c_void)>,
-    pub MapTexSubImage2DCHROMIUM: ::std::option::Option<extern "C" fn
-                                                            (context:
-                                                                 PP_Resource,
-                                                             target: GLenum,
-                                                             level: GLint,
-                                                             xoffset: GLint,
-                                                             yoffset: GLint,
-                                                             width: GLsizei,
-                                                             height: GLsizei,
-                                                             format: GLenum,
-                                                             _type: GLenum,
-                                                             access: GLenum)
+    pub UnmapBufferSubDataCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                            PP_Resource,
+                                                                        mem:
+                                                                            *const ::libc::c_void)
+                                                              -> ()>,
+    pub MapTexSubImage2DCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                          PP_Resource,
+                                                                      target:
+                                                                          GLenum,
+                                                                      level:
+                                                                          GLint,
+                                                                      xoffset:
+                                                                          GLint,
+                                                                      yoffset:
+                                                                          GLint,
+                                                                      width:
+                                                                          GLsizei,
+                                                                      height:
+                                                                          GLsizei,
+                                                                      format:
+                                                                          GLenum,
+                                                                      _type:
+                                                                          GLenum,
+                                                                      access:
+                                                                          GLenum)
                                                             ->
                                                                 *mut ::libc::c_void>,
-    pub UnmapTexSubImage2DCHROMIUM: ::std::option::Option<extern "C" fn
-                                                              (context:
-                                                                   PP_Resource,
-                                                               mem:
-                                                                   *const ::libc::c_void)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumMapSub {
-    fn default() -> Struct_PPB_OpenGLES2ChromiumMapSub {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub UnmapTexSubImage2DCHROMIUM: ::std::option::Option<extern "C" fn(context:
+                                                                            PP_Resource,
+                                                                        mem:
+                                                                            *const ::libc::c_void)
+                                                              -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2ChromiumMapSub {
-    fn clone(&self) -> Struct_PPB_OpenGLES2ChromiumMapSub {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2ChromiumMapSub {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2Query_1_0 {
-    pub GenQueriesEXT: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  n: GLsizei,
-                                                  queries: *mut GLuint)>,
-    pub DeleteQueriesEXT: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     n: GLsizei,
-                                                     queries: *const GLuint)>,
-    pub IsQueryEXT: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               id: GLuint) -> GLboolean>,
-    pub BeginQueryEXT: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  id: GLuint)>,
-    pub EndQueryEXT: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                target: GLenum)>,
-    pub GetQueryivEXT: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  pname: GLenum,
-                                                  params: *mut GLint)>,
-    pub GetQueryObjectuivEXT: ::std::option::Option<extern "C" fn
-                                                        (context: PP_Resource,
-                                                         id: GLuint,
-                                                         pname: GLenum,
-                                                         params:
-                                                             *mut GLuint)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2Query_1_0 {
-    fn default() -> Struct_PPB_OpenGLES2Query_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub GenQueriesEXT: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           n: GLsizei,
+                                                           queries:
+                                                               *mut GLuint)
+                                                 -> ()>,
+    pub DeleteQueriesEXT: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              n: GLsizei,
+                                                              queries:
+                                                                  *const GLuint)
+                                                    -> ()>,
+    pub IsQueryEXT: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        id: GLuint)
+                                              -> GLboolean>,
+    pub BeginQueryEXT: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           id: GLuint) -> ()>,
+    pub EndQueryEXT: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         target: GLenum)
+                                               -> ()>,
+    pub GetQueryivEXT: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           pname: GLenum,
+                                                           params: *mut GLint)
+                                                 -> ()>,
+    pub GetQueryObjectuivEXT: ::std::option::Option<extern "C" fn(context:
+                                                                      PP_Resource,
+                                                                  id: GLuint,
+                                                                  pname:
+                                                                      GLenum,
+                                                                  params:
+                                                                      *mut GLuint)
+                                                        -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2Query_1_0 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2Query_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2Query_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2Query {
-    pub GenQueriesEXT: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  n: GLsizei,
-                                                  queries: *mut GLuint)>,
-    pub DeleteQueriesEXT: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     n: GLsizei,
-                                                     queries: *const GLuint)>,
-    pub IsQueryEXT: ::std::option::Option<extern "C" fn
-                                              (context: PP_Resource,
-                                               id: GLuint) -> GLboolean>,
-    pub BeginQueryEXT: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  id: GLuint)>,
-    pub EndQueryEXT: ::std::option::Option<extern "C" fn
-                                               (context: PP_Resource,
-                                                target: GLenum)>,
-    pub GetQueryivEXT: ::std::option::Option<extern "C" fn
-                                                 (context: PP_Resource,
-                                                  target: GLenum,
-                                                  pname: GLenum,
-                                                  params: *mut GLint)>,
-    pub GetQueryObjectuivEXT: ::std::option::Option<extern "C" fn
-                                                        (context: PP_Resource,
-                                                         id: GLuint,
-                                                         pname: GLenum,
-                                                         params:
-                                                             *mut GLuint)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2Query {
-    fn default() -> Struct_PPB_OpenGLES2Query {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub GenQueriesEXT: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           n: GLsizei,
+                                                           queries:
+                                                               *mut GLuint)
+                                                 -> ()>,
+    pub DeleteQueriesEXT: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              n: GLsizei,
+                                                              queries:
+                                                                  *const GLuint)
+                                                    -> ()>,
+    pub IsQueryEXT: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                        id: GLuint)
+                                              -> GLboolean>,
+    pub BeginQueryEXT: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           id: GLuint) -> ()>,
+    pub EndQueryEXT: ::std::option::Option<extern "C" fn(context: PP_Resource,
+                                                         target: GLenum)
+                                               -> ()>,
+    pub GetQueryivEXT: ::std::option::Option<extern "C" fn(context:
+                                                               PP_Resource,
+                                                           target: GLenum,
+                                                           pname: GLenum,
+                                                           params: *mut GLint)
+                                                 -> ()>,
+    pub GetQueryObjectuivEXT: ::std::option::Option<extern "C" fn(context:
+                                                                      PP_Resource,
+                                                                  id: GLuint,
+                                                                  pname:
+                                                                      GLenum,
+                                                                  params:
+                                                                      *mut GLuint)
+                                                        -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2Query {
-    fn clone(&self) -> Struct_PPB_OpenGLES2Query {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2Query {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
-    pub GenVertexArraysOES: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       n: GLsizei,
-                                                       arrays: *mut GLuint)>,
-    pub DeleteVertexArraysOES: ::std::option::Option<extern "C" fn
-                                                         (context:
-                                                              PP_Resource,
-                                                          n: GLsizei,
-                                                          arrays:
-                                                              *const GLuint)>,
-    pub IsVertexArrayOES: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     array: GLuint)
+    pub GenVertexArraysOES: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                n: GLsizei,
+                                                                arrays:
+                                                                    *mut GLuint)
+                                                      -> ()>,
+    pub DeleteVertexArraysOES: ::std::option::Option<extern "C" fn(context:
+                                                                       PP_Resource,
+                                                                   n: GLsizei,
+                                                                   arrays:
+                                                                       *const GLuint)
+                                                         -> ()>,
+    pub IsVertexArrayOES: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              array: GLuint)
                                                     -> GLboolean>,
-    pub BindVertexArrayOES: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       array: GLuint)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
-    fn default() -> Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub BindVertexArrayOES: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                array: GLuint)
+                                                      -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2VertexArrayObject_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2VertexArrayObject {
-    pub GenVertexArraysOES: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       n: GLsizei,
-                                                       arrays: *mut GLuint)>,
-    pub DeleteVertexArraysOES: ::std::option::Option<extern "C" fn
-                                                         (context:
-                                                              PP_Resource,
-                                                          n: GLsizei,
-                                                          arrays:
-                                                              *const GLuint)>,
-    pub IsVertexArrayOES: ::std::option::Option<extern "C" fn
-                                                    (context: PP_Resource,
-                                                     array: GLuint)
+    pub GenVertexArraysOES: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                n: GLsizei,
+                                                                arrays:
+                                                                    *mut GLuint)
+                                                      -> ()>,
+    pub DeleteVertexArraysOES: ::std::option::Option<extern "C" fn(context:
+                                                                       PP_Resource,
+                                                                   n: GLsizei,
+                                                                   arrays:
+                                                                       *const GLuint)
+                                                         -> ()>,
+    pub IsVertexArrayOES: ::std::option::Option<extern "C" fn(context:
+                                                                  PP_Resource,
+                                                              array: GLuint)
                                                     -> GLboolean>,
-    pub BindVertexArrayOES: ::std::option::Option<extern "C" fn
-                                                      (context: PP_Resource,
-                                                       array: GLuint)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2VertexArrayObject {
-    fn default() -> Struct_PPB_OpenGLES2VertexArrayObject {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub BindVertexArrayOES: ::std::option::Option<extern "C" fn(context:
+                                                                    PP_Resource,
+                                                                array: GLuint)
+                                                      -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2VertexArrayObject {
-    fn clone(&self) -> Struct_PPB_OpenGLES2VertexArrayObject {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed35 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PPB_OpenGLES2VertexArrayObject {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed26 = ::libc::c_uint;
 pub const PP_TCPSOCKET_OPTION_NO_DELAY: ::libc::c_uint = 0;
 pub const PP_TCPSOCKET_OPTION_SEND_BUFFER_SIZE: ::libc::c_uint = 1;
 pub const PP_TCPSOCKET_OPTION_RECV_BUFFER_SIZE: ::libc::c_uint = 2;
-pub type PP_TCPSocket_Option = Enum_Unnamed35;
+pub type PP_TCPSocket_Option = Enum_Unnamed26;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TCPSocket_Option {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TCPSocket_Option_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_TCPSocket_Option {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TCPSocket_Option {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TCPSocket_Option {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_TCPSocket_1_2 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsTCPSocket: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub IsTCPSocket: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> PP_Bool>,
-    pub Bind: ::std::option::Option<extern "C" fn
-                                        (tcp_socket: PP_Resource,
-                                         addr: PP_Resource,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Bind: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                  addr: PP_Resource,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub Connect: ::std::option::Option<extern "C" fn
-                                           (tcp_socket: PP_Resource,
-                                            addr: PP_Resource,
-                                            callback:
-                                                Struct_PP_CompletionCallback)
+    pub Connect: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                     addr: PP_Resource,
+                                                     callback:
+                                                         Struct_PP_CompletionCallback)
                                            -> int32_t>,
-    pub GetLocalAddress: ::std::option::Option<extern "C" fn
-                                                   (tcp_socket: PP_Resource)
+    pub GetLocalAddress: ::std::option::Option<extern "C" fn(tcp_socket:
+                                                                 PP_Resource)
                                                    -> PP_Resource>,
-    pub GetRemoteAddress: ::std::option::Option<extern "C" fn
-                                                    (tcp_socket: PP_Resource)
+    pub GetRemoteAddress: ::std::option::Option<extern "C" fn(tcp_socket:
+                                                                  PP_Resource)
                                                     -> PP_Resource>,
-    pub Read: ::std::option::Option<extern "C" fn
-                                        (tcp_socket: PP_Resource,
-                                         buffer: *mut ::libc::c_char,
-                                         bytes_to_read: int32_t,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Read: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                  buffer: *mut ::libc::c_char,
+                                                  bytes_to_read: int32_t,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub Write: ::std::option::Option<extern "C" fn
-                                         (tcp_socket: PP_Resource,
-                                          buffer: *const ::libc::c_char,
-                                          bytes_to_write: int32_t,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Write: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                   buffer:
+                                                       *const ::libc::c_char,
+                                                   bytes_to_write: int32_t,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Listen: ::std::option::Option<extern "C" fn
-                                          (tcp_socket: PP_Resource,
-                                           backlog: int32_t,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Listen: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                    backlog: int32_t,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Accept: ::std::option::Option<extern "C" fn
-                                          (tcp_socket: PP_Resource,
-                                           accepted_tcp_socket:
-                                               *mut PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Accept: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                    accepted_tcp_socket:
+                                                        *mut PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource)>,
-    pub SetOption: ::std::option::Option<extern "C" fn
-                                             (tcp_socket: PP_Resource,
-                                              name: PP_TCPSocket_Option,
-                                              value: Struct_PP_Var,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub Close: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource)
+                                         -> ()>,
+    pub SetOption: ::std::option::Option<extern "C" fn(tcp_socket:
+                                                           PP_Resource,
+                                                       name:
+                                                           PP_TCPSocket_Option,
+                                                       value: Struct_PP_Var,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_TCPSocket_1_2 {
-    fn default() -> Struct_PPB_TCPSocket_1_2 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_TCPSocket_1_2 {
-    fn clone(&self) -> Struct_PPB_TCPSocket_1_2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_TCPSocket_1_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_TCPSocket = Struct_PPB_TCPSocket_1_2;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_TCPSocket_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsTCPSocket: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub IsTCPSocket: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> PP_Bool>,
-    pub Connect: ::std::option::Option<extern "C" fn
-                                           (tcp_socket: PP_Resource,
-                                            addr: PP_Resource,
-                                            callback:
-                                                Struct_PP_CompletionCallback)
+    pub Connect: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                     addr: PP_Resource,
+                                                     callback:
+                                                         Struct_PP_CompletionCallback)
                                            -> int32_t>,
-    pub GetLocalAddress: ::std::option::Option<extern "C" fn
-                                                   (tcp_socket: PP_Resource)
+    pub GetLocalAddress: ::std::option::Option<extern "C" fn(tcp_socket:
+                                                                 PP_Resource)
                                                    -> PP_Resource>,
-    pub GetRemoteAddress: ::std::option::Option<extern "C" fn
-                                                    (tcp_socket: PP_Resource)
+    pub GetRemoteAddress: ::std::option::Option<extern "C" fn(tcp_socket:
+                                                                  PP_Resource)
                                                     -> PP_Resource>,
-    pub Read: ::std::option::Option<extern "C" fn
-                                        (tcp_socket: PP_Resource,
-                                         buffer: *mut ::libc::c_char,
-                                         bytes_to_read: int32_t,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Read: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                  buffer: *mut ::libc::c_char,
+                                                  bytes_to_read: int32_t,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub Write: ::std::option::Option<extern "C" fn
-                                         (tcp_socket: PP_Resource,
-                                          buffer: *const ::libc::c_char,
-                                          bytes_to_write: int32_t,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Write: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                   buffer:
+                                                       *const ::libc::c_char,
+                                                   bytes_to_write: int32_t,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource)>,
-    pub SetOption: ::std::option::Option<extern "C" fn
-                                             (tcp_socket: PP_Resource,
-                                              name: PP_TCPSocket_Option,
-                                              value: Struct_PP_Var,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub Close: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource)
+                                         -> ()>,
+    pub SetOption: ::std::option::Option<extern "C" fn(tcp_socket:
+                                                           PP_Resource,
+                                                       name:
+                                                           PP_TCPSocket_Option,
+                                                       value: Struct_PP_Var,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_TCPSocket_1_0 {
-    fn default() -> Struct_PPB_TCPSocket_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_TCPSocket_1_0 {
-    fn clone(&self) -> Struct_PPB_TCPSocket_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_TCPSocket_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_TCPSocket_1_1 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsTCPSocket: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub IsTCPSocket: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> PP_Bool>,
-    pub Bind: ::std::option::Option<extern "C" fn
-                                        (tcp_socket: PP_Resource,
-                                         addr: PP_Resource,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Bind: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                  addr: PP_Resource,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub Connect: ::std::option::Option<extern "C" fn
-                                           (tcp_socket: PP_Resource,
-                                            addr: PP_Resource,
-                                            callback:
-                                                Struct_PP_CompletionCallback)
+    pub Connect: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                     addr: PP_Resource,
+                                                     callback:
+                                                         Struct_PP_CompletionCallback)
                                            -> int32_t>,
-    pub GetLocalAddress: ::std::option::Option<extern "C" fn
-                                                   (tcp_socket: PP_Resource)
+    pub GetLocalAddress: ::std::option::Option<extern "C" fn(tcp_socket:
+                                                                 PP_Resource)
                                                    -> PP_Resource>,
-    pub GetRemoteAddress: ::std::option::Option<extern "C" fn
-                                                    (tcp_socket: PP_Resource)
+    pub GetRemoteAddress: ::std::option::Option<extern "C" fn(tcp_socket:
+                                                                  PP_Resource)
                                                     -> PP_Resource>,
-    pub Read: ::std::option::Option<extern "C" fn
-                                        (tcp_socket: PP_Resource,
-                                         buffer: *mut ::libc::c_char,
-                                         bytes_to_read: int32_t,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Read: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                  buffer: *mut ::libc::c_char,
+                                                  bytes_to_read: int32_t,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub Write: ::std::option::Option<extern "C" fn
-                                         (tcp_socket: PP_Resource,
-                                          buffer: *const ::libc::c_char,
-                                          bytes_to_write: int32_t,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
+    pub Write: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                   buffer:
+                                                       *const ::libc::c_char,
+                                                   bytes_to_write: int32_t,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
                                          -> int32_t>,
-    pub Listen: ::std::option::Option<extern "C" fn
-                                          (tcp_socket: PP_Resource,
-                                           backlog: int32_t,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Listen: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                    backlog: int32_t,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Accept: ::std::option::Option<extern "C" fn
-                                          (tcp_socket: PP_Resource,
-                                           accepted_tcp_socket:
-                                               *mut PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub Accept: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource,
+                                                    accepted_tcp_socket:
+                                                        *mut PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource)>,
-    pub SetOption: ::std::option::Option<extern "C" fn
-                                             (tcp_socket: PP_Resource,
-                                              name: PP_TCPSocket_Option,
-                                              value: Struct_PP_Var,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub Close: ::std::option::Option<extern "C" fn(tcp_socket: PP_Resource)
+                                         -> ()>,
+    pub SetOption: ::std::option::Option<extern "C" fn(tcp_socket:
+                                                           PP_Resource,
+                                                       name:
+                                                           PP_TCPSocket_Option,
+                                                       value: Struct_PP_Var,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_TCPSocket_1_1 {
-    fn default() -> Struct_PPB_TCPSocket_1_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_TCPSocket_1_1 {
-    fn clone(&self) -> Struct_PPB_TCPSocket_1_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed36 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PPB_TCPSocket_1_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed27 = ::libc::c_uint;
 pub const PP_TEXTINPUT_TYPE_NONE: ::libc::c_uint = 0;
 pub const PP_TEXTINPUT_TYPE_TEXT: ::libc::c_uint = 1;
 pub const PP_TEXTINPUT_TYPE_PASSWORD: ::libc::c_uint = 2;
@@ -4577,231 +4952,292 @@ pub const PP_TEXTINPUT_TYPE_EMAIL: ::libc::c_uint = 4;
 pub const PP_TEXTINPUT_TYPE_NUMBER: ::libc::c_uint = 5;
 pub const PP_TEXTINPUT_TYPE_TELEPHONE: ::libc::c_uint = 6;
 pub const PP_TEXTINPUT_TYPE_URL: ::libc::c_uint = 7;
-pub type PP_TextInput_Type = Enum_Unnamed36;
+pub type PP_TextInput_Type = Enum_Unnamed27;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TextInput_Type {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TextInput_Type_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_TextInput_Type {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TextInput_Type
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TextInput_Type {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_TextInputController_1_0 {
-    pub SetTextInputType: ::std::option::Option<extern "C" fn
-                                                    (instance: PP_Instance,
-                                                     _type:
-                                                         PP_TextInput_Type)>,
-    pub UpdateCaretPosition: ::std::option::Option<extern "C" fn
-                                                       (instance: PP_Instance,
-                                                        caret:
-                                                            *const Struct_PP_Rect)>,
-    pub CancelCompositionText: ::std::option::Option<extern "C" fn
-                                                         (instance:
-                                                              PP_Instance)>,
-    pub UpdateSurroundingText: ::std::option::Option<extern "C" fn
-                                                         (instance:
-                                                              PP_Instance,
-                                                          text: Struct_PP_Var,
-                                                          caret: uint32_t,
-                                                          anchor: uint32_t)>,
-}
-impl ::std::default::Default for Struct_PPB_TextInputController_1_0 {
-    fn default() -> Struct_PPB_TextInputController_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub SetTextInputType: ::std::option::Option<extern "C" fn(instance:
+                                                                  PP_Instance,
+                                                              _type:
+                                                                  PP_TextInput_Type)
+                                                    -> ()>,
+    pub UpdateCaretPosition: ::std::option::Option<extern "C" fn(instance:
+                                                                     PP_Instance,
+                                                                 caret:
+                                                                     *const Struct_PP_Rect)
+                                                       -> ()>,
+    pub CancelCompositionText: ::std::option::Option<extern "C" fn(instance:
+                                                                       PP_Instance)
+                                                         -> ()>,
+    pub UpdateSurroundingText: ::std::option::Option<extern "C" fn(instance:
+                                                                       PP_Instance,
+                                                                   text:
+                                                                       Struct_PP_Var,
+                                                                   caret:
+                                                                       uint32_t,
+                                                                   anchor:
+                                                                       uint32_t)
+                                                         -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_TextInputController_1_0 {
-    fn clone(&self) -> Struct_PPB_TextInputController_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_TextInputController_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_TextInputController = Struct_PPB_TextInputController_1_0;
-pub type Enum_Unnamed37 = ::libc::c_uint;
+pub type Enum_Unnamed28 = ::libc::c_uint;
 pub const PP_UDPSOCKET_OPTION_ADDRESS_REUSE: ::libc::c_uint = 0;
 pub const PP_UDPSOCKET_OPTION_BROADCAST: ::libc::c_uint = 1;
 pub const PP_UDPSOCKET_OPTION_SEND_BUFFER_SIZE: ::libc::c_uint = 2;
 pub const PP_UDPSOCKET_OPTION_RECV_BUFFER_SIZE: ::libc::c_uint = 3;
-pub type PP_UDPSocket_Option = Enum_Unnamed37;
+pub const PP_UDPSOCKET_OPTION_MULTICAST_LOOP: ::libc::c_uint = 4;
+pub const PP_UDPSOCKET_OPTION_MULTICAST_TTL: ::libc::c_uint = 5;
+pub type PP_UDPSocket_Option = Enum_Unnamed28;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_UDPSocket_Option {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_UDPSocket_Option_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_UDPSocket_Option {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_UDPSocket_Option {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_UDPSocket_Option {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-pub struct Struct_PPB_UDPSocket_1_1 {
+#[derive(Copy)]
+pub struct Struct_PPB_UDPSocket_1_2 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsUDPSocket: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub IsUDPSocket: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> PP_Bool>,
-    pub Bind: ::std::option::Option<extern "C" fn
-                                        (udp_socket: PP_Resource,
-                                         addr: PP_Resource,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Bind: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource,
+                                                  addr: PP_Resource,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub GetBoundAddress: ::std::option::Option<extern "C" fn
-                                                   (udp_socket: PP_Resource)
+    pub GetBoundAddress: ::std::option::Option<extern "C" fn(udp_socket:
+                                                                 PP_Resource)
                                                    -> PP_Resource>,
-    pub RecvFrom: ::std::option::Option<extern "C" fn
-                                            (udp_socket: PP_Resource,
-                                             buffer: *mut ::libc::c_char,
-                                             num_bytes: int32_t,
-                                             addr: *mut PP_Resource,
-                                             callback:
-                                                 Struct_PP_CompletionCallback)
+    pub RecvFrom: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource,
+                                                      buffer:
+                                                          *mut ::libc::c_char,
+                                                      num_bytes: int32_t,
+                                                      addr: *mut PP_Resource,
+                                                      callback:
+                                                          Struct_PP_CompletionCallback)
                                             -> int32_t>,
-    pub SendTo: ::std::option::Option<extern "C" fn
-                                          (udp_socket: PP_Resource,
-                                           buffer: *const ::libc::c_char,
-                                           num_bytes: int32_t,
-                                           addr: PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub SendTo: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource,
+                                                    buffer:
+                                                        *const ::libc::c_char,
+                                                    num_bytes: int32_t,
+                                                    addr: PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource)>,
-    pub SetOption: ::std::option::Option<extern "C" fn
-                                             (udp_socket: PP_Resource,
-                                              name: PP_UDPSocket_Option,
-                                              value: Struct_PP_Var,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub Close: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource)
+                                         -> ()>,
+    pub SetOption: ::std::option::Option<extern "C" fn(udp_socket:
+                                                           PP_Resource,
+                                                       name:
+                                                           PP_UDPSocket_Option,
+                                                       value: Struct_PP_Var,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
+    pub JoinGroup: ::std::option::Option<extern "C" fn(udp_socket:
+                                                           PP_Resource,
+                                                       group: PP_Resource,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
+                                             -> int32_t>,
+    pub LeaveGroup: ::std::option::Option<extern "C" fn(udp_socket:
+                                                            PP_Resource,
+                                                        group: PP_Resource,
+                                                        callback:
+                                                            Struct_PP_CompletionCallback)
+                                              -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_UDPSocket_1_1 {
-    fn default() -> Struct_PPB_UDPSocket_1_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
+impl ::std::clone::Clone for Struct_PPB_UDPSocket_1_2 {
+    fn clone(&self) -> Self { *self }
 }
-impl ::std::clone::Clone for Struct_PPB_UDPSocket_1_1 {
-    fn clone(&self) -> Struct_PPB_UDPSocket_1_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+impl ::std::default::Default for Struct_PPB_UDPSocket_1_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type PPB_UDPSocket = Struct_PPB_UDPSocket_1_1;
+pub type PPB_UDPSocket = Struct_PPB_UDPSocket_1_2;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_UDPSocket_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsUDPSocket: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub IsUDPSocket: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> PP_Bool>,
-    pub Bind: ::std::option::Option<extern "C" fn
-                                        (udp_socket: PP_Resource,
-                                         addr: PP_Resource,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Bind: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource,
+                                                  addr: PP_Resource,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub GetBoundAddress: ::std::option::Option<extern "C" fn
-                                                   (udp_socket: PP_Resource)
+    pub GetBoundAddress: ::std::option::Option<extern "C" fn(udp_socket:
+                                                                 PP_Resource)
                                                    -> PP_Resource>,
-    pub RecvFrom: ::std::option::Option<extern "C" fn
-                                            (udp_socket: PP_Resource,
-                                             buffer: *mut ::libc::c_char,
-                                             num_bytes: int32_t,
-                                             addr: *mut PP_Resource,
-                                             callback:
-                                                 Struct_PP_CompletionCallback)
+    pub RecvFrom: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource,
+                                                      buffer:
+                                                          *mut ::libc::c_char,
+                                                      num_bytes: int32_t,
+                                                      addr: *mut PP_Resource,
+                                                      callback:
+                                                          Struct_PP_CompletionCallback)
                                             -> int32_t>,
-    pub SendTo: ::std::option::Option<extern "C" fn
-                                          (udp_socket: PP_Resource,
-                                           buffer: *const ::libc::c_char,
-                                           num_bytes: int32_t,
-                                           addr: PP_Resource,
-                                           callback:
-                                               Struct_PP_CompletionCallback)
+    pub SendTo: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource,
+                                                    buffer:
+                                                        *const ::libc::c_char,
+                                                    num_bytes: int32_t,
+                                                    addr: PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
                                           -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource)>,
-    pub SetOption: ::std::option::Option<extern "C" fn
-                                             (udp_socket: PP_Resource,
-                                              name: PP_UDPSocket_Option,
-                                              value: Struct_PP_Var,
-                                              callback:
-                                                  Struct_PP_CompletionCallback)
+    pub Close: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource)
+                                         -> ()>,
+    pub SetOption: ::std::option::Option<extern "C" fn(udp_socket:
+                                                           PP_Resource,
+                                                       name:
+                                                           PP_UDPSocket_Option,
+                                                       value: Struct_PP_Var,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
                                              -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_UDPSocket_1_0 {
-    fn default() -> Struct_PPB_UDPSocket_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_UDPSocket_1_0 {
-    fn clone(&self) -> Struct_PPB_UDPSocket_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_UDPSocket_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PPB_UDPSocket_1_1 {
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
+                                          -> PP_Resource>,
+    pub IsUDPSocket: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
+                                               -> PP_Bool>,
+    pub Bind: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource,
+                                                  addr: PP_Resource,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
+                                        -> int32_t>,
+    pub GetBoundAddress: ::std::option::Option<extern "C" fn(udp_socket:
+                                                                 PP_Resource)
+                                                   -> PP_Resource>,
+    pub RecvFrom: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource,
+                                                      buffer:
+                                                          *mut ::libc::c_char,
+                                                      num_bytes: int32_t,
+                                                      addr: *mut PP_Resource,
+                                                      callback:
+                                                          Struct_PP_CompletionCallback)
+                                            -> int32_t>,
+    pub SendTo: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource,
+                                                    buffer:
+                                                        *const ::libc::c_char,
+                                                    num_bytes: int32_t,
+                                                    addr: PP_Resource,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
+                                          -> int32_t>,
+    pub Close: ::std::option::Option<extern "C" fn(udp_socket: PP_Resource)
+                                         -> ()>,
+    pub SetOption: ::std::option::Option<extern "C" fn(udp_socket:
+                                                           PP_Resource,
+                                                       name:
+                                                           PP_UDPSocket_Option,
+                                                       value: Struct_PP_Var,
+                                                       callback:
+                                                           Struct_PP_CompletionCallback)
+                                             -> int32_t>,
+}
+impl ::std::clone::Clone for Struct_PPB_UDPSocket_1_1 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_UDPSocket_1_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+#[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_URLLoader_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsURLLoader: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub IsURLLoader: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> PP_Bool>,
-    pub Open: ::std::option::Option<extern "C" fn
-                                        (loader: PP_Resource,
-                                         request_info: PP_Resource,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Open: ::std::option::Option<extern "C" fn(loader: PP_Resource,
+                                                  request_info: PP_Resource,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub FollowRedirect: ::std::option::Option<extern "C" fn
-                                                  (loader: PP_Resource,
-                                                   callback:
-                                                       Struct_PP_CompletionCallback)
+    pub FollowRedirect: ::std::option::Option<extern "C" fn(loader:
+                                                                PP_Resource,
+                                                            callback:
+                                                                Struct_PP_CompletionCallback)
                                                   -> int32_t>,
-    pub GetUploadProgress: ::std::option::Option<extern "C" fn
-                                                     (loader: PP_Resource,
-                                                      bytes_sent:
-                                                          *mut int64_t,
-                                                      total_bytes_to_be_sent:
-                                                          *mut int64_t)
+    pub GetUploadProgress: ::std::option::Option<extern "C" fn(loader:
+                                                                   PP_Resource,
+                                                               bytes_sent:
+                                                                   *mut int64_t,
+                                                               total_bytes_to_be_sent:
+                                                                   *mut int64_t)
                                                      -> PP_Bool>,
-    pub GetDownloadProgress: ::std::option::Option<extern "C" fn
-                                                       (loader: PP_Resource,
-                                                        bytes_received:
-                                                            *mut int64_t,
-                                                        total_bytes_to_be_received:
-                                                            *mut int64_t)
+    pub GetDownloadProgress: ::std::option::Option<extern "C" fn(loader:
+                                                                     PP_Resource,
+                                                                 bytes_received:
+                                                                     *mut int64_t,
+                                                                 total_bytes_to_be_received:
+                                                                     *mut int64_t)
                                                        -> PP_Bool>,
-    pub GetResponseInfo: ::std::option::Option<extern "C" fn
-                                                   (loader: PP_Resource)
+    pub GetResponseInfo: ::std::option::Option<extern "C" fn(loader:
+                                                                 PP_Resource)
                                                    -> PP_Resource>,
-    pub ReadResponseBody: ::std::option::Option<extern "C" fn
-                                                    (loader: PP_Resource,
-                                                     buffer:
-                                                         *mut ::libc::c_void,
-                                                     bytes_to_read: int32_t,
-                                                     callback:
-                                                         Struct_PP_CompletionCallback)
+    pub ReadResponseBody: ::std::option::Option<extern "C" fn(loader:
+                                                                  PP_Resource,
+                                                              buffer:
+                                                                  *mut ::libc::c_void,
+                                                              bytes_to_read:
+                                                                  int32_t,
+                                                              callback:
+                                                                  Struct_PP_CompletionCallback)
                                                     -> int32_t>,
-    pub FinishStreamingToFile: ::std::option::Option<extern "C" fn
-                                                         (loader: PP_Resource,
-                                                          callback:
-                                                              Struct_PP_CompletionCallback)
+    pub FinishStreamingToFile: ::std::option::Option<extern "C" fn(loader:
+                                                                       PP_Resource,
+                                                                   callback:
+                                                                       Struct_PP_CompletionCallback)
                                                          -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn(loader: PP_Resource)>,
-}
-impl ::std::default::Default for Struct_PPB_URLLoader_1_0 {
-    fn default() -> Struct_PPB_URLLoader_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub Close: ::std::option::Option<extern "C" fn(loader: PP_Resource)
+                                         -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_URLLoader_1_0 {
-    fn clone(&self) -> Struct_PPB_URLLoader_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_URLLoader_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_URLLoader = Struct_PPB_URLLoader_1_0;
-pub type Enum_Unnamed38 = ::libc::c_uint;
+pub type Enum_Unnamed29 = ::libc::c_uint;
 pub const PP_URLREQUESTPROPERTY_URL: ::libc::c_uint = 0;
 pub const PP_URLREQUESTPROPERTY_METHOD: ::libc::c_uint = 1;
 pub const PP_URLREQUESTPROPERTY_HEADERS: ::libc::c_uint = 2;
@@ -4820,373 +5256,827 @@ pub const PP_URLREQUESTPROPERTY_PREFETCHBUFFERUPPERTHRESHOLD: ::libc::c_uint =
 pub const PP_URLREQUESTPROPERTY_PREFETCHBUFFERLOWERTHRESHOLD: ::libc::c_uint =
     12;
 pub const PP_URLREQUESTPROPERTY_CUSTOMUSERAGENT: ::libc::c_uint = 13;
-pub type PP_URLRequestProperty = Enum_Unnamed38;
+pub type PP_URLRequestProperty = Enum_Unnamed29;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_URLRequestProperty {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLRequestProperty_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_URLRequestProperty
+ {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_URLRequestProperty {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_URLRequestProperty {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_URLRequestInfo_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsURLRequestInfo: ::std::option::Option<extern "C" fn
-                                                    (resource: PP_Resource)
+    pub IsURLRequestInfo: ::std::option::Option<extern "C" fn(resource:
+                                                                  PP_Resource)
                                                     -> PP_Bool>,
-    pub SetProperty: ::std::option::Option<extern "C" fn
-                                               (request: PP_Resource,
-                                                property:
-                                                    PP_URLRequestProperty,
-                                                value: Struct_PP_Var)
+    pub SetProperty: ::std::option::Option<extern "C" fn(request: PP_Resource,
+                                                         property:
+                                                             PP_URLRequestProperty,
+                                                         value: Struct_PP_Var)
                                                -> PP_Bool>,
-    pub AppendDataToBody: ::std::option::Option<extern "C" fn
-                                                    (request: PP_Resource,
-                                                     data:
-                                                         *const ::libc::c_void,
-                                                     len: uint32_t)
+    pub AppendDataToBody: ::std::option::Option<extern "C" fn(request:
+                                                                  PP_Resource,
+                                                              data:
+                                                                  *const ::libc::c_void,
+                                                              len: uint32_t)
                                                     -> PP_Bool>,
-    pub AppendFileToBody: ::std::option::Option<extern "C" fn
-                                                    (request: PP_Resource,
-                                                     file_ref: PP_Resource,
-                                                     start_offset: int64_t,
-                                                     number_of_bytes: int64_t,
-                                                     expected_last_modified_time:
-                                                         PP_Time) -> PP_Bool>,
-}
-impl ::std::default::Default for Struct_PPB_URLRequestInfo_1_0 {
-    fn default() -> Struct_PPB_URLRequestInfo_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub AppendFileToBody: ::std::option::Option<extern "C" fn(request:
+                                                                  PP_Resource,
+                                                              file_ref:
+                                                                  PP_Resource,
+                                                              start_offset:
+                                                                  int64_t,
+                                                              number_of_bytes:
+                                                                  int64_t,
+                                                              expected_last_modified_time:
+                                                                  PP_Time)
+                                                    -> PP_Bool>,
 }
 impl ::std::clone::Clone for Struct_PPB_URLRequestInfo_1_0 {
-    fn clone(&self) -> Struct_PPB_URLRequestInfo_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_URLRequestInfo_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_URLRequestInfo = Struct_PPB_URLRequestInfo_1_0;
-pub type Enum_Unnamed39 = ::libc::c_uint;
+pub type Enum_Unnamed30 = ::libc::c_uint;
 pub const PP_URLRESPONSEPROPERTY_URL: ::libc::c_uint = 0;
 pub const PP_URLRESPONSEPROPERTY_REDIRECTURL: ::libc::c_uint = 1;
 pub const PP_URLRESPONSEPROPERTY_REDIRECTMETHOD: ::libc::c_uint = 2;
 pub const PP_URLRESPONSEPROPERTY_STATUSCODE: ::libc::c_uint = 3;
 pub const PP_URLRESPONSEPROPERTY_STATUSLINE: ::libc::c_uint = 4;
 pub const PP_URLRESPONSEPROPERTY_HEADERS: ::libc::c_uint = 5;
-pub type PP_URLResponseProperty = Enum_Unnamed39;
+pub type PP_URLResponseProperty = Enum_Unnamed30;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_URLResponseProperty {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_URLResponseProperty_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_URLResponseProperty
+ {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_URLResponseProperty {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_URLResponseProperty {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_URLResponseInfo_1_0 {
-    pub IsURLResponseInfo: ::std::option::Option<extern "C" fn
-                                                     (resource: PP_Resource)
+    pub IsURLResponseInfo: ::std::option::Option<extern "C" fn(resource:
+                                                                   PP_Resource)
                                                      -> PP_Bool>,
-    pub GetProperty: ::std::option::Option<extern "C" fn
-                                               (response: PP_Resource,
-                                                property:
-                                                    PP_URLResponseProperty)
+    pub GetProperty: ::std::option::Option<extern "C" fn(response:
+                                                             PP_Resource,
+                                                         property:
+                                                             PP_URLResponseProperty)
                                                -> Struct_PP_Var>,
-    pub GetBodyAsFileRef: ::std::option::Option<extern "C" fn
-                                                    (response: PP_Resource)
+    pub GetBodyAsFileRef: ::std::option::Option<extern "C" fn(response:
+                                                                  PP_Resource)
                                                     -> PP_Resource>,
 }
-impl ::std::default::Default for Struct_PPB_URLResponseInfo_1_0 {
-    fn default() -> Struct_PPB_URLResponseInfo_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_URLResponseInfo_1_0 {
-    fn clone(&self) -> Struct_PPB_URLResponseInfo_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_URLResponseInfo_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_URLResponseInfo = Struct_PPB_URLResponseInfo_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Var_1_2 {
-    pub AddRef: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
-    pub Release: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
-    pub VarFromUtf8: ::std::option::Option<extern "C" fn
-                                               (data: *const ::libc::c_char,
-                                                len: uint32_t)
+    pub AddRef: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)
+                                          -> ()>,
+    pub Release: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)
+                                           -> ()>,
+    pub VarFromUtf8: ::std::option::Option<extern "C" fn(data:
+                                                             *const ::libc::c_char,
+                                                         len: uint32_t)
                                                -> Struct_PP_Var>,
-    pub VarToUtf8: ::std::option::Option<extern "C" fn
-                                             (var: Struct_PP_Var,
-                                              len: *mut uint32_t)
+    pub VarToUtf8: ::std::option::Option<extern "C" fn(var: Struct_PP_Var,
+                                                       len: *mut uint32_t)
                                              -> *const ::libc::c_char>,
     pub VarToResource: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)
                                                  -> PP_Resource>,
-    pub VarFromResource: ::std::option::Option<extern "C" fn
-                                                   (resource: PP_Resource)
+    pub VarFromResource: ::std::option::Option<extern "C" fn(resource:
+                                                                 PP_Resource)
                                                    -> Struct_PP_Var>,
 }
-impl ::std::default::Default for Struct_PPB_Var_1_2 {
-    fn default() -> Struct_PPB_Var_1_2 { unsafe { ::std::mem::zeroed() } }
-}
 impl ::std::clone::Clone for Struct_PPB_Var_1_2 {
-    fn clone(&self) -> Struct_PPB_Var_1_2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Var_1_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Var = Struct_PPB_Var_1_2;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Var_1_0 {
-    pub AddRef: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
-    pub Release: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
-    pub VarFromUtf8: ::std::option::Option<extern "C" fn
-                                               (module: PP_Module,
-                                                data: *const ::libc::c_char,
-                                                len: uint32_t)
+    pub AddRef: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)
+                                          -> ()>,
+    pub Release: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)
+                                           -> ()>,
+    pub VarFromUtf8: ::std::option::Option<extern "C" fn(module: PP_Module,
+                                                         data:
+                                                             *const ::libc::c_char,
+                                                         len: uint32_t)
                                                -> Struct_PP_Var>,
-    pub VarToUtf8: ::std::option::Option<extern "C" fn
-                                             (var: Struct_PP_Var,
-                                              len: *mut uint32_t)
+    pub VarToUtf8: ::std::option::Option<extern "C" fn(var: Struct_PP_Var,
+                                                       len: *mut uint32_t)
                                              -> *const ::libc::c_char>,
-}
-impl ::std::default::Default for Struct_PPB_Var_1_0 {
-    fn default() -> Struct_PPB_Var_1_0 { unsafe { ::std::mem::zeroed() } }
 }
 impl ::std::clone::Clone for Struct_PPB_Var_1_0 {
-    fn clone(&self) -> Struct_PPB_Var_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Var_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Var_1_1 {
-    pub AddRef: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
-    pub Release: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)>,
-    pub VarFromUtf8: ::std::option::Option<extern "C" fn
-                                               (data: *const ::libc::c_char,
-                                                len: uint32_t)
+    pub AddRef: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)
+                                          -> ()>,
+    pub Release: ::std::option::Option<extern "C" fn(var: Struct_PP_Var)
+                                           -> ()>,
+    pub VarFromUtf8: ::std::option::Option<extern "C" fn(data:
+                                                             *const ::libc::c_char,
+                                                         len: uint32_t)
                                                -> Struct_PP_Var>,
-    pub VarToUtf8: ::std::option::Option<extern "C" fn
-                                             (var: Struct_PP_Var,
-                                              len: *mut uint32_t)
+    pub VarToUtf8: ::std::option::Option<extern "C" fn(var: Struct_PP_Var,
+                                                       len: *mut uint32_t)
                                              -> *const ::libc::c_char>,
 }
-impl ::std::default::Default for Struct_PPB_Var_1_1 {
-    fn default() -> Struct_PPB_Var_1_1 { unsafe { ::std::mem::zeroed() } }
-}
 impl ::std::clone::Clone for Struct_PPB_Var_1_1 {
-    fn clone(&self) -> Struct_PPB_Var_1_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Var_1_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_VarArray_1_0 {
     pub Create: ::std::option::Option<extern "C" fn() -> Struct_PP_Var>,
-    pub Get: ::std::option::Option<extern "C" fn
-                                       (array: Struct_PP_Var, index: uint32_t)
+    pub Get: ::std::option::Option<extern "C" fn(array: Struct_PP_Var,
+                                                 index: uint32_t)
                                        -> Struct_PP_Var>,
-    pub Set: ::std::option::Option<extern "C" fn
-                                       (array: Struct_PP_Var, index: uint32_t,
-                                        value: Struct_PP_Var) -> PP_Bool>,
+    pub Set: ::std::option::Option<extern "C" fn(array: Struct_PP_Var,
+                                                 index: uint32_t,
+                                                 value: Struct_PP_Var)
+                                       -> PP_Bool>,
     pub GetLength: ::std::option::Option<extern "C" fn(array: Struct_PP_Var)
                                              -> uint32_t>,
-    pub SetLength: ::std::option::Option<extern "C" fn
-                                             (array: Struct_PP_Var,
-                                              length: uint32_t) -> PP_Bool>,
-}
-impl ::std::default::Default for Struct_PPB_VarArray_1_0 {
-    fn default() -> Struct_PPB_VarArray_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub SetLength: ::std::option::Option<extern "C" fn(array: Struct_PP_Var,
+                                                       length: uint32_t)
+                                             -> PP_Bool>,
 }
 impl ::std::clone::Clone for Struct_PPB_VarArray_1_0 {
-    fn clone(&self) -> Struct_PPB_VarArray_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_VarArray_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_VarArray = Struct_PPB_VarArray_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_VarArrayBuffer_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(size_in_bytes: uint32_t)
                                           -> Struct_PP_Var>,
-    pub ByteLength: ::std::option::Option<extern "C" fn
-                                              (array: Struct_PP_Var,
-                                               byte_length: *mut uint32_t)
+    pub ByteLength: ::std::option::Option<extern "C" fn(array: Struct_PP_Var,
+                                                        byte_length:
+                                                            *mut uint32_t)
                                               -> PP_Bool>,
     pub Map: ::std::option::Option<extern "C" fn(array: Struct_PP_Var)
                                        -> *mut ::libc::c_void>,
-    pub Unmap: ::std::option::Option<extern "C" fn(array: Struct_PP_Var)>,
-}
-impl ::std::default::Default for Struct_PPB_VarArrayBuffer_1_0 {
-    fn default() -> Struct_PPB_VarArrayBuffer_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub Unmap: ::std::option::Option<extern "C" fn(array: Struct_PP_Var)
+                                         -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_VarArrayBuffer_1_0 {
-    fn clone(&self) -> Struct_PPB_VarArrayBuffer_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_VarArrayBuffer_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_VarArrayBuffer = Struct_PPB_VarArrayBuffer_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_VarDictionary_1_0 {
     pub Create: ::std::option::Option<extern "C" fn() -> Struct_PP_Var>,
-    pub Get: ::std::option::Option<extern "C" fn
-                                       (dict: Struct_PP_Var,
-                                        key: Struct_PP_Var) -> Struct_PP_Var>,
-    pub Set: ::std::option::Option<extern "C" fn
-                                       (dict: Struct_PP_Var,
-                                        key: Struct_PP_Var,
-                                        value: Struct_PP_Var) -> PP_Bool>,
-    pub Delete: ::std::option::Option<extern "C" fn
-                                          (dict: Struct_PP_Var,
-                                           key: Struct_PP_Var)>,
-    pub HasKey: ::std::option::Option<extern "C" fn
-                                          (dict: Struct_PP_Var,
-                                           key: Struct_PP_Var) -> PP_Bool>,
+    pub Get: ::std::option::Option<extern "C" fn(dict: Struct_PP_Var,
+                                                 key: Struct_PP_Var)
+                                       -> Struct_PP_Var>,
+    pub Set: ::std::option::Option<extern "C" fn(dict: Struct_PP_Var,
+                                                 key: Struct_PP_Var,
+                                                 value: Struct_PP_Var)
+                                       -> PP_Bool>,
+    pub Delete: ::std::option::Option<extern "C" fn(dict: Struct_PP_Var,
+                                                    key: Struct_PP_Var)
+                                          -> ()>,
+    pub HasKey: ::std::option::Option<extern "C" fn(dict: Struct_PP_Var,
+                                                    key: Struct_PP_Var)
+                                          -> PP_Bool>,
     pub GetKeys: ::std::option::Option<extern "C" fn(dict: Struct_PP_Var)
                                            -> Struct_PP_Var>,
 }
-impl ::std::default::Default for Struct_PPB_VarDictionary_1_0 {
-    fn default() -> Struct_PPB_VarDictionary_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_VarDictionary_1_0 {
-    fn clone(&self) -> Struct_PPB_VarDictionary_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_VarDictionary_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_VarDictionary = Struct_PPB_VarDictionary_1_0;
+pub type Enum_Unnamed31 = ::libc::c_uint;
+pub const PP_VIDEOPROFILE_H264BASELINE: ::libc::c_uint = 0;
+pub const PP_VIDEOPROFILE_H264MAIN: ::libc::c_uint = 1;
+pub const PP_VIDEOPROFILE_H264EXTENDED: ::libc::c_uint = 2;
+pub const PP_VIDEOPROFILE_H264HIGH: ::libc::c_uint = 3;
+pub const PP_VIDEOPROFILE_H264HIGH10PROFILE: ::libc::c_uint = 4;
+pub const PP_VIDEOPROFILE_H264HIGH422PROFILE: ::libc::c_uint = 5;
+pub const PP_VIDEOPROFILE_H264HIGH444PREDICTIVEPROFILE: ::libc::c_uint = 6;
+pub const PP_VIDEOPROFILE_H264SCALABLEBASELINE: ::libc::c_uint = 7;
+pub const PP_VIDEOPROFILE_H264SCALABLEHIGH: ::libc::c_uint = 8;
+pub const PP_VIDEOPROFILE_H264STEREOHIGH: ::libc::c_uint = 9;
+pub const PP_VIDEOPROFILE_H264MULTIVIEWHIGH: ::libc::c_uint = 10;
+pub const PP_VIDEOPROFILE_VP8_ANY: ::libc::c_uint = 11;
+pub const PP_VIDEOPROFILE_VP9_ANY: ::libc::c_uint = 12;
+pub const PP_VIDEOPROFILE_MAX: ::libc::c_uint = 12;
+pub type PP_VideoProfile = Enum_Unnamed31;
+pub type Enum_Unnamed32 = ::libc::c_uint;
+pub const PP_HARDWAREACCELERATION_ONLY: ::libc::c_uint = 0;
+pub const PP_HARDWAREACCELERATION_WITHFALLBACK: ::libc::c_uint = 1;
+pub const PP_HARDWAREACCELERATION_NONE: ::libc::c_uint = 2;
+pub const PP_HARDWAREACCELERATION_LAST: ::libc::c_uint = 2;
+pub type PP_HardwareAcceleration = Enum_Unnamed32;
 #[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PP_VideoPicture {
+    pub decode_id: uint32_t,
+    pub texture_id: uint32_t,
+    pub texture_target: uint32_t,
+    pub texture_size: Struct_PP_Size,
+    pub visible_rect: Struct_PP_Rect,
+}
+impl ::std::clone::Clone for Struct_PP_VideoPicture {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PP_VideoPicture {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PP_VideoPicture_0_1 {
+    pub decode_id: uint32_t,
+    pub texture_id: uint32_t,
+    pub texture_target: uint32_t,
+    pub texture_size: Struct_PP_Size,
+}
+impl ::std::clone::Clone for Struct_PP_VideoPicture_0_1 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PP_VideoPicture_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PP_VideoProfileDescription {
+    pub profile: PP_VideoProfile,
+    pub max_resolution: Struct_PP_Size,
+    pub max_framerate_numerator: uint32_t,
+    pub max_framerate_denominator: uint32_t,
+    pub hardware_accelerated: PP_Bool,
+}
+impl ::std::clone::Clone for Struct_PP_VideoProfileDescription {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PP_VideoProfileDescription {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PP_VideoProfileDescription_0_1 {
+    pub profile: PP_VideoProfile,
+    pub max_resolution: Struct_PP_Size,
+    pub max_framerate_numerator: uint32_t,
+    pub max_framerate_denominator: uint32_t,
+    pub acceleration: PP_HardwareAcceleration,
+}
+impl ::std::clone::Clone for Struct_PP_VideoProfileDescription_0_1 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PP_VideoProfileDescription_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PP_BitstreamBuffer {
+    pub size: uint32_t,
+    pub buffer: *mut ::libc::c_void,
+    pub key_frame: PP_Bool,
+}
+impl ::std::clone::Clone for Struct_PP_BitstreamBuffer {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PP_BitstreamBuffer {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PPB_VideoDecoder_1_0 {
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
+                                          -> PP_Resource>,
+    pub IsVideoDecoder: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
+                                                  -> PP_Bool>,
+    pub Initialize: ::std::option::Option<extern "C" fn(video_decoder:
+                                                            PP_Resource,
+                                                        graphics3d_context:
+                                                            PP_Resource,
+                                                        profile:
+                                                            PP_VideoProfile,
+                                                        acceleration:
+                                                            PP_HardwareAcceleration,
+                                                        callback:
+                                                            Struct_PP_CompletionCallback)
+                                              -> int32_t>,
+    pub Decode: ::std::option::Option<extern "C" fn(video_decoder:
+                                                        PP_Resource,
+                                                    decode_id: uint32_t,
+                                                    size: uint32_t,
+                                                    buffer:
+                                                        *const ::libc::c_void,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
+                                          -> int32_t>,
+    pub GetPicture: ::std::option::Option<extern "C" fn(video_decoder:
+                                                            PP_Resource,
+                                                        picture:
+                                                            *mut Struct_PP_VideoPicture,
+                                                        callback:
+                                                            Struct_PP_CompletionCallback)
+                                              -> int32_t>,
+    pub RecyclePicture: ::std::option::Option<extern "C" fn(video_decoder:
+                                                                PP_Resource,
+                                                            picture:
+                                                                *const Struct_PP_VideoPicture)
+                                                  -> ()>,
+    pub Flush: ::std::option::Option<extern "C" fn(video_decoder: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
+                                         -> int32_t>,
+    pub Reset: ::std::option::Option<extern "C" fn(video_decoder: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
+                                         -> int32_t>,
+}
+impl ::std::clone::Clone for Struct_PPB_VideoDecoder_1_0 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_VideoDecoder_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type PPB_VideoDecoder = Struct_PPB_VideoDecoder_1_0;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PPB_VideoDecoder_0_1 {
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
+                                          -> PP_Resource>,
+    pub IsVideoDecoder: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
+                                                  -> PP_Bool>,
+    pub Initialize: ::std::option::Option<extern "C" fn(video_decoder:
+                                                            PP_Resource,
+                                                        graphics3d_context:
+                                                            PP_Resource,
+                                                        profile:
+                                                            PP_VideoProfile,
+                                                        allow_software_fallback:
+                                                            PP_Bool,
+                                                        callback:
+                                                            Struct_PP_CompletionCallback)
+                                              -> int32_t>,
+    pub Decode: ::std::option::Option<extern "C" fn(video_decoder:
+                                                        PP_Resource,
+                                                    decode_id: uint32_t,
+                                                    size: uint32_t,
+                                                    buffer:
+                                                        *const ::libc::c_void,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
+                                          -> int32_t>,
+    pub GetPicture: ::std::option::Option<extern "C" fn(video_decoder:
+                                                            PP_Resource,
+                                                        picture:
+                                                            *mut Struct_PP_VideoPicture_0_1,
+                                                        callback:
+                                                            Struct_PP_CompletionCallback)
+                                              -> int32_t>,
+    pub RecyclePicture: ::std::option::Option<extern "C" fn(video_decoder:
+                                                                PP_Resource,
+                                                            picture:
+                                                                *const Struct_PP_VideoPicture)
+                                                  -> ()>,
+    pub Flush: ::std::option::Option<extern "C" fn(video_decoder: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
+                                         -> int32_t>,
+    pub Reset: ::std::option::Option<extern "C" fn(video_decoder: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
+                                         -> int32_t>,
+}
+impl ::std::clone::Clone for Struct_PPB_VideoDecoder_0_1 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_VideoDecoder_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PPB_VideoDecoder_0_2 {
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
+                                          -> PP_Resource>,
+    pub IsVideoDecoder: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
+                                                  -> PP_Bool>,
+    pub Initialize: ::std::option::Option<extern "C" fn(video_decoder:
+                                                            PP_Resource,
+                                                        graphics3d_context:
+                                                            PP_Resource,
+                                                        profile:
+                                                            PP_VideoProfile,
+                                                        acceleration:
+                                                            PP_HardwareAcceleration,
+                                                        callback:
+                                                            Struct_PP_CompletionCallback)
+                                              -> int32_t>,
+    pub Decode: ::std::option::Option<extern "C" fn(video_decoder:
+                                                        PP_Resource,
+                                                    decode_id: uint32_t,
+                                                    size: uint32_t,
+                                                    buffer:
+                                                        *const ::libc::c_void,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
+                                          -> int32_t>,
+    pub GetPicture: ::std::option::Option<extern "C" fn(video_decoder:
+                                                            PP_Resource,
+                                                        picture:
+                                                            *mut Struct_PP_VideoPicture_0_1,
+                                                        callback:
+                                                            Struct_PP_CompletionCallback)
+                                              -> int32_t>,
+    pub RecyclePicture: ::std::option::Option<extern "C" fn(video_decoder:
+                                                                PP_Resource,
+                                                            picture:
+                                                                *const Struct_PP_VideoPicture)
+                                                  -> ()>,
+    pub Flush: ::std::option::Option<extern "C" fn(video_decoder: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
+                                         -> int32_t>,
+    pub Reset: ::std::option::Option<extern "C" fn(video_decoder: PP_Resource,
+                                                   callback:
+                                                       Struct_PP_CompletionCallback)
+                                         -> int32_t>,
+}
+impl ::std::clone::Clone for Struct_PPB_VideoDecoder_0_2 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_VideoDecoder_0_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed33 = ::libc::c_uint;
+pub const PP_VIDEOFRAME_FORMAT_UNKNOWN: ::libc::c_uint = 0;
+pub const PP_VIDEOFRAME_FORMAT_YV12: ::libc::c_uint = 1;
+pub const PP_VIDEOFRAME_FORMAT_I420: ::libc::c_uint = 2;
+pub const PP_VIDEOFRAME_FORMAT_BGRA: ::libc::c_uint = 3;
+pub const PP_VIDEOFRAME_FORMAT_LAST: ::libc::c_uint = 3;
+pub type PP_VideoFrame_Format = Enum_Unnamed33;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PPB_VideoFrame_0_1 {
+    pub IsVideoFrame: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
+                                                -> PP_Bool>,
+    pub GetTimestamp: ::std::option::Option<extern "C" fn(frame: PP_Resource)
+                                                -> PP_TimeDelta>,
+    pub SetTimestamp: ::std::option::Option<extern "C" fn(frame: PP_Resource,
+                                                          timestamp:
+                                                              PP_TimeDelta)
+                                                -> ()>,
+    pub GetFormat: ::std::option::Option<extern "C" fn(frame: PP_Resource)
+                                             -> PP_VideoFrame_Format>,
+    pub GetSize: ::std::option::Option<extern "C" fn(frame: PP_Resource,
+                                                     size:
+                                                         *mut Struct_PP_Size)
+                                           -> PP_Bool>,
+    pub GetDataBuffer: ::std::option::Option<extern "C" fn(frame: PP_Resource)
+                                                 -> *mut ::libc::c_void>,
+    pub GetDataBufferSize: ::std::option::Option<extern "C" fn(frame:
+                                                                   PP_Resource)
+                                                     -> uint32_t>,
+}
+impl ::std::clone::Clone for Struct_PPB_VideoFrame_0_1 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_VideoFrame_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type PPB_VideoFrame = Struct_PPB_VideoFrame_0_1;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PPB_VideoEncoder_0_2 {
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
+                                          -> PP_Resource>,
+    pub IsVideoEncoder: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
+                                                  -> PP_Bool>,
+    pub GetSupportedProfiles: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                      PP_Resource,
+                                                                  output:
+                                                                      Struct_PP_ArrayOutput,
+                                                                  callback:
+                                                                      Struct_PP_CompletionCallback)
+                                                        -> int32_t>,
+    pub Initialize: ::std::option::Option<extern "C" fn(video_encoder:
+                                                            PP_Resource,
+                                                        input_format:
+                                                            PP_VideoFrame_Format,
+                                                        input_visible_size:
+                                                            *const Struct_PP_Size,
+                                                        output_profile:
+                                                            PP_VideoProfile,
+                                                        initial_bitrate:
+                                                            uint32_t,
+                                                        acceleration:
+                                                            PP_HardwareAcceleration,
+                                                        callback:
+                                                            Struct_PP_CompletionCallback)
+                                              -> int32_t>,
+    pub GetFramesRequired: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                   PP_Resource)
+                                                     -> int32_t>,
+    pub GetFrameCodedSize: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                   PP_Resource,
+                                                               coded_size:
+                                                                   *mut Struct_PP_Size)
+                                                     -> int32_t>,
+    pub GetVideoFrame: ::std::option::Option<extern "C" fn(video_encoder:
+                                                               PP_Resource,
+                                                           video_frame:
+                                                               *mut PP_Resource,
+                                                           callback:
+                                                               Struct_PP_CompletionCallback)
+                                                 -> int32_t>,
+    pub Encode: ::std::option::Option<extern "C" fn(video_encoder:
+                                                        PP_Resource,
+                                                    video_frame: PP_Resource,
+                                                    force_keyframe: PP_Bool,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
+                                          -> int32_t>,
+    pub GetBitstreamBuffer: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                    PP_Resource,
+                                                                bitstream_buffer:
+                                                                    *mut Struct_PP_BitstreamBuffer,
+                                                                callback:
+                                                                    Struct_PP_CompletionCallback)
+                                                      -> int32_t>,
+    pub RecycleBitstreamBuffer: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                        PP_Resource,
+                                                                    bitstream_buffer:
+                                                                        *const Struct_PP_BitstreamBuffer)
+                                                          -> ()>,
+    pub RequestEncodingParametersChange: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                                 PP_Resource,
+                                                                             bitrate:
+                                                                                 uint32_t,
+                                                                             framerate:
+                                                                                 uint32_t)
+                                                                   -> ()>,
+    pub Close: ::std::option::Option<extern "C" fn(video_encoder: PP_Resource)
+                                         -> ()>,
+}
+impl ::std::clone::Clone for Struct_PPB_VideoEncoder_0_2 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_VideoEncoder_0_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct_PPB_VideoEncoder_0_1 {
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
+                                          -> PP_Resource>,
+    pub IsVideoEncoder: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
+                                                  -> PP_Bool>,
+    pub GetSupportedProfiles: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                      PP_Resource,
+                                                                  output:
+                                                                      Struct_PP_ArrayOutput,
+                                                                  callback:
+                                                                      Struct_PP_CompletionCallback)
+                                                        -> int32_t>,
+    pub Initialize: ::std::option::Option<extern "C" fn(video_encoder:
+                                                            PP_Resource,
+                                                        input_format:
+                                                            PP_VideoFrame_Format,
+                                                        input_visible_size:
+                                                            *const Struct_PP_Size,
+                                                        output_profile:
+                                                            PP_VideoProfile,
+                                                        initial_bitrate:
+                                                            uint32_t,
+                                                        acceleration:
+                                                            PP_HardwareAcceleration,
+                                                        callback:
+                                                            Struct_PP_CompletionCallback)
+                                              -> int32_t>,
+    pub GetFramesRequired: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                   PP_Resource)
+                                                     -> int32_t>,
+    pub GetFrameCodedSize: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                   PP_Resource,
+                                                               coded_size:
+                                                                   *mut Struct_PP_Size)
+                                                     -> int32_t>,
+    pub GetVideoFrame: ::std::option::Option<extern "C" fn(video_encoder:
+                                                               PP_Resource,
+                                                           video_frame:
+                                                               *mut PP_Resource,
+                                                           callback:
+                                                               Struct_PP_CompletionCallback)
+                                                 -> int32_t>,
+    pub Encode: ::std::option::Option<extern "C" fn(video_encoder:
+                                                        PP_Resource,
+                                                    video_frame: PP_Resource,
+                                                    force_keyframe: PP_Bool,
+                                                    callback:
+                                                        Struct_PP_CompletionCallback)
+                                          -> int32_t>,
+    pub GetBitstreamBuffer: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                    PP_Resource,
+                                                                bitstream_buffer:
+                                                                    *mut Struct_PP_BitstreamBuffer,
+                                                                callback:
+                                                                    Struct_PP_CompletionCallback)
+                                                      -> int32_t>,
+    pub RecycleBitstreamBuffer: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                        PP_Resource,
+                                                                    bitstream_buffer:
+                                                                        *const Struct_PP_BitstreamBuffer)
+                                                          -> ()>,
+    pub RequestEncodingParametersChange: ::std::option::Option<extern "C" fn(video_encoder:
+                                                                                 PP_Resource,
+                                                                             bitrate:
+                                                                                 uint32_t,
+                                                                             framerate:
+                                                                                 uint32_t)
+                                                                   -> ()>,
+    pub Close: ::std::option::Option<extern "C" fn(video_encoder: PP_Resource)
+                                         -> ()>,
+}
+impl ::std::clone::Clone for Struct_PPB_VideoEncoder_0_1 {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_VideoEncoder_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+#[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_View_1_2 {
     pub IsView: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                           -> PP_Bool>,
-    pub GetRect: ::std::option::Option<extern "C" fn
-                                           (resource: PP_Resource,
-                                            rect: *mut Struct_PP_Rect)
+    pub GetRect: ::std::option::Option<extern "C" fn(resource: PP_Resource,
+                                                     rect:
+                                                         *mut Struct_PP_Rect)
                                            -> PP_Bool>,
-    pub IsFullscreen: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource)
+    pub IsFullscreen: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
                                                 -> PP_Bool>,
     pub IsVisible: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                              -> PP_Bool>,
-    pub IsPageVisible: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource)
+    pub IsPageVisible: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource)
                                                  -> PP_Bool>,
-    pub GetClipRect: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource,
-                                                clip: *mut Struct_PP_Rect)
+    pub GetClipRect: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource,
+                                                         clip:
+                                                             *mut Struct_PP_Rect)
                                                -> PP_Bool>,
-    pub GetDeviceScale: ::std::option::Option<extern "C" fn
-                                                  (resource: PP_Resource)
+    pub GetDeviceScale: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
                                                   -> ::libc::c_float>,
-    pub GetCSSScale: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub GetCSSScale: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> ::libc::c_float>,
-    pub GetScrollOffset: ::std::option::Option<extern "C" fn
-                                                   (resource: PP_Resource,
-                                                    offset:
-                                                        *mut Struct_PP_Point)
+    pub GetScrollOffset: ::std::option::Option<extern "C" fn(resource:
+                                                                 PP_Resource,
+                                                             offset:
+                                                                 *mut Struct_PP_Point)
                                                    -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPB_View_1_2 {
-    fn default() -> Struct_PPB_View_1_2 { unsafe { ::std::mem::zeroed() } }
-}
 impl ::std::clone::Clone for Struct_PPB_View_1_2 {
-    fn clone(&self) -> Struct_PPB_View_1_2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_View_1_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_View = Struct_PPB_View_1_2;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_View_1_0 {
     pub IsView: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                           -> PP_Bool>,
-    pub GetRect: ::std::option::Option<extern "C" fn
-                                           (resource: PP_Resource,
-                                            rect: *mut Struct_PP_Rect)
+    pub GetRect: ::std::option::Option<extern "C" fn(resource: PP_Resource,
+                                                     rect:
+                                                         *mut Struct_PP_Rect)
                                            -> PP_Bool>,
-    pub IsFullscreen: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource)
+    pub IsFullscreen: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
                                                 -> PP_Bool>,
     pub IsVisible: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                              -> PP_Bool>,
-    pub IsPageVisible: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource)
+    pub IsPageVisible: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource)
                                                  -> PP_Bool>,
-    pub GetClipRect: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource,
-                                                clip: *mut Struct_PP_Rect)
+    pub GetClipRect: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource,
+                                                         clip:
+                                                             *mut Struct_PP_Rect)
                                                -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPB_View_1_0 {
-    fn default() -> Struct_PPB_View_1_0 { unsafe { ::std::mem::zeroed() } }
-}
 impl ::std::clone::Clone for Struct_PPB_View_1_0 {
-    fn clone(&self) -> Struct_PPB_View_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_View_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_View_1_1 {
     pub IsView: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                           -> PP_Bool>,
-    pub GetRect: ::std::option::Option<extern "C" fn
-                                           (resource: PP_Resource,
-                                            rect: *mut Struct_PP_Rect)
+    pub GetRect: ::std::option::Option<extern "C" fn(resource: PP_Resource,
+                                                     rect:
+                                                         *mut Struct_PP_Rect)
                                            -> PP_Bool>,
-    pub IsFullscreen: ::std::option::Option<extern "C" fn
-                                                (resource: PP_Resource)
+    pub IsFullscreen: ::std::option::Option<extern "C" fn(resource:
+                                                              PP_Resource)
                                                 -> PP_Bool>,
     pub IsVisible: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                              -> PP_Bool>,
-    pub IsPageVisible: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource)
+    pub IsPageVisible: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource)
                                                  -> PP_Bool>,
-    pub GetClipRect: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource,
-                                                clip: *mut Struct_PP_Rect)
+    pub GetClipRect: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource,
+                                                         clip:
+                                                             *mut Struct_PP_Rect)
                                                -> PP_Bool>,
-    pub GetDeviceScale: ::std::option::Option<extern "C" fn
-                                                  (resource: PP_Resource)
+    pub GetDeviceScale: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
                                                   -> ::libc::c_float>,
-    pub GetCSSScale: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub GetCSSScale: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> ::libc::c_float>,
 }
-impl ::std::default::Default for Struct_PPB_View_1_1 {
-    fn default() -> Struct_PPB_View_1_1 { unsafe { ::std::mem::zeroed() } }
-}
 impl ::std::clone::Clone for Struct_PPB_View_1_1 {
-    fn clone(&self) -> Struct_PPB_View_1_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed40 = ::libc::c_int;
+impl ::std::default::Default for Struct_PPB_View_1_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed34 = ::libc::c_int;
 pub const PP_WEBSOCKETREADYSTATE_INVALID: ::libc::c_int = -1;
 pub const PP_WEBSOCKETREADYSTATE_CONNECTING: ::libc::c_int = 0;
 pub const PP_WEBSOCKETREADYSTATE_OPEN: ::libc::c_int = 1;
 pub const PP_WEBSOCKETREADYSTATE_CLOSING: ::libc::c_int = 2;
 pub const PP_WEBSOCKETREADYSTATE_CLOSED: ::libc::c_int = 3;
-pub type PP_WebSocketReadyState = Enum_Unnamed40;
+pub type PP_WebSocketReadyState = Enum_Unnamed34;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_WebSocketReadyState {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketReadyState_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_WebSocketReadyState
+ {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_WebSocketReadyState {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_WebSocketReadyState {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed41 = ::libc::c_uint;
+pub type Enum_Unnamed35 = ::libc::c_uint;
 pub const PP_WEBSOCKETSTATUSCODE_NOT_SPECIFIED: ::libc::c_uint = 1005;
 pub const PP_WEBSOCKETSTATUSCODE_NORMAL_CLOSURE: ::libc::c_uint = 1000;
 pub const PP_WEBSOCKETSTATUSCODE_GOING_AWAY: ::libc::c_uint = 1001;
@@ -5205,109 +6095,110 @@ pub const PP_WEBSOCKETSTATUSCODE_USER_REGISTERED_MIN: ::libc::c_uint = 3000;
 pub const PP_WEBSOCKETSTATUSCODE_USER_REGISTERED_MAX: ::libc::c_uint = 3999;
 pub const PP_WEBSOCKETSTATUSCODE_USER_PRIVATE_MIN: ::libc::c_uint = 4000;
 pub const PP_WEBSOCKETSTATUSCODE_USER_PRIVATE_MAX: ::libc::c_uint = 4999;
-pub type PP_WebSocketCloseCode = Enum_Unnamed41;
+pub type PP_WebSocketCloseCode = Enum_Unnamed35;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_WebSocketCloseCode {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_WebSocketCloseCode_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_WebSocketCloseCode
+ {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_WebSocketCloseCode {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_WebSocketCloseCode {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_WebSocket_1_0 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub IsWebSocket: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub IsWebSocket: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> PP_Bool>,
-    pub Connect: ::std::option::Option<extern "C" fn
-                                           (web_socket: PP_Resource,
-                                            url: Struct_PP_Var,
-                                            protocols: *const Struct_PP_Var,
-                                            protocol_count: uint32_t,
-                                            callback:
-                                                Struct_PP_CompletionCallback)
+    pub Connect: ::std::option::Option<extern "C" fn(web_socket: PP_Resource,
+                                                     url: Struct_PP_Var,
+                                                     protocols:
+                                                         *const Struct_PP_Var,
+                                                     protocol_count: uint32_t,
+                                                     callback:
+                                                         Struct_PP_CompletionCallback)
                                            -> int32_t>,
-    pub Close: ::std::option::Option<extern "C" fn
-                                         (web_socket: PP_Resource,
-                                          code: uint16_t,
-                                          reason: Struct_PP_Var,
-                                          callback:
-                                              Struct_PP_CompletionCallback)
-                                         -> int32_t>,
-    pub ReceiveMessage: ::std::option::Option<extern "C" fn
-                                                  (web_socket: PP_Resource,
-                                                   message:
-                                                       *mut Struct_PP_Var,
+    pub Close: ::std::option::Option<extern "C" fn(web_socket: PP_Resource,
+                                                   code: uint16_t,
+                                                   reason: Struct_PP_Var,
                                                    callback:
                                                        Struct_PP_CompletionCallback)
+                                         -> int32_t>,
+    pub ReceiveMessage: ::std::option::Option<extern "C" fn(web_socket:
+                                                                PP_Resource,
+                                                            message:
+                                                                *mut Struct_PP_Var,
+                                                            callback:
+                                                                Struct_PP_CompletionCallback)
                                                   -> int32_t>,
-    pub SendMessage: ::std::option::Option<extern "C" fn
-                                               (web_socket: PP_Resource,
-                                                message: Struct_PP_Var)
+    pub SendMessage: ::std::option::Option<extern "C" fn(web_socket:
+                                                             PP_Resource,
+                                                         message:
+                                                             Struct_PP_Var)
                                                -> int32_t>,
-    pub GetBufferedAmount: ::std::option::Option<extern "C" fn
-                                                     (web_socket: PP_Resource)
+    pub GetBufferedAmount: ::std::option::Option<extern "C" fn(web_socket:
+                                                                   PP_Resource)
                                                      -> uint64_t>,
-    pub GetCloseCode: ::std::option::Option<extern "C" fn
-                                                (web_socket: PP_Resource)
+    pub GetCloseCode: ::std::option::Option<extern "C" fn(web_socket:
+                                                              PP_Resource)
                                                 -> uint16_t>,
-    pub GetCloseReason: ::std::option::Option<extern "C" fn
-                                                  (web_socket: PP_Resource)
+    pub GetCloseReason: ::std::option::Option<extern "C" fn(web_socket:
+                                                                PP_Resource)
                                                   -> Struct_PP_Var>,
-    pub GetCloseWasClean: ::std::option::Option<extern "C" fn
-                                                    (web_socket: PP_Resource)
+    pub GetCloseWasClean: ::std::option::Option<extern "C" fn(web_socket:
+                                                                  PP_Resource)
                                                     -> PP_Bool>,
-    pub GetExtensions: ::std::option::Option<extern "C" fn
-                                                 (web_socket: PP_Resource)
+    pub GetExtensions: ::std::option::Option<extern "C" fn(web_socket:
+                                                               PP_Resource)
                                                  -> Struct_PP_Var>,
-    pub GetProtocol: ::std::option::Option<extern "C" fn
-                                               (web_socket: PP_Resource)
+    pub GetProtocol: ::std::option::Option<extern "C" fn(web_socket:
+                                                             PP_Resource)
                                                -> Struct_PP_Var>,
-    pub GetReadyState: ::std::option::Option<extern "C" fn
-                                                 (web_socket: PP_Resource)
+    pub GetReadyState: ::std::option::Option<extern "C" fn(web_socket:
+                                                               PP_Resource)
                                                  -> PP_WebSocketReadyState>,
     pub GetURL: ::std::option::Option<extern "C" fn(web_socket: PP_Resource)
                                           -> Struct_PP_Var>,
 }
-impl ::std::default::Default for Struct_PPB_WebSocket_1_0 {
-    fn default() -> Struct_PPB_WebSocket_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_WebSocket_1_0 {
-    fn clone(&self) -> Struct_PPB_WebSocket_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_WebSocket_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_WebSocket = Struct_PPB_WebSocket_1_0;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_DirectoryEntry {
     pub file_ref: PP_Resource,
     pub file_type: PP_FileType,
 }
+impl ::std::clone::Clone for Struct_PP_DirectoryEntry {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_DirectoryEntry {
-    fn default() -> Struct_PP_DirectoryEntry {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_DirectoryEntry {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_DirectoryEntry_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_DirectoryEntry {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_DirectoryEntry
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_DirectoryEntry {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed42 = ::libc::c_int;
+pub type Enum_Unnamed36 = ::libc::c_int;
 pub const PP_OK: ::libc::c_int = 0;
 pub const PP_OK_COMPLETIONPENDING: ::libc::c_int = -1;
 pub const PP_ERROR_FAILED: ::libc::c_int = -2;
@@ -5348,51 +6239,56 @@ pub const PP_ERROR_ADDRESS_IN_USE: ::libc::c_int = -108;
 pub const PP_ERROR_MESSAGE_TOO_BIG: ::libc::c_int = -109;
 pub const PP_ERROR_NAME_NOT_RESOLVED: ::libc::c_int = -110;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_InputEvent_Key {
     pub modifier: uint32_t,
     pub key_code: uint32_t,
 }
+impl ::std::clone::Clone for Struct_PP_InputEvent_Key {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_InputEvent_Key {
-    fn default() -> Struct_PP_InputEvent_Key {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Key {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Key_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_InputEvent_Key {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_InputEvent_Key
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_InputEvent_Key {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_InputEvent_Character {
     pub modifier: uint32_t,
     pub text: [::libc::c_char; 5usize],
 }
+impl ::std::clone::Clone for Struct_PP_InputEvent_Character {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_InputEvent_Character {
-    fn default() -> Struct_PP_InputEvent_Character {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Character {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Character_is_not_12_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_InputEvent_Character {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Character {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_InputEvent_Character {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_InputEvent_Mouse {
     pub modifier: uint32_t,
     pub button: PP_InputEvent_MouseButton,
@@ -5400,24 +6296,26 @@ pub struct Struct_PP_InputEvent_Mouse {
     pub y: ::libc::c_float,
     pub click_count: int32_t,
 }
+impl ::std::clone::Clone for Struct_PP_InputEvent_Mouse {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_InputEvent_Mouse {
-    fn default() -> Struct_PP_InputEvent_Mouse {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Mouse {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Mouse_is_not_20_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_InputEvent_Mouse {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Mouse {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_InputEvent_Mouse {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_InputEvent_Wheel {
     pub modifier: uint32_t,
     pub delta_x: ::libc::c_float,
@@ -5426,160 +6324,152 @@ pub struct Struct_PP_InputEvent_Wheel {
     pub wheel_ticks_y: ::libc::c_float,
     pub scroll_by_page: PP_Bool,
 }
+impl ::std::clone::Clone for Struct_PP_InputEvent_Wheel {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_InputEvent_Wheel {
-    fn default() -> Struct_PP_InputEvent_Wheel {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_InputEvent_Wheel {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_InputEvent_Wheel_is_not_24_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_InputEvent_Wheel {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_InputEvent_Wheel {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_InputEvent_Wheel {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPP_Graphics3D_1_0 {
-    pub Graphics3DContextLost: ::std::option::Option<extern "C" fn
-                                                         (instance:
-                                                              PP_Instance)>,
-}
-impl ::std::default::Default for Struct_PPP_Graphics3D_1_0 {
-    fn default() -> Struct_PPP_Graphics3D_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub Graphics3DContextLost: ::std::option::Option<extern "C" fn(instance:
+                                                                       PP_Instance)
+                                                         -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPP_Graphics3D_1_0 {
-    fn clone(&self) -> Struct_PPP_Graphics3D_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPP_Graphics3D_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPP_Graphics3D = Struct_PPP_Graphics3D_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPP_InputEvent_0_1 {
-    pub HandleInputEvent: ::std::option::Option<extern "C" fn
-                                                    (instance: PP_Instance,
-                                                     input_event: PP_Resource)
+    pub HandleInputEvent: ::std::option::Option<extern "C" fn(instance:
+                                                                  PP_Instance,
+                                                              input_event:
+                                                                  PP_Resource)
                                                     -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPP_InputEvent_0_1 {
-    fn default() -> Struct_PPP_InputEvent_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPP_InputEvent_0_1 {
-    fn clone(&self) -> Struct_PPP_InputEvent_0_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPP_InputEvent_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPP_InputEvent = Struct_PPP_InputEvent_0_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPP_Instance_1_1 {
-    pub DidCreate: ::std::option::Option<extern "C" fn
-                                             (instance: PP_Instance,
-                                              argc: uint32_t,
-                                              argn:
-                                                  *mut *const ::libc::c_char,
-                                              argv:
-                                                  *mut *const ::libc::c_char)
+    pub DidCreate: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                       argc: uint32_t,
+                                                       argn:
+                                                           *mut *const ::libc::c_char,
+                                                       argv:
+                                                           *mut *const ::libc::c_char)
                                              -> PP_Bool>,
-    pub DidDestroy: ::std::option::Option<extern "C" fn
-                                              (instance: PP_Instance)>,
-    pub DidChangeView: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance,
-                                                  view: PP_Resource)>,
-    pub DidChangeFocus: ::std::option::Option<extern "C" fn
-                                                  (instance: PP_Instance,
-                                                   has_focus: PP_Bool)>,
-    pub HandleDocumentLoad: ::std::option::Option<extern "C" fn
-                                                      (instance: PP_Instance,
-                                                       url_loader:
-                                                           PP_Resource)
+    pub DidDestroy: ::std::option::Option<extern "C" fn(instance: PP_Instance)
+                                              -> ()>,
+    pub DidChangeView: ::std::option::Option<extern "C" fn(instance:
+                                                               PP_Instance,
+                                                           view: PP_Resource)
+                                                 -> ()>,
+    pub DidChangeFocus: ::std::option::Option<extern "C" fn(instance:
+                                                                PP_Instance,
+                                                            has_focus:
+                                                                PP_Bool)
+                                                  -> ()>,
+    pub HandleDocumentLoad: ::std::option::Option<extern "C" fn(instance:
+                                                                    PP_Instance,
+                                                                url_loader:
+                                                                    PP_Resource)
                                                       -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPP_Instance_1_1 {
-    fn default() -> Struct_PPP_Instance_1_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPP_Instance_1_1 {
-    fn clone(&self) -> Struct_PPP_Instance_1_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPP_Instance_1_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPP_Instance = Struct_PPP_Instance_1_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPP_Instance_1_0 {
-    pub DidCreate: ::std::option::Option<extern "C" fn
-                                             (instance: PP_Instance,
-                                              argc: uint32_t,
-                                              argn:
-                                                  *mut *const ::libc::c_char,
-                                              argv:
-                                                  *mut *const ::libc::c_char)
+    pub DidCreate: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                       argc: uint32_t,
+                                                       argn:
+                                                           *mut *const ::libc::c_char,
+                                                       argv:
+                                                           *mut *const ::libc::c_char)
                                              -> PP_Bool>,
-    pub DidDestroy: ::std::option::Option<extern "C" fn
-                                              (instance: PP_Instance)>,
-    pub DidChangeView: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance,
-                                                  position:
-                                                      *const Struct_PP_Rect,
-                                                  clip:
-                                                      *const Struct_PP_Rect)>,
-    pub DidChangeFocus: ::std::option::Option<extern "C" fn
-                                                  (instance: PP_Instance,
-                                                   has_focus: PP_Bool)>,
-    pub HandleDocumentLoad: ::std::option::Option<extern "C" fn
-                                                      (instance: PP_Instance,
-                                                       url_loader:
-                                                           PP_Resource)
+    pub DidDestroy: ::std::option::Option<extern "C" fn(instance: PP_Instance)
+                                              -> ()>,
+    pub DidChangeView: ::std::option::Option<extern "C" fn(instance:
+                                                               PP_Instance,
+                                                           position:
+                                                               *const Struct_PP_Rect,
+                                                           clip:
+                                                               *const Struct_PP_Rect)
+                                                 -> ()>,
+    pub DidChangeFocus: ::std::option::Option<extern "C" fn(instance:
+                                                                PP_Instance,
+                                                            has_focus:
+                                                                PP_Bool)
+                                                  -> ()>,
+    pub HandleDocumentLoad: ::std::option::Option<extern "C" fn(instance:
+                                                                    PP_Instance,
+                                                                url_loader:
+                                                                    PP_Resource)
                                                       -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPP_Instance_1_0 {
-    fn default() -> Struct_PPP_Instance_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPP_Instance_1_0 {
-    fn clone(&self) -> Struct_PPP_Instance_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPP_Instance_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPP_Messaging_1_0 {
-    pub HandleMessage: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance,
-                                                  message: Struct_PP_Var)>,
-}
-impl ::std::default::Default for Struct_PPP_Messaging_1_0 {
-    fn default() -> Struct_PPP_Messaging_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub HandleMessage: ::std::option::Option<extern "C" fn(instance:
+                                                               PP_Instance,
+                                                           message:
+                                                               Struct_PP_Var)
+                                                 -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPP_Messaging_1_0 {
-    fn clone(&self) -> Struct_PPP_Messaging_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPP_Messaging_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPP_Messaging = Struct_PPP_Messaging_1_0;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPP_MouseLock_1_0 {
-    pub MouseLockLost: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance)>,
-}
-impl ::std::default::Default for Struct_PPP_MouseLock_1_0 {
-    fn default() -> Struct_PPP_MouseLock_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub MouseLockLost: ::std::option::Option<extern "C" fn(instance:
+                                                               PP_Instance)
+                                                 -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPP_MouseLock_1_0 {
-    fn clone(&self) -> Struct_PPP_MouseLock_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPP_MouseLock_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPP_MouseLock = Struct_PPP_MouseLock_1_0;
 pub type Enum_PP_CursorType_Dev = ::libc::c_int;
@@ -5628,138 +6518,135 @@ pub const PP_CURSORTYPE_ZOOMOUT: ::libc::c_int = 40;
 pub const PP_CURSORTYPE_GRAB: ::libc::c_int = 41;
 pub const PP_CURSORTYPE_GRABBING: ::libc::c_int = 42;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_CursorType_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_CursorType_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_CursorType_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_CursorType_Dev
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_CursorType_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_CursorControl_Dev_0_4 {
-    pub SetCursor: ::std::option::Option<extern "C" fn
-                                             (instance: PP_Instance,
-                                              _type: Enum_PP_CursorType_Dev,
-                                              custom_image: PP_Resource,
-                                              hot_spot:
-                                                  *const Struct_PP_Point)
+    pub SetCursor: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                       _type:
+                                                           Enum_PP_CursorType_Dev,
+                                                       custom_image:
+                                                           PP_Resource,
+                                                       hot_spot:
+                                                           *const Struct_PP_Point)
                                              -> PP_Bool>,
     pub LockCursor: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                               -> PP_Bool>,
-    pub UnlockCursor: ::std::option::Option<extern "C" fn
-                                                (instance: PP_Instance)
+    pub UnlockCursor: ::std::option::Option<extern "C" fn(instance:
+                                                              PP_Instance)
                                                 -> PP_Bool>,
-    pub HasCursorLock: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance)
+    pub HasCursorLock: ::std::option::Option<extern "C" fn(instance:
+                                                               PP_Instance)
                                                  -> PP_Bool>,
-    pub CanLockCursor: ::std::option::Option<extern "C" fn
-                                                 (instance: PP_Instance)
+    pub CanLockCursor: ::std::option::Option<extern "C" fn(instance:
+                                                               PP_Instance)
                                                  -> PP_Bool>,
-}
-impl ::std::default::Default for Struct_PPB_CursorControl_Dev_0_4 {
-    fn default() -> Struct_PPB_CursorControl_Dev_0_4 {
-        unsafe { ::std::mem::zeroed() }
-    }
 }
 impl ::std::clone::Clone for Struct_PPB_CursorControl_Dev_0_4 {
-    fn clone(&self) -> Struct_PPB_CursorControl_Dev_0_4 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_CursorControl_Dev_0_4 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_CursorControl_Dev = Struct_PPB_CursorControl_Dev_0_4;
-pub type Enum_Unnamed43 = ::libc::c_uint;
+pub type Enum_Unnamed37 = ::libc::c_uint;
 pub const PP_FILECHOOSERMODE_OPEN: ::libc::c_uint = 0;
 pub const PP_FILECHOOSERMODE_OPENMULTIPLE: ::libc::c_uint = 1;
-pub type PP_FileChooserMode_Dev = Enum_Unnamed43;
+pub type PP_FileChooserMode_Dev = Enum_Unnamed37;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FileChooserMode_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FileChooserMode_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FileChooserMode_Dev
+ {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_FileChooserMode_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FileChooserMode_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_FileChooser_Dev_0_6 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           mode: PP_FileChooserMode_Dev,
-                                           accept_types: Struct_PP_Var)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    mode:
+                                                        PP_FileChooserMode_Dev,
+                                                    accept_types:
+                                                        Struct_PP_Var)
                                           -> PP_Resource>,
-    pub IsFileChooser: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource)
+    pub IsFileChooser: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource)
                                                  -> PP_Bool>,
-    pub Show: ::std::option::Option<extern "C" fn
-                                        (chooser: PP_Resource,
-                                         output: Struct_PP_ArrayOutput,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Show: ::std::option::Option<extern "C" fn(chooser: PP_Resource,
+                                                  output:
+                                                      Struct_PP_ArrayOutput,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_FileChooser_Dev_0_6 {
-    fn default() -> Struct_PPB_FileChooser_Dev_0_6 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_FileChooser_Dev_0_6 {
-    fn clone(&self) -> Struct_PPB_FileChooser_Dev_0_6 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_FileChooser_Dev_0_6 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_FileChooser_Dev = Struct_PPB_FileChooser_Dev_0_6;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_FileChooser_Dev_0_5 {
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           mode: PP_FileChooserMode_Dev,
-                                           accept_types: Struct_PP_Var)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    mode:
+                                                        PP_FileChooserMode_Dev,
+                                                    accept_types:
+                                                        Struct_PP_Var)
                                           -> PP_Resource>,
-    pub IsFileChooser: ::std::option::Option<extern "C" fn
-                                                 (resource: PP_Resource)
+    pub IsFileChooser: ::std::option::Option<extern "C" fn(resource:
+                                                               PP_Resource)
                                                  -> PP_Bool>,
-    pub Show: ::std::option::Option<extern "C" fn
-                                        (chooser: PP_Resource,
-                                         callback:
-                                             Struct_PP_CompletionCallback)
+    pub Show: ::std::option::Option<extern "C" fn(chooser: PP_Resource,
+                                                  callback:
+                                                      Struct_PP_CompletionCallback)
                                         -> int32_t>,
-    pub GetNextChosenFile: ::std::option::Option<extern "C" fn
-                                                     (chooser: PP_Resource)
+    pub GetNextChosenFile: ::std::option::Option<extern "C" fn(chooser:
+                                                                   PP_Resource)
                                                      -> PP_Resource>,
 }
-impl ::std::default::Default for Struct_PPB_FileChooser_Dev_0_5 {
-    fn default() -> Struct_PPB_FileChooser_Dev_0_5 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_FileChooser_Dev_0_5 {
-    fn clone(&self) -> Struct_PPB_FileChooser_Dev_0_5 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed44 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PPB_FileChooser_Dev_0_5 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed38 = ::libc::c_uint;
 pub const PP_FONTFAMILY_DEFAULT: ::libc::c_uint = 0;
 pub const PP_FONTFAMILY_SERIF: ::libc::c_uint = 1;
 pub const PP_FONTFAMILY_SANSSERIF: ::libc::c_uint = 2;
 pub const PP_FONTFAMILY_MONOSPACE: ::libc::c_uint = 3;
-pub type PP_FontFamily_Dev = Enum_Unnamed44;
+pub type PP_FontFamily_Dev = Enum_Unnamed38;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontFamily_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FontFamily_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FontFamily_Dev
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FontFamily_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed45 = ::libc::c_uint;
+pub type Enum_Unnamed39 = ::libc::c_uint;
 pub const PP_FONTWEIGHT_100: ::libc::c_uint = 0;
 pub const PP_FONTWEIGHT_200: ::libc::c_uint = 1;
 pub const PP_FONTWEIGHT_300: ::libc::c_uint = 2;
@@ -5771,20 +6658,21 @@ pub const PP_FONTWEIGHT_800: ::libc::c_uint = 7;
 pub const PP_FONTWEIGHT_900: ::libc::c_uint = 8;
 pub const PP_FONTWEIGHT_NORMAL: ::libc::c_uint = 3;
 pub const PP_FONTWEIGHT_BOLD: ::libc::c_uint = 6;
-pub type PP_FontWeight_Dev = Enum_Unnamed45;
+pub type PP_FontWeight_Dev = Enum_Unnamed39;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontWeight_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FontWeight_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FontWeight_Dev
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FontWeight_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_FontDescription_Dev {
     pub face: Struct_PP_Var,
     pub family: PP_FontFamily_Dev,
@@ -5796,24 +6684,27 @@ pub struct Struct_PP_FontDescription_Dev {
     pub word_spacing: int32_t,
     pub padding: int32_t,
 }
+impl ::std::clone::Clone for Struct_PP_FontDescription_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_FontDescription_Dev {
-    fn default() -> Struct_PP_FontDescription_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontDescription_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontDescription_Dev_is_not_48_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FontDescription_Dev
+ {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_FontDescription_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FontDescription_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_FontMetrics_Dev {
     pub height: int32_t,
     pub ascent: int32_t,
@@ -5821,224 +6712,210 @@ pub struct Struct_PP_FontMetrics_Dev {
     pub line_spacing: int32_t,
     pub x_height: int32_t,
 }
+impl ::std::clone::Clone for Struct_PP_FontMetrics_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_FontMetrics_Dev {
-    fn default() -> Struct_PP_FontMetrics_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_FontMetrics_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_FontMetrics_Dev_is_not_20_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_FontMetrics_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_FontMetrics_Dev
  {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_FontMetrics_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_TextRun_Dev {
     pub text: Struct_PP_Var,
     pub rtl: PP_Bool,
     pub override_direction: PP_Bool,
 }
+impl ::std::clone::Clone for Struct_PP_TextRun_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_TextRun_Dev {
-    fn default() -> Struct_PP_TextRun_Dev { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TextRun_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TextRun_Dev_is_not_24_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_TextRun_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_TextRun_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TextRun_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Font_Dev_0_6 {
-    pub GetFontFamilies: ::std::option::Option<extern "C" fn
-                                                   (instance: PP_Instance)
+    pub GetFontFamilies: ::std::option::Option<extern "C" fn(instance:
+                                                                 PP_Instance)
                                                    -> Struct_PP_Var>,
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           description:
-                                               *const Struct_PP_FontDescription_Dev)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    description:
+                                                        *const Struct_PP_FontDescription_Dev)
                                           -> PP_Resource>,
     pub IsFont: ::std::option::Option<extern "C" fn(resource: PP_Resource)
                                           -> PP_Bool>,
-    pub Describe: ::std::option::Option<extern "C" fn
-                                            (font: PP_Resource,
-                                             description:
-                                                 *mut Struct_PP_FontDescription_Dev,
-                                             metrics:
-                                                 *mut Struct_PP_FontMetrics_Dev)
+    pub Describe: ::std::option::Option<extern "C" fn(font: PP_Resource,
+                                                      description:
+                                                          *mut Struct_PP_FontDescription_Dev,
+                                                      metrics:
+                                                          *mut Struct_PP_FontMetrics_Dev)
                                             -> PP_Bool>,
-    pub DrawTextAt: ::std::option::Option<extern "C" fn
-                                              (font: PP_Resource,
-                                               image_data: PP_Resource,
-                                               text:
-                                                   *const Struct_PP_TextRun_Dev,
-                                               position:
-                                                   *const Struct_PP_Point,
-                                               color: uint32_t,
-                                               clip: *const Struct_PP_Rect,
-                                               image_data_is_opaque: PP_Bool)
+    pub DrawTextAt: ::std::option::Option<extern "C" fn(font: PP_Resource,
+                                                        image_data:
+                                                            PP_Resource,
+                                                        text:
+                                                            *const Struct_PP_TextRun_Dev,
+                                                        position:
+                                                            *const Struct_PP_Point,
+                                                        color: uint32_t,
+                                                        clip:
+                                                            *const Struct_PP_Rect,
+                                                        image_data_is_opaque:
+                                                            PP_Bool)
                                               -> PP_Bool>,
-    pub MeasureText: ::std::option::Option<extern "C" fn
-                                               (font: PP_Resource,
-                                                text:
-                                                    *const Struct_PP_TextRun_Dev)
+    pub MeasureText: ::std::option::Option<extern "C" fn(font: PP_Resource,
+                                                         text:
+                                                             *const Struct_PP_TextRun_Dev)
                                                -> int32_t>,
-    pub CharacterOffsetForPixel: ::std::option::Option<extern "C" fn
-                                                           (font: PP_Resource,
-                                                            text:
-                                                                *const Struct_PP_TextRun_Dev,
-                                                            pixel_position:
-                                                                int32_t)
+    pub CharacterOffsetForPixel: ::std::option::Option<extern "C" fn(font:
+                                                                         PP_Resource,
+                                                                     text:
+                                                                         *const Struct_PP_TextRun_Dev,
+                                                                     pixel_position:
+                                                                         int32_t)
                                                            -> uint32_t>,
-    pub PixelOffsetForCharacter: ::std::option::Option<extern "C" fn
-                                                           (font: PP_Resource,
-                                                            text:
-                                                                *const Struct_PP_TextRun_Dev,
-                                                            char_offset:
-                                                                uint32_t)
+    pub PixelOffsetForCharacter: ::std::option::Option<extern "C" fn(font:
+                                                                         PP_Resource,
+                                                                     text:
+                                                                         *const Struct_PP_TextRun_Dev,
+                                                                     char_offset:
+                                                                         uint32_t)
                                                            -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_Font_Dev_0_6 {
-    fn default() -> Struct_PPB_Font_Dev_0_6 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_Font_Dev_0_6 {
-    fn clone(&self) -> Struct_PPB_Font_Dev_0_6 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Font_Dev_0_6 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Font_Dev = Struct_PPB_Font_Dev_0_6;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Memory_Dev_0_1 {
     pub MemAlloc: ::std::option::Option<extern "C" fn(num_bytes: uint32_t)
                                             -> *mut ::libc::c_void>,
-    pub MemFree: ::std::option::Option<extern "C" fn
-                                           (ptr: *mut ::libc::c_void)>,
-}
-impl ::std::default::Default for Struct_PPB_Memory_Dev_0_1 {
-    fn default() -> Struct_PPB_Memory_Dev_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub MemFree: ::std::option::Option<extern "C" fn(ptr: *mut ::libc::c_void)
+                                           -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_Memory_Dev_0_1 {
-    fn clone(&self) -> Struct_PPB_Memory_Dev_0_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Memory_Dev_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Memory_Dev = Struct_PPB_Memory_Dev_0_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
-    pub DrawBuffersEXT: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   count: GLsizei,
-                                                   bufs: *const GLenum)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
-    fn default() -> Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub DrawBuffersEXT: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            count: GLsizei,
+                                                            bufs:
+                                                                *const GLenum)
+                                                  -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
-    fn clone(&self) -> Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_OpenGLES2DrawBuffers_Dev_1_0 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_OpenGLES2DrawBuffers_Dev {
-    pub DrawBuffersEXT: ::std::option::Option<extern "C" fn
-                                                  (context: PP_Resource,
-                                                   count: GLsizei,
-                                                   bufs: *const GLenum)>,
-}
-impl ::std::default::Default for Struct_PPB_OpenGLES2DrawBuffers_Dev {
-    fn default() -> Struct_PPB_OpenGLES2DrawBuffers_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub DrawBuffersEXT: ::std::option::Option<extern "C" fn(context:
+                                                                PP_Resource,
+                                                            count: GLsizei,
+                                                            bufs:
+                                                                *const GLenum)
+                                                  -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_OpenGLES2DrawBuffers_Dev {
-    fn clone(&self) -> Struct_PPB_OpenGLES2DrawBuffers_Dev {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed46 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PPB_OpenGLES2DrawBuffers_Dev {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed40 = ::libc::c_uint;
 pub const PP_PRINTORIENTATION_NORMAL: ::libc::c_uint = 0;
 pub const PP_PRINTORIENTATION_ROTATED_90_CW: ::libc::c_uint = 1;
 pub const PP_PRINTORIENTATION_ROTATED_180: ::libc::c_uint = 2;
 pub const PP_PRINTORIENTATION_ROTATED_90_CCW: ::libc::c_uint = 3;
-pub type PP_PrintOrientation_Dev = Enum_Unnamed46;
+pub type PP_PrintOrientation_Dev = Enum_Unnamed40;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintOrientation_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOrientation_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_PrintOrientation_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintOrientation_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_PrintOrientation_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed47 = ::libc::c_uint;
+pub type Enum_Unnamed41 = ::libc::c_uint;
 pub const PP_PRINTOUTPUTFORMAT_RASTER: ::libc::c_uint = 1;
 pub const PP_PRINTOUTPUTFORMAT_PDF: ::libc::c_uint = 2;
 pub const PP_PRINTOUTPUTFORMAT_POSTSCRIPT: ::libc::c_uint = 4;
 pub const PP_PRINTOUTPUTFORMAT_EMF: ::libc::c_uint = 8;
-pub type PP_PrintOutputFormat_Dev = Enum_Unnamed47;
+pub type PP_PrintOutputFormat_Dev = Enum_Unnamed41;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintOutputFormat_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintOutputFormat_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_PrintOutputFormat_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintOutputFormat_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_PrintOutputFormat_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed48 = ::libc::c_uint;
+pub type Enum_Unnamed42 = ::libc::c_uint;
 pub const PP_PRINTSCALINGOPTION_NONE: ::libc::c_uint = 0;
 pub const PP_PRINTSCALINGOPTION_FIT_TO_PRINTABLE_AREA: ::libc::c_uint = 1;
 pub const PP_PRINTSCALINGOPTION_SOURCE_SIZE: ::libc::c_uint = 2;
-pub type PP_PrintScalingOption_Dev = Enum_Unnamed48;
+pub type PP_PrintScalingOption_Dev = Enum_Unnamed42;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintScalingOption_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintScalingOption_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_PrintScalingOption_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintScalingOption_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_PrintScalingOption_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-pub type Enum_Unnamed49 = ::libc::c_uint;
-pub const PP_PRINTDUPLEXMODE_NONE: ::libc::c_uint = 0;
-pub const PP_PRINTDUPLEXMODE_SIMPLEX: ::libc::c_uint = 1;
-pub const PP_PRINTDUPLEXMODE_LONG_EDGE: ::libc::c_uint = 2;
-pub const PP_PRINTDUPLEXMODE_SHORT_EDGE: ::libc::c_uint = 3;
-pub type PP_PrintDuplexMode_Dev = Enum_Unnamed49;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct Struct_PP_Dummy_Struct_For_PP_PrintDuplexMode_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintDuplexMode_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
-}
-impl ::std::default::Default for
- Struct_PP_Dummy_Struct_For_PP_PrintDuplexMode_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_PrintDuplexMode_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_PrintSettings_Dev {
     pub printable_area: Struct_PP_Rect,
     pub content_area: Struct_PP_Rect,
@@ -6049,192 +6926,171 @@ pub struct Struct_PP_PrintSettings_Dev {
     pub grayscale: PP_Bool,
     pub format: PP_PrintOutputFormat_Dev,
 }
+impl ::std::clone::Clone for Struct_PP_PrintSettings_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_PrintSettings_Dev {
-    fn default() -> Struct_PP_PrintSettings_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintSettings_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintSettings_Dev_is_not_60_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for Struct_PP_Dummy_Struct_For_PP_PrintSettings_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintSettings_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_PrintSettings_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-pub struct Struct_PP_PrintRange_Dev {
-    pub from: int32_t,
-    pub to: int32_t,
-}
-impl ::std::default::Default for Struct_PP_PrintRange_Dev {
-    fn default() -> Struct_PP_PrintRange_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct Struct_PP_Dummy_Struct_For_PP_PrintRange_Dev {
-    pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintRange_Dev_is_not_8_bytes_wide: [::libc::c_char; 1usize],
-}
-impl ::std::default::Default for Struct_PP_Dummy_Struct_For_PP_PrintRange_Dev
- {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_PrintRange_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-#[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Printing_Dev_0_7 {
     pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance)
                                           -> PP_Resource>,
-    pub GetDefaultPrintSettings: ::std::option::Option<extern "C" fn
-                                                           (resource:
-                                                                PP_Resource,
-                                                            print_settings:
-                                                                *mut Struct_PP_PrintSettings_Dev,
-                                                            callback:
-                                                                Struct_PP_CompletionCallback)
+    pub GetDefaultPrintSettings: ::std::option::Option<extern "C" fn(resource:
+                                                                         PP_Resource,
+                                                                     print_settings:
+                                                                         *mut Struct_PP_PrintSettings_Dev,
+                                                                     callback:
+                                                                         Struct_PP_CompletionCallback)
                                                            -> int32_t>,
 }
-impl ::std::default::Default for Struct_PPB_Printing_Dev_0_7 {
-    fn default() -> Struct_PPB_Printing_Dev_0_7 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_Printing_Dev_0_7 {
-    fn clone(&self) -> Struct_PPB_Printing_Dev_0_7 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Printing_Dev_0_7 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Printing_Dev = Struct_PPB_Printing_Dev_0_7;
 pub type PP_TraceEventTime = int64_t;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Trace_Event_Dev_0_2 {
-    pub GetCategoryEnabled: ::std::option::Option<extern "C" fn
-                                                      (category_name:
-                                                           *const ::libc::c_char)
+    pub GetCategoryEnabled: ::std::option::Option<extern "C" fn(category_name:
+                                                                    *const ::libc::c_char)
                                                       -> *mut ::libc::c_void>,
-    pub AddTraceEvent: ::std::option::Option<extern "C" fn
-                                                 (phase: int8_t,
-                                                  category_enabled:
-                                                      *const ::libc::c_void,
-                                                  name: *const ::libc::c_char,
-                                                  id: uint64_t,
-                                                  num_args: uint32_t,
-                                                  arg_names:
-                                                      *mut *const ::libc::c_char,
-                                                  arg_types: *const uint8_t,
-                                                  arg_values: *const uint64_t,
-                                                  flags: uint8_t)>,
-    pub AddTraceEventWithThreadIdAndTimestamp: ::std::option::Option<extern "C" fn
-                                                                         (phase:
-                                                                              int8_t,
-                                                                          category_enabled:
-                                                                              *const ::libc::c_void,
-                                                                          name:
-                                                                              *const ::libc::c_char,
-                                                                          id:
-                                                                              uint64_t,
-                                                                          thread_id:
-                                                                              int32_t,
-                                                                          timestamp:
-                                                                              PP_TraceEventTime,
-                                                                          num_args:
-                                                                              uint32_t,
-                                                                          arg_names:
-                                                                              *mut *const ::libc::c_char,
-                                                                          arg_types:
-                                                                              *const uint8_t,
-                                                                          arg_values:
-                                                                              *const uint64_t,
-                                                                          flags:
-                                                                              uint8_t)>,
+    pub AddTraceEvent: ::std::option::Option<extern "C" fn(phase: int8_t,
+                                                           category_enabled:
+                                                               *const ::libc::c_void,
+                                                           name:
+                                                               *const ::libc::c_char,
+                                                           id: uint64_t,
+                                                           num_args: uint32_t,
+                                                           arg_names:
+                                                               *mut *const ::libc::c_char,
+                                                           arg_types:
+                                                               *const uint8_t,
+                                                           arg_values:
+                                                               *const uint64_t,
+                                                           flags: uint8_t)
+                                                 -> ()>,
+    pub AddTraceEventWithThreadIdAndTimestamp: ::std::option::Option<extern "C" fn(phase:
+                                                                                       int8_t,
+                                                                                   category_enabled:
+                                                                                       *const ::libc::c_void,
+                                                                                   name:
+                                                                                       *const ::libc::c_char,
+                                                                                   id:
+                                                                                       uint64_t,
+                                                                                   thread_id:
+                                                                                       int32_t,
+                                                                                   timestamp:
+                                                                                       PP_TraceEventTime,
+                                                                                   num_args:
+                                                                                       uint32_t,
+                                                                                   arg_names:
+                                                                                       *mut *const ::libc::c_char,
+                                                                                   arg_types:
+                                                                                       *const uint8_t,
+                                                                                   arg_values:
+                                                                                       *const uint64_t,
+                                                                                   flags:
+                                                                                       uint8_t)
+                                                                         ->
+                                                                             ()>,
     pub Now: ::std::option::Option<extern "C" fn() -> PP_TraceEventTime>,
-    pub SetThreadName: ::std::option::Option<extern "C" fn
-                                                 (thread_name:
-                                                      *const ::libc::c_char)>,
-}
-impl ::std::default::Default for Struct_PPB_Trace_Event_Dev_0_2 {
-    fn default() -> Struct_PPB_Trace_Event_Dev_0_2 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub SetThreadName: ::std::option::Option<extern "C" fn(thread_name:
+                                                               *const ::libc::c_char)
+                                                 -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_Trace_Event_Dev_0_2 {
-    fn clone(&self) -> Struct_PPB_Trace_Event_Dev_0_2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_Trace_Event_Dev_0_2 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_Trace_Event_Dev = Struct_PPB_Trace_Event_Dev_0_2;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_Trace_Event_Dev_0_1 {
-    pub GetCategoryEnabled: ::std::option::Option<extern "C" fn
-                                                      (category_name:
-                                                           *const ::libc::c_char)
+    pub GetCategoryEnabled: ::std::option::Option<extern "C" fn(category_name:
+                                                                    *const ::libc::c_char)
                                                       -> *mut ::libc::c_void>,
-    pub AddTraceEvent: ::std::option::Option<extern "C" fn
-                                                 (phase: int8_t,
-                                                  category_enabled:
-                                                      *const ::libc::c_void,
-                                                  name: *const ::libc::c_char,
-                                                  id: uint64_t,
-                                                  num_args: uint32_t,
-                                                  arg_names:
-                                                      *mut *const ::libc::c_char,
-                                                  arg_types: *const uint8_t,
-                                                  arg_values: *const uint64_t,
-                                                  flags: uint8_t)>,
-    pub SetThreadName: ::std::option::Option<extern "C" fn
-                                                 (thread_name:
-                                                      *const ::libc::c_char)>,
-}
-impl ::std::default::Default for Struct_PPB_Trace_Event_Dev_0_1 {
-    fn default() -> Struct_PPB_Trace_Event_Dev_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub AddTraceEvent: ::std::option::Option<extern "C" fn(phase: int8_t,
+                                                           category_enabled:
+                                                               *const ::libc::c_void,
+                                                           name:
+                                                               *const ::libc::c_char,
+                                                           id: uint64_t,
+                                                           num_args: uint32_t,
+                                                           arg_names:
+                                                               *mut *const ::libc::c_char,
+                                                           arg_types:
+                                                               *const uint8_t,
+                                                           arg_values:
+                                                               *const uint64_t,
+                                                           flags: uint8_t)
+                                                 -> ()>,
+    pub SetThreadName: ::std::option::Option<extern "C" fn(thread_name:
+                                                               *const ::libc::c_char)
+                                                 -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPB_Trace_Event_Dev_0_1 {
-    fn clone(&self) -> Struct_PPB_Trace_Event_Dev_0_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
 }
-pub type Enum_Unnamed50 = ::libc::c_uint;
+impl ::std::default::Default for Struct_PPB_Trace_Event_Dev_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+pub type Enum_Unnamed43 = ::libc::c_uint;
 pub const PP_TRUETYPEFONTFAMILY_SERIF: ::libc::c_uint = 0;
 pub const PP_TRUETYPEFONTFAMILY_SANSSERIF: ::libc::c_uint = 1;
 pub const PP_TRUETYPEFONTFAMILY_CURSIVE: ::libc::c_uint = 2;
 pub const PP_TRUETYPEFONTFAMILY_FANTASY: ::libc::c_uint = 3;
 pub const PP_TRUETYPEFONTFAMILY_MONOSPACE: ::libc::c_uint = 4;
-pub type PP_TrueTypeFontFamily_Dev = Enum_Unnamed50;
+pub type PP_TrueTypeFontFamily_Dev = Enum_Unnamed43;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontFamily_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontFamily_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_TrueTypeFontFamily_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontFamily_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TrueTypeFontFamily_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed51 = ::libc::c_uint;
+pub type Enum_Unnamed44 = ::libc::c_uint;
 pub const PP_TRUETYPEFONTSTYLE_NORMAL: ::libc::c_uint = 0;
 pub const PP_TRUETYPEFONTSTYLE_ITALIC: ::libc::c_uint = 1;
-pub type PP_TrueTypeFontStyle_Dev = Enum_Unnamed51;
+pub type PP_TrueTypeFontStyle_Dev = Enum_Unnamed44;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontStyle_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontStyle_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_TrueTypeFontStyle_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontStyle_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TrueTypeFontStyle_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed52 = ::libc::c_uint;
+pub type Enum_Unnamed45 = ::libc::c_uint;
 pub const PP_TRUETYPEFONTWEIGHT_THIN: ::libc::c_uint = 100;
 pub const PP_TRUETYPEFONTWEIGHT_ULTRALIGHT: ::libc::c_uint = 200;
 pub const PP_TRUETYPEFONTWEIGHT_LIGHT: ::libc::c_uint = 300;
@@ -6244,19 +7100,21 @@ pub const PP_TRUETYPEFONTWEIGHT_SEMIBOLD: ::libc::c_uint = 600;
 pub const PP_TRUETYPEFONTWEIGHT_BOLD: ::libc::c_uint = 700;
 pub const PP_TRUETYPEFONTWEIGHT_ULTRABOLD: ::libc::c_uint = 800;
 pub const PP_TRUETYPEFONTWEIGHT_HEAVY: ::libc::c_uint = 900;
-pub type PP_TrueTypeFontWeight_Dev = Enum_Unnamed52;
+pub type PP_TrueTypeFontWeight_Dev = Enum_Unnamed45;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWeight_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWeight_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWeight_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWeight_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWeight_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed53 = ::libc::c_uint;
+pub type Enum_Unnamed46 = ::libc::c_uint;
 pub const PP_TRUETYPEFONTWIDTH_ULTRACONDENSED: ::libc::c_uint = 0;
 pub const PP_TRUETYPEFONTWIDTH_EXTRACONDENSED: ::libc::c_uint = 1;
 pub const PP_TRUETYPEFONTWIDTH_CONDENSED: ::libc::c_uint = 2;
@@ -6266,19 +7124,21 @@ pub const PP_TRUETYPEFONTWIDTH_SEMIEXPANDED: ::libc::c_uint = 5;
 pub const PP_TRUETYPEFONTWIDTH_EXPANDED: ::libc::c_uint = 6;
 pub const PP_TRUETYPEFONTWIDTH_EXTRAEXPANDED: ::libc::c_uint = 7;
 pub const PP_TRUETYPEFONTWIDTH_ULTRAEXPANDED: ::libc::c_uint = 8;
-pub type PP_TrueTypeFontWidth_Dev = Enum_Unnamed53;
+pub type PP_TrueTypeFontWidth_Dev = Enum_Unnamed46;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWidth_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontWidth_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWidth_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWidth_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TrueTypeFontWidth_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
-pub type Enum_Unnamed54 = ::libc::c_uint;
+pub type Enum_Unnamed47 = ::libc::c_uint;
 pub const PP_TRUETYPEFONTCHARSET_ANSI: ::libc::c_uint = 0;
 pub const PP_TRUETYPEFONTCHARSET_DEFAULT: ::libc::c_uint = 1;
 pub const PP_TRUETYPEFONTCHARSET_SYMBOL: ::libc::c_uint = 2;
@@ -6298,20 +7158,22 @@ pub const PP_TRUETYPEFONTCHARSET_RUSSIAN: ::libc::c_uint = 204;
 pub const PP_TRUETYPEFONTCHARSET_THAI: ::libc::c_uint = 222;
 pub const PP_TRUETYPEFONTCHARSET_EASTEUROPE: ::libc::c_uint = 238;
 pub const PP_TRUETYPEFONTCHARSET_OEM: ::libc::c_uint = 255;
-pub type PP_TrueTypeFontCharset_Dev = Enum_Unnamed54;
+pub type PP_TrueTypeFontCharset_Dev = Enum_Unnamed47;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontCharset_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontCharset_Dev_is_not_4_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_TrueTypeFontCharset_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontCharset_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TrueTypeFontCharset_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_TrueTypeFontDesc_Dev {
     pub family: Struct_PP_Var,
     pub generic_family: PP_TrueTypeFontFamily_Dev,
@@ -6321,288 +7183,165 @@ pub struct Struct_PP_TrueTypeFontDesc_Dev {
     pub charset: PP_TrueTypeFontCharset_Dev,
     pub padding: int32_t,
 }
+impl ::std::clone::Clone for Struct_PP_TrueTypeFontDesc_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_TrueTypeFontDesc_Dev {
-    fn default() -> Struct_PP_TrueTypeFontDesc_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_TrueTypeFontDesc_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_TrueTypeFontDesc_Dev_is_not_40_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_TrueTypeFontDesc_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_TrueTypeFontDesc_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_TrueTypeFontDesc_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_TrueTypeFont_Dev_0_1 {
-    pub GetFontFamilies: ::std::option::Option<extern "C" fn
-                                                   (instance: PP_Instance,
-                                                    output:
-                                                        Struct_PP_ArrayOutput,
-                                                    callback:
-                                                        Struct_PP_CompletionCallback)
+    pub GetFontFamilies: ::std::option::Option<extern "C" fn(instance:
+                                                                 PP_Instance,
+                                                             output:
+                                                                 Struct_PP_ArrayOutput,
+                                                             callback:
+                                                                 Struct_PP_CompletionCallback)
                                                    -> int32_t>,
-    pub GetFontsInFamily: ::std::option::Option<extern "C" fn
-                                                    (instance: PP_Instance,
-                                                     family: Struct_PP_Var,
-                                                     output:
-                                                         Struct_PP_ArrayOutput,
-                                                     callback:
-                                                         Struct_PP_CompletionCallback)
+    pub GetFontsInFamily: ::std::option::Option<extern "C" fn(instance:
+                                                                  PP_Instance,
+                                                              family:
+                                                                  Struct_PP_Var,
+                                                              output:
+                                                                  Struct_PP_ArrayOutput,
+                                                              callback:
+                                                                  Struct_PP_CompletionCallback)
                                                     -> int32_t>,
-    pub Create: ::std::option::Option<extern "C" fn
-                                          (instance: PP_Instance,
-                                           desc:
-                                               *const Struct_PP_TrueTypeFontDesc_Dev)
+    pub Create: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                    desc:
+                                                        *const Struct_PP_TrueTypeFontDesc_Dev)
                                           -> PP_Resource>,
-    pub IsTrueTypeFont: ::std::option::Option<extern "C" fn
-                                                  (resource: PP_Resource)
+    pub IsTrueTypeFont: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
                                                   -> PP_Bool>,
-    pub Describe: ::std::option::Option<extern "C" fn
-                                            (font: PP_Resource,
-                                             desc:
-                                                 *mut Struct_PP_TrueTypeFontDesc_Dev,
-                                             callback:
-                                                 Struct_PP_CompletionCallback)
+    pub Describe: ::std::option::Option<extern "C" fn(font: PP_Resource,
+                                                      desc:
+                                                          *mut Struct_PP_TrueTypeFontDesc_Dev,
+                                                      callback:
+                                                          Struct_PP_CompletionCallback)
                                             -> int32_t>,
-    pub GetTableTags: ::std::option::Option<extern "C" fn
-                                                (font: PP_Resource,
-                                                 output:
-                                                     Struct_PP_ArrayOutput,
-                                                 callback:
-                                                     Struct_PP_CompletionCallback)
+    pub GetTableTags: ::std::option::Option<extern "C" fn(font: PP_Resource,
+                                                          output:
+                                                              Struct_PP_ArrayOutput,
+                                                          callback:
+                                                              Struct_PP_CompletionCallback)
                                                 -> int32_t>,
-    pub GetTable: ::std::option::Option<extern "C" fn
-                                            (font: PP_Resource,
-                                             table: uint32_t, offset: int32_t,
-                                             max_data_length: int32_t,
-                                             output: Struct_PP_ArrayOutput,
-                                             callback:
-                                                 Struct_PP_CompletionCallback)
+    pub GetTable: ::std::option::Option<extern "C" fn(font: PP_Resource,
+                                                      table: uint32_t,
+                                                      offset: int32_t,
+                                                      max_data_length:
+                                                          int32_t,
+                                                      output:
+                                                          Struct_PP_ArrayOutput,
+                                                      callback:
+                                                          Struct_PP_CompletionCallback)
                                             -> int32_t>,
-}
-impl ::std::default::Default for Struct_PPB_TrueTypeFont_Dev_0_1 {
-    fn default() -> Struct_PPB_TrueTypeFont_Dev_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
 }
 impl ::std::clone::Clone for Struct_PPB_TrueTypeFont_Dev_0_1 {
-    fn clone(&self) -> Struct_PPB_TrueTypeFont_Dev_0_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_TrueTypeFont_Dev_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_TrueTypeFont_Dev = Struct_PPB_TrueTypeFont_Dev_0_1;
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPB_View_Dev_0_1 {
-    pub GetDeviceScale: ::std::option::Option<extern "C" fn
-                                                  (resource: PP_Resource)
+    pub GetDeviceScale: ::std::option::Option<extern "C" fn(resource:
+                                                                PP_Resource)
                                                   -> ::libc::c_float>,
-    pub GetCSSScale: ::std::option::Option<extern "C" fn
-                                               (resource: PP_Resource)
+    pub GetCSSScale: ::std::option::Option<extern "C" fn(resource:
+                                                             PP_Resource)
                                                -> ::libc::c_float>,
 }
-impl ::std::default::Default for Struct_PPB_View_Dev_0_1 {
-    fn default() -> Struct_PPB_View_Dev_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPB_View_Dev_0_1 {
-    fn clone(&self) -> Struct_PPB_View_Dev_0_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPB_View_Dev_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPB_View_Dev = Struct_PPB_View_Dev_0_1;
 #[repr(C)]
-pub struct Struct_PPB_Zoom_Dev_0_2 {
-    pub ZoomChanged: ::std::option::Option<extern "C" fn
-                                               (instance: PP_Instance,
-                                                factor: ::libc::c_double)>,
-    pub ZoomLimitsChanged: ::std::option::Option<extern "C" fn
-                                                     (instance: PP_Instance,
-                                                      minimum_factor:
-                                                          ::libc::c_double,
-                                                      maximum_factor:
-                                                          ::libc::c_double)>,
-}
-impl ::std::default::Default for Struct_PPB_Zoom_Dev_0_2 {
-    fn default() -> Struct_PPB_Zoom_Dev_0_2 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-impl ::std::clone::Clone for Struct_PPB_Zoom_Dev_0_2 {
-    fn clone(&self) -> Struct_PPB_Zoom_Dev_0_2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
-}
-pub type PPB_Zoom_Dev = Struct_PPB_Zoom_Dev_0_2;
-#[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPP_NetworkState_Dev_0_1 {
-    pub SetOnLine: ::std::option::Option<extern "C" fn(is_online: PP_Bool)>,
-}
-impl ::std::default::Default for Struct_PPP_NetworkState_Dev_0_1 {
-    fn default() -> Struct_PPP_NetworkState_Dev_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
+    pub SetOnLine: ::std::option::Option<extern "C" fn(is_online: PP_Bool)
+                                             -> ()>,
 }
 impl ::std::clone::Clone for Struct_PPP_NetworkState_Dev_0_1 {
-    fn clone(&self) -> Struct_PPP_NetworkState_Dev_0_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPP_NetworkState_Dev_0_1 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPP_NetworkState_Dev = Struct_PPP_NetworkState_Dev_0_1;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_PrintPageNumberRange_Dev {
     pub first_page_number: uint32_t,
     pub last_page_number: uint32_t,
 }
+impl ::std::clone::Clone for Struct_PP_PrintPageNumberRange_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct_PP_PrintPageNumberRange_Dev {
-    fn default() -> Struct_PP_PrintPageNumberRange_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct_PP_Dummy_Struct_For_PP_PrintPageNumberRange_Dev {
     pub _COMPILE_ASSERT_FAILED_The_type_named_PP_PrintPageNumberRange_Dev_is_not_8_bytes_wide: [::libc::c_char; 1usize],
 }
+impl ::std::clone::Clone for
+ Struct_PP_Dummy_Struct_For_PP_PrintPageNumberRange_Dev {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for
  Struct_PP_Dummy_Struct_For_PP_PrintPageNumberRange_Dev {
-    fn default() -> Struct_PP_Dummy_Struct_For_PP_PrintPageNumberRange_Dev {
-        unsafe { ::std::mem::zeroed() }
-    }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 #[repr(C)]
+#[derive(Copy)]
 pub struct Struct_PPP_Printing_Dev_0_6 {
-    pub QuerySupportedFormats: ::std::option::Option<extern "C" fn
-                                                         (instance:
-                                                              PP_Instance)
+    pub QuerySupportedFormats: ::std::option::Option<extern "C" fn(instance:
+                                                                       PP_Instance)
                                                          -> uint32_t>,
-    pub Begin: ::std::option::Option<extern "C" fn
-                                         (instance: PP_Instance,
-                                          print_settings:
-                                              *const Struct_PP_PrintSettings_Dev)
+    pub Begin: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                   print_settings:
+                                                       *const Struct_PP_PrintSettings_Dev)
                                          -> int32_t>,
-    pub PrintPages: ::std::option::Option<extern "C" fn
-                                              (instance: PP_Instance,
-                                               page_ranges:
-                                                   *const Struct_PP_PrintPageNumberRange_Dev,
-                                               page_range_count: uint32_t)
+    pub PrintPages: ::std::option::Option<extern "C" fn(instance: PP_Instance,
+                                                        page_ranges:
+                                                            *const Struct_PP_PrintPageNumberRange_Dev,
+                                                        page_range_count:
+                                                            uint32_t)
                                               -> PP_Resource>,
-    pub End: ::std::option::Option<extern "C" fn(instance: PP_Instance)>,
-    pub IsScalingDisabled: ::std::option::Option<extern "C" fn
-                                                     (instance: PP_Instance)
+    pub End: ::std::option::Option<extern "C" fn(instance: PP_Instance)
+                                       -> ()>,
+    pub IsScalingDisabled: ::std::option::Option<extern "C" fn(instance:
+                                                                   PP_Instance)
                                                      -> PP_Bool>,
 }
-impl ::std::default::Default for Struct_PPP_Printing_Dev_0_6 {
-    fn default() -> Struct_PPP_Printing_Dev_0_6 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
 impl ::std::clone::Clone for Struct_PPP_Printing_Dev_0_6 {
-    fn clone(&self) -> Struct_PPP_Printing_Dev_0_6 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Struct_PPP_Printing_Dev_0_6 {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type PPP_Printing_Dev = Struct_PPP_Printing_Dev_0_6;
-#[repr(C)]
-pub struct Struct_PPP_Scrollbar_Dev_0_3 {
-    pub ValueChanged: ::std::option::Option<extern "C" fn
-                                                (instance: PP_Instance,
-                                                 scrollbar: PP_Resource,
-                                                 value: uint32_t)>,
-    pub OverlayChanged: ::std::option::Option<extern "C" fn
-                                                  (instance: PP_Instance,
-                                                   scrollbar: PP_Resource,
-                                                   overlay: PP_Bool)>,
-}
-impl ::std::default::Default for Struct_PPP_Scrollbar_Dev_0_3 {
-    fn default() -> Struct_PPP_Scrollbar_Dev_0_3 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-impl ::std::clone::Clone for Struct_PPP_Scrollbar_Dev_0_3 {
-    fn clone(&self) -> Struct_PPP_Scrollbar_Dev_0_3 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
-}
-pub type PPP_Scrollbar_Dev = Struct_PPP_Scrollbar_Dev_0_3;
-#[repr(C)]
-pub struct Struct_PPP_Scrollbar_Dev_0_2 {
-    pub ValueChanged: ::std::option::Option<extern "C" fn
-                                                (instance: PP_Instance,
-                                                 scrollbar: PP_Resource,
-                                                 value: uint32_t)>,
-}
-impl ::std::default::Default for Struct_PPP_Scrollbar_Dev_0_2 {
-    fn default() -> Struct_PPP_Scrollbar_Dev_0_2 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-impl ::std::clone::Clone for Struct_PPP_Scrollbar_Dev_0_2 {
-    fn clone(&self) -> Struct_PPP_Scrollbar_Dev_0_2 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
-}
-#[repr(C)]
-pub struct Struct_PPP_Selection_Dev_0_3 {
-    pub GetSelectedText: ::std::option::Option<extern "C" fn
-                                                   (instance: PP_Instance,
-                                                    html: PP_Bool)
-                                                   -> Struct_PP_Var>,
-}
-impl ::std::default::Default for Struct_PPP_Selection_Dev_0_3 {
-    fn default() -> Struct_PPP_Selection_Dev_0_3 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-impl ::std::clone::Clone for Struct_PPP_Selection_Dev_0_3 {
-    fn clone(&self) -> Struct_PPP_Selection_Dev_0_3 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
-}
-pub type PPP_Selection_Dev = Struct_PPP_Selection_Dev_0_3;
-#[repr(C)]
-pub struct Struct_PPP_TextInput_Dev_0_1 {
-    pub RequestSurroundingText: ::std::option::Option<extern "C" fn
-                                                          (instance:
-                                                               PP_Instance,
-                                                           desired_number_of_characters:
-                                                               uint32_t)>,
-}
-impl ::std::default::Default for Struct_PPP_TextInput_Dev_0_1 {
-    fn default() -> Struct_PPP_TextInput_Dev_0_1 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-impl ::std::clone::Clone for Struct_PPP_TextInput_Dev_0_1 {
-    fn clone(&self) -> Struct_PPP_TextInput_Dev_0_1 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
-}
-pub type PPP_TextInput_Dev = Struct_PPP_TextInput_Dev_0_1;
-#[repr(C)]
-pub struct Struct_PPP_Zoom_Dev_0_3 {
-    pub Zoom: ::std::option::Option<extern "C" fn
-                                        (instance: PP_Instance,
-                                         factor: ::libc::c_double,
-                                         text_only: PP_Bool)>,
-}
-impl ::std::default::Default for Struct_PPP_Zoom_Dev_0_3 {
-    fn default() -> Struct_PPP_Zoom_Dev_0_3 {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-impl ::std::clone::Clone for Struct_PPP_Zoom_Dev_0_3 {
-    fn clone(&self) -> Struct_PPP_Zoom_Dev_0_3 {
-        unsafe { ::std::mem::transmute_copy(self) }
-    }
-}
-pub type PPP_Zoom_Dev = Struct_PPP_Zoom_Dev_0_3;
 pub type u_int8_t = __uint8_t;
 pub type u_int16_t = __uint16_t;
 pub type u_int32_t = __uint32_t;
@@ -6621,35 +7360,17 @@ pub type ushort = ::libc::c_ushort;
 pub type _uint = ::libc::c_uint;
 pub type ulong = ::libc::c_ulong;
 pub type clock_t = ::libc::c_ulong;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct Struct_itimerspec {
-    pub it_interval: Struct_timespec,
-    pub it_value: Struct_timespec,
-}
-impl ::std::default::Default for Struct_itimerspec {
-    fn default() -> Struct_itimerspec { unsafe { ::std::mem::zeroed() } }
-}
-pub type daddr_t = ::libc::c_long;
-pub type caddr_t = *mut ::libc::c_char;
-pub type ino_t = __ino_t;
-pub type off_t = _off_t;
-pub type dev_t = __dev_t;
-pub type uid_t = __uid_t;
-pub type gid_t = __gid_t;
-pub type pid_t = ::libc::c_int;
-pub type key_t = ::libc::c_long;
-pub type ssize_t = _ssize_t;
-pub type mode_t = ::libc::c_uint;
-pub type nlink_t = __nlink_t;
 pub type fd_mask = ::libc::c_long;
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 pub struct Struct__types_fd_set {
     pub fds_bits: [fd_mask; 2usize],
 }
+impl ::std::clone::Clone for Struct__types_fd_set {
+    fn clone(&self) -> Self { *self }
+}
 impl ::std::default::Default for Struct__types_fd_set {
-    fn default() -> Struct__types_fd_set { unsafe { ::std::mem::zeroed() } }
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
 }
 pub type _types_fd_set = Struct__types_fd_set;
 pub type clockid_t = ::libc::c_ulong;
@@ -6666,10 +7387,9 @@ pub type nacl_io_mount_callback_t =
                                target: *const ::libc::c_char,
                                filesystemtype: *const ::libc::c_char,
                                mountflags: ::libc::c_ulong,
-                               data: *const ::libc::c_void, dev: dev_t,
+                               data: *const ::libc::c_void, dev: ::libc::dev_t,
                                user_data: *mut ::libc::c_void)>;
 pub enum Struct_fuse_operations { }
-pub type fpos_t = _fpos_t;
 extern "C" {
     pub fn nacl_io_init() -> ::libc::c_int;
     pub fn nacl_io_init_ppapi(instance: PP_Instance,

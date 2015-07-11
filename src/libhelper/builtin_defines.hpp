@@ -1,17 +1,18 @@
 #define _GNU_SOURCE 1
 #define _ILP32 1
-#define _REENTRANT 1
 #define __ATOMIC_ACQUIRE 2
 #define __ATOMIC_ACQ_REL 4
 #define __ATOMIC_CONSUME 1
 #define __ATOMIC_RELAXED 0
 #define __ATOMIC_RELEASE 3
 #define __ATOMIC_SEQ_CST 5
+#define __BIGGEST_ALIGNMENT__ 8
 #define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #define __CHAR16_TYPE__ unsigned short
 #define __CHAR32_TYPE__ unsigned int
 #define __CHAR_BIT__ 8
 #define __CONSTANT_CFSTRINGS__ 1
+#define __DBL_DECIMAL_DIG__ 17
 #define __DBL_DENORM_MIN__ 4.9406564584124654e-324
 #define __DBL_DIG__ 15
 #define __DBL_EPSILON__ 2.2204460492503131e-16
@@ -25,11 +26,12 @@
 #define __DBL_MIN_10_EXP__ (-307)
 #define __DBL_MIN_EXP__ (-1021)
 #define __DBL_MIN__ 2.2250738585072014e-308
-#define __DECIMAL_DIG__ 17
+#define __DECIMAL_DIG__ __LDBL_DECIMAL_DIG__
 #define __DEPRECATED 1
 #define __ELF__ 1
 #define __EXCEPTIONS 1
 #define __FINITE_MATH_ONLY__ 0
+#define __FLT_DECIMAL_DIG__ 9
 #define __FLT_DENORM_MIN__ 1.40129846e-45F
 #define __FLT_DIG__ 6
 #define __FLT_EPSILON__ 1.19209290e-7F
@@ -130,6 +132,7 @@
 #define __INT_LEAST8_MAX__ 127
 #define __INT_LEAST8_TYPE__ signed char
 #define __INT_MAX__ 2147483647
+#define __LDBL_DECIMAL_DIG__ 17
 #define __LDBL_DENORM_MIN__ 4.9406564584124654e-324L
 #define __LDBL_DIG__ 15
 #define __LDBL_EPSILON__ 2.2204460492503131e-16L
@@ -277,7 +280,7 @@
 #define __UINT_LEAST8_MAX__ 255
 #define __UINT_LEAST8_TYPE__ unsigned char
 #define __USER_LABEL_PREFIX__ 
-#define __VERSION__ "4.2.1 Compatible Clang 3.5.0 (https://chromium.googlesource.com/a/native_client/pnacl-clang.git ee9f4759d2c241a5e896e922865895289a7ca702) (https://chromium.googlesource.com/a/native_client/pnacl-llvm.git 9dd1dea7a54652afee2582c8d5686a16feb406fa)"
+#define __VERSION__ "4.2.1 Compatible Clang 3.7.0 (https://chromium.googlesource.com/a/native_client/pnacl-clang.git 0895c9a2aedd33371c6cb8703d5fe8bb4493169b) (https://chromium.googlesource.com/a/native_client/pnacl-llvm.git 58b8aae0d0105ffa0042d6e44f50f06f618cb754)"
 #define __WCHAR_MAX__ 2147483647
 #define __WCHAR_TYPE__ int
 #define __WCHAR_WIDTH__ 32
@@ -285,15 +288,24 @@
 #define __WINT_WIDTH__ 32
 #define __clang__ 1
 #define __clang_major__ 3
-#define __clang_minor__ 5
+#define __clang_minor__ 7
 #define __clang_patchlevel__ 0
-#define __clang_version__ "3.5.0 (https://chromium.googlesource.com/a/native_client/pnacl-clang.git ee9f4759d2c241a5e896e922865895289a7ca702) (https://chromium.googlesource.com/a/native_client/pnacl-llvm.git 9dd1dea7a54652afee2582c8d5686a16feb406fa)"
+#define __clang_version__ "3.7.0 (https://chromium.googlesource.com/a/native_client/pnacl-clang.git 0895c9a2aedd33371c6cb8703d5fe8bb4493169b) (https://chromium.googlesource.com/a/native_client/pnacl-llvm.git 58b8aae0d0105ffa0042d6e44f50f06f618cb754)"
 #define __cplusplus 201103L
+#define __cpp_alias_templates 200704
 #define __cpp_attributes 200809
 #define __cpp_constexpr 200704
 #define __cpp_decltype 200707
+#define __cpp_delegating_constructors 200604
+#define __cpp_exceptions 199711
+#define __cpp_inheriting_constructors 200802
+#define __cpp_initializer_lists 200806
 #define __cpp_lambdas 200907
+#define __cpp_nsdmi 200809
+#define __cpp_range_based_for 200907
 #define __cpp_raw_strings 200710
+#define __cpp_ref_qualifiers 200710
+#define __cpp_rtti 199711
 #define __cpp_rvalue_references 200610
 #define __cpp_static_assert 200410
 #define __cpp_unicode_characters 200704
