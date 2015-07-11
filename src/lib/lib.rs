@@ -87,7 +87,6 @@ extern crate hyper as http;
 extern crate url as iurl;
 extern crate libc;
 extern crate alloc;
-extern crate finally;
 
 use std::{mem, cmp};
 use std::mem::transmute;
@@ -1763,7 +1762,6 @@ pub mod entry {
     use super::{ffi};
     use super::url::UrlLoader;
 
-    use finally::try_finally;
     use libc::c_char;
     use std::any::Any;
     use std::mem::transmute;
@@ -1842,27 +1840,31 @@ pub mod entry {
                                       thread::panicking()
                                   }
 
-                                  try_finally(&mut (), args.take().unwrap(),
-                                              |_, args| unsafe {
-                                                  super::ppapi_instance_created
-                                                      (instance.clone(), args)
-                                              },
-                                              |_| {
-                                                  if unwinding() {
-                                                      error!("failed to initialize instance");
-                                                      let _ = tx.send(None);
-                                                  } else {
-                                                      let _ = tx.send(Some(ml.clone()));
-                                                  }
-                                              });
 
-                                  let code = try_finally(&mut (), ml.clone(),
-                                                         |_, ml| ml.run_loop(),
-                                                         |_| {
-                                                             if unwinding() {
-                                                                 let _ = ml.shutdown();
-                                                             }
-                                                         });
+                                  let res = {
+                                      let i = instance.clone();
+                                      let a = args.take().unwrap();
+                                      catch_panic(move || unsafe {
+                                          super::ppapi_instance_created(i, a)
+                                      })
+                                  };
+
+                                  match res {
+                                      Ok(()) => {
+                                          tx.send(Some(ml.clone())).unwrap();
+                                      },
+                                      Err(..) => {
+                                          error!("failed to initialize instance");
+                                          tx.send(None).unwrap();
+                                      },
+                                  }
+
+                                  let code = match catch_panic(move || ml.run_loop() ) {
+                                      Ok(code) => code,
+                                      // Eat errors:
+                                      Err(..) => { Code::Ok },
+                                  };
+
                                   if code != Code::Ok {
                                       panic!("message loop exited with code: `{}`", code);
                                   }
