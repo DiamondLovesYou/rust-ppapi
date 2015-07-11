@@ -44,6 +44,8 @@ pub type UrlResponseInfo = ffi::PPB_URLResponseInfo;
 pub type View = ffi::Struct_PPB_View_1_2;
 pub type FileSystem = ffi::Struct_PPB_FileSystem_1_0;
 pub type FileRef = ffi::PPB_FileRef;
+pub type MediaStreamVideoTrack = ffi::Struct_PPB_MediaStreamVideoTrack_0_1;
+pub type VideoFrame = ffi::Struct_PPB_VideoFrame_0_1;
 
 mod consts {
     pub const VAR: &'static str              = "PPB_Var;1.1\0";
@@ -71,6 +73,8 @@ mod consts {
     pub const VIEW:     &'static str         = "PPB_View;1.2\0";
     pub const FILESYSTEM: &'static str       = "PPB_FileSystem;1.0\0";
     pub const FILEREF: &'static str          = "PPB_FileRef;1.2\0";
+    pub const MEDIA_STREAM_VIDEO_TRACK: &'static str = "PPB_MediaStreamVideoTrack;0.1\0";
+    pub const VIDEO_FRAME: &'static str      = "PPB_VideoFrame;0.1\0";
 }
 mod globals {
     use super::super::ffi;
@@ -99,7 +103,8 @@ mod globals {
     pub static mut URL_RESPONSE: Option<&'static super::UrlResponseInfo> = None;
     pub static mut VIEW:         Option<&'static super::View> = None;
     pub static mut FILESYSTEM:   Option<&'static super::FileSystem> = None;
-
+    pub static mut MEDIA_STREAM_VIDEO_TRACK: Option<&'static super::MediaStreamVideoTrack> = None;
+    pub static mut VIDEO_FRAME:  Option<&'static super::VideoFrame> = None;
 }
 #[cold] #[inline(never)] #[doc(hidden)]
 pub fn initialize_globals(b: ffi::PPB_GetInterface) {
@@ -129,6 +134,8 @@ pub fn initialize_globals(b: ffi::PPB_GetInterface) {
         globals::URL_RESPONSE  = get_interface(consts::URL_RESPONSE);
         globals::VIEW          = get_interface(consts::VIEW);
         globals::FILESYSTEM    = get_interface(consts::FILESYSTEM);
+        globals::MEDIA_STREAM_VIDEO_TRACK = get_interface(consts::MEDIA_STREAM_VIDEO_TRACK);
+        globals::VIDEO_FRAME   = get_interface(consts::VIDEO_FRAME);
     }
 }
 /// Get the PPB_GetInterface function pointer.
@@ -219,6 +226,10 @@ get_fun!    (pub fn get_view() -> View { VIEW });
 get_fun_opt!(pub fn get_view_opt() -> View { VIEW });
 get_fun!    (pub fn get_file_system() -> FileSystem { FILESYSTEM });
 get_fun_opt!(pub fn get_file_system_opt() -> FileSystem { FILESYSTEM });
+get_fun!    (pub fn get_media_stream_video_track() -> MediaStreamVideoTrack { MEDIA_STREAM_VIDEO_TRACK });
+get_fun_opt!(pub fn get_media_stream_video_track_opt() -> MediaStreamVideoTrack { MEDIA_STREAM_VIDEO_TRACK });
+get_fun!    (pub fn get_video_frame() -> VideoFrame { VIDEO_FRAME });
+get_fun_opt!(pub fn get_video_frame_opt() -> VideoFrame { VIDEO_FRAME });
 
 macro_rules! impl_fun(
     ($fun:expr => ( $($arg:expr),* ) ) => ({
@@ -891,6 +902,118 @@ impl FileSystemIf for ffi::Struct_PPB_FileSystem_1_0 {
     }
     fn get_type(&self, res: PP_Resource) -> ffi::PP_FileSystemType {
         impl_fun!(self.GetType => (res))
+    }
+}
+
+pub trait MediaStreamVideoTrackIf {
+    //fn create(&self, inst: PP_Instance) -> Option<PP_Resource>;
+    fn is(&self, res: PP_Resource) -> bool;
+    fn configure(&self, res: PP_Resource, attrs: &[ffi::PP_MediaStreamVideoTrack_Attrib],
+                 callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn get_attrib(&self, res: PP_Resource, attr: ffi::PP_MediaStreamVideoTrack_Attrib) ->
+        Result<libc::int32_t>;
+    fn get_id(&self, res: PP_Resource) -> ffi::PP_Var;
+    fn has_ended(&self, res: PP_Resource) -> bool;
+    fn get_frame(&self, res: PP_Resource, frame: &mut PP_Resource,
+                 callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn recycle_frame(&self, res: PP_Resource, frame: PP_Resource) -> Code;
+    fn close(&self, res: PP_Resource);
+    /*fn get_empty_frame(&self, res: PP_Resource, frame: &mut PP_Resource,
+                       callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn put_frame(&self, res: PP_Resource, frame: PP_Resource) -> Code;*/
+}
+
+impl MediaStreamVideoTrackIf for ffi::Struct_PPB_MediaStreamVideoTrack_0_1 {
+    /*fn create(&self, inst: PP_Instance) -> Option<PP_Resource> {
+        let res = impl_fun!(self.Create => (inst));
+        if res == 0 { None }
+        else        { Some(res) }
+    }*/
+    fn is(&self, res: PP_Resource) -> bool {
+        (impl_fun!(self.IsMediaStreamVideoTrack => (res))) != 0
+    }
+    fn configure(&self, res: PP_Resource, attrs: &[ffi::PP_MediaStreamVideoTrack_Attrib],
+                 callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        debug_assert!(attrs.last() == Some(&ffi::PP_MEDIASTREAMVIDEOTRACK_ATTRIB_NONE));
+        let code = impl_fun!(self.Configure => (res, attrs.as_ptr() as *const i32, callback));
+        From::from(code)
+    }
+    fn get_attrib(&self, res: PP_Resource, attr: ffi::PP_MediaStreamVideoTrack_Attrib) ->
+        Result<libc::int32_t>
+    {
+        let mut dest: i32 = unsafe { ::std::mem::uninitialized() };
+        let code = impl_fun!(self.GetAttrib => (res, attr, &mut dest as *mut _));
+        if code >= 0 {
+            Ok(dest)
+        } else {
+            Err(From::from(code))
+        }
+    }
+    fn get_id(&self, res: PP_Resource) -> ffi::PP_Var {
+        impl_fun!(self.GetId => (res))
+    }
+    fn has_ended(&self, res: PP_Resource) -> bool {
+        (impl_fun!(self.HasEnded => (res))) != 0
+    }
+    fn get_frame(&self, res: PP_Resource, frame: &mut PP_Resource,
+                 callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        let code = impl_fun!(self.GetFrame => (res, frame as *mut _, callback));
+        From::from(code)
+    }
+    fn recycle_frame(&self, res: PP_Resource, frame: PP_Resource) -> Code {
+        let code = impl_fun!(self.RecycleFrame => (res, frame));
+        From::from(code)
+    }
+    fn close(&self, res: PP_Resource) {
+        impl_fun!(self.Close => (res));
+    }
+    /*fn get_empty_frame(&self, res: PP_Resource, frame: &mut PP_Resource,
+                       callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        let code = impl_fun!(self.GetEmptyFrame => (res, frame as *mut _, callback));
+        From::from(code)
+    }
+    fn put_frame(&self, res: PP_Resource, frame: PP_Resource) -> Code {
+        let code = impl_fun!(self.PutFrame => (res, frame));
+        From::from(code)
+    }*/
+}
+
+pub trait VideoFrameIf {
+    fn is(&self, res: PP_Resource) -> bool;
+    fn get_timestamp(&self, res: PP_Resource) -> ffi::PP_TimeDelta;
+    fn set_timestamp(&self, res: PP_Resource, ts: ffi::PP_TimeDelta);
+    fn get_format(&self, res: PP_Resource) -> ffi::PP_VideoFrame_Format;
+    fn get_size(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Size>;
+    fn get_data_buffer(&self, res: PP_Resource) -> *const u8;
+    fn get_data_buffer_size(&self, res: PP_Resource) -> usize;
+}
+impl VideoFrameIf for ffi::Struct_PPB_VideoFrame_0_1 {
+    fn is(&self, res: PP_Resource) -> bool {
+        (impl_fun!(self.IsVideoFrame => (res))) != 0
+    }
+    fn get_timestamp(&self, res: PP_Resource) -> ffi::PP_TimeDelta {
+        impl_fun!(self.GetTimestamp => (res))
+    }
+    fn set_timestamp(&self, res: PP_Resource, ts: ffi::PP_TimeDelta) {
+        impl_fun!(self.SetTimestamp => (res, ts))
+    }
+    fn get_format(&self, res: PP_Resource) -> ffi::PP_VideoFrame_Format {
+        (impl_fun!(self.GetFormat => (res))) as ffi::PP_VideoFrame_Format
+    }
+    fn get_size(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Size> {
+        let mut size: ffi::Struct_PP_Size = unsafe { ::std::mem::uninitialized() };
+        let success = impl_fun!(self.GetSize => (res, &mut size as *mut _));
+        if success != 0 {
+            Some(size)
+        } else {
+            None
+        }
+    }
+    fn get_data_buffer(&self, res: PP_Resource) -> *const u8 {
+        (impl_fun!(self.GetDataBuffer => (res))) as *const _
+    }
+    fn get_data_buffer_size(&self, res: PP_Resource) -> usize {
+        (impl_fun!(self.GetDataBufferSize => (res))) as usize
     }
 }
 

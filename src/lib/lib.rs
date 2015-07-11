@@ -474,6 +474,7 @@ pub type TouchPoint = ffi::PP_TouchPoint;
 pub type Rect = ffi::PP_Rect;
 pub type Ticks = ffi::PP_TimeTicks;
 pub type Time = ffi::PP_Time;
+pub type TimeDelta = ffi::PP_TimeDelta;
 
 // duplicated here so we don't have such a long name for this.
 #[derive(Eq, PartialEq, Hash, Clone, Copy)]
