@@ -16,7 +16,7 @@ echo "#![allow(missing_copy_implementations)]" >> $OUT
 
 export LD_LIBRARY_PATH=$BINDGEN_DIR:$LD_LIBRARY_PATH
 
-$BINDGEN_DIR/bindgen -nostdinc -I $NACL_INCLUDE_DIR -isystem $NACL_DIR/toolchain/linux_pnacl/le32-nacl/include -isystem $NACL_DIR/toolchain/linux_pnacl/le32-nacl/include/c++/4.6.2/ -isystem $NACL_DIR/include/pnacl -isystem $NACL_DIR/toolchain/linux_pnacl/lib/clang/3.5.0/include -target le32-unknown-nacl src/libhelper/helper.cpp -pthread -o temp -D__BINDGEN__ -std=c++11
+$BINDGEN_DIR/bindgen -nostdinc -I $NACL_INCLUDE_DIR -isystem $NACL_DIR/toolchain/linux_pnacl/le32-nacl/include -isystem $NACL_DIR/toolchain/linux_pnacl/le32-nacl/include/c++/v1 -isystem $NACL_DIR/include/pnacl -isystem $NACL_DIR/toolchain/linux_pnacl/lib/clang/3.7.0/include -target le32-unknown-nacl src/libhelper/helper.cpp -pthread -o temp -D__BINDGEN__ -std=c++11
 #perl -i -e 's/pub\\sstruct\\sStruct_PP_Dummy_Struct_For_(PP_.*_Dev)\\s\\{\\s*_COMPILE_ASSERT_FAILED_The_type_named_\\g1_is_not_[0-9]+_bytes_wide:\\s\\[c_schar,\\s\\.\\.1u\\],\\s*\\}//' $OUT
 
 # -isystem $NACL_DIR/toolchain/linux_pnacl/usr/include/c++/v1/arm-none-linux-gnueabi -isystem $NACL_DIR/toolchain/linux_pnacl/usr/include/c++/v1/backward -isystem $NACL_DIR/toolchain/linux_pnacl/include/c++/v1

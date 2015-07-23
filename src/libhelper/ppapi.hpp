@@ -65,6 +65,7 @@
 #include <ppapi/c/ppb_view.h>
 #include <ppapi/c/ppb_websocket.h>
 
+#include <ppapi/c/pp_array_output.h>
 #include <ppapi/c/pp_completion_callback.h>
 #include <ppapi/c/pp_directory_entry.h>
 #include <ppapi/c/pp_errors.h>
