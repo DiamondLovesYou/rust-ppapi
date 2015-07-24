@@ -143,7 +143,7 @@ impl Description {
 
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct Font(ffi::PP_Resource);
 
-impl_resource_for!(Font, ResourceType::FontRes);
+impl_resource_for!(Font, ResourceType::Font);
 
 impl Font {
     pub fn describe(&self) -> Option<(Description, Metrics)> {

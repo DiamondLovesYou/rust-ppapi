@@ -6,7 +6,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-/// This file is here to handle thing that the ppapi has either inlined or delegated to macros.
+/// This file is here to handle things that the ppapi has either inlined or
+/// delegated to macros.
 
 #ifdef __BINDGEN__
 #include "builtin_defines.hpp" // For bindgen.
@@ -27,6 +28,9 @@ extern "C" {
   }
   void run_completion_callback(PP_CompletionCallback func, const int32_t code) {
     PP_RunCompletionCallback(&func, code);
+  }
+  PP_CompletionCallback block_until_complete() {
+    return PP_BlockUntilComplete();
   }
 
   const PP_Var make_undefined_var() {

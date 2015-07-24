@@ -7,13 +7,13 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 use ffi;
-use ppb::{get_video_frame, VideoFrameIf};
+use ppb::{get_video_frame, VideoFrameIf, ResourceInterface};
 
 use {TimeDelta, Resource, Size};
 
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct VideoFrame(ffi::PP_Resource);
 impl_clone_drop_for!(VideoFrame);
-impl_resource_for!(VideoFrame, ResourceType::VideoFrameRes);
+impl_resource_for!(VideoFrame, ResourceType::VideoFrame);
 
 #[derive(Hash, Eq, PartialEq, Debug, Copy, Clone)]
 pub enum Format {

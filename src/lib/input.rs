@@ -26,10 +26,10 @@ pub struct IMEInputEvent {
     segments_len: usize,
 }
 
-impl_resource_for!(TouchInputEvent, ResourceType::TouchInputEventRes);
-impl_resource_for!(WheelInputEvent, ResourceType::WheelInputEventRes);
-impl_resource_for!(MouseInputEvent, ResourceType::MouseInputEventRes);
-impl_resource_for!(KeyboardInputEvent, ResourceType::KeyboardInputEventRes);
+impl_resource_for!(TouchInputEvent, ResourceType::TouchInputEvent);
+impl_resource_for!(WheelInputEvent, ResourceType::WheelInputEvent);
+impl_resource_for!(MouseInputEvent, ResourceType::MouseInputEvent);
+impl_resource_for!(KeyboardInputEvent, ResourceType::KeyboardInputEvent);
 
 impl IMEInputEvent {
     pub fn new(res: ffi::PP_Resource) -> IMEInputEvent {
@@ -47,8 +47,8 @@ impl Resource for IMEInputEvent {
     fn unwrap(&self) -> ffi::PP_Resource {
         self.res
     }
-    fn type_of(&self) -> ResourceType {
-        super::ResourceType::IMEInputEventRes
+    fn type_of(&self) -> Option<ResourceType> {
+        Some(super::ResourceType::IMEInputEvent)
     }
 }
 impl PartialEq for IMEInputEvent {
@@ -237,7 +237,7 @@ impl Resource for Class {
             &Class::IME     (ref e) => e.res.unwrap(),
         }
     }
-    fn type_of(&self) -> ResourceType {
+    fn type_of(&self) -> Option<ResourceType> {
         match self {
             &Class::Keyboard(ref e) => e.res.type_of(),
             &Class::Mouse   (ref e) => e.res.type_of(),
@@ -274,11 +274,11 @@ pub struct Event<Res, Class> {
     pub mods: Modifiers,
     pub event: Class,
 }
-impl<Res: Resource, Class> Resource for Event<Res, Class> {
+impl<Res: Resource, Class: Clone> Resource for Event<Res, Class> {
     fn unwrap(&self) -> ffi::PP_Resource {
         self.res.unwrap()
     }
-    fn type_of(&self) -> ResourceType {
+    fn type_of(&self) -> Option<ResourceType> {
         self.res.type_of()
     }
 }

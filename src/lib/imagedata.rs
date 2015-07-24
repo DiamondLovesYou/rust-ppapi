@@ -16,7 +16,7 @@ use ppb::ImageDataIf;
 
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct ImageData(ffi::PP_Resource);
 
-impl_resource_for!(ImageData, ResourceType::ImageDataRes);
+impl_resource_for!(ImageData, ResourceType::ImageData);
 
 #[derive(Eq, PartialEq, Hash, Clone, Copy)]
 pub enum Format {

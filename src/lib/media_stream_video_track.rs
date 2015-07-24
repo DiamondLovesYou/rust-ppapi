@@ -7,7 +7,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 use ffi;
-use ppb::{MediaStreamVideoTrackIf, get_media_stream_video_track};
+use ppb::{ResourceInterface, MediaStreamVideoTrackIf, get_media_stream_video_track};
 
 use super::{Callback, CallbackArgs, StringVar, Code, Result, Resource};
 use super::video_frame::{self, VideoFrame};
@@ -17,7 +17,7 @@ use super::video_frame::{self, VideoFrame};
 pub struct VideoTrack(ffi::PP_Resource);
 
 impl_clone_drop_for!(VideoTrack);
-impl_resource_for!(VideoTrack, ResourceType::VideoFrameRes);
+impl_resource_for!(VideoTrack, ResourceType::VideoFrame);
 
 #[doc(hidden)]
 impl From<ffi::PP_Resource> for VideoTrack {
@@ -102,8 +102,11 @@ impl VideoTrack {
         }
         nattrs.push(ffi::PP_MEDIASTREAMVIDEOTRACK_ATTRIB_NONE);
 
-        get_media_stream_video_track()
-            .configure(self.unwrap(), nattrs.as_ref(), callback.to_ffi_callback())
+        let cc = callback.to_ffi_callback();
+
+        let code = get_media_stream_video_track()
+            .configure(self.unwrap(), nattrs.as_ref(), cc.cc);
+        cc.drop_with_code(code)
     }
     pub fn get_attr(&self, attr: Attr) -> Result<Attr> {
         get_media_stream_video_track()
@@ -127,11 +130,14 @@ impl VideoTrack {
     pub fn get_frame<F>(&self, f: F) -> Code
         where F: CallbackArgs<VideoFrame>
     {
-        fn mapper(res: ffi::PP_Resource) -> VideoFrame { From::from(res) }
+        impl super::InPlaceInit for i32 { }
+        fn map_args(res: ffi::PP_Resource) -> VideoFrame { From::from(res) }
 
-        let (cb, frame) = f.to_ffi_callback(0, mapper);
+        let mapper = super::StorageToArgsMapper::Take(map_args);
+        let mut cc = f.to_ffi_callback(0i32, mapper);
+        let fficc = cc.cc;
         get_media_stream_video_track()
-            .get_frame(self.unwrap(), frame, cb)
+            .get_frame(self.unwrap(), &mut *cc, fficc)
     }
     pub fn recycle_frame(&self, frame: VideoFrame) -> Code {
         get_media_stream_video_track()

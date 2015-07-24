@@ -43,7 +43,8 @@ pub type UrlRequestInfo = ffi::PPB_URLRequestInfo;
 pub type UrlResponseInfo = ffi::PPB_URLResponseInfo;
 pub type View = ffi::Struct_PPB_View_1_2;
 pub type FileSystem = ffi::Struct_PPB_FileSystem_1_0;
-pub type FileRef = ffi::PPB_FileRef;
+pub type FileRef = ffi::Struct_PPB_FileRef_1_2;
+pub type FileIo = ffi::Struct_PPB_FileIO_1_1;
 pub type MediaStreamVideoTrack = ffi::Struct_PPB_MediaStreamVideoTrack_0_1;
 pub type VideoFrame = ffi::Struct_PPB_VideoFrame_0_1;
 
@@ -73,6 +74,7 @@ mod consts {
     pub const VIEW:     &'static str         = "PPB_View;1.2\0";
     pub const FILESYSTEM: &'static str       = "PPB_FileSystem;1.0\0";
     pub const FILEREF: &'static str          = "PPB_FileRef;1.2\0";
+    pub const FILEIO: &'static str           = "PPB_FileIo;1.1\0";
     pub const MEDIA_STREAM_VIDEO_TRACK: &'static str = "PPB_MediaStreamVideoTrack;0.1\0";
     pub const VIDEO_FRAME: &'static str      = "PPB_VideoFrame;0.1\0";
 }
@@ -103,6 +105,8 @@ mod globals {
     pub static mut URL_RESPONSE: Option<&'static super::UrlResponseInfo> = None;
     pub static mut VIEW:         Option<&'static super::View> = None;
     pub static mut FILESYSTEM:   Option<&'static super::FileSystem> = None;
+    pub static mut FILEREF:      Option<&'static super::FileRef> = None;
+    pub static mut FILEIO:       Option<&'static super::FileIo> = None;
     pub static mut MEDIA_STREAM_VIDEO_TRACK: Option<&'static super::MediaStreamVideoTrack> = None;
     pub static mut VIDEO_FRAME:  Option<&'static super::VideoFrame> = None;
 }
@@ -134,6 +138,8 @@ pub fn initialize_globals(b: ffi::PPB_GetInterface) {
         globals::URL_RESPONSE  = get_interface(consts::URL_RESPONSE);
         globals::VIEW          = get_interface(consts::VIEW);
         globals::FILESYSTEM    = get_interface(consts::FILESYSTEM);
+        globals::FILEREF       = get_interface(consts::FILEREF);
+        globals::FILEIO        = get_interface(consts::FILEIO);
         globals::MEDIA_STREAM_VIDEO_TRACK = get_interface(consts::MEDIA_STREAM_VIDEO_TRACK);
         globals::VIDEO_FRAME   = get_interface(consts::VIDEO_FRAME);
     }
@@ -226,6 +232,10 @@ get_fun!    (pub fn get_view() -> View { VIEW });
 get_fun_opt!(pub fn get_view_opt() -> View { VIEW });
 get_fun!    (pub fn get_file_system() -> FileSystem { FILESYSTEM });
 get_fun_opt!(pub fn get_file_system_opt() -> FileSystem { FILESYSTEM });
+get_fun!    (pub fn get_file_ref() -> FileRef { FILEREF });
+get_fun_opt!(pub fn get_file_ref_opt() -> FileRef { FILEREF });
+get_fun!    (pub fn get_file_io() -> FileIo { FILEIO });
+get_fun_opt!(pub fn get_file_io_opt() -> FileIo { FILEIO });
 get_fun!    (pub fn get_media_stream_video_track() -> MediaStreamVideoTrack { MEDIA_STREAM_VIDEO_TRACK });
 get_fun_opt!(pub fn get_media_stream_video_track_opt() -> MediaStreamVideoTrack { MEDIA_STREAM_VIDEO_TRACK });
 get_fun!    (pub fn get_video_frame() -> VideoFrame { VIDEO_FRAME });
@@ -241,6 +251,15 @@ macro_rules! impl_fun(
                 else { $fun.unwrap() };
         f( $($arg),* )
     });
+    ($fun:expr => ( $($arg:expr),* ) -> Option<PP_Resource> ) => ({
+        let r = impl_fun!($fun => ( $($arg),* ));
+        if r == 0 { None }
+        else { Some(r) }
+    });
+    ($fun:expr => ( $($arg:expr),* ) -> Code ) => ({
+        let r = impl_fun!($fun => ( $($arg),* ));
+        From::from(r)
+    });
     ($fun:expr) => ({
         #[inline(never)] fn failure() -> ! {
             panic!("Interface function \"{}\" missing!", stringify!($fun))
@@ -250,6 +269,37 @@ macro_rules! impl_fun(
                 else { $fun.unwrap() };
         f()
     })
+);
+
+pub trait ResourceInterface {
+    #[doc(hidden)]
+    fn get_is_fn(&self) -> Option<extern "C" fn(resource: ffi::PP_Resource)
+                                                -> ffi::PP_Bool>;
+    fn is(&self, r: ffi::PP_Resource) -> bool {
+        self.get_is_fn()
+            .map(|f| f(r) != ffi::PP_FALSE )
+            .unwrap_or(false)
+    }
+}
+macro_rules! resource_interface(
+    (impl for $ty:ty => $is_name:ident) => {
+        impl ResourceInterface for $ty {
+            fn get_is_fn(&self) -> Option<extern "C" fn(resource: ffi::PP_Resource)
+                                                        -> ffi::PP_Bool> {
+                self.$is_name
+            }
+        }
+    }
+);
+macro_rules! resource_interface_opt(
+    (impl for $ty:ty => $is_name:ident) => {
+        impl ResourceInterface for Option<&'static $ty> {
+            fn get_is_fn(&self) -> Option<extern "C" fn(resource: ffi::PP_Resource)
+                                                        -> ffi::PP_Bool> {
+                self.and_then(|s| s.$is_name )
+            }
+        }
+    }
 );
 
 pub trait CoreIf {
@@ -492,13 +542,16 @@ impl ImageDataIf for ffi::Struct_PPB_ImageData_1_0 {
         impl_fun!(self.Unmap => (*img))
     }
 }
+
+resource_interface!(impl for ffi::Struct_PPB_URLLoader_1_0 => IsURLLoader);
+resource_interface_opt!(impl for ffi::Struct_PPB_URLLoader_1_0 => IsURLLoader);
+
 pub trait URLLoaderIf {
     fn create(&self, instance: PP_Instance) -> Option<PP_Resource>;
-    fn is(&self, res: PP_Resource) -> bool;
     fn open(&self,
             loader: PP_Resource,
             request: PP_Resource,
-            callback: ffi::Struct_PP_CompletionCallback) -> super::Result<()>;
+            callback: ffi::Struct_PP_CompletionCallback) -> Code;
 }
 impl URLLoaderIf for ffi::Struct_PPB_URLLoader_1_0 {
     fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
@@ -509,21 +562,15 @@ impl URLLoaderIf for ffi::Struct_PPB_URLLoader_1_0 {
             Some(loader)
         }
     }
-    fn is(&self, res: PP_Resource) -> bool {
-        let is = impl_fun!(self.IsURLLoader => (res));
-        is != 0
-    }
     fn open(&self,
             loader: PP_Resource,
             request: PP_Resource,
-            callback: ffi::Struct_PP_CompletionCallback) -> super::Result<()> {
-        let code = Code::from_i32(impl_fun!(self.Open => (loader, request, callback)));
-        code.to_result(|_| () )
+            callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Open => (loader, request, callback) -> Code)
     }
 }
 pub trait URLRequestInfoIf {
     fn create(&self, instance: PP_Instance) -> Option<PP_Resource>;
-    fn is(&self, res: PP_Resource) -> bool;
     fn property(&self,
                 res: PP_Resource,
                 prop: ffi::PP_URLRequestProperty,
@@ -538,6 +585,8 @@ pub trait URLRequestInfoIf {
                            res: PP_Resource,
                            data: &Vec<u8>) -> bool;
 }
+resource_interface!(impl for ffi::Struct_PPB_URLRequestInfo_1_0 => IsURLRequestInfo);
+resource_interface_opt!(impl for ffi::Struct_PPB_URLRequestInfo_1_0 => IsURLRequestInfo);
 impl URLRequestInfoIf for ffi::Struct_PPB_URLRequestInfo_1_0 {
     fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
         let loader = impl_fun!(self.Create => (instance));
@@ -546,10 +595,6 @@ impl URLRequestInfoIf for ffi::Struct_PPB_URLRequestInfo_1_0 {
         } else {
             Some(loader)
         }
-    }
-    fn is(&self, res: PP_Resource) -> bool {
-        let is = impl_fun!(self.IsURLRequestInfo => (res));
-        is != 0
     }
     fn property(&self,
                 res: PP_Resource,
@@ -584,17 +629,14 @@ impl URLRequestInfoIf for ffi::Struct_PPB_URLRequestInfo_1_0 {
 
 }
 pub trait URLResponseInfoIf {
-    fn is(&self, res: &PP_Resource) -> bool;
     fn property(&self,
                 res: &PP_Resource,
                 property: ffi::PP_URLResponseProperty) -> ffi::PP_Var;
     fn body_as_file(&self, res: &PP_Resource) -> PP_Resource;
 }
+resource_interface!(impl for ffi::Struct_PPB_URLResponseInfo_1_0 => IsURLResponseInfo);
+resource_interface_opt!(impl for ffi::Struct_PPB_URLResponseInfo_1_0 => IsURLResponseInfo);
 impl URLResponseInfoIf for ffi::Struct_PPB_URLResponseInfo_1_0 {
-    fn is(&self, res: &PP_Resource) -> bool {
-        let is = impl_fun!(self.IsURLResponseInfo => (*res));
-        is != 0
-    }
     fn property(&self,
                 res: &PP_Resource,
                 property: ffi::PP_URLResponseProperty) -> ffi::PP_Var {
@@ -615,11 +657,12 @@ pub trait InputEventIf {
     fn cancel_requests(&self,
                        instance: &PP_Instance,
                        classes: u32);
-    fn is(&self, res: &PP_Resource) -> bool;
     fn type_of(&self, res: &PP_Resource) -> ffi::PP_InputEvent_Type;
     fn timestamp(&self, res: &PP_Resource) -> ffi::PP_TimeTicks;
     fn modifiers(&self, res: &PP_Resource) -> u32;
 }
+resource_interface!(impl for ffi::Struct_PPB_InputEvent_1_0 => IsInputEvent);
+resource_interface_opt!(impl for ffi::Struct_PPB_InputEvent_1_0 => IsInputEvent);
 impl InputEventIf for ffi::Struct_PPB_InputEvent_1_0 {
     fn request(&self,
                instance: &PP_Instance,
@@ -636,10 +679,6 @@ impl InputEventIf for ffi::Struct_PPB_InputEvent_1_0 {
                        classes: u32) {
         impl_fun!(self.ClearInputEventRequest => (*instance, classes))
     }
-    fn is(&self, res: &PP_Resource) -> bool {
-        let is = impl_fun!(self.IsInputEvent => (*res));
-        is != 0
-    }
     fn type_of(&self, res: &PP_Resource) -> ffi::PP_InputEvent_Type {
         impl_fun!(self.GetType => (*res))
     }
@@ -651,17 +690,14 @@ impl InputEventIf for ffi::Struct_PPB_InputEvent_1_0 {
     }
 }
 pub trait MouseInputEventIf {
-    fn is(&self, res: &PP_Resource) -> bool;
     fn button(&self, res: &PP_Resource) -> ffi::PP_InputEvent_MouseButton;
     fn point(&self, res: &PP_Resource) -> ffi::PP_FloatPoint;
     fn click_count(&self, res: &PP_Resource) -> i32;
     fn delta(&self, res: &PP_Resource) -> ffi::PP_FloatPoint;
 }
+resource_interface!(impl for ffi::Struct_PPB_MouseInputEvent_1_1 => IsMouseInputEvent);
+resource_interface_opt!(impl for ffi::Struct_PPB_MouseInputEvent_1_1 => IsMouseInputEvent);
 impl MouseInputEventIf for ffi::Struct_PPB_MouseInputEvent_1_1 {
-    fn is(&self, res: &PP_Resource) -> bool {
-        let is = impl_fun!(self.IsMouseInputEvent => (*res));
-        is != 0
-    }
     fn button(&self, res: &PP_Resource) -> ffi::PP_InputEvent_MouseButton {
         impl_fun!(self.GetButton => (*res))
     }
@@ -685,15 +721,12 @@ impl MouseInputEventIf for ffi::Struct_PPB_MouseInputEvent_1_1 {
 }
 
 pub trait KeyboardInputEventIf {
-    fn is(&self, res: &PP_Resource) -> bool;
     fn key_code(&self, res: &PP_Resource) -> u32;
     fn text(&self, res: &PP_Resource) -> ffi::PP_Var;
 }
+resource_interface!(impl for ffi::Struct_PPB_KeyboardInputEvent_1_2 => IsKeyboardInputEvent);
+resource_interface_opt!(impl for ffi::Struct_PPB_KeyboardInputEvent_1_2 => IsKeyboardInputEvent);
 impl KeyboardInputEventIf for ffi::Struct_PPB_KeyboardInputEvent_1_2 {
-    fn is(&self, res: &PP_Resource) -> bool {
-        let is = impl_fun!(self.IsKeyboardInputEvent => (*res));
-        is != 0
-    }
     fn key_code(&self, res: &PP_Resource) -> u32 {
         impl_fun!(self.GetKeyCode => (*res))
     }
@@ -702,7 +735,6 @@ impl KeyboardInputEventIf for ffi::Struct_PPB_KeyboardInputEvent_1_2 {
     }
 }
 pub trait TouchInputEventIf {
-    fn is(&self, res: &PP_Resource) -> bool;
     fn count(&self, res: &PP_Resource, list: ffi::PP_TouchListType) -> u32;
     fn by_index(&self,
                 res: &PP_Resource,
@@ -713,11 +745,9 @@ pub trait TouchInputEventIf {
              list_type: ffi::PP_TouchListType,
              id: u32) -> ffi::PP_TouchPoint;
 }
+resource_interface!(impl for ffi::Struct_PPB_TouchInputEvent_1_0 => IsTouchInputEvent);
+resource_interface_opt!(impl for ffi::Struct_PPB_TouchInputEvent_1_0 => IsTouchInputEvent);
 impl TouchInputEventIf for ffi::Struct_PPB_TouchInputEvent_1_0 {
-    fn is(&self, res: &PP_Resource) -> bool {
-        let is = impl_fun!(self.IsTouchInputEvent => (*res));
-        is != 0
-    }
     fn count(&self, res: &PP_Resource, list: ffi::PP_TouchListType) -> u32 {
         impl_fun!(self.GetTouchCount => (*res, list))
     }
@@ -735,16 +765,13 @@ impl TouchInputEventIf for ffi::Struct_PPB_TouchInputEvent_1_0 {
     }
 }
 pub trait WheelInputEventIf {
-    fn is(&self, res: &PP_Resource) -> bool;
     fn delta(&self, res: &PP_Resource) -> ffi::PP_FloatPoint;
     fn ticks(&self, res: &PP_Resource) -> ffi::PP_FloatPoint;
     fn scroll_by_page(&self, res: &PP_Resource) -> bool;
 }
+resource_interface!(impl for ffi::Struct_PPB_WheelInputEvent_1_0 => IsWheelInputEvent);
+resource_interface_opt!(impl for ffi::Struct_PPB_WheelInputEvent_1_0 => IsWheelInputEvent);
 impl WheelInputEventIf for ffi::Struct_PPB_WheelInputEvent_1_0 {
-    fn is(&self, res: &PP_Resource) -> bool {
-        let is = impl_fun!(self.IsWheelInputEvent => (*res));
-        is != 0
-    }
     fn delta(&self, res: &PP_Resource) -> ffi::PP_FloatPoint {
         impl_fun!(self.GetDelta => (*res))
     }
@@ -762,7 +789,6 @@ pub trait Graphics3DIf {
                ctxt: PP_Resource,
                attribs: Vec<ffi::PP_Graphics3DAttrib>) -> Result<Vec<u32>>;
     fn status(&self, ctxt: PP_Resource) -> Code;
-    fn is(&self, res: PP_Resource) -> bool;
     fn resize_buffers(&self, ctxt: PP_Resource, width: i32, height: i32) -> Code;
     fn set_attribs(&self,
                    ctxt: PP_Resource,
@@ -771,6 +797,8 @@ pub trait Graphics3DIf {
                     ctxt: PP_Resource,
                     callback: ffi::Struct_PP_CompletionCallback) -> Code;
 }
+resource_interface!(impl for ffi::Struct_PPB_Graphics3D_1_0 => IsGraphics3D);
+resource_interface_opt!(impl for ffi::Struct_PPB_Graphics3D_1_0 => IsGraphics3D);
 impl Graphics3DIf for ffi::Struct_PPB_Graphics3D_1_0 {
     fn attrib_max_value(&self, instance: PP_Instance, attribute: i32) -> Result<i32> {
         let mut value: i32 = 0;
@@ -812,10 +840,6 @@ impl Graphics3DIf for ffi::Struct_PPB_Graphics3D_1_0 {
     fn status(&self, ctxt: PP_Resource) -> Code {
         Code::from_i32(impl_fun!(self.GetError => (ctxt)))
     }
-    fn is(&self, res: PP_Resource) -> bool {
-        let r = impl_fun!(self.IsGraphics3D => (res));
-        r != 0
-    }
     fn resize_buffers(&self, ctxt: PP_Resource, width: i32, height: i32) -> Code {
         Code::from_i32(impl_fun!(self.ResizeBuffers => (ctxt, width, height)))
     }
@@ -832,7 +856,6 @@ impl Graphics3DIf for ffi::Struct_PPB_Graphics3D_1_0 {
     }
 }
 pub trait ViewIf {
-    fn is(&self, res: PP_Resource) -> bool;
     fn rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect>;
     fn is_fullscreen(&self, res: PP_Resource) -> bool;
     fn is_visible(&self, res: PP_Resource) -> bool;
@@ -841,11 +864,9 @@ pub trait ViewIf {
     fn device_scale(&self, res: PP_Resource) -> f32;
     fn css_scale(&self, res: PP_Resource) -> f32;
 }
+resource_interface!(impl for ffi::Struct_PPB_View_1_2 => IsView);
+resource_interface_opt!(impl for ffi::Struct_PPB_View_1_2 => IsView);
 impl ViewIf for ffi::Struct_PPB_View_1_2 {
-    fn is(&self, res: PP_Resource) -> bool {
-        let r = impl_fun!(self.IsView => (res));
-        r != 0
-    }
     fn rect(&self, res: PP_Resource) -> Option<ffi::Struct_PP_Rect> {
         let mut dest = unsafe { uninitialized() };
         let ok = impl_fun!(self.GetRect => (res, &mut dest as *mut ffi::Struct_PP_Rect));
@@ -882,32 +903,154 @@ impl ViewIf for ffi::Struct_PPB_View_1_2 {
 }
 pub trait FileSystemIf {
     fn create(&self, inst: PP_Instance, t: ffi::PP_FileSystemType) -> Option<ffi::PP_Resource>;
-    fn is(&self, res: PP_Resource) -> bool;
     fn open(&self, sys: PP_Resource, expected_size: libc::int64_t,
-            callback: ffi::PP_CompletionCallback) -> libc::int32_t;
+            callback: ffi::PP_CompletionCallback) -> Code;
     fn get_type(&self, res: PP_Resource) -> ffi::PP_FileSystemType;
 }
+resource_interface!(impl for ffi::Struct_PPB_FileSystem_1_0 => IsFileSystem);
+resource_interface_opt!(impl for ffi::Struct_PPB_FileSystem_1_0 => IsFileSystem);
 impl FileSystemIf for ffi::Struct_PPB_FileSystem_1_0 {
     fn create(&self, inst: PP_Instance, t: ffi::PP_FileSystemType) -> Option<ffi::PP_Resource> {
         let res = impl_fun!(self.Create => (inst, t));
         if res == 0 { None }
         else        { Some(res) }
     }
-    fn is(&self, res: PP_Resource) -> bool {
-        (impl_fun!(self.IsFileSystem => (res))) != 0
-    }
     fn open(&self, sys: PP_Resource, expected_size: libc::int64_t,
-            callback: ffi::PP_CompletionCallback) -> libc::int32_t {
-        impl_fun!(self.Open => (sys, expected_size, callback))
+            callback: ffi::PP_CompletionCallback) -> Code {
+        impl_fun!(self.Open => (sys, expected_size, callback) -> Code)
     }
     fn get_type(&self, res: PP_Resource) -> ffi::PP_FileSystemType {
         impl_fun!(self.GetType => (res))
     }
 }
+pub trait FileRefIf {
+    fn create(&self, fs: PP_Resource, path: *const libc::c_char) -> Option<PP_Resource>;
+    fn get_file_system_type(&self, f: PP_Resource) -> ffi::PP_FileSystemType;
+    fn get_name(&self, f: PP_Resource) -> PP_Var;
+    fn get_path(&self, f: PP_Resource) -> PP_Var;
+    fn get_parent(&self, f: PP_Resource) -> Option<PP_Resource>;
+    fn mkdir(&self, f: PP_Resource, flags: libc::int32_t,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn touch(&self, f: PP_Resource, atime: ffi::PP_Time, mtime: ffi::PP_Time,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn delete(&self, f: PP_Resource, callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn rename(&self, f: PP_Resource, new_f: PP_Resource, callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn query(&self, f: PP_Resource, info: &mut ffi::Struct_PP_FileInfo,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code;
+
+    fn read_directory_entries(&self, f: PP_Resource, output: ffi::Struct_PP_ArrayOutput,
+                              callback: ffi::Struct_PP_CompletionCallback) -> Code;
+}
+resource_interface!(impl for ffi::Struct_PPB_FileRef_1_2 => IsFileRef);
+resource_interface_opt!(impl for ffi::Struct_PPB_FileRef_1_2 => IsFileRef);
+impl FileRefIf for ffi::Struct_PPB_FileRef_1_2 {
+    fn create(&self, fs: PP_Resource, path: *const libc::c_char) -> Option<PP_Resource> {
+        let res = impl_fun!(self.Create => (fs, path));
+        if res == 0 { None }
+        else        { Some(res) }
+    }
+    fn get_file_system_type(&self, f: PP_Resource) -> ffi::PP_FileSystemType {
+        impl_fun!(self.GetFileSystemType => (f))
+    }
+    fn get_name(&self, f: PP_Resource) -> PP_Var { impl_fun!(self.GetName => (f)) }
+    fn get_path(&self, f: PP_Resource) -> PP_Var { impl_fun!(self.GetPath => (f)) }
+    fn get_parent(&self, f: PP_Resource) -> Option<PP_Resource> {
+        impl_fun!(self.GetParent => (f) -> Option<PP_Resource>)
+    }
+    fn mkdir(&self, f: PP_Resource, flags: libc::int32_t,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.MakeDirectory => (f, flags, callback) -> Code)
+    }
+    fn touch(&self, f: PP_Resource, atime: ffi::PP_Time, mtime: ffi::PP_Time,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Touch => (f, atime, mtime, callback) -> Code)
+    }
+    fn delete(&self, f: PP_Resource, callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Delete => (f, callback) -> Code)
+    }
+    fn rename(&self, f: PP_Resource, new_f: PP_Resource, callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Rename => (f, new_f, callback) -> Code)
+    }
+    fn query(&self, f: PP_Resource, info: &mut ffi::Struct_PP_FileInfo,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Query => (f, info as *mut _, callback) -> Code)
+    }
+    fn read_directory_entries(&self, f: PP_Resource, output: ffi::Struct_PP_ArrayOutput,
+                              callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.ReadDirectoryEntries => (f, output, callback) -> Code)
+    }
+}
+
+pub trait FileIoIf {
+    fn create(&self, instance: PP_Instance) -> Option<PP_Resource>;
+    fn open(&self, f: PP_Resource, r: PP_Resource, flags: libc::int32_t,
+            callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn query(&self, f: PP_Resource, info: &mut ffi::Struct_PP_FileInfo,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn touch(&self, f: PP_Resource, atime: ffi::PP_Time, mtime: ffi::PP_Time,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn read(&self, f: PP_Resource, offset: libc::uint64_t, buffer: *mut libc::c_char,
+            bytes: libc::size_t, callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn write(&self, f: PP_Resource, offset: libc::uint64_t, buffer: *const libc::c_char,
+             bytes: libc::size_t, callback: ffi::Struct_PP_CompletionCallback) -> Result<u64>;
+    fn set_length(&self, f: PP_Resource, length: libc::uint64_t,
+                  callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn flush(&self, f: PP_Resource,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn close(&self, f: PP_Resource);
+    fn read_to_array(&self, f: PP_Resource, offset: libc::uint64_t, max_read: libc::size_t,
+                     output: &mut ffi::Struct_PP_ArrayOutput,
+                     callback: ffi::Struct_PP_CompletionCallback) -> Code;
+}
+resource_interface!(impl for ffi::Struct_PPB_FileIO_1_1 => IsFileIO);
+resource_interface_opt!(impl for ffi::Struct_PPB_FileIO_1_1 => IsFileIO);
+impl FileIoIf for ffi::Struct_PPB_FileIO_1_1 {
+    fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
+        impl_fun!(self.Create => (instance) -> Option<PP_Resource>)
+    }
+    fn open(&self, f: PP_Resource, r: PP_Resource, flags: libc::int32_t,
+            callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Open => (f, r, flags, callback) -> Code)
+    }
+    fn query(&self, f: PP_Resource, info: &mut ffi::Struct_PP_FileInfo,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Query => (f, info as *mut _, callback) -> Code)
+    }
+    fn touch(&self, f: PP_Resource, atime: ffi::PP_Time, mtime: ffi::PP_Time,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Touch => (f, atime, mtime, callback) -> Code)
+    }
+    fn read(&self, f: PP_Resource, offset: libc::uint64_t, buffer: *mut libc::c_char,
+            bytes: libc::size_t, callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Read => (f, offset as libc::int64_t, buffer,
+                                bytes as libc::int32_t, callback) -> Code)
+    }
+    fn write(&self, f: PP_Resource, offset: libc::uint64_t, buffer: *const libc::c_char,
+             bytes: libc::size_t, callback: ffi::Struct_PP_CompletionCallback) -> Result<u64> {
+        let result = impl_fun!(self.Write => (f, offset as libc::int64_t, buffer,
+                                              bytes as libc::int32_t, callback));
+        if result >= 0 { Ok(result as u64) }
+        else           { Err(From::from(result)) }
+    }
+    fn set_length(&self, f: PP_Resource, length: libc::uint64_t,
+                  callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.SetLength => (f, length as libc::int64_t, callback) -> Code)
+    }
+    fn flush(&self, f: PP_Resource,
+             callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Flush => (f, callback) -> Code)
+    }
+    fn close(&self, f: PP_Resource) { impl_fun!(self.Close => (f)) }
+    fn read_to_array(&self, f: PP_Resource, offset: libc::uint64_t, max_read: libc::size_t,
+                     output: &mut ffi::Struct_PP_ArrayOutput,
+                     callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.ReadToArray => (f, offset as libc::int64_t, max_read as libc::int32_t,
+                                       output as *mut _, callback) -> Code)
+    }
+}
 
 pub trait MediaStreamVideoTrackIf {
     //fn create(&self, inst: PP_Instance) -> Option<PP_Resource>;
-    fn is(&self, res: PP_Resource) -> bool;
     fn configure(&self, res: PP_Resource, attrs: &[ffi::PP_MediaStreamVideoTrack_Attrib],
                  callback: ffi::Struct_PP_CompletionCallback) -> Code;
     fn get_attrib(&self, res: PP_Resource, attr: ffi::PP_MediaStreamVideoTrack_Attrib) ->
@@ -922,16 +1065,14 @@ pub trait MediaStreamVideoTrackIf {
                        callback: ffi::Struct_PP_CompletionCallback) -> Code;
     fn put_frame(&self, res: PP_Resource, frame: PP_Resource) -> Code;*/
 }
-
+resource_interface!(impl for ffi::Struct_PPB_MediaStreamVideoTrack_0_1 => IsMediaStreamVideoTrack);
+resource_interface_opt!(impl for ffi::Struct_PPB_MediaStreamVideoTrack_0_1 => IsMediaStreamVideoTrack);
 impl MediaStreamVideoTrackIf for ffi::Struct_PPB_MediaStreamVideoTrack_0_1 {
     /*fn create(&self, inst: PP_Instance) -> Option<PP_Resource> {
         let res = impl_fun!(self.Create => (inst));
         if res == 0 { None }
         else        { Some(res) }
     }*/
-    fn is(&self, res: PP_Resource) -> bool {
-        (impl_fun!(self.IsMediaStreamVideoTrack => (res))) != 0
-    }
     fn configure(&self, res: PP_Resource, attrs: &[ffi::PP_MediaStreamVideoTrack_Attrib],
                  callback: ffi::Struct_PP_CompletionCallback) -> Code {
         debug_assert!(attrs.last() == Some(&ffi::PP_MEDIASTREAMVIDEOTRACK_ATTRIB_NONE));
@@ -979,7 +1120,6 @@ impl MediaStreamVideoTrackIf for ffi::Struct_PPB_MediaStreamVideoTrack_0_1 {
 }
 
 pub trait VideoFrameIf {
-    fn is(&self, res: PP_Resource) -> bool;
     fn get_timestamp(&self, res: PP_Resource) -> ffi::PP_TimeDelta;
     fn set_timestamp(&self, res: PP_Resource, ts: ffi::PP_TimeDelta);
     fn get_format(&self, res: PP_Resource) -> ffi::PP_VideoFrame_Format;
@@ -987,10 +1127,9 @@ pub trait VideoFrameIf {
     fn get_data_buffer(&self, res: PP_Resource) -> *const u8;
     fn get_data_buffer_size(&self, res: PP_Resource) -> usize;
 }
+resource_interface!(impl for ffi::Struct_PPB_VideoFrame_0_1 => IsVideoFrame);
+resource_interface_opt!(impl for ffi::Struct_PPB_VideoFrame_0_1 => IsVideoFrame);
 impl VideoFrameIf for ffi::Struct_PPB_VideoFrame_0_1 {
-    fn is(&self, res: PP_Resource) -> bool {
-        (impl_fun!(self.IsVideoFrame => (res))) != 0
-    }
     fn get_timestamp(&self, res: PP_Resource) -> ffi::PP_TimeDelta {
         impl_fun!(self.GetTimestamp => (res))
     }

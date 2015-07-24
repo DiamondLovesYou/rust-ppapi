@@ -84,6 +84,7 @@ More info:
 #![feature(catch_panic)]
 
 #![allow(dead_code)]
+#![allow(non_shorthand_field_patterns)]
 
 #[macro_use]
 extern crate log;
@@ -102,6 +103,8 @@ use std::clone;
 use std::result;
 use std::collections::HashMap;
 use std::fmt;
+use std::marker::PhantomData;
+use std::error::Error;
 
 use log::LogRecord;
 
@@ -130,9 +133,9 @@ macro_rules! impl_resource_for(
                 assert!(*res != 0);
                 *res
             }
-            fn type_of(&self) -> ::ResourceType {
+            fn type_of(&self) -> Option<::ResourceType> {
                 use ::ResourceType;
-                $type_
+                Some($type_)
             }
         }
         impl $ty {
@@ -224,53 +227,34 @@ impl ToFFIBool for bool {
     }
 }
 
-#[derive(Clone, Eq, PartialEq, Copy)] #[must_use]
+#[derive(Clone, Eq, PartialEq, Copy, Debug)]
+#[must_use] #[repr(i32)]
 pub enum Code {
-    Ok                = ffi::PP_OK as isize,
-    BadResource       = ffi::PP_ERROR_BADRESOURCE as isize,
-    BadArgument       = ffi::PP_ERROR_BADARGUMENT as isize,
-    WrongThread       = ffi::PP_ERROR_WRONG_THREAD as isize,
-    InProgress        = ffi::PP_ERROR_INPROGRESS as isize,
-    Failed            = ffi::PP_ERROR_FAILED as isize,
-    NotSupported      = ffi::PP_ERROR_NOTSUPPORTED as isize,
-    NoMemory          = ffi::PP_ERROR_NOMEMORY as isize,
-    NoSpace           = ffi::PP_ERROR_NOSPACE as isize,
-    NoQuota           = ffi::PP_ERROR_NOQUOTA as isize,
-    ContextLost       = ffi::PP_ERROR_CONTEXT_LOST as isize,
-    CompletionPending = ffi::PP_OK_COMPLETIONPENDING as isize,
-    FileNotFound      = ffi::PP_ERROR_FILENOTFOUND as isize,
-    FileExists        = ffi::PP_ERROR_FILEEXISTS as isize,
-    NoAccess          = ffi::PP_ERROR_NOACCESS as isize,
-    ConnectionRefused = ffi::PP_ERROR_CONNECTION_REFUSED as isize,
-    ConnectionReset   = ffi::PP_ERROR_CONNECTION_RESET as isize,
-    ConnectionAborted = ffi::PP_ERROR_CONNECTION_ABORTED as isize,
-    ConnectionClosed  = ffi::PP_ERROR_CONNECTION_CLOSED as isize,
-    TimedOut          = ffi::PP_ERROR_TIMEDOUT as isize,
+    Ok                = ffi::PP_OK,
+    CompletionPending = ffi::PP_OK_COMPLETIONPENDING,
+    BadResource       = ffi::PP_ERROR_BADRESOURCE,
+    BadArgument       = ffi::PP_ERROR_BADARGUMENT,
+    WrongThread       = ffi::PP_ERROR_WRONG_THREAD,
+    InProgress        = ffi::PP_ERROR_INPROGRESS,
+    Failed            = ffi::PP_ERROR_FAILED,
+    NotSupported      = ffi::PP_ERROR_NOTSUPPORTED,
+    NoMemory          = ffi::PP_ERROR_NOMEMORY,
+    NoSpace           = ffi::PP_ERROR_NOSPACE,
+    NoQuota           = ffi::PP_ERROR_NOQUOTA,
+    ContextLost       = ffi::PP_ERROR_CONTEXT_LOST,
+    FileNotFound      = ffi::PP_ERROR_FILENOTFOUND,
+    FileExists        = ffi::PP_ERROR_FILEEXISTS,
+    NoAccess          = ffi::PP_ERROR_NOACCESS,
+    ConnectionRefused = ffi::PP_ERROR_CONNECTION_REFUSED,
+    ConnectionReset   = ffi::PP_ERROR_CONNECTION_RESET,
+    ConnectionAborted = ffi::PP_ERROR_CONNECTION_ABORTED,
+    ConnectionClosed  = ffi::PP_ERROR_CONNECTION_CLOSED,
+    TimedOut          = ffi::PP_ERROR_TIMEDOUT,
+    NoMessageLoop     = ffi::PP_ERROR_NO_MESSAGE_LOOP,
 }
 impl fmt::Display for Code {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            Code::Ok => f.pad("ok"),
-            Code::BadResource => f.pad("bad resource"),
-            Code::BadArgument => f.pad("bad argument"),
-            Code::WrongThread => f.pad("wrong thread"),
-            Code::InProgress  => f.pad("in-progress"),
-            Code::Failed      => f.pad("failed"),
-            Code::NotSupported=> f.pad("not supported"),
-            Code::NoMemory    => f.pad("no memory"),
-            Code::ContextLost => f.pad("context lost"),
-            Code::CompletionPending => f.pad("completion callback pending"),
-            Code::NoSpace     => f.pad("no space left"),
-            Code::NoQuota     => f.pad("no space left in quota"),
-            Code::FileNotFound => f.pad("file not found"),
-            Code::FileExists  => f.pad("file exists"),
-            Code::NoAccess    => f.pad("insufficient privileges"),
-            Code::ConnectionRefused => f.pad("connection attempt refused"),
-            Code::ConnectionReset => f.pad("connection reset"),
-            Code::ConnectionAborted => f.pad("connection aborted"),
-            Code::ConnectionClosed => f.pad("connection closed"),
-            Code::TimedOut    => f.pad("operation timed out"),
-        }
+        f.pad(self.description())
     }
 }
 impl From<i32> for Code {
@@ -295,9 +279,61 @@ impl From<i32> for Code {
             ffi::PP_ERROR_CONNECTION_CLOSED => Code::ConnectionClosed,
             ffi::PP_ERROR_TIMEDOUT | ffi::PP_ERROR_CONNECTION_TIMEDOUT =>
                 Code::TimedOut,
+            ffi::PP_ERROR_NO_MESSAGE_LOOP => Code::NoMessageLoop,
 
             _ => unreachable!("unexpected invalid or unknown code: `{}`", v),
         }
+    }
+}
+impl<'a, T> From<&'a Result<T>> for Code {
+    fn from(v: &'a Result<T>) -> Code {
+        match v {
+            &Ok(_) => Code::Ok,
+            &Err(code) => code,
+        }
+    }
+}
+impl ::std::error::Error for Code {
+    fn description(&self) -> &str {
+        match self {
+            &Code::Ok => "ok",
+            &Code::BadResource => "bad resource",
+            &Code::BadArgument => "bad argument",
+            &Code::WrongThread => "wrong thread",
+            &Code::InProgress  => "in-progress",
+            &Code::Failed      => "failed",
+            &Code::NoMemory    => "no memory",
+            &Code::ContextLost => "context lost",
+            &Code::CompletionPending => "completion callback pending",
+            &Code::NoSpace     => "no space left",
+            &Code::NoQuota     => "no quota left",
+            &Code::FileNotFound => "file not found",
+            &Code::FileExists  => "file exists",
+            &Code::NoAccess    => "insufficient privileges",
+            &Code::ConnectionRefused => "connection attempt refused",
+            &Code::ConnectionReset => "connection reset",
+            &Code::ConnectionAborted => "connection aborted",
+            &Code::ConnectionClosed => "connection closed",
+            &Code::TimedOut    => "operation timed out",
+            &Code::NotSupported => "operation not supported/implemented",
+            &Code::NoMessageLoop => "this thread doesn't have an attached message loop",
+        }
+    }
+}
+impl Into<::std::io::Error> for Code {
+    fn into(self) -> ::std::io::Error {
+        use std::io::{ErrorKind, Error};
+        assert!(!self.is_ok());
+        let kind = match self {
+            Code::TimedOut => ErrorKind::TimedOut,
+            Code::ConnectionClosed => ErrorKind::NotConnected,
+            Code::ConnectionAborted => ErrorKind::ConnectionAborted,
+            Code::ConnectionReset => ErrorKind::ConnectionReset,
+            Code::ConnectionRefused => ErrorKind::ConnectionRefused,
+            _ => ErrorKind::Other, // TODO
+        };
+
+        Error::new(kind, self)
     }
 }
 impl Code {
@@ -326,6 +362,7 @@ impl Code {
             Code::ConnectionAborted => ffi::PP_ERROR_CONNECTION_ABORTED,
             Code::ConnectionClosed => ffi::PP_ERROR_CONNECTION_CLOSED,
             Code::TimedOut    => ffi::PP_ERROR_TIMEDOUT,
+            Code::NoMessageLoop => ffi::PP_ERROR_NO_MESSAGE_LOOP,
         }
     }
     pub fn to_empty_result(self) -> Result<()> {
@@ -352,6 +389,12 @@ impl Code {
     pub fn is_ok(&self) -> bool {
         match self {
             &Code::Ok | &Code::CompletionPending => true,
+            _ => false,
+        }
+    }
+    pub fn completion_pending(&self) -> bool {
+        match self {
+            &Code::CompletionPending => true,
             _ => false,
         }
     }
@@ -505,43 +548,97 @@ impl From<ffi::PP_Size> for Size {
     }
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub enum ResourceType {
-    WheelInputEventRes,
-    WebSocketRes,
-    ViewRes,
-    UrlResponseInfoRes,
-    UrlRequestInfoRes,
-    UrlLoaderRes,
-    UdpSocketRes,
-    TrueTypeFontRes,
-    TouchInputEventRes,
-    TcpSocketRes,
-    NetworkMonitorRes,
-    NetworkListRes,
-    NetworkAddressRes,
-    MouseInputEventRes,
-    MessageLoopRes,
-    KeyboardInputEventRes,
-    ImageDataRes,
-    IMEInputEventRes,
-    HostResolverRes,
-    Graphics3DRes,
-    Graphics2DRes,
-    FontRes,
-    FileSystemRes,
-    FileRefRes,
-    FileIoRes,
-    AudioConfigRes,
-    AudioRes,
-    VideoTrackRes,
-    VideoFrameRes,
+    WheelInputEvent,
+    WebSocket,
+    View,
+    UrlResponseInfo,
+    UrlRequestInfo,
+    UrlLoader,
+    UdpSocket,
+    TrueTypeFont,
+    TouchInputEvent,
+    TcpSocket,
+    NetworkMonitor,
+    NetworkList,
+    NetworkAddress,
+    MouseInputEvent,
+    MessageLoop,
+    KeyboardInputEvent,
+    ImageData,
+    IMEInputEvent,
+    HostResolver,
+    Graphics3D,
+    Graphics2D,
+    Font,
+    FileSystem,
+    FileRef,
+    FileIo,
+    AudioConfig,
+    Audio,
+    VideoTrack,
+    VideoFrame,
 }
 
-pub trait Resource {
-    fn unwrap(&self) -> ffi::PP_Resource;
+#[derive(Eq, PartialEq, Debug)]
+pub struct GenericResource(ffi::PP_Resource);
+impl_clone_drop_for!(GenericResource);
+impl Resource for GenericResource {
+    fn unwrap(&self) -> ffi::PP_Resource { self.0 }
 
-    fn type_of(&self) -> ResourceType;
+    fn type_of(&self) -> Option<ResourceType> {
+        use ppb::*;
+        let t;
+
+        if get_graphics_3d_opt().is(self.0) {
+            t = Some(ResourceType::Graphics3D);
+        } else if get_keyboard_event_opt().is(self.0) {
+            t = Some(ResourceType::KeyboardInputEvent);
+        } else if get_mouse_event_opt().is(self.0) {
+            t = Some(ResourceType::MouseInputEvent);
+        } else if get_wheel_event_opt().is(self.0) {
+            t = Some(ResourceType::WheelInputEvent);
+        } else if get_touch_event_opt().is(self.0) {
+            t = Some(ResourceType::TouchInputEvent);
+        //} else if get_ime_event_opt().is(self.0) {
+        //    t = Some(ResourceType::IMEInputEvent);
+        } else if get_url_loader_opt().is(self.0) {
+            t = Some(ResourceType::UrlLoader);
+        } else if get_url_request_opt().is(self.0) {
+            t = Some(ResourceType::UrlRequestInfo);
+        } else if get_url_response_opt().is(self.0) {
+            t = Some(ResourceType::UrlResponseInfo);
+        } else if get_view_opt().is(self.0) {
+            t = Some(ResourceType::View);
+        } else if get_file_system_opt().is(self.0) {
+            t = Some(ResourceType::FileSystem);
+        } else if get_media_stream_video_track_opt().is(self.0) {
+            t = Some(ResourceType::VideoTrack);
+        } else if get_video_frame_opt().is(self.0) {
+            t = Some(ResourceType::VideoFrame);
+        } else {
+            t = None;
+        }
+
+        t
+    }
+}
+impl ::std::hash::Hash for GenericResource {
+    fn hash<H>(&self, state: &mut H) where H: ::std::hash::Hasher {
+        use std::mem::size_of;
+        let id_slice = unsafe {
+            let ptr: *const u8 = mem::transmute(&self.0);
+            ::std::slice::from_raw_parts(ptr, size_of::<ffi::PP_Resource>())
+        };
+        state.write(id_slice)
+    }
+}
+
+pub trait Resource: Clone {
+    #[doc(hidden)] fn unwrap(&self) -> ffi::PP_Resource;
+
+    fn type_of(&self) -> Option<ResourceType>;
 }
 pub trait ContextResource {
     fn get_device(&self) -> ffi::PP_Resource;
@@ -551,11 +648,11 @@ pub trait ContextResource {
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct MessageLoop(ffi::PP_Resource);
 
 impl_clone_drop_for!(Context3d);
-impl_resource_for!(Context2d, ResourceType::Graphics2DRes);
+impl_resource_for!(Context2d, ResourceType::Graphics2D);
 impl_clone_drop_for!(Context2d);
-impl_resource_for!(View, ResourceType::ViewRes);
+impl_resource_for!(View, ResourceType::View);
 impl_clone_drop_for!(View);
-impl_resource_for!(MessageLoop, ResourceType::MessageLoopRes);
+impl_resource_for!(MessageLoop, ResourceType::MessageLoop);
 impl_clone_drop_for!(MessageLoop);
 impl_clone_drop_for!(KeyboardInputEvent);
 impl_clone_drop_for!(MouseInputEvent);
@@ -608,7 +705,7 @@ impl Messaging {
     }
 }
 impl MessageLoop {
-    pub fn get_main_loop() -> MessageLoop {
+    fn get_main_loop() -> MessageLoop {
         MessageLoop::new((ppb::get_message_loop().GetForMainThread.unwrap())())
     }
     pub fn is_attached() -> bool {
@@ -628,24 +725,25 @@ impl MessageLoop {
     pub fn run_loop(&self) -> Code {
         Code::from_i32((ppb::get_message_loop().Run.unwrap())(self.unwrap()))
     }
-    pub fn post_work<T: Callback>(&self, work: T, delay: i64) -> Code {
-        let comp_cb = work.to_ffi_callback();
-        match ppb::get_message_loop().post_work(&self.unwrap(), comp_cb, delay) {
+    pub fn post_work<T: Callback>(&self, work: T, delay: u64) -> Code {
+        let cc = work.to_ffi_callback();
+        match ppb::get_message_loop().post_work(&self.unwrap(), cc.cc, delay as i64) {
             ffi::PP_ERROR_BADARGUMENT => panic!("internal error: completion callback was null?"),
             c => Code::from_i32(c),
         }
     }
-    pub fn post_to_self<T: Callback>(work: T, delay: i64) -> Code {
+    pub fn post_to_self<T: Callback>(work: T, delay: u64) -> Code {
         MessageLoop::current()
-            .expect("can't post work to self: no message loop attached to the current thread")
-            .post_work(work, delay)
+            .map(move |m| m.post_work(work, delay) )
+            .unwrap_or(Code::NoMessageLoop)
     }
-    pub fn pause_loop(&self) -> Code {
+    #[allow(dead_code)]
+    fn pause_loop(&self) -> Code {
         Code::from_i32((ppb::get_message_loop().PostQuit.unwrap())(self.unwrap(), ffi::PP_FALSE))
     }
 
-    ///
-    pub fn shutdown(&self) -> Code {
+    /// Queue loop shutdown.
+    pub fn stop_loop(&self) -> Code {
         Code::from_i32((ppb::get_message_loop().PostQuit.unwrap())(self.unwrap(), ffi::PP_TRUE))
     }
 }
@@ -1143,7 +1241,6 @@ impl AnyVar {
         } else if var.is_an_array_buffer() {
             AnyVar::ArrayBuffer(ArrayBufferVar::new_from_var(var))
         } else if var.is_a_resource() {
-            error!("Resource vars aren't implemented");
             AnyVar::Undefined
         } else {
             error!("Var doesn't have a known type");
@@ -1165,6 +1262,19 @@ impl AnyVar {
             self.is_a_dictionary() ||
             self.is_an_array_buffer() ||
             self.is_a_resource()
+    }
+
+    pub fn get_string(&self) -> Option<&StringVar> {
+        match self {
+            &AnyVar::String(ref s) => Some(s),
+            _ => None,
+        }
+    }
+    pub fn get_dict(&self) -> Option<&DictionaryVar> {
+        match self {
+            &AnyVar::Dictionary(ref s) => Some(s),
+            _ => None,
+        }
     }
 }
 
@@ -1389,74 +1499,220 @@ fn parse_args(argc: u32,
         .collect()
 }
 
+pub trait InPlaceInit {
+    fn inplace_init(&mut self) { }
+}
+impl<T> InPlaceInit for Vec<T> {}
+
+/// The storage must be in-place (read: can't be moved), or the pointer to
+/// storage will be invalid!
+struct InPlaceArrayOutputStorage<T> {
+    storage: Vec<T>,
+    ffi: ffi::Struct_PP_ArrayOutput,
+}
+impl<T> Into<Vec<T>> for InPlaceArrayOutputStorage<T> {
+    fn into(self) -> Vec<T> {
+        let InPlaceArrayOutputStorage {
+            storage: storage, ..
+        } = self;
+        storage
+    }
+}
+unsafe impl<T: Send> Send for InPlaceArrayOutputStorage<T> { }
+impl<T> AsRef<ffi::Struct_PP_ArrayOutput> for InPlaceArrayOutputStorage<T> {
+    fn as_ref(&self) -> &ffi::Struct_PP_ArrayOutput { &self.ffi }
+}
+impl<T> AsMut<ffi::Struct_PP_ArrayOutput> for InPlaceArrayOutputStorage<T> {
+    fn as_mut(&mut self) -> &mut ffi::Struct_PP_ArrayOutput { &mut self.ffi }
+}
+impl<T> AsRef<Vec<T>> for InPlaceArrayOutputStorage<T> {
+    fn as_ref(&self) -> &Vec<T> { &self.storage }
+}
+impl<T> AsMut<Vec<T>> for InPlaceArrayOutputStorage<T> {
+    fn as_mut(&mut self) -> &mut Vec<T> { &mut self.storage }
+}
+impl<T> Default for InPlaceArrayOutputStorage<T> {
+    fn default() -> InPlaceArrayOutputStorage<T> {
+        extern "C" fn get_data_buffer<T>(vec: *mut libc::c_void,
+                                         count: libc::uint32_t,
+                                         size: libc::uint32_t) -> *mut libc::c_void {
+            use std::mem::size_of;
+            assert!(size_of::<T>() == size as usize,
+                    "PPAPI is wanting to allocate an unexpected element type");
+            assert!(vec != 0 as *mut _);
+
+            if count == 0 { return 0 as *mut _; }
+
+            let v: &mut Vec<T> = unsafe { transmute(vec) };
+            v.reserve_exact(count as usize);
+            unsafe { v.set_len(count as usize); }
+            v.as_mut_ptr() as *mut _
+        }
+
+        let mut this = InPlaceArrayOutputStorage {
+            storage: Vec::new(),
+            ffi: Default::default(),
+        };
+        this.ffi.GetDataBuffer = Some(get_data_buffer::<T>);
+        this
+    }
+}
+impl<T> InPlaceInit for InPlaceArrayOutputStorage<T> {
+    fn inplace_init(&mut self) {
+        let storage_ptr: *mut Vec<T> = unsafe {
+            transmute(&mut self.storage)
+        };
+        self.ffi.user_data = storage_ptr as *mut libc::c_void;
+    }
+}
+
+#[must_use]
+pub struct CallbackCompletion<F> {
+    pub cc: ffi::Struct_PP_CompletionCallback,
+    _1: PhantomData<F>,
+}
+impl<F> CallbackCompletion<F> {
+    pub fn drop_with_code(self, code: Code) -> Code {
+        if !code.completion_pending() {
+            if self.cc.func.is_some() &&
+                !self.cc.post_to_self(code).is_ok()
+            {
+                unsafe {
+                    ffi::run_completion_callback(self.cc,
+                                                 code.to_i32())
+                }
+            }
+        }
+        code
+    }
+}
+
 pub trait Callback {
+    #[doc(hidden)] type Fun;
     #[doc(hidden)]
-    fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback;
+    fn to_ffi_callback(self) -> CallbackCompletion<<Self as Callback>::Fun>;
 }
 trait PostToSelf: Send {
-    fn post_to_self(self, code: Code);
+    fn post_to_self(self, code: Code) -> Code;
 }
 unsafe impl Send for ffi::Struct_PP_CompletionCallback {}
 impl PostToSelf for ffi::Struct_PP_CompletionCallback {
-    fn post_to_self(self, code: Code) {
-        MessageLoop::post_to_self(move |_c: Code| {
-            unsafe {
-                ffi::run_completion_callback(self,
-                                             code.to_i32())
-            }
-        }, 0)
-            .unwrap()
-    }
-}
-fn possibly_warn_code_callback(code: Code) -> bool {
-    if code != Code::Ok {
-        warn!("unhandled code in callback: `{}`", code);
-        true
-    } else {
-        false
+    fn post_to_self(self, code: Code) -> Code {
+        if self.flags as u32 & ffi::PP_COMPLETIONCALLBACK_FLAG_OPTIONAL != 0 {
+            // don't post to a message queue.
+            Code::Failed
+        } else {
+            MessageLoop::post_to_self(move |_| {
+                unsafe {
+                    ffi::run_completion_callback(self,
+                                                 code.to_i32())
+                }
+            }, 0)
+        }
     }
 }
 
 impl<F: Sized> Callback for F
-    where F: FnOnce(Code) + Send,
+    where F: FnOnce(Result<()>) + Send,
 {
-    fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
+    type Fun = F;
+    fn to_ffi_callback(self) -> CallbackCompletion<F> {
         extern "C" fn work_callback<F: Sized>(user: *mut libc::c_void, status: i32)
-            where F : FnOnce(Code) + Send
+            where F : FnOnce(Result<()>) + Send
         {
             let work: Box<F> = unsafe { mem::transmute(user) };
-            let code = Code::from_i32(status);
+            let code = Code::from_i32(status)
+                .to_valued_result(());
             work.call_once((code,));
         }
-        unsafe {
+        let cc = unsafe {
             ffi::make_completion_callback(Some(work_callback::<F>),
                                           mem::transmute(box self))
+        };
+        CallbackCompletion {
+            cc: cc,
+            _1: PhantomData,
         }
     }
 }
 
+pub enum StorageToArgsMapper<RawArgs, Args> {
+    Take(fn(RawArgs) -> Args),
+    Borrow(fn(&RawArgs) -> Args),
+}
+impl<RawArgs, Args> Default for StorageToArgsMapper<RawArgs, Args>
+    where RawArgs: Into<Args>,
+{
+    fn default() -> StorageToArgsMapper<RawArgs, Args> {
+        fn identity<RawArgs, Args>(i: RawArgs) -> Args
+            where RawArgs: Into<Args>,
+        {
+            i.into()
+        }
+        StorageToArgsMapper::Take(identity)
+    }
+}
+
+#[must_use]
+pub struct CallbackArgsCompletion<F, Args, RawArgs> {
+    raw: *mut RawArgs,
+    pub cc: ffi::Struct_PP_CompletionCallback,
+    _1:  PhantomData<(F, Args)>,
+}
+impl<F, Args, RawArgs> CallbackArgsCompletion<F, Args, RawArgs> {
+    fn raw_args(&self) -> *mut RawArgs { self.raw }
+
+    pub fn drop_with_code(self, code: Code) -> Code {
+        if !code.completion_pending() {
+            if self.cc.func.is_some() &&
+                !self.cc.post_to_self(code).is_ok()
+            {
+                unsafe {
+                    ffi::run_completion_callback(self.cc,
+                                                 code.to_i32())
+                }
+            }
+        }
+        code
+    }
+}
+
+impl<F, Args, RawArgs> ops::Deref for CallbackArgsCompletion<F, Args, RawArgs> {
+    type Target = RawArgs;
+    fn deref(&self) -> &RawArgs { unsafe { mem::transmute(self.raw) } }
+}
+impl<F, Args, RawArgs> ops::DerefMut for CallbackArgsCompletion<F, Args, RawArgs> {
+    fn deref_mut(&mut self) -> &mut RawArgs { unsafe { mem::transmute(self.raw) } }
+}
+
 /// A completion callback that has arguments which PPAPI writes to before
 /// calling.
-pub trait CallbackArgs<Args> {
+pub trait CallbackArgs<Args>: Send {
+    #[doc(hidden)] type Fun;
     #[doc(hidden)]
-    fn to_ffi_callback<RawArgs: Send>(self, args: RawArgs,
-                                      args_mapper: fn(RawArgs) -> Args) ->
-        (ffi::Struct_PP_CompletionCallback, &'static mut RawArgs);
+    fn to_ffi_callback<RawArgs>(self, args: RawArgs,
+                                args_mapper: StorageToArgsMapper<RawArgs, Args>) ->
+        CallbackArgsCompletion<<Self as CallbackArgs<Args>>::Fun, Args, RawArgs>
+        where RawArgs: Send + InPlaceInit;
+
+    #[doc(hidden)] fn call_directly(self, args: Result<Args>);
+}
+
+struct CallbackArgsStorage<RawArgs, Args, F> {
+    args: RawArgs,
+    mapper: StorageToArgsMapper<RawArgs, Args>,
+    f: F,
 }
 
 impl<F: Sized, Args> CallbackArgs<Args> for F
     where F: FnOnce(Result<Args>) + Send
 {
-    fn to_ffi_callback<RawArgs: Send>(self, args: RawArgs,
-                                      args_mapper: fn(RawArgs) -> Args) ->
-        (ffi::Struct_PP_CompletionCallback, &'static mut RawArgs)
+    type Fun = F;
+    fn to_ffi_callback<RawArgs>(self, args: RawArgs,
+                                args_mapper: StorageToArgsMapper<RawArgs, Args>) ->
+        CallbackArgsCompletion<<Self as CallbackArgs<Args>>::Fun, Args, RawArgs>
+                               where RawArgs: Send + InPlaceInit,
     {
-        struct CallbackArgsStorage<RawArgs, Args, F> {
-            args: RawArgs,
-            mapper: fn(RawArgs) -> Args,
-            f: F
-        }
-
         extern "C" fn work_callback<F: Sized, RawArgs, Args>(user: *mut libc::c_void,
                                                              status: i32)
             where F : FnOnce(Result<Args>) + Send
@@ -1468,14 +1724,22 @@ impl<F: Sized, Args> CallbackArgs<Args> for F
             };
 
             let code = Code::from_i32(status);
-            let arg = code.to_valued_result(args)
-                .map(|args| mapper(args) );
+            let code = code.to_valued_result(());
+            let arg = match mapper {
+                StorageToArgsMapper::Take(mapper) => {
+                    code.map(move |()| mapper(args) )
+                },
+                StorageToArgsMapper::Borrow(mapper) => {
+                    code.map(|()| mapper(&args) )
+                },
+            };
             f.call_once((arg, ));
         }
 
         let mut store = box CallbackArgsStorage {
             args: args, mapper: args_mapper, f: self,
         };
+        store.args.inplace_init();
 
         let args: *mut RawArgs = &mut store.args as *mut _;
 
@@ -1484,31 +1748,51 @@ impl<F: Sized, Args> CallbackArgs<Args> for F
                                           mem::transmute(store))
         };
 
-        (cc, unsafe { mem::transmute(args) })
+        CallbackArgsCompletion {
+            raw: args,
+            cc: cc,
+            _1: PhantomData,
+        }
+    }
+
+    fn call_directly(self, args: Result<Args>) {
+        self(args)
     }
 }
-
-
-
 
 // This avoids an allocation.
 struct InternalCallbacksOperatorFn(fn());
 impl Callback for InternalCallbacksOperatorFn {
-    fn to_ffi_callback(self) -> ffi::Struct_PP_CompletionCallback {
-        extern "C" fn work_callback(user: *mut libc::c_void, status: i32) {
-            let code = Code::from_i32(status);
-
-            if possibly_warn_code_callback(code) { return; }
-
+    type Fun = fn();
+    fn to_ffi_callback(self) -> CallbackCompletion<fn()> {
+        extern "C" fn work_callback(user: *mut libc::c_void, _status: i32) {
             let work: fn() = unsafe {
                 mem::transmute(user)
             };
             work();
         }
         let InternalCallbacksOperatorFn(work) = self;
-        unsafe {
+        let cc = unsafe {
             ffi::make_completion_callback(Some(work_callback),
                                           mem::transmute(work))
+        };
+        CallbackCompletion {
+            cc: cc,
+            _1: PhantomData,
+        }
+    }
+}
+
+struct BlockUntilComplete;
+impl Callback for BlockUntilComplete {
+    type Fun = ();
+    fn to_ffi_callback(self) -> CallbackCompletion<()> {
+        let cc = unsafe {
+            ffi::block_until_complete()
+        };
+        CallbackCompletion {
+            cc: cc,
+            _1: PhantomData,
         }
     }
 }
@@ -1707,8 +1991,21 @@ impl Instance {
         }
     }
 
-    pub fn create_msg_loop(&self) -> MessageLoop {
+    pub fn create_message_loop(&self) -> MessageLoop {
         MessageLoop(ppb::get_message_loop().create(&self.unwrap()))
+    }
+    /// Creates a new message loop and runs it inside a new thread.
+    pub fn spawn_message_loop(&self) -> (MessageLoop, ::std::thread::JoinHandle<()>) {
+        let msg_loop = self.create_message_loop();
+        let msg_loop2 = msg_loop.clone();
+        let join = ::std::thread::spawn(move || {
+            msg_loop.attach_to_current_thread()
+                .unwrap();
+            let code = msg_loop.run_loop();
+            assert!(!code.is_ok() || !MessageLoop::is_attached(),
+                    "please stop (or shutdown) loop");
+        });
+        (msg_loop2, join)
     }
 
     pub fn create_url_loader(&self) -> Option<UrlLoader> {
@@ -1740,12 +2037,12 @@ impl MessageLoop {
             .post_work(InternalCallbacksOperatorFn(work),
                        0)
             .expect("couldn't tell an instance to shutdown");
-        self.get_ref().shutdown().expect("message loop shutdown failed");
+        self.get_ref().stop_loop().expect("message loop shutdown failed");
     }
 
     fn on_change_view(&mut self, view: View) {
         self.get_ref()
-            .post_work(move |_c: Code| {
+            .post_work(move |_| {
                 unsafe {
                     assert!(!ppapi_on_change_view.is_null());
                     let on_change_view: fn(View) =
@@ -1758,7 +2055,7 @@ impl MessageLoop {
     }
     fn on_change_focus(&mut self, has_focus: bool) {
         self.get_ref()
-            .post_work(move |_c: Code| {
+            .post_work(move |_| {
                 unsafe {
                     assert!(!ppapi_on_change_focus.is_null());
                     let on_change_focus: fn(bool) =
@@ -1773,7 +2070,7 @@ impl MessageLoop {
         use std::sync::mpsc::channel;
         let (tx, rx) = channel();
         self.get_ref()
-            .post_work(move |_c: Code| {
+            .post_work(move |_| {
                 unsafe {
                     assert!(!ppapi_on_document_loaded.is_null());
                     let on_document_loaded: fn(UrlLoader) -> bool =
@@ -1904,7 +2201,7 @@ pub mod entry {
                          CURRENT_INSTANCE.set
                              (&instance,
                               || {
-                                  let ml = instance.create_msg_loop();
+                                  let ml = instance.create_message_loop();
                                   match ml.attach_to_current_thread() {
                                       Code::Ok => {}
                                       _ => {
@@ -1951,7 +2248,7 @@ pub mod entry {
                                       panic!("please shutdown the loop; I may add pausing \
                                               for some sort of pattern later");
                                   } else {
-                                      let cb = move |_c: Code| {
+                                      let cb = move |_| {
                                           super::expect_instances()
                                               .remove(&instance);
                                       };

@@ -165,6 +165,8 @@ extern "C" {
   PP_CompletionCallback make_completion_callback(PP_CompletionCallback_Func func,
                                                  void* user_data);
   void run_completion_callback(PP_CompletionCallback func, const int32_t code);
+  PP_CompletionCallback block_until_complete();
+
   const PP_Var make_undefined_var();
   const PP_Var make_null_var();
 

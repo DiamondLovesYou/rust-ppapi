@@ -1472,7 +1472,7 @@ impl Context3dAttrib {
     }
 }
 
-impl_resource_for!(Context3d, ResourceType::Graphics3DRes);
+impl_resource_for!(Context3d, ResourceType::Graphics3D);
 
 impl Context3d {
     fn gen_vert_shader(&self) -> VertexShader {
@@ -1565,15 +1565,12 @@ impl Context3d {
                              width as libc::int32_t,
                              height as libc::int32_t)
     }
-    pub fn swap_buffers<T: Callback>(&self, next_frame: T) {
-        use super::{Callback, PostToSelf};
+    pub fn swap_buffers<T: Callback>(&self, next_frame: T) -> super::Code {
         use ppb::Graphics3DIf;
         let interface = ppb::get_graphics_3d();
 
-        let cb = next_frame.to_ffi_callback();
-        let r = interface.swap_buffers(self.unwrap(), cb.clone());
-        if !r.is_ok() {
-            cb.post_to_self(r);
-        }
+        let cc = next_frame.to_ffi_callback();
+        let r = interface.swap_buffers(self.unwrap(), cc.cc);
+        cc.drop_with_code(r)
     }
 }

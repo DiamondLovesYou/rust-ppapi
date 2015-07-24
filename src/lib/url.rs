@@ -17,15 +17,15 @@ use super::ffi;
 use super::ffi::bool_to_var;
 use iurl::Url;
 
-use fs::FileSliceRef;
+use fs::{SliceIo, FileIo, FileView};
 
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct UrlLoader(ffi::PP_Resource);
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct UrlRequestInfo(ffi::PP_Resource);
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct UrlResponseInfo(ffi::PP_Resource);
 
-impl_resource_for!(UrlLoader, ResourceType::UrlLoaderRes);
-impl_resource_for!(UrlRequestInfo, ResourceType::UrlRequestInfoRes);
-impl_resource_for!(UrlResponseInfo, ResourceType::UrlResponseInfoRes);
+impl_resource_for!(UrlLoader, ResourceType::UrlLoader);
+impl_resource_for!(UrlRequestInfo, ResourceType::UrlRequestInfo);
+impl_resource_for!(UrlResponseInfo, ResourceType::UrlResponseInfo);
 
 pub type RequestProperties = EnumSet<RequestProperties_>;
 #[derive(Eq, PartialEq, Clone, Hash, Copy)]
@@ -80,7 +80,7 @@ impl RequestProperties_ {
 }
 #[derive(Clone)]
 pub enum Body {
-    File(FileSliceRef, Option<super::Time>),
+    File(SliceIo<FileIo>, Option<super::Time>),
     Blob(Vec<u8>),
 }
 
@@ -157,11 +157,11 @@ impl RequestInfo {
         } = self;
         for body in body.into_iter() {
             let success = match body {
-                Body::File(FileSliceRef(file, start_opt, len_opt), time) => {
+                Body::File(slice, time) => {
                     request.append_file_to_body(res.unwrap(),
-                                                file.unwrap(),
-                                                start_opt,
-                                                len_opt,
+                                                slice.unwrap(),
+                                                Some(slice.view_start() as i64),
+                                                slice.view_len().map(|v| v as i64 ),
                                                 time)
                 }
                 Body::Blob(blob) => {
@@ -215,26 +215,30 @@ impl Resource for OpenedUrlLoader {
     fn unwrap(&self) -> ffi::PP_Resource {
         self.unwrap_loader().unwrap()
     }
-    fn type_of(&self) -> super::ResourceType {
+    fn type_of(&self) -> Option<super::ResourceType> {
         self.unwrap_loader().type_of()
     }
 }
 
 impl UrlLoader {
     // TODO: this is messy. Do it generically.
-    pub fn open<F: FnOnce(Code, OpenedUrlLoader) + Send>(&self,
-                                                         ffi_info: UrlRequestInfo,
-                                                         callback: F) -> super::Result<OpenedUrlLoader> {
+    pub fn open<F>(self, ffi_info: UrlRequestInfo, callback: F) -> Code
+        where F: super::CallbackArgs<OpenedUrlLoader>,
+    {
         let loader = get_url_loader();
-        let open_loader = OpenedUrlLoader(self.clone());
-        let open_loader2 = open_loader.clone();
-        let cb = move |c: Code| {
-            callback(c, open_loader2);
-        };
-        loader.open(self.unwrap(),
-                    ffi_info.unwrap(),
-                    cb.to_ffi_callback())
-            .map(|_| open_loader.clone() )
+        let res = self.unwrap();
+
+        impl super::InPlaceInit for UrlLoader { }
+
+        fn map(this: UrlLoader) -> OpenedUrlLoader {
+            OpenedUrlLoader(this)
+        }
+
+        let mapper = super::StorageToArgsMapper::Take(map);
+        let cc = callback.to_ffi_callback(self, mapper);
+
+        let code = loader.open(res, ffi_info.unwrap(), cc.cc);
+        cc.drop_with_code(code)
     }
 
 }
