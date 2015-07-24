@@ -184,5 +184,6 @@ extern "C" {
   const PP_Var array_id_to_var(const int64_t id);
   const PP_Var dictionary_id_to_var(const int64_t id);
   const PP_Var array_buffer_id_to_var(const int64_t id);
+  const PP_Var resource_id_to_var(const int64_t id);
   const int64_t id_from_var(const PP_Var v);
 }

@@ -7429,6 +7429,7 @@ extern "C" {
     pub fn array_id_to_var(id: int64_t) -> Struct_PP_Var;
     pub fn dictionary_id_to_var(id: int64_t) -> Struct_PP_Var;
     pub fn array_buffer_id_to_var(id: int64_t) -> Struct_PP_Var;
+    pub fn resource_id_to_var(id: PP_Resource) -> Struct_PP_Var;
     pub fn id_from_var(v: Struct_PP_Var) -> int64_t;
 }
 pub type PP_Var = Struct_PP_Var;

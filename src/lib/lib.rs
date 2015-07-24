@@ -583,6 +583,22 @@ pub enum ResourceType {
 
 #[derive(Eq, PartialEq, Debug)]
 pub struct GenericResource(ffi::PP_Resource);
+impl GenericResource {
+    pub fn is_graphics3d(&self) -> bool {
+        use ppb::*;
+        get_graphics_3d_opt().is(self.unwrap())
+    }
+    pub fn media_stream_video_track(&self) ->
+        Option<media_stream_video_track::VideoTrack>
+    {
+        use ppb::*;
+        if get_media_stream_video_track_opt().is(self.unwrap()) {
+            Some(From::from(self.unwrap()))
+        } else {
+            None
+        }
+    }
+}
 impl_clone_drop_for!(GenericResource);
 impl Resource for GenericResource {
     fn unwrap(&self) -> ffi::PP_Resource { self.0 }
@@ -632,6 +648,11 @@ impl ::std::hash::Hash for GenericResource {
             ::std::slice::from_raw_parts(ptr, size_of::<ffi::PP_Resource>())
         };
         state.write(id_slice)
+    }
+}
+impl ToVar for GenericResource {
+    fn to_var(&self) -> ffi::PP_Var {
+        unsafe { ffi::resource_id_to_var(self.unwrap()) }
     }
 }
 
@@ -760,6 +781,7 @@ pub enum AnyVar {
     Array(ArrayVar),
     Dictionary(DictionaryVar),
     ArrayBuffer(ArrayBufferVar),
+    Resource(GenericResource),
 }
 #[derive(Clone, Eq, PartialEq, Copy)]
 pub struct NullVar;
@@ -1059,6 +1081,7 @@ impl ToVar for AnyVar {
             &AnyVar::Array(ref v) => v.to_var(),
             &AnyVar::Dictionary(ref v) => v.to_var(),
             &AnyVar::ArrayBuffer(ref v) => v.to_var(),
+            &AnyVar::Resource(ref r) => r.to_var(),
         }
     }
     #[inline]

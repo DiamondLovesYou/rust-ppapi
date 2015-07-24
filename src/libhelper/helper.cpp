@@ -111,6 +111,15 @@ extern "C" {
     };
     return v;
   }
+  const PP_Var resource_id_to_var(const int64_t id) {
+    PP_VarValue vv;
+    vv.as_id = id;
+    const PP_Var v = {
+      PP_VARTYPE_RESOURCE,
+      0,
+      vv,
+    };
+  }
   const int64_t id_from_var(const PP_Var v) {
     return v.value.as_id;
   }
