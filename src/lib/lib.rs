@@ -102,7 +102,7 @@ use std::iter;
 use std::clone;
 use std::result;
 use std::collections::HashMap;
-use std::fmt;
+use std::fmt::{self, Display};
 use std::marker::PhantomData;
 use std::error::Error;
 
@@ -110,7 +110,8 @@ use log::LogRecord;
 
 use ppb::{get_url_loader, get_url_request};
 use ppb::{ViewIf, MessageLoopIf, VarIf, ImageDataIf, URLLoaderIf,
-          URLRequestInfoIf, VarDictionaryIf, VarArrayIf};
+          URLRequestInfoIf, VarDictionaryIf, VarArrayIf,
+          ConsoleInterface};
 
 pub use font::Font;
 pub use gles::Context3d;
@@ -205,7 +206,7 @@ pub fn mount<'s, 't, 'f, 'd>(source: &'s str,
                    0,
                    data.as_ptr() as *const libc::c_void)
     } {
-        c if c >= 0 => Code::Ok,
+        c if c >= 0 => Code::Ok(c as usize),
         -1 => Code::Failed,
         _ => {
             warn!("Unrecognized failure code");
@@ -228,29 +229,29 @@ impl ToFFIBool for bool {
 }
 
 #[derive(Clone, Eq, PartialEq, Copy, Debug)]
-#[must_use] #[repr(i32)]
+#[must_use]
 pub enum Code {
-    Ok                = ffi::PP_OK,
-    CompletionPending = ffi::PP_OK_COMPLETIONPENDING,
-    BadResource       = ffi::PP_ERROR_BADRESOURCE,
-    BadArgument       = ffi::PP_ERROR_BADARGUMENT,
-    WrongThread       = ffi::PP_ERROR_WRONG_THREAD,
-    InProgress        = ffi::PP_ERROR_INPROGRESS,
-    Failed            = ffi::PP_ERROR_FAILED,
-    NotSupported      = ffi::PP_ERROR_NOTSUPPORTED,
-    NoMemory          = ffi::PP_ERROR_NOMEMORY,
-    NoSpace           = ffi::PP_ERROR_NOSPACE,
-    NoQuota           = ffi::PP_ERROR_NOQUOTA,
-    ContextLost       = ffi::PP_ERROR_CONTEXT_LOST,
-    FileNotFound      = ffi::PP_ERROR_FILENOTFOUND,
-    FileExists        = ffi::PP_ERROR_FILEEXISTS,
-    NoAccess          = ffi::PP_ERROR_NOACCESS,
-    ConnectionRefused = ffi::PP_ERROR_CONNECTION_REFUSED,
-    ConnectionReset   = ffi::PP_ERROR_CONNECTION_RESET,
-    ConnectionAborted = ffi::PP_ERROR_CONNECTION_ABORTED,
-    ConnectionClosed  = ffi::PP_ERROR_CONNECTION_CLOSED,
-    TimedOut          = ffi::PP_ERROR_TIMEDOUT,
-    NoMessageLoop     = ffi::PP_ERROR_NO_MESSAGE_LOOP,
+    Ok(usize),
+    CompletionPending, // = ffi::PP_OK_COMPLETIONPENDING,
+    BadResource,       // = ffi::PP_ERROR_BADRESOURCE,
+    BadArgument,       // = ffi::PP_ERROR_BADARGUMENT,
+    WrongThread,       // = ffi::PP_ERROR_WRONG_THREAD,
+    InProgress,        // = ffi::PP_ERROR_INPROGRESS,
+    Failed,            // = ffi::PP_ERROR_FAILED,
+    NotSupported,      // = ffi::PP_ERROR_NOTSUPPORTED,
+    NoMemory,          // = ffi::PP_ERROR_NOMEMORY,
+    NoSpace,           // = ffi::PP_ERROR_NOSPACE,
+    NoQuota,           // = ffi::PP_ERROR_NOQUOTA,
+    ContextLost,       // = ffi::PP_ERROR_CONTEXT_LOST,
+    FileNotFound,      // = ffi::PP_ERROR_FILENOTFOUND,
+    FileExists,        // = ffi::PP_ERROR_FILEEXISTS,
+    NoAccess,          // = ffi::PP_ERROR_NOACCESS,
+    ConnectionRefused, // = ffi::PP_ERROR_CONNECTION_REFUSED,
+    ConnectionReset,   // = ffi::PP_ERROR_CONNECTION_RESET,
+    ConnectionAborted, // = ffi::PP_ERROR_CONNECTION_ABORTED,
+    ConnectionClosed,  // = ffi::PP_ERROR_CONNECTION_CLOSED,
+    TimedOut,          // = ffi::PP_ERROR_TIMEDOUT,
+    NoMessageLoop,     // = ffi::PP_ERROR_NO_MESSAGE_LOOP,
 }
 impl fmt::Display for Code {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -260,7 +261,7 @@ impl fmt::Display for Code {
 impl From<i32> for Code {
     fn from(v: i32) -> Code {
         match v {
-            ffi::PP_OK => Code::Ok,
+            v if v >= 0 => Code::Ok(v as usize),
             ffi::PP_OK_COMPLETIONPENDING => Code::CompletionPending,
             ffi::PP_ERROR_BADRESOURCE => Code::BadResource,
             ffi::PP_ERROR_BADARGUMENT => Code::BadArgument,
@@ -288,7 +289,7 @@ impl From<i32> for Code {
 impl<'a, T> From<&'a Result<T>> for Code {
     fn from(v: &'a Result<T>) -> Code {
         match v {
-            &Ok(_) => Code::Ok,
+            &Ok(_) => Code::Ok(0),
             &Err(code) => code,
         }
     }
@@ -296,7 +297,7 @@ impl<'a, T> From<&'a Result<T>> for Code {
 impl ::std::error::Error for Code {
     fn description(&self) -> &str {
         match self {
-            &Code::Ok => "ok",
+            &Code::Ok(_)       => "ok",
             &Code::BadResource => "bad resource",
             &Code::BadArgument => "bad argument",
             &Code::WrongThread => "wrong thread",
@@ -342,7 +343,7 @@ impl Code {
     }
     pub fn to_i32(self) -> i32 {
         match self {
-            Code::Ok                => ffi::PP_OK,
+            Code::Ok(v)             => v as i32,
             Code::CompletionPending => ffi::PP_OK_COMPLETIONPENDING,
             Code::BadResource => ffi::PP_ERROR_BADRESOURCE,
             Code::BadArgument => ffi::PP_ERROR_BADARGUMENT,
@@ -388,7 +389,7 @@ impl Code {
     }
     pub fn is_ok(&self) -> bool {
         match self {
-            &Code::Ok | &Code::CompletionPending => true,
+            &Code::Ok(_) | &Code::CompletionPending => true,
             _ => false,
         }
     }
@@ -1499,6 +1500,22 @@ impl Console {
         let &Console(inst) = self;
         inst
     }
+
+
+    pub fn err<T: ToVar>(&self, msg: T) {
+        self.log(ffi::PP_LOGLEVEL_ERROR, msg)
+    }
+    pub fn err_with_file<T: ToVar, U: Display, V: Display>(&self, msg: T, file: U, line: V) {
+        let source = format!("{}:{}", file, line);
+        self.log_with_source(ffi::PP_LOGLEVEL_ERROR, source, msg)
+    }
+    pub fn warn<T: ToVar>(&self, msg: T) {
+        self.log(ffi::PP_LOGLEVEL_WARNING, msg)
+    }
+    pub fn warn_with_file<T: ToVar, U: Display, V: Display>(&self, msg: T, file: U, line: V) {
+        let source = format!("{}:{}", file, line);
+        self.log_with_source(ffi::PP_LOGLEVEL_WARNING, source, msg)
+    }
 }
 
 fn parse_args(argc: u32,
@@ -1595,8 +1612,22 @@ pub struct CallbackCompletion<F> {
     _1: PhantomData<F>,
 }
 impl<F> CallbackCompletion<F> {
+    pub fn cc(&self) -> ffi::Struct_PP_CompletionCallback { self.cc }
+
     pub fn drop_with_code(self, code: Code) -> Code {
         if !code.completion_pending() {
+            let optional = self.cc.flags as u32 & ffi::PP_COMPLETIONCALLBACK_FLAG_OPTIONAL != 0;
+            match (optional, self.cc.user_data as usize) {
+                (true, 0) => { return code; }
+                (true, _) => {
+                    // clean up.
+                    let _: Box<F> = unsafe { mem::transmute(self.cc.user_data) };
+
+                    return code;
+                },
+                _ => (),
+            }
+
             if self.cc.func.is_some() &&
                 !self.cc.post_to_self(code).is_ok()
             {
@@ -1612,8 +1643,7 @@ impl<F> CallbackCompletion<F> {
 
 pub trait Callback {
     #[doc(hidden)] type Fun;
-    #[doc(hidden)]
-    fn to_ffi_callback(self) -> CallbackCompletion<<Self as Callback>::Fun>;
+    #[doc(hidden)] fn to_ffi_callback(self) -> CallbackCompletion<<Self as Callback>::Fun>;
 }
 trait PostToSelf: Send {
     fn post_to_self(self, code: Code) -> Code;
@@ -1621,17 +1651,12 @@ trait PostToSelf: Send {
 unsafe impl Send for ffi::Struct_PP_CompletionCallback {}
 impl PostToSelf for ffi::Struct_PP_CompletionCallback {
     fn post_to_self(self, code: Code) -> Code {
-        if self.flags as u32 & ffi::PP_COMPLETIONCALLBACK_FLAG_OPTIONAL != 0 {
-            // don't post to a message queue.
-            Code::Failed
-        } else {
-            MessageLoop::post_to_self(move |_| {
-                unsafe {
-                    ffi::run_completion_callback(self,
-                                                 code.to_i32())
-                }
-            }, 0)
-        }
+        MessageLoop::post_to_self(move |_| {
+            unsafe {
+                ffi::run_completion_callback(self,
+                                             code.to_i32())
+            }
+        }, 0)
     }
 }
 
@@ -1660,14 +1685,14 @@ impl<F: Sized> Callback for F
 }
 
 pub enum StorageToArgsMapper<RawArgs, Args> {
-    Take(fn(RawArgs) -> Args),
-    Borrow(fn(&RawArgs) -> Args),
+    Take(fn(RawArgs, usize) -> Args),
+    Borrow(fn(&RawArgs, usize) -> Args),
 }
 impl<RawArgs, Args> Default for StorageToArgsMapper<RawArgs, Args>
     where RawArgs: Into<Args>,
 {
     fn default() -> StorageToArgsMapper<RawArgs, Args> {
-        fn identity<RawArgs, Args>(i: RawArgs) -> Args
+        fn identity<RawArgs, Args>(i: RawArgs, _status: usize) -> Args
             where RawArgs: Into<Args>,
         {
             i.into()
@@ -1675,6 +1700,17 @@ impl<RawArgs, Args> Default for StorageToArgsMapper<RawArgs, Args>
         StorageToArgsMapper::Take(identity)
     }
 }
+impl<RawArgs, Args> StorageToArgsMapper<RawArgs, Args> {
+    pub fn map(self, status: usize, args: &mut Option<RawArgs>) -> Args {
+        match self {
+            StorageToArgsMapper::Take(mapper) =>
+                mapper(args.take().unwrap(), status),
+            StorageToArgsMapper::Borrow(mapper) =>
+                mapper(args.as_ref().unwrap(), status),
+        }
+    }
+}
+
 
 #[must_use]
 pub struct CallbackArgsCompletion<F, Args, RawArgs> {
@@ -1687,6 +1723,19 @@ impl<F, Args, RawArgs> CallbackArgsCompletion<F, Args, RawArgs> {
 
     pub fn drop_with_code(self, code: Code) -> Code {
         if !code.completion_pending() {
+            let optional = self.cc.flags as u32 & ffi::PP_COMPLETIONCALLBACK_FLAG_OPTIONAL != 0;
+            match (optional, self.cc.user_data as usize) {
+                (true, 0) => { return code; }
+                (true, _) => {
+                    // clean up.
+                    let _: Box<CallbackArgsStorage<RawArgs, Args, F>> =
+                        unsafe { mem::transmute(self.cc.user_data) };
+
+                    return code;
+                },
+                _ => (),
+            }
+
             if self.cc.func.is_some() &&
                 !self.cc.post_to_self(code).is_ok()
             {
@@ -1746,17 +1795,17 @@ impl<F: Sized, Args> CallbackArgs<Args> for F
                 mem::transmute(user)
             };
 
-            let code = Code::from_i32(status);
-            let code = code.to_valued_result(());
-            let arg = match mapper {
-                StorageToArgsMapper::Take(mapper) => {
-                    code.map(move |()| mapper(args) )
-                },
-                StorageToArgsMapper::Borrow(mapper) => {
-                    code.map(|()| mapper(&args) )
-                },
+            let is_ok = status >= 0;
+            let code = if !is_ok {
+                Err(Code::from_i32(status))
+            } else {
+                Ok(status)
             };
-            f.call_once((arg, ));
+
+            let mut args = Some(args);
+
+            let code = code.map(|status| mapper.map(status as usize, &mut args) );
+            f.call_once((code, ));
         }
 
         let mut store = box CallbackArgsStorage {
@@ -1959,7 +2008,7 @@ impl Instance {
         match (ppb::get_instance().BindGraphics.unwrap())
             (self.instance,
              cxt.get_device()) {
-            ffi::PP_TRUE => Code::Ok,
+            ffi::PP_TRUE => Code::Ok(0),
             ffi::PP_FALSE => Code::Failed,
             other => {
                 error!("unknown truthy value: {:}", other);
@@ -2018,15 +2067,23 @@ impl Instance {
         MessageLoop(ppb::get_message_loop().create(&self.unwrap()))
     }
     /// Creates a new message loop and runs it inside a new thread.
-    pub fn spawn_message_loop(&self) -> (MessageLoop, ::std::thread::JoinHandle<()>) {
+    pub fn spawn_message_loop<F>(&self,
+                                 thread_local_setup: F) -> (MessageLoop, ::std::thread::JoinHandle<()>)
+        where F: FnOnce(fn()) + Send + 'static,
+    {
+        fn run_loop() {
+            let code = MessageLoop::current()
+                .unwrap()
+                .run_loop();
+            assert!(!code.is_ok() || !MessageLoop::is_attached(),
+                    "please stop (or shutdown) loop");
+        }
         let msg_loop = self.create_message_loop();
         let msg_loop2 = msg_loop.clone();
         let join = ::std::thread::spawn(move || {
             msg_loop.attach_to_current_thread()
                 .unwrap();
-            let code = msg_loop.run_loop();
-            assert!(!code.is_ok() || !MessageLoop::is_attached(),
-                    "please stop (or shutdown) loop");
+            thread_local_setup(run_loop);
         });
         (msg_loop2, join)
     }
@@ -2226,7 +2283,7 @@ pub mod entry {
                               || {
                                   let ml = instance.create_message_loop();
                                   match ml.attach_to_current_thread() {
-                                      Code::Ok => {}
+                                      Code::Ok(_) => {}
                                       _ => {
                                           error!("failed to attach the new instance's message loop");
                                           let _ = tx.send(None);
@@ -2258,15 +2315,9 @@ pub mod entry {
                                       },
                                   }
 
-                                  let code = match catch_panic(move || ml.run_loop() ) {
-                                      Ok(code) => code,
-                                      // Eat errors:
-                                      Err(..) => { Code::Ok },
-                                  };
+                                  // TODO log errors.
+                                  let _ = catch_panic(move || ml.run_loop() );
 
-                                  if code != Code::Ok {
-                                      panic!("message loop exited with code: `{}`", code);
-                                  }
                                   if MessageLoop::is_attached() {
                                       panic!("please shutdown the loop; I may add pausing \
                                               for some sort of pattern later");

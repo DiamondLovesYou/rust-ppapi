@@ -131,7 +131,7 @@ impl VideoTrack {
         where F: CallbackArgs<VideoFrame>
     {
         impl super::InPlaceInit for i32 { }
-        fn map_args(res: ffi::PP_Resource) -> VideoFrame { From::from(res) }
+        fn map_args(res: ffi::PP_Resource, _status: usize) -> VideoFrame { From::from(res) }
 
         let mapper = super::StorageToArgsMapper::Take(map_args);
         let mut cc = f.to_ffi_callback(0i32, mapper);

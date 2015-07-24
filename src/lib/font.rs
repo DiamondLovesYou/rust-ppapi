@@ -7,7 +7,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 use std::mem;
-use std::result::Result::{Ok};
 use std::ptr;
 use std::collections::HashSet;
 
@@ -198,44 +197,49 @@ impl Font {
      * grayscale antialiasing will be used instead (assuming the user has
      *      antialiasing enabled at all).
      */
-    pub fn draw_text<TStr: super::ToStringVar +
-        super::ToVar>(&self,
-                      image: &imagedata::ImageData,
-                      text: &TStr,
-                      rtl: bool,
-                      override_direction: bool,
-                      pos: super::Point,
-                      color: u32,
-                      clip: Option<super::Rect>,
-                      image_data_is_opaque: bool) -> super::Code {
-            let font_res = self.unwrap();
-            let image_res = image.unwrap();
-            let text_run = Struct_PP_TextRun_Dev {
-                text: text.to_var(),
-                rtl: rtl as u32,
-                override_direction: override_direction as u32,
-            };
-            let pos_ptr = &pos as *const super::Point;
-            let clip_ptr = if clip.is_some() { clip.as_ref().unwrap() as *const super::Rect}
-                           else              { ptr::null() };
-            if (ppb::get_font().DrawTextAt.unwrap())
-                (font_res,
-                 image_res,
-                 &text_run as *const Struct_PP_TextRun_Dev,
-                 pos_ptr,
-                 color,
-                 clip_ptr,
-                 image_data_is_opaque as ffi::PP_Bool) as i32 != -1 {
-                super::Code::Ok
-            } else { super::Code::Failed }
+    pub fn draw_text<TStr: super::ToStringVar + super::ToVar>
+        (&self,
+         image: &imagedata::ImageData,
+         text: &TStr,
+         rtl: bool,
+         override_direction: bool,
+         pos: super::Point,
+         color: u32,
+         clip: Option<super::Rect>,
+         image_data_is_opaque: bool) -> bool
+    {
+        let font_res = self.unwrap();
+        let image_res = image.unwrap();
+        let text_run = Struct_PP_TextRun_Dev {
+            text: text.to_var(),
+            rtl: rtl as u32,
+            override_direction: override_direction as u32,
+        };
+        let pos_ptr = &pos as *const super::Point;
+        let clip_ptr = if clip.is_some() { clip.as_ref().unwrap() as *const super::Rect}
+        else              { ptr::null() };
+        if (ppb::get_font().DrawTextAt.unwrap())
+            (font_res,
+             image_res,
+             &text_run as *const Struct_PP_TextRun_Dev,
+             pos_ptr,
+             color,
+             clip_ptr,
+             image_data_is_opaque as ffi::PP_Bool) != ffi::PP_FALSE
+        {
+            true
+        } else {
+            false
         }
+    }
 
-    pub fn char_offset_for_pixel<TStr: super::ToStringVar +
-        super::ToVar>(&self,
-                      text: &TStr,
-                      rtl: bool,
-                      override_direction: bool,
-                      position: i32) -> Option<u32> {
+    pub fn char_offset_for_pixel<TStr: super::ToStringVar + super::ToVar>
+        (&self,
+         text: &TStr,
+         rtl: bool,
+         override_direction: bool,
+         position: i32) -> Option<u32>
+    {
         let text_run = Struct_PP_TextRun_Dev {
             text: text.to_var(),
             rtl: rtl as u32,
@@ -252,21 +256,22 @@ impl Font {
         }
     }
 
-    pub fn pixel_offset_for_character<TStr: super::ToStringVar +
-        super::ToVar>(&self,
-                      text: &TStr,
-                      rtl: bool,
-                      override_direction: bool,
-                      char_offset: u32) -> Option<i32> {
+    pub fn pixel_offset_for_character<TStr: super::ToStringVar + super::ToVar>
+        (&self,
+         text: &TStr,
+         rtl: bool,
+         override_direction: bool,
+         char_offset: u32) -> Option<i32>
+    {
         let text_run = Struct_PP_TextRun_Dev {
             text: text.to_var(),
             rtl: rtl as u32,
             override_direction: override_direction as u32,
         };
         let result = (ppb::get_font().PixelOffsetForCharacter.unwrap())
-                (self.unwrap(),
-                 &text_run as *const Struct_PP_TextRun_Dev,
-                 char_offset);
+            (self.unwrap(),
+             &text_run as *const Struct_PP_TextRun_Dev,
+             char_offset);
         if result as i32 == -1 { None }
         else                   { Some(result) }
     }

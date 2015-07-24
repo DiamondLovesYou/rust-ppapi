@@ -230,7 +230,7 @@ impl UrlLoader {
 
         impl super::InPlaceInit for UrlLoader { }
 
-        fn map(this: UrlLoader) -> OpenedUrlLoader {
+        fn map(this: UrlLoader, _status: usize) -> OpenedUrlLoader {
             OpenedUrlLoader(this)
         }
 

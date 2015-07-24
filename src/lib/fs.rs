@@ -145,8 +145,8 @@ pub mod common {
             where F: CallbackArgs<Cow<'a, [u8]>>;
     }
     pub trait AsyncWrite {
-        fn async_write<F>(&mut self, offset: u64, buffer: Vec<u8>, callback: F) -> Code
-            where F: CallbackArgs<(usize, Vec<u8>)>;
+        fn async_write<'a, F>(&mut self, offset: u64, buffer: Cow<'a, [u8]>, callback: F) -> Code
+            where F: CallbackArgs<(usize, Cow<'a, [u8]>)>;
         fn async_flush<F>(&mut self, callback: F) -> Code
             where F: Callback;
     }
@@ -191,8 +191,17 @@ pub mod common {
         fn view_stop (&self) -> Option<u64>;
         fn view_len  (&self) -> Option<u64> {
             self.view_stop()
-                .map(|stop| stop - self.view_start() )
+                .map(|stop| {
+                    let start = self.view_start();
+                    if stop < start {
+                        0
+                    } else {
+                        stop - start
+                    }
+                })
         }
+
+        fn view_absolute_start(&self) -> u64;
     }
 }
 
@@ -200,8 +209,6 @@ pub mod common {
 #[cfg(feature = "pepper")]
 mod impl_ {
     use std::borrow::Cow;
-
-    use libc;
 
     use ffi;
     use ppb::{FileSystemIf, FileRefIf, FileIoIf};
@@ -280,6 +287,8 @@ mod impl_ {
 
         fn view_start(&self) -> u64         { 0    }
         fn view_stop (&self) -> Option<u64> { None }
+
+        fn view_absolute_start(&self) -> u64 { 0 }
     }
     impl<T: FileView> FileView for SliceIo<T> {
         type Target = SliceIo<Self>;
@@ -295,13 +304,17 @@ mod impl_ {
 
         fn view_start(&self) -> u64         { self.1 }
         fn view_stop (&self) -> Option<u64> { self.2 }
+
+        fn view_absolute_start(&self) -> u64 {
+            self.0.view_absolute_start() + self.view_start()
+        }
     }
 
     impl AsyncRead for FileIo {
         fn async_read<'a, F>(&mut self, offset: u64, size: usize, callback: F) -> Code
             where F: CallbackArgs<Cow<'a, [u8]>>
         {
-            fn map_arg<'a>(raw: InPlaceArrayOutputStorage<u8>) -> Cow<'a, [u8]> {
+            fn map_arg<'a>(raw: InPlaceArrayOutputStorage<u8>, _status: usize) -> Cow<'a, [u8]> {
                 let v: Vec<_> = raw.into();
                 Cow::Owned(v)
             }
@@ -318,24 +331,34 @@ mod impl_ {
     }
 
     impl AsyncWrite for FileIo {
-        fn async_write<F>(&mut self, offset: u64, buffer: Vec<u8>, callback: F) -> Code
-            where F: CallbackArgs<(usize, Vec<u8>)>
+        fn async_write<'a, F>(&mut self, offset: u64, buffer: Cow<'a, [u8]>, callback: F) -> Code
+            where F: CallbackArgs<(usize, Cow<'a, [u8]>)>
         {
-            impl super::super::InPlaceInit for (usize, Vec<u8>) { }
+            impl<'a> super::super::InPlaceInit for (bool, usize, Cow<'a, [u8]>) { }
 
-            fn map_arg(arg: (usize, Vec<u8>)) -> (usize, Vec<u8>) { arg }
+            fn map_arg<'a>((sync, written, buf): (bool, usize, Cow<'a, [u8]>),
+                           status: usize) -> (usize, Cow<'a, [u8]>) {
+                if sync {
+                    (written, buf)
+                } else {
+                    (status, buf)
+                }
+            }
             let mapper = StorageToArgsMapper::Take(map_arg);
-            let mut cc = callback.to_ffi_callback((0, buffer), mapper);
+            let mut cc = callback.to_ffi_callback((false, 0, buffer), mapper);
             let written = get_file_io()
                 .write(self.unwrap(), offset,
-                       cc.1.as_ptr() as *const _,
-                       cc.1.len() as libc::size_t,
+                       cc.2.as_ptr() as *const _,
+                       cc.2.len() as usize,
                        cc.cc);
             match written {
+                Err(Code::CompletionPending) =>
+                    cc.drop_with_code(Code::CompletionPending),
                 Err(code) => cc.drop_with_code(code),
                 Ok(written) => {
-                    cc.0 = written as usize;
-                    cc.drop_with_code(Code::CompletionPending)
+                    cc.0 = true;
+                    cc.1 = written as usize;
+                    cc.drop_with_code(Code::Ok(written))
                 },
             }
         }
@@ -362,7 +385,7 @@ mod impl_ {
             where F: CallbackArgs<Info>
         {
             impl super::super::InPlaceInit for ffi::Struct_PP_FileInfo { }
-            fn map_arg(arg: Info) -> Info { arg }
+            fn map_arg(arg: Info, _status: usize) -> Info { arg }
             let mapper = StorageToArgsMapper::Take(map_arg);
             let mut cc = callback.to_ffi_callback(Default::default(),
                                                   mapper);
@@ -398,8 +421,8 @@ mod impl_ {
         }
     }
     impl<T: FileView> AsyncWrite for SliceIo<T> {
-        fn async_write<F>(&mut self, offset: u64, buffer: Vec<u8>, callback: F) -> Code
-            where F: CallbackArgs<(usize, Vec<u8>)>
+        fn async_write<'a, F>(&mut self, offset: u64, buffer: Cow<'a, [u8]>, callback: F) -> Code
+            where F: CallbackArgs<(usize, Cow<'a, [u8]>)>
         {
             let offset = self.view_start() + offset;
             self.0.async_write(offset, buffer, callback)
@@ -450,7 +473,7 @@ mod impl_ {
         fn async_query<F>(&self, callback: F) -> Code
             where F: CallbackArgs<Info>
         {
-            fn map_arg(arg: Info) -> Info { arg }
+            fn map_arg(arg: Info, _status: usize) -> Info { arg }
             let mapper = StorageToArgsMapper::Take(map_arg);
             let mut cc = callback.to_ffi_callback(Default::default(),
                                                   mapper);
@@ -518,17 +541,55 @@ mod impl_ {
         }
     }
 
-    impl Read for SliceIo {
+    impl<T: FileView> Read for SliceIo<T> {
         fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-            unimplemented!()
+            let cc = BlockUntilComplete;
+            let cc = cc.to_ffi_callback();
+
+            let to_read = ::std::cmp::min(buf.len() as u64,
+                                          self.view_len().unwrap_or(u64::max_value()));
+            let to_read = to_read as usize;
+
+            let offset = self.view_absolute_start();
+            let read = get_file_io()
+                .read(self.unwrap(), offset, buf.as_mut_ptr() as *mut _,
+                      to_read, cc.cc());
+
+            let read = match read {
+                Err(code) => { return Err(code.into()); },
+                Ok(read) => read,
+            };
+            self.1 += read as u64;
+            Ok(read as usize)
         }
     }
-    impl Seek for SliceIo {
+    impl<T: FileView> Seek for SliceIo<T> {
         fn seek(&mut self, from: io::SeekFrom) -> io::Result<u64> {
-            unimplemented!()
+            match from {
+                io::SeekFrom::Start(v) => {
+                    self.1 = v;
+                },
+                io::SeekFrom::End(_) => {
+                    // TODO
+                    return Err({Code::NotSupported}.into());
+                },
+                io::SeekFrom::Current(v) => {
+                    if v < 0 && -v as u64 > self.1 {
+                        return Err(io::Error::new(io::ErrorKind::InvalidInput,
+                                                  "can't seek before 0"));
+                    }
+                    if v < 0 {
+                        self.1 -= (-v) as u64;
+                    } else {
+                        self.1 += v as u64;
+                    }
+                },
+            }
+
+            Ok(self.1)
         }
     }
-    impl Write for SliceIo {
+    impl<T: FileView> Write for SliceIo<T> {
         fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
             unimplemented!()
         }
