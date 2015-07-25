@@ -104,7 +104,6 @@ use std::result;
 use std::collections::HashMap;
 use std::fmt::{self, Display};
 use std::marker::PhantomData;
-use std::error::Error;
 
 use log::LogRecord;
 
@@ -261,9 +260,36 @@ pub enum Code<T = usize> {
     /// See PP_ERROR_NOINTERFACE.
     NoInterface,
 }
-impl fmt::Display for Code {
+impl<T: fmt::Display> fmt::Display for Code<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.pad(self.description())
+        let desc = match self {
+            &Code::Ok(ref v)   => {
+                return write!(f, "ok({})", v);
+            },
+            &Code::BadResource => "bad resource",
+            &Code::BadArgument => "bad argument",
+            &Code::WrongThread => "wrong thread",
+            &Code::InProgress  => "in-progress",
+            &Code::Failed      => "failed",
+            &Code::NoMemory    => "no memory",
+            &Code::ContextLost => "context lost",
+            &Code::CompletionPending => "completion callback pending",
+            &Code::NoSpace     => "no space left",
+            &Code::NoQuota     => "no quota left",
+            &Code::FileNotFound => "file not found",
+            &Code::FileExists  => "file exists",
+            &Code::NoAccess    => "insufficient privileges",
+            &Code::ConnectionRefused => "connection attempt refused",
+            &Code::ConnectionReset => "connection reset",
+            &Code::ConnectionAborted => "connection aborted",
+            &Code::ConnectionClosed => "connection closed",
+            &Code::TimedOut    => "operation timed out",
+            &Code::NotSupported => "operation not supported/implemented",
+            &Code::NoMessageLoop =>
+                "this thread doesn't have an attached message loop",
+            &Code::NoInterface => "missing PPAPI interface",
+        };
+        write!(f, "{}", desc)
     }
 }
 impl From<i32> for Code {
@@ -414,11 +440,6 @@ impl Code {
                   code=self, msg=msg)
         }
     }
-    pub fn unwrap(self) {
-        if !self.is_ok() {
-            panic!("unexpected error code `{}`", self)
-        }
-    }
     pub fn map<T>(self, take: T) -> Option<T> {
         if self.is_ok() {
             Some(take)
@@ -502,8 +523,21 @@ impl<T> Code<T> {
             _ => false,
         }
     }
+    pub fn unwrap_completion_pending(self) {
+        if !self.completion_pending() {
+            panic!("unexpected error code `{}`", self.map_err::<usize>())
+        }
+    }
     pub fn is_err(&self) -> bool {
         !self.is_ok() && !self.completion_pending()
+    }
+    pub fn unwrap(self) -> T {
+        if let Code::Ok(v) = self {
+            v
+        } else {
+            let code: Code<usize> = self.map_err();
+            panic!("unexpected error code `{}`", code)
+        }
     }
 }
 
@@ -2479,7 +2513,7 @@ pub mod entry {
                                       };
                                       MessageLoop::get_main_loop()
                                           .post_work(cb, 0)
-                                          .unwrap()
+                                          .unwrap();
                                   }
                               });
                      });
