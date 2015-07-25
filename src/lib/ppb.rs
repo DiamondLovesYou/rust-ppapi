@@ -47,6 +47,7 @@ pub type FileRef = ffi::Struct_PPB_FileRef_1_2;
 pub type FileIo = ffi::Struct_PPB_FileIO_1_1;
 pub type MediaStreamVideoTrack = ffi::Struct_PPB_MediaStreamVideoTrack_0_1;
 pub type VideoFrame = ffi::Struct_PPB_VideoFrame_0_1;
+pub type VideoDecoder = ffi::Struct_PPB_VideoDecoder_1_0;
 
 mod consts {
     pub const VAR: &'static str              = "PPB_Var;1.1\0";
@@ -77,6 +78,7 @@ mod consts {
     pub const FILEIO: &'static str           = "PPB_FileIo;1.1\0";
     pub const MEDIA_STREAM_VIDEO_TRACK: &'static str = "PPB_MediaStreamVideoTrack;0.1\0";
     pub const VIDEO_FRAME: &'static str      = "PPB_VideoFrame;0.1\0";
+    pub const VIDEO_DECODER: &'static str    = "PPB_VideoDecoder;1.0\0";
 }
 mod globals {
     use super::super::ffi;
@@ -109,6 +111,7 @@ mod globals {
     pub static mut FILEIO:       Option<&'static super::FileIo> = None;
     pub static mut MEDIA_STREAM_VIDEO_TRACK: Option<&'static super::MediaStreamVideoTrack> = None;
     pub static mut VIDEO_FRAME:  Option<&'static super::VideoFrame> = None;
+    pub static mut VIDEO_DECODER: Option<&'static super::VideoDecoder> = None;
 }
 #[cold] #[inline(never)] #[doc(hidden)]
 pub fn initialize_globals(b: ffi::PPB_GetInterface) {
@@ -142,6 +145,7 @@ pub fn initialize_globals(b: ffi::PPB_GetInterface) {
         globals::FILEIO        = get_interface(consts::FILEIO);
         globals::MEDIA_STREAM_VIDEO_TRACK = get_interface(consts::MEDIA_STREAM_VIDEO_TRACK);
         globals::VIDEO_FRAME   = get_interface(consts::VIDEO_FRAME);
+        globals::VIDEO_DECODER = get_interface(consts::VIDEO_DECODER);
     }
 }
 /// Get the PPB_GetInterface function pointer.
@@ -240,6 +244,8 @@ get_fun!    (pub fn get_media_stream_video_track() -> MediaStreamVideoTrack { ME
 get_fun_opt!(pub fn get_media_stream_video_track_opt() -> MediaStreamVideoTrack { MEDIA_STREAM_VIDEO_TRACK });
 get_fun!    (pub fn get_video_frame() -> VideoFrame { VIDEO_FRAME });
 get_fun_opt!(pub fn get_video_frame_opt() -> VideoFrame { VIDEO_FRAME });
+get_fun!    (pub fn get_video_decoder() -> VideoDecoder { VIDEO_DECODER });
+get_fun_opt!(pub fn get_video_decoder_opt() -> VideoDecoder { VIDEO_DECODER });
 
 macro_rules! impl_fun(
     ($fun:expr => ( $($arg:expr),* ) ) => ({
@@ -1151,6 +1157,50 @@ impl VideoFrameIf for ffi::Struct_PPB_VideoFrame_0_1 {
     }
     fn get_data_buffer_size(&self, res: PP_Resource) -> usize {
         (impl_fun!(self.GetDataBufferSize => (res))) as usize
+    }
+}
+
+pub trait VideoDecoderIf {
+    fn create(&self, instance: PP_Instance) -> Option<PP_Resource>;
+    fn initialize(&self, decoder: PP_Resource, g3d: PP_Resource, profile: ffi::PP_VideoProfile,
+                  accel: ffi::PP_HardwareAcceleration,
+                  callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn decode(&self, decoder: PP_Resource, decode_tag: u32, size: usize, data: *const u8,
+              callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn get_picture(&self, decoder: PP_Resource, picture: *mut ffi::Struct_PP_VideoPicture,
+                   callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn recycle_picture(&self, decoder: PP_Resource, picture: &ffi::Struct_PP_VideoPicture);
+    fn flush(&self, decoder: PP_Resource, callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn reset(&self, decoder: PP_Resource, callback: ffi::Struct_PP_CompletionCallback) -> Code;
+}
+resource_interface!(impl for ffi::Struct_PPB_VideoDecoder_1_0 => IsVideoDecoder);
+resource_interface_opt!(impl for ffi::Struct_PPB_VideoDecoder_1_0 => IsVideoDecoder);
+impl VideoDecoderIf for ffi::Struct_PPB_VideoDecoder_1_0 {
+    fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
+        impl_fun!(self.Create => (instance) -> Option<PP_Resource>)
+    }
+    fn initialize(&self, decoder: PP_Resource, g3d: PP_Resource, profile: ffi::PP_VideoProfile,
+                  accel: ffi::PP_HardwareAcceleration,
+                  callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Initialize => (decoder, g3d, profile, accel, callback) -> Code)
+    }
+    fn decode(&self, decoder: PP_Resource, decode_tag: u32, size: usize, data: *const u8,
+              callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Decode => (decoder, decode_tag, size as libc::uint32_t,
+                                  data as *const libc::c_void, callback) -> Code)
+    }
+    fn get_picture(&self, decoder: PP_Resource, picture: *mut ffi::Struct_PP_VideoPicture,
+                   callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.GetPicture => (decoder, picture, callback) -> Code)
+    }
+    fn recycle_picture(&self, decoder: PP_Resource, picture: &ffi::Struct_PP_VideoPicture) {
+        impl_fun!(self.RecyclePicture => (decoder, picture as *const _))
+    }
+    fn flush(&self, decoder: PP_Resource, callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Flush => (decoder, callback) -> Code)
+    }
+    fn reset(&self, decoder: PP_Resource, callback: ffi::Struct_PP_CompletionCallback) -> Code {
+        impl_fun!(self.Reset => (decoder, callback) -> Code)
     }
 }
 

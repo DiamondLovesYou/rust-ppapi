@@ -188,6 +188,7 @@ pub mod url;
 pub mod fs;
 pub mod media_stream_video_track;
 pub mod video_frame;
+pub mod video_decoder;
 
 #[cfg(feature = "pepper")]
 #[link(name = "helper", kind = "static")]
