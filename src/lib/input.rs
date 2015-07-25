@@ -274,7 +274,7 @@ pub struct Event<Res, Class> {
     pub mods: Modifiers,
     pub event: Class,
 }
-impl<Res: Resource, Class: Clone> Resource for Event<Res, Class> {
+impl<Res: Resource, Class: Clone + Send> Resource for Event<Res, Class> {
     fn unwrap(&self) -> ffi::PP_Resource {
         self.res.unwrap()
     }
@@ -473,13 +473,13 @@ impl MouseInputEvent {
         (ppb::get_mouse_event().GetButton.unwrap())(self.unwrap())
     }
     pub fn get_position(&self) -> Point {
-        (ppb::get_mouse_event().GetPosition.unwrap())(self.unwrap())
+        From::from((ppb::get_mouse_event().GetPosition.unwrap())(self.unwrap()))
     }
     pub fn get_click_count(&self) -> i32 {
         (ppb::get_mouse_event().GetClickCount.unwrap())(self.unwrap())
     }
     pub fn get_movement(&self) -> Point {
-        (ppb::get_mouse_event().GetMovement.unwrap())(self.unwrap())
+        From::from((ppb::get_mouse_event().GetMovement.unwrap())(self.unwrap()))
     }
 }
 impl WheelInputEvent {

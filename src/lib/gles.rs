@@ -368,7 +368,7 @@ pub mod traits {
     use super::Context3d;
     use super::{types, consts};
     use super::super::ppb::get_gles2;
-    use super::{BufferType, BoundBuffer, Ctor, BufferObject,
+    use super::{BufferType, BoundBuffer, BufferObject,
                 VertexBuffer, IndexBuffer, TextureBuffer, FrameBuffer,
                 RenderBuffer};
     use std::clone::Clone;
@@ -460,8 +460,18 @@ pub mod traits {
         }
     }
 
-    pub trait BindableBuffer {
-        fn bind(&self, ctxt: &mut Context3d) -> BoundBuffer<Self>;
+    pub trait BindableTargetBuffer
+        where <Self as BindableTargetBuffer>::Target: Buffer,
+    {
+        type Target; type TargetArg = types::Enum;
+        fn bind(&self, ctxt: &mut Context3d, target: Self::TargetArg) -> Self::Target;
+    }
+
+    pub trait BindableBuffer
+        where <Self as BindableBuffer>::Target: Buffer,
+    {
+        type Target = BoundBuffer<Self>;
+        fn bind(&self, ctxt: &mut Context3d) -> Self::Target;
     }
     macro_rules! std_buffer_bind(
         ($ty:ty => $fun:ident($target:expr)) => {
@@ -482,8 +492,8 @@ pub mod traits {
     impl BindableBuffer for FrameBuffer {
         fn bind(&self, ctxt: &mut Context3d) -> BoundBuffer<FrameBuffer> {
             call_gl_fun!(get_gles2() => BindFramebuffer => (ctxt,
-                                                          consts::FRAMEBUFFER,
-                                                          self.unwrap()));
+                                                            consts::FRAMEBUFFER,
+                                                            self.unwrap()));
             ctxt.clear(super::consts::COLOR_BUFFER_BIT);
             BoundBuffer(self.to_owned())
         }
@@ -504,7 +514,7 @@ pub mod traits {
                     (get_gles2().$gen_fun.unwrap())(ctxt.unwrap(),
                                                     count,
                                                     buffers.as_mut_ptr());
-                    Ctor::ctor(buffers[0])
+                    From::from(buffers[0])
                 }
                 fn gen_multiple(ctxt: &Context3d, count: usize) -> Vec<$ty> {
                     let mut buffers: Vec<types::UInt> =
@@ -512,7 +522,7 @@ pub mod traits {
                     (get_gles2().$gen_fun.unwrap())(ctxt.unwrap(),
                                                     count as i32,
                                                     buffers.as_mut_ptr());
-                    buffers.map_in_place(|b| Ctor::ctor(b) )
+                    buffers.map_in_place(|b| From::from(b) )
                 }
             }
         }
@@ -584,7 +594,6 @@ pub mod traits {
         }
     }
     /// utility trait for CompileShader below.
-    /// INTERNEL
     pub trait GenShader {
         fn gen_single(ctxt: &Context3d) -> Self;
     }
@@ -632,31 +641,33 @@ pub mod traits {
         fn ptr_offset(&self, offset: usize) -> *const c_void;
     }
 }
-trait Ctor {
-    fn ctor(id: types::UInt) -> Self;
-}
-impl Ctor for VertexBuffer {
-    fn ctor(id: types::UInt) -> VertexBuffer {
+#[doc(hidden)]
+impl From<types::UInt> for VertexBuffer {
+    fn from(id: types::UInt) -> VertexBuffer {
         VertexBuffer(id)
     }
 }
-impl Ctor for IndexBuffer {
-    fn ctor(id: types::UInt) -> IndexBuffer {
+#[doc(hidden)]
+impl From<types::UInt> for IndexBuffer {
+    fn from(id: types::UInt) -> IndexBuffer {
         IndexBuffer(id)
     }
 }
-impl Ctor for TextureBuffer {
-    fn ctor(id: types::UInt) -> TextureBuffer {
+#[doc(hidden)]
+impl From<types::UInt> for TextureBuffer {
+    fn from(id: types::UInt) -> TextureBuffer {
         TextureBuffer(id)
     }
 }
-impl Ctor for FrameBuffer {
-    fn ctor(id: types::UInt) -> FrameBuffer {
+#[doc(hidden)]
+impl From<types::UInt> for FrameBuffer {
+    fn from(id: types::UInt) -> FrameBuffer {
         FrameBuffer(id)
     }
 }
-impl Ctor for RenderBuffer {
-    fn ctor(id: types::UInt) -> RenderBuffer {
+#[doc(hidden)]
+impl From<types::UInt> for RenderBuffer {
+    fn from(id: types::UInt) -> RenderBuffer {
         RenderBuffer(id)
     }
 }
@@ -949,8 +960,9 @@ impl TexFormat {
     }
 }
 
-impl TextureBuffer {
-    pub fn bind(&self, ctxt: &mut Context3d, target: types::Enum) -> BoundTexBuffer {
+impl traits::BindableTargetBuffer for TextureBuffer {
+    type Target = BoundTexBuffer;
+    fn bind(&self, ctxt: &mut Context3d, target: types::Enum) -> BoundTexBuffer {
         let bound = BoundTexBuffer {
             tex: self.clone(),
             target: target,
@@ -999,6 +1011,12 @@ impl BoundTexBuffer {
                                                    as *const c_void))
     }
 }
+impl traits::Buffer for BoundTexBuffer {
+    fn unwrap(&self) -> types::UInt { self.tex.unwrap() }
+    fn get_type(&self) -> BufferType { BufferType::TextureBufferType }
+    fn to_object(&self) -> BufferObject { BufferObject::TexBufObject(self.tex.clone()) }
+}
+
 impl FrameBuffer {
 
 }

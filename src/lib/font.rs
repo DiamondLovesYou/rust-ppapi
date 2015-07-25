@@ -215,9 +215,14 @@ impl Font {
             rtl: rtl as u32,
             override_direction: override_direction as u32,
         };
-        let pos_ptr = &pos as *const super::Point;
-        let clip_ptr = if clip.is_some() { clip.as_ref().unwrap() as *const super::Rect}
-        else              { ptr::null() };
+        let pos: ffi::PP_Point = pos.into();
+        let pos_ptr = &pos as *const ffi::PP_Point;
+        let clip: Option<ffi::PP_Rect> = clip.map(|c| c.into() );
+        let clip_ptr = if clip.is_some() {
+            clip.as_ref().unwrap() as *const _
+        } else {
+            ptr::null()
+        };
         if (ppb::get_font().DrawTextAt.unwrap())
             (font_res,
              image_res,

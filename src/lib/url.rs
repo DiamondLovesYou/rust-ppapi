@@ -222,7 +222,7 @@ impl Resource for OpenedUrlLoader {
 
 impl UrlLoader {
     // TODO: this is messy. Do it generically.
-    pub fn open<F>(self, ffi_info: UrlRequestInfo, callback: F) -> Code
+    pub fn open<F>(self, ffi_info: UrlRequestInfo, callback: F) -> Code<OpenedUrlLoader>
         where F: super::CallbackArgs<OpenedUrlLoader>,
     {
         let loader = get_url_loader();
@@ -230,11 +230,11 @@ impl UrlLoader {
 
         impl super::InPlaceInit for UrlLoader { }
 
-        fn map(this: UrlLoader, _status: usize) -> OpenedUrlLoader {
+        fn map(this: UrlLoader, _status: Code) -> OpenedUrlLoader {
             OpenedUrlLoader(this)
         }
 
-        let mapper = super::StorageToArgsMapper::Take(map);
+        let mapper = super::StorageToArgsMapper(map);
         let cc = callback.to_ffi_callback(self, mapper);
 
         let code = loader.open(res, ffi_info.unwrap(), cc.cc);

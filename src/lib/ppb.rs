@@ -990,9 +990,9 @@ pub trait FileIoIf {
     fn touch(&self, f: PP_Resource, atime: ffi::PP_Time, mtime: ffi::PP_Time,
              callback: ffi::Struct_PP_CompletionCallback) -> Code;
     fn read(&self, f: PP_Resource, offset: libc::uint64_t, buffer: *mut libc::c_char,
-            bytes: usize, callback: ffi::Struct_PP_CompletionCallback) -> Result<usize>;
+            bytes: usize, callback: ffi::Struct_PP_CompletionCallback) -> Code<usize>;
     fn write(&self, f: PP_Resource, offset: libc::uint64_t, buffer: *const libc::c_char,
-             bytes: usize, callback: ffi::Struct_PP_CompletionCallback) -> Result<usize>;
+             bytes: usize, callback: ffi::Struct_PP_CompletionCallback) -> Code<usize>;
     fn set_length(&self, f: PP_Resource, length: libc::uint64_t,
                   callback: ffi::Struct_PP_CompletionCallback) -> Code;
     fn flush(&self, f: PP_Resource,
@@ -1021,18 +1021,14 @@ impl FileIoIf for ffi::Struct_PPB_FileIO_1_1 {
         impl_fun!(self.Touch => (f, atime, mtime, callback) -> Code)
     }
     fn read(&self, f: PP_Resource, offset: libc::uint64_t, buffer: *mut libc::c_char,
-            bytes: usize, callback: ffi::Struct_PP_CompletionCallback) -> Result<usize> {
-        let read = impl_fun!(self.Read => (f, offset as libc::int64_t, buffer,
-                                           bytes as libc::int32_t, callback));
-        if read >= 0 { Ok(read as usize) }
-        else         { Err(From::from(read)) }
+            bytes: usize, callback: ffi::Struct_PP_CompletionCallback) -> Code<usize> {
+        impl_fun!(self.Read => (f, offset as libc::int64_t, buffer,
+                                bytes as libc::int32_t, callback) -> Code)
     }
     fn write(&self, f: PP_Resource, offset: libc::uint64_t, buffer: *const libc::c_char,
-             bytes: usize, callback: ffi::Struct_PP_CompletionCallback) -> Result<usize> {
-        let result = impl_fun!(self.Write => (f, offset as libc::int64_t, buffer,
-                                              bytes as libc::int32_t, callback));
-        if result >= 0 { Ok(result as usize) }
-        else           { Err(From::from(result)) }
+             bytes: usize, callback: ffi::Struct_PP_CompletionCallback) -> Code<usize> {
+        impl_fun!(self.Write => (f, offset as libc::int64_t, buffer,
+                                 bytes as libc::int32_t, callback) -> Code)
     }
     fn set_length(&self, f: PP_Resource, length: libc::uint64_t,
                   callback: ffi::Struct_PP_CompletionCallback) -> Code {

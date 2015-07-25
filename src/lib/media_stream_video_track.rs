@@ -127,17 +127,22 @@ impl VideoTrack {
         get_media_stream_video_track()
             .has_ended(self.unwrap())
     }
-    pub fn get_frame<F>(&self, f: F) -> Code
-        where F: CallbackArgs<VideoFrame>
+    pub fn get_frame<F>(&self, f: F) -> Code<(VideoTrack, VideoFrame)>
+        where F: CallbackArgs<(VideoTrack, VideoFrame)>
     {
-        impl super::InPlaceInit for i32 { }
-        fn map_args(res: ffi::PP_Resource, _status: usize) -> VideoFrame { From::from(res) }
+        impl super::InPlaceInit for (VideoTrack, i32) { }
+        fn map_args((this, frame): (VideoTrack, i32), _status: Code) ->
+            (VideoTrack, VideoFrame)
+        {
+            (this, From::from(frame))
+        }
 
-        let mapper = super::StorageToArgsMapper::Take(map_args);
-        let mut cc = f.to_ffi_callback(0i32, mapper);
+        let mapper = super::StorageToArgsMapper(map_args);
+        let mut cc = f.to_ffi_callback((self.clone(), 0i32), mapper);
         let fficc = cc.cc;
-        get_media_stream_video_track()
-            .get_frame(self.unwrap(), &mut *cc, fficc)
+        let code = get_media_stream_video_track()
+            .get_frame(self.unwrap(), &mut cc.1, fficc);
+        cc.drop_with_code(code)
     }
     pub fn recycle_frame(&self, frame: VideoFrame) -> Code {
         get_media_stream_video_track()

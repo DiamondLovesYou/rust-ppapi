@@ -140,11 +140,13 @@ macro_rules! impl_resource_for(
             }
         }
         impl $ty {
+            #[doc(hidden)]
             pub fn new(res: ::ffi::PP_Resource) -> $ty {
                 unsafe {
                     ::std::mem::transmute_copy(&res)
                 }
             }
+            #[doc(hidden)]
             pub fn new_bumped(res: ::ffi::PP_Resource) -> $ty {
                 let v: $ty = unsafe { ::std::mem::transmute_copy(&res) };
                 // bump the ref count:
@@ -230,9 +232,11 @@ impl ToFFIBool for bool {
 
 #[derive(Clone, Eq, PartialEq, Copy, Debug)]
 #[must_use]
-pub enum Code {
-    Ok(usize),
+pub enum Code<T = usize> {
+    Ok(T),
     CompletionPending, // = ffi::PP_OK_COMPLETIONPENDING,
+
+    /// eventually, these will be split from Code.
     BadResource,       // = ffi::PP_ERROR_BADRESOURCE,
     BadArgument,       // = ffi::PP_ERROR_BADARGUMENT,
     WrongThread,       // = ffi::PP_ERROR_WRONG_THREAD,
@@ -252,6 +256,9 @@ pub enum Code {
     ConnectionClosed,  // = ffi::PP_ERROR_CONNECTION_CLOSED,
     TimedOut,          // = ffi::PP_ERROR_TIMEDOUT,
     NoMessageLoop,     // = ffi::PP_ERROR_NO_MESSAGE_LOOP,
+
+    /// See PP_ERROR_NOINTERFACE.
+    NoInterface,
 }
 impl fmt::Display for Code {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -281,6 +288,7 @@ impl From<i32> for Code {
             ffi::PP_ERROR_TIMEDOUT | ffi::PP_ERROR_CONNECTION_TIMEDOUT =>
                 Code::TimedOut,
             ffi::PP_ERROR_NO_MESSAGE_LOOP => Code::NoMessageLoop,
+            ffi::PP_ERROR_NOINTERFACE => Code::NoInterface,
 
             _ => unreachable!("unexpected invalid or unknown code: `{}`", v),
         }
@@ -317,7 +325,9 @@ impl ::std::error::Error for Code {
             &Code::ConnectionClosed => "connection closed",
             &Code::TimedOut    => "operation timed out",
             &Code::NotSupported => "operation not supported/implemented",
-            &Code::NoMessageLoop => "this thread doesn't have an attached message loop",
+            &Code::NoMessageLoop =>
+                "this thread doesn't have an attached message loop",
+            &Code::NoInterface => "missing PPAPI interface",
         }
     }
 }
@@ -335,6 +345,15 @@ impl Into<::std::io::Error> for Code {
         };
 
         Error::new(kind, self)
+    }
+}
+impl<T> Into<Result<T>> for Code<T> {
+    fn into(self) -> Result<T> {
+        if let Code::Ok(v) = self {
+            Ok(v)
+        } else {
+            Err(self.map_err())
+        }
     }
 }
 impl Code {
@@ -364,6 +383,7 @@ impl Code {
             Code::ConnectionClosed => ffi::PP_ERROR_CONNECTION_CLOSED,
             Code::TimedOut    => ffi::PP_ERROR_TIMEDOUT,
             Code::NoMessageLoop => ffi::PP_ERROR_NO_MESSAGE_LOOP,
+            Code::NoInterface => ffi::PP_ERROR_NOINTERFACE,
         }
     }
     pub fn to_empty_result(self) -> Result<()> {
@@ -387,18 +407,6 @@ impl Code {
             result::Result::Err(self)
         }
     }
-    pub fn is_ok(&self) -> bool {
-        match self {
-            &Code::Ok(_) | &Code::CompletionPending => true,
-            _ => false,
-        }
-    }
-    pub fn completion_pending(&self) -> bool {
-        match self {
-            &Code::CompletionPending => true,
-            _ => false,
-        }
-    }
     pub fn expect(self, msg: &str) {
         if !self.is_ok() {
             panic!("Code: `{code:}`, Message: `{msg:}`",
@@ -416,6 +424,85 @@ impl Code {
         } else {
             None
         }
+    }
+}
+impl<T> Code<T> {
+    pub fn map_ok<F, U>(self, f: F) -> Code<U>
+        where F: FnOnce(T) -> U,
+    {
+        match self {
+            Code::Ok(v) => Code::Ok(f(v)),
+
+            // Well, this is nice.
+            Code::CompletionPending => Code::CompletionPending,
+            Code::BadResource => Code::BadResource,
+            Code::BadArgument => Code::BadArgument,
+            Code::WrongThread => Code::WrongThread,
+            Code::InProgress  => Code::InProgress,
+            Code::Failed      => Code::Failed,
+            Code::NotSupported=> Code::NotSupported,
+            Code::NoMemory    => Code::NoMemory,
+            Code::ContextLost => Code::ContextLost,
+            Code::NoSpace     => Code::NoSpace,
+            Code::NoQuota     => Code::NoQuota,
+            Code::FileNotFound => Code::FileNotFound,
+            Code::FileExists  => Code::FileExists,
+            Code::NoAccess    => Code::NoAccess,
+            Code::ConnectionRefused => Code::ConnectionRefused,
+            Code::ConnectionReset => Code::ConnectionReset,
+            Code::ConnectionAborted => Code::ConnectionAborted,
+            Code::ConnectionClosed => Code::ConnectionClosed,
+            Code::TimedOut    => Code::TimedOut,
+            Code::NoMessageLoop => Code::NoMessageLoop,
+            Code::NoInterface => Code::NoInterface,
+        }
+    }
+    pub fn map_err<U>(self) -> Code<U> {
+        match self {
+            Code::BadResource => Code::BadResource,
+            Code::BadArgument => Code::BadArgument,
+            Code::WrongThread => Code::WrongThread,
+            Code::InProgress  => Code::InProgress,
+            Code::Failed      => Code::Failed,
+            Code::NotSupported=> Code::NotSupported,
+            Code::NoMemory    => Code::NoMemory,
+            Code::ContextLost => Code::ContextLost,
+            Code::NoSpace     => Code::NoSpace,
+            Code::NoQuota     => Code::NoQuota,
+            Code::FileNotFound => Code::FileNotFound,
+            Code::FileExists  => Code::FileExists,
+            Code::NoAccess    => Code::NoAccess,
+            Code::ConnectionRefused => Code::ConnectionRefused,
+            Code::ConnectionReset => Code::ConnectionReset,
+            Code::ConnectionAborted => Code::ConnectionAborted,
+            Code::ConnectionClosed => Code::ConnectionClosed,
+            Code::TimedOut    => Code::TimedOut,
+            Code::NoMessageLoop => Code::NoMessageLoop,
+            Code::NoInterface => Code::NoInterface,
+
+            _ => unreachable!(),
+        }
+    }
+    pub fn ok(self) -> Option<T> {
+        match self {
+            Code::Ok(v) => Some(v),
+            _ => None,
+        }
+    }
+    pub fn is_ok(&self) -> bool {
+        match self {
+            &Code::Ok(_) => true,
+            _ => false,
+        }
+    }
+    pub fn completion_pending(&self) -> bool {
+        match self {
+            &Code::CompletionPending => true,
+            _ => false,
+        }
+    }
+    pub fn is_err(&self) -> bool {
+        !self.is_ok() && !self.completion_pending()
     }
 }
 
@@ -512,10 +599,8 @@ impl fmt::Debug for ffi::Struct_PP_FloatPoint {
     }
 }
 
-pub type Point = ffi::PP_Point;
 pub type FloatPoint = ffi::PP_FloatPoint;
 pub type TouchPoint = ffi::PP_TouchPoint;
-pub type Rect = ffi::PP_Rect;
 pub type Ticks = ffi::PP_TimeTicks;
 pub type Time = ffi::PP_Time;
 pub type TimeDelta = ffi::PP_TimeDelta;
@@ -533,19 +618,70 @@ impl Size {
             height: height,
         }
     }
-    // This uses a by-val so we get a 'free' compile time assertion;
-    // if Self && ffi::PP_Size aren't the same size rustc will refuse
-    // to compile this mod, though with a not very helpful message.
-    fn to_ffi(self) -> ffi::PP_Size {
-        use std::mem::transmute;
-        unsafe { transmute(self) }
-    }
 }
-#[doc(hidden)]
 impl From<ffi::PP_Size> for Size {
     fn from(v: ffi::PP_Size) -> Size {
         use std::mem::transmute;
         unsafe { transmute(v) }
+    }
+}
+impl Into<ffi::PP_Size> for Size {
+    fn into(self) -> ffi::PP_Size {
+        use std::mem::transmute;
+        unsafe { transmute(self) }
+    }
+}
+
+// duplicated here so we don't have such a long name for this.
+#[derive(Eq, PartialEq, Hash, Clone, Copy)]
+pub struct Rect {
+    pub point: Point,
+    pub size:  Size,
+}
+impl Rect {
+    pub fn new(point: Point, size: Size) -> Rect {
+        Rect {
+            point: point,
+            size: size,
+        }
+    }
+}
+impl From<ffi::PP_Rect> for Rect {
+    fn from(v: ffi::PP_Rect) -> Rect {
+        use std::mem::transmute;
+        unsafe { transmute(v) }
+    }
+}
+impl Into<ffi::PP_Rect> for Rect {
+    fn into(self) -> ffi::PP_Rect {
+        use std::mem::transmute;
+        unsafe { transmute(self) }
+    }
+}
+// duplicated here so we don't have such a long name for this.
+#[derive(Eq, PartialEq, Hash, Clone, Copy)]
+pub struct Point {
+    pub x: u32,
+    pub y: u32,
+}
+impl Point {
+    pub fn new(x: u32, y: u32) -> Point {
+        Point {
+            x: x,
+            y: y,
+        }
+    }
+}
+impl From<ffi::PP_Point> for Point {
+    fn from(v: ffi::PP_Point) -> Point {
+        use std::mem::transmute;
+        unsafe { transmute(v) }
+    }
+}
+impl Into<ffi::PP_Point> for Point {
+    fn into(self) -> ffi::PP_Point {
+        use std::mem::transmute;
+        unsafe { transmute(self) }
     }
 }
 
@@ -580,10 +716,12 @@ pub enum ResourceType {
     Audio,
     VideoTrack,
     VideoFrame,
+    VideoDecoder,
 }
 
-#[derive(Eq, PartialEq, Debug)]
+#[derive(Eq, PartialEq, Debug, Hash)]
 pub struct GenericResource(ffi::PP_Resource);
+unsafe impl Send for GenericResource { }
 impl GenericResource {
     pub fn is_graphics3d(&self) -> bool {
         use ppb::*;
@@ -641,28 +779,24 @@ impl Resource for GenericResource {
         t
     }
 }
-impl ::std::hash::Hash for GenericResource {
-    fn hash<H>(&self, state: &mut H) where H: ::std::hash::Hasher {
-        use std::mem::size_of;
-        let id_slice = unsafe {
-            let ptr: *const u8 = mem::transmute(&self.0);
-            ::std::slice::from_raw_parts(ptr, size_of::<ffi::PP_Resource>())
-        };
-        state.write(id_slice)
-    }
-}
 impl ToVar for GenericResource {
     fn to_var(&self) -> ffi::PP_Var {
         unsafe { ffi::resource_id_to_var(self.unwrap()) }
     }
 }
+#[doc(hidden)]
+impl From<ffi::PP_Resource> for GenericResource {
+    fn from(v: ffi::PP_Resource) -> GenericResource {
+        GenericResource(v)
+    }
+}
 
-pub trait Resource: Clone {
+pub trait Resource: Clone + Send {
     #[doc(hidden)] fn unwrap(&self) -> ffi::PP_Resource;
 
     fn type_of(&self) -> Option<ResourceType>;
 }
-pub trait ContextResource {
+pub trait ContextResource: Resource {
     fn get_device(&self) -> ffi::PP_Resource;
 }
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct Context2d(ffi::PP_Resource);
@@ -698,25 +832,29 @@ impl ContextResource for Context2d {
     }
 }
 impl View {
-    #[inline] pub fn rect(&self) -> Option<Rect> {
-        ppb::get_view().rect(self.unwrap())
+    pub fn rect(&self) -> Option<Rect> {
+        ppb::get_view()
+            .rect(self.unwrap())
+            .map(|rect| From::from(rect) )
     }
-    #[inline] pub fn is_fullscreen(&self) -> bool {
+    pub fn is_fullscreen(&self) -> bool {
         ppb::get_view().is_fullscreen(self.unwrap())
     }
-    #[inline] pub fn is_visible(&self) -> bool {
+    pub fn is_visible(&self) -> bool {
         ppb::get_view().is_visible(self.unwrap())
     }
-    #[inline] pub fn is_page_visible(&self) -> bool {
+    pub fn is_page_visible(&self) -> bool {
         ppb::get_view().is_page_visible(self.unwrap())
     }
-    #[inline] pub fn clip_rect(&self) -> Option<Rect> {
-        ppb::get_view().clip_rect(self.unwrap())
+    pub fn clip_rect(&self) -> Option<Rect> {
+        ppb::get_view()
+            .clip_rect(self.unwrap())
+            .map(|rect| From::from(rect) )
     }
-    #[inline] pub fn device_scale(&self) -> f32 {
+    pub fn device_scale(&self) -> f32 {
         ppb::get_view().device_scale(self.unwrap())
     }
-    #[inline] pub fn css_scale(&self) -> f32 {
+    pub fn css_scale(&self) -> f32 {
         ppb::get_view().css_scale(self.unwrap())
     }
 }
@@ -1539,6 +1677,8 @@ fn parse_args(argc: u32,
         .collect()
 }
 
+/// Update any internal self referential pointers/refs. This is only called
+/// after the object has been placed into it's final callback-storage location.
 pub trait InPlaceInit {
     fn inplace_init(&mut self) { }
 }
@@ -1642,8 +1782,10 @@ impl<F> CallbackCompletion<F> {
 }
 
 pub trait Callback {
-    #[doc(hidden)] type Fun;
-    #[doc(hidden)] fn to_ffi_callback(self) -> CallbackCompletion<<Self as Callback>::Fun>;
+    type Fun;
+    fn to_ffi_callback(self) -> CallbackCompletion<<Self as Callback>::Fun>;
+
+    fn is_blocking(&self) -> bool { false }
 }
 trait PostToSelf: Send {
     fn post_to_self(self, code: Code) -> Code;
@@ -1660,6 +1802,7 @@ impl PostToSelf for ffi::Struct_PP_CompletionCallback {
     }
 }
 
+/// TODO `F` does NOT need to be `Send` unless the use case requires it, ie MessageLoop.
 impl<F: Sized> Callback for F
     where F: FnOnce(Result<()>) + Send,
 {
@@ -1684,30 +1827,17 @@ impl<F: Sized> Callback for F
     }
 }
 
-pub enum StorageToArgsMapper<RawArgs, Args> {
-    Take(fn(RawArgs, usize) -> Args),
-    Borrow(fn(&RawArgs, usize) -> Args),
-}
+pub struct StorageToArgsMapper<RawArgs, Args>(fn(RawArgs, Code) -> Args);
 impl<RawArgs, Args> Default for StorageToArgsMapper<RawArgs, Args>
     where RawArgs: Into<Args>,
 {
     fn default() -> StorageToArgsMapper<RawArgs, Args> {
-        fn identity<RawArgs, Args>(i: RawArgs, _status: usize) -> Args
+        fn identity<RawArgs, Args>(i: RawArgs, _status: Code) -> Args
             where RawArgs: Into<Args>,
         {
             i.into()
         }
-        StorageToArgsMapper::Take(identity)
-    }
-}
-impl<RawArgs, Args> StorageToArgsMapper<RawArgs, Args> {
-    pub fn map(self, status: usize, args: &mut Option<RawArgs>) -> Args {
-        match self {
-            StorageToArgsMapper::Take(mapper) =>
-                mapper(args.take().unwrap(), status),
-            StorageToArgsMapper::Borrow(mapper) =>
-                mapper(args.as_ref().unwrap(), status),
-        }
+        StorageToArgsMapper(identity)
     }
 }
 
@@ -1721,31 +1851,36 @@ pub struct CallbackArgsCompletion<F, Args, RawArgs> {
 impl<F, Args, RawArgs> CallbackArgsCompletion<F, Args, RawArgs> {
     fn raw_args(&self) -> *mut RawArgs { self.raw }
 
-    pub fn drop_with_code(self, code: Code) -> Code {
-        if !code.completion_pending() {
-            let optional = self.cc.flags as u32 & ffi::PP_COMPLETIONCALLBACK_FLAG_OPTIONAL != 0;
-            match (optional, self.cc.user_data as usize) {
-                (true, 0) => { return code; }
-                (true, _) => {
-                    // clean up.
-                    let _: Box<CallbackArgsStorage<RawArgs, Args, F>> =
-                        unsafe { mem::transmute(self.cc.user_data) };
+    pub fn cc(&self) -> ffi::Struct_PP_CompletionCallback { self.cc }
 
-                    return code;
-                },
-                _ => (),
-            }
+    pub fn drop_with_code(self, code: Code) -> Code<Args> {
+        if code.completion_pending() { return code.map_err(); }
 
-            if self.cc.func.is_some() &&
-                !self.cc.post_to_self(code).is_ok()
-            {
-                unsafe {
-                    ffi::run_completion_callback(self.cc,
-                                                 code.to_i32())
-                }
+        let optional = self.cc.flags as u32 & ffi::PP_COMPLETIONCALLBACK_FLAG_OPTIONAL != 0;
+        let blocking = self.cc.func.is_none();
+        if code.is_ok() && (optional || blocking) {
+            // the call completed synchronously.
+
+            // CallbackArgsCompletion always has user_data
+            debug_assert!(self.cc.user_data as usize != 0);
+
+            let box CallbackArgsStorage {
+                args, mapper: StorageToArgsMapper(mapper), f: _f,
+            }: Box<CallbackArgsStorage<RawArgs, Args, F>> = unsafe {
+                mem::transmute(self.cc.user_data)
+            };
+            Code::Ok(mapper(args, code))
+        } else {
+            // if this is taken, `code` is an error.
+            // TODO: return provided data back to caller on errors
+
+            if self.cc.user_data as usize != 0 {
+                // clean up.
+                let _: Box<CallbackArgsStorage<RawArgs, Args, F>> =
+                    unsafe { mem::transmute(self.cc.user_data) };
             }
+            code.map_err()
         }
-        code
     }
 }
 
@@ -1760,14 +1895,13 @@ impl<F, Args, RawArgs> ops::DerefMut for CallbackArgsCompletion<F, Args, RawArgs
 /// A completion callback that has arguments which PPAPI writes to before
 /// calling.
 pub trait CallbackArgs<Args>: Send {
-    #[doc(hidden)] type Fun;
-    #[doc(hidden)]
+    type Fun;
     fn to_ffi_callback<RawArgs>(self, args: RawArgs,
                                 args_mapper: StorageToArgsMapper<RawArgs, Args>) ->
         CallbackArgsCompletion<<Self as CallbackArgs<Args>>::Fun, Args, RawArgs>
         where RawArgs: Send + InPlaceInit;
 
-    #[doc(hidden)] fn call_directly(self, args: Result<Args>);
+    fn call_directly(self, args: Result<Args>);
 }
 
 struct CallbackArgsStorage<RawArgs, Args, F> {
@@ -1790,22 +1924,18 @@ impl<F: Sized, Args> CallbackArgs<Args> for F
             where F : FnOnce(Result<Args>) + Send
         {
             let box CallbackArgsStorage {
-                args, mapper, f,
+                args, mapper: StorageToArgsMapper(mapper), f,
             }: Box<CallbackArgsStorage<RawArgs, Args, F>> = unsafe {
                 mem::transmute(user)
             };
 
-            let is_ok = status >= 0;
-            let code = if !is_ok {
-                Err(Code::from_i32(status))
-            } else {
-                Ok(status)
-            };
 
-            let mut args = Some(args);
-
-            let code = code.map(|status| mapper.map(status as usize, &mut args) );
-            f.call_once((code, ));
+            let code = Code::from_i32(status);
+            let code = code
+                .map_ok(|status| {
+                    mapper(args, Code::Ok(status))
+                });
+            f.call_once((code.into(), ));
         }
 
         let mut store = box CallbackArgsStorage {
@@ -1865,6 +1995,13 @@ impl Callback for BlockUntilComplete {
         CallbackCompletion {
             cc: cc,
             _1: PhantomData,
+        }
+    }
+}
+impl BlockUntilComplete {
+    fn new() -> ffi::Struct_PP_CompletionCallback {
+        unsafe {
+            ffi::block_until_complete()
         }
     }
 }
@@ -2066,7 +2203,9 @@ impl Instance {
     pub fn create_message_loop(&self) -> MessageLoop {
         MessageLoop(ppb::get_message_loop().create(&self.unwrap()))
     }
-    /// Creates a new message loop and runs it inside a new thread.
+    /// Creates a new message loop and runs it inside a new thread. Once
+    /// instance local data is added, this will ensure the new thread has
+    /// access.
     pub fn spawn_message_loop<F>(&self,
                                  thread_local_setup: F) -> (MessageLoop, ::std::thread::JoinHandle<()>)
         where F: FnOnce(fn()) + Send + 'static,
@@ -2080,10 +2219,13 @@ impl Instance {
         }
         let msg_loop = self.create_message_loop();
         let msg_loop2 = msg_loop.clone();
+        let instance = self.clone();
         let join = ::std::thread::spawn(move || {
             msg_loop.attach_to_current_thread()
                 .unwrap();
-            thread_local_setup(run_loop);
+            CURRENT_INSTANCE.set(&instance, || {
+                thread_local_setup(run_loop)
+            })
         });
         (msg_loop2, join)
     }
@@ -2099,6 +2241,13 @@ impl Instance {
         ppb::get_file_system().create(self.unwrap(),
                                       kind as ffi::PP_FileSystemType)
             .map(|fs| fs::FileSystem::new(fs) )
+    }
+
+    pub fn create_video_decoder(&self) -> Option<video_decoder::VideoDecoder> {
+        use ppb::{get_video_decoder_opt, VideoDecoderIf};
+        get_video_decoder_opt()
+            .and_then(|i| i.create(self.unwrap()) )
+            .map(|r| From::from(r) )
     }
 }
 
@@ -2217,6 +2366,7 @@ fn find_instance<U, Take, F>(instance: Instance,
         },
     }
 }
+#[doc(hidden)]
 pub mod entry {
     use super::{expect_instances, find_instance, CURRENT_INSTANCE};
     use super::{AnyVar, Code, Instance, View, ToFFIBool};
