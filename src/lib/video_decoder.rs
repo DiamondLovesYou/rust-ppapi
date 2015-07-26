@@ -25,7 +25,6 @@ impl Resource for VideoDecoder {
 #[doc(hidden)]
 impl From<ffi::PP_Resource> for VideoDecoder {
     fn from(v: ffi::PP_Resource) -> VideoDecoder {
-        debug_assert!(get_video_decoder().is(v));
         VideoDecoder(From::from(v))
     }
 }
