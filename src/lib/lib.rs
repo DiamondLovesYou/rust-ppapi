@@ -1226,6 +1226,11 @@ impl ToStringVar for StringVar {
         self.clone()
     }
 }
+impl<'a> ToStringVar for &'a StringVar {
+    fn to_string_var(&self) -> StringVar {
+        StringVar(self.0)
+    }
+}
 impl Var for ::std::string::String {
     #[inline] fn is_a_string(&self) -> bool { true }
 }
@@ -1473,6 +1478,20 @@ impl AnyVar {
             _ => None,
         }
     }
+    pub fn get_resource(&self) -> Option<&GenericResource> {
+        if let &AnyVar::Resource(ref r) = self {
+            Some(r)
+        } else {
+            None
+        }
+    }
+    pub fn get_i32(&self) -> Option<i32> {
+        if let &AnyVar::I32(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
 }
 
 impl fmt::Debug for StringVar {
@@ -1485,6 +1504,11 @@ impl fmt::Debug for StringVar {
 impl fmt::Display for StringVar {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.pad(self.as_ref())
+    }
+}
+impl cmp::PartialEq<str> for StringVar {
+    fn eq(&self, rhs: &str) -> bool {
+        self.as_ref() == rhs
     }
 }
 impl StringVar {
@@ -1628,13 +1652,16 @@ impl DictionaryVar {
     pub fn len(&self) -> usize {
         self.keys().len()
     }
-    pub fn has_key<T: ToVar>(&self, key: &T) -> bool {
+    pub fn has_key<T: ToStringVar>(&self, key: T) -> bool {
+        let key = key.to_string_var();
         ppb::get_dictionary().has_key(&self.to_var(), &key.to_var())
     }
-    pub fn get<T: ToVar>(&self, key: &T) -> AnyVar {
+    pub fn get<T: ToStringVar>(&self, key: T) -> AnyVar {
+        let key = key.to_string_var();
         AnyVar::new(ppb::get_dictionary().get(&self.to_var(), &key.to_var()))
     }
-    pub fn set<T: ToVar, V: ToVar>(&self, key: T, value: V) -> bool {
+    pub fn set<T: ToStringVar, V: ToVar>(&self, key: T, value: V) -> bool {
+        let key = key.to_string_var();
         ppb::get_dictionary().set(&self.to_var(), &key.to_var(), &value.to_var())
     }
     pub fn keys(&self) -> ArrayVar {
