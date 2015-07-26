@@ -22,6 +22,7 @@ log = "*"
 openssl = "*"
 url = "*"
 hyper = "*"
+httparse = "*"
 libc = "0.1.6"
 
 [build-dependencies.pnacl-build-helper]

@@ -558,21 +558,20 @@ pub trait URLLoaderIf {
             loader: PP_Resource,
             request: PP_Resource,
             callback: ffi::Struct_PP_CompletionCallback) -> Code;
+    fn get_response_info(&self, loader: PP_Resource) -> Option<PP_Resource>;
 }
 impl URLLoaderIf for ffi::Struct_PPB_URLLoader_1_0 {
     fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
-        let loader = impl_fun!(self.Create => (instance));
-        if loader == 0 {
-            None
-        } else {
-            Some(loader)
-        }
+        impl_fun!(self.Create => (instance) -> Option<PP_Resource>)
     }
     fn open(&self,
             loader: PP_Resource,
             request: PP_Resource,
             callback: ffi::Struct_PP_CompletionCallback) -> Code {
         impl_fun!(self.Open => (loader, request, callback) -> Code)
+    }
+    fn get_response_info(&self, loader: PP_Resource) -> Option<PP_Resource> {
+        impl_fun!(self.GetResponseInfo => (loader) -> Option<PP_Resource>)
     }
 }
 pub trait URLRequestInfoIf {
@@ -636,20 +635,20 @@ impl URLRequestInfoIf for ffi::Struct_PPB_URLRequestInfo_1_0 {
 }
 pub trait URLResponseInfoIf {
     fn property(&self,
-                res: &PP_Resource,
+                res: PP_Resource,
                 property: ffi::PP_URLResponseProperty) -> ffi::PP_Var;
-    fn body_as_file(&self, res: &PP_Resource) -> PP_Resource;
+    fn body_as_file(&self, res: PP_Resource) -> PP_Resource;
 }
 resource_interface!(impl for ffi::Struct_PPB_URLResponseInfo_1_0 => IsURLResponseInfo);
 resource_interface_opt!(impl for ffi::Struct_PPB_URLResponseInfo_1_0 => IsURLResponseInfo);
 impl URLResponseInfoIf for ffi::Struct_PPB_URLResponseInfo_1_0 {
     fn property(&self,
-                res: &PP_Resource,
+                res: PP_Resource,
                 property: ffi::PP_URLResponseProperty) -> ffi::PP_Var {
-        impl_fun!(self.GetProperty => (*res, property))
+        impl_fun!(self.GetProperty => (res, property))
     }
-    fn body_as_file(&self, res: &PP_Resource) -> PP_Resource {
-        impl_fun!(self.GetBodyAsFileRef => (*res))
+    fn body_as_file(&self, res: PP_Resource) -> PP_Resource {
+        impl_fun!(self.GetBodyAsFileRef => (res))
     }
 
 }

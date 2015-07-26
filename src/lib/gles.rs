@@ -24,6 +24,14 @@ use ffi;
 #[derive(Hash, Eq, PartialEq, Debug)]
 pub struct Context3d(ffi::PP_Resource);
 
+impl_clone_drop_for!(Context3d);
+
+impl super::ContextResource for Context3d {
+    fn get_device(&self) -> ffi::PP_Resource {
+        self.unwrap()
+    }
+}
+
 // for debugging purposes:
 impl fmt::Display for Context3d {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

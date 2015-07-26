@@ -234,12 +234,13 @@ pub mod common {
     }
 
     pub trait FileView: AsyncStream + AsyncCommon + Resource {
-        type Target;
+        type View;
+        type Io;
 
-        fn file_io(&self) -> &super::FileIo;
+        fn io(&self) -> &Self::Io;
 
-        fn view(&self, from: Option<u64>, to: Option<u64>) -> Self::Target;
-        fn view_full(&self) -> Self::Target { self.view(None, None) }
+        fn view(&self, from: Option<u64>, to: Option<u64>) -> Self::View;
+        fn view_full(&self) -> Self::View { self.view(None, None) }
 
         fn view_start(&self) -> u64;
         fn view_stop (&self) -> Option<u64>;
@@ -292,9 +293,9 @@ mod impl_ {
 
     #[derive(Hash, Eq, PartialEq, Debug, Clone)]
     pub struct SliceIo<T = FileIo>(T, u64, Option<u64>) where T: FileView;
-    impl<T: FileView> Resource for SliceIo<T> {
-        fn unwrap(&self) -> ffi::PP_Resource { self.file_io().unwrap() }
-        fn type_of(&self) -> Option<ResourceType> { Some(ResourceType::FileIo) }
+    impl<T: FileView + Resource> Resource for SliceIo<T> {
+        fn unwrap(&self) -> ffi::PP_Resource { self.io().unwrap() }
+        fn type_of(&self) -> Option<ResourceType> { self.io().type_of() }
     }
 
     #[repr(u32)]
@@ -330,8 +331,9 @@ mod impl_ {
     }
 
     impl FileView for FileIo {
-        type Target = SliceIo<FileIo>;
-        fn file_io(&self) -> &FileIo { self }
+        type View = SliceIo<FileIo>;
+        type Io = FileIo;
+        fn io(&self) -> &FileIo { self }
 
         fn view(&self, from: Option<u64>, to: Option<u64>) -> SliceIo<FileIo> {
             match (from, to) {
@@ -347,8 +349,10 @@ mod impl_ {
         fn view_absolute_start(&self) -> u64 { 0 }
     }
     impl<T: FileView> FileView for SliceIo<T> {
-        type Target = SliceIo<Self>;
-        fn file_io(&self) -> &FileIo { self.0.file_io() }
+        type View = SliceIo<Self>;
+        type Io = T;
+
+        fn io(&self) -> &T { &self.0 }
 
         fn view(&self, from: Option<u64>, to: Option<u64>) -> SliceIo<Self> {
             match (from, to) {
@@ -542,12 +546,12 @@ mod impl_ {
             })
         }
     }
-    impl<T: FileView> SyncCommon for SliceIo<T> {
+    impl<T: FileView + SyncCommon> SyncCommon for SliceIo<T> {
         fn sync_touch(&self, atime: Time, mtime: Time) -> Code {
-            self.file_io().sync_touch(atime, mtime)
+            self.io().sync_touch(atime, mtime)
         }
         fn sync_query(&self) -> Code<Info> {
-            self.file_io()
+            self.io()
                 .sync_query()
                 .map_ok(|info| {
                     let slice_start = self.view_start();

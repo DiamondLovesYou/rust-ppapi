@@ -141,8 +141,8 @@ impl Description {
 }
 
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct Font(ffi::PP_Resource);
-
 impl_resource_for!(Font, ResourceType::Font);
+impl_clone_drop_for!(Font);
 
 impl Font {
     pub fn describe(&self) -> Option<(Description, Metrics)> {
@@ -290,7 +290,7 @@ impl FontFamilies for super::Instance {
         let mut dest = HashSet::new();
         let fam_str = (ppb::get_font().GetFontFamilies.unwrap())(self.instance);
         let fam_str = StringVar::new_from_var(fam_str);
-        for font in fam_str.as_ref().split('\0') {
+        for font in fam_str.split('\0') {
             dest.insert(font.to_owned());
         }
         dest

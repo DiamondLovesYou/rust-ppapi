@@ -31,6 +31,12 @@ impl_resource_for!(WheelInputEvent, ResourceType::WheelInputEvent);
 impl_resource_for!(MouseInputEvent, ResourceType::MouseInputEvent);
 impl_resource_for!(KeyboardInputEvent, ResourceType::KeyboardInputEvent);
 
+impl_clone_drop_for!(KeyboardInputEvent);
+impl_clone_drop_for!(MouseInputEvent);
+impl_clone_drop_for!(WheelInputEvent);
+impl_clone_drop_for!(TouchInputEvent);
+impl_clone_drop_for!(IMEInputEvent);
+
 impl IMEInputEvent {
     pub fn new(res: ffi::PP_Resource) -> IMEInputEvent {
         let var = (ppb::get_ime_event().GetText.unwrap())(res);

@@ -89,7 +89,8 @@ More info:
 #[macro_use]
 extern crate log;
 extern crate collections;
-extern crate hyper as http;
+extern crate hyper;
+extern crate httparse;
 extern crate url as iurl;
 extern crate libc;
 extern crate alloc;
@@ -107,20 +108,11 @@ use std::marker::PhantomData;
 
 use log::LogRecord;
 
-use ppb::{get_url_loader, get_url_request};
 use ppb::{ViewIf, MessageLoopIf, VarIf, ImageDataIf, URLLoaderIf,
           URLRequestInfoIf, VarDictionaryIf, VarArrayIf,
           ConsoleInterface};
 
-pub use font::Font;
-pub use gles::Context3d;
-pub use input::{KeyboardInputEvent,
-                MouseInputEvent,
-                WheelInputEvent,
-                TouchInputEvent,
-                IMEInputEvent};
-pub use imagedata::ImageData;
-pub use url::{UrlLoader, UrlRequestInfo, UrlResponseInfo};
+pub use http as url;
 
 macro_rules! impl_resource_for(
     ($ty:ty, $type_:expr) => (
@@ -145,13 +137,6 @@ macro_rules! impl_resource_for(
                     ::std::mem::transmute_copy(&res)
                 }
             }
-            #[doc(hidden)]
-            pub fn new_bumped(res: ::ffi::PP_Resource) -> $ty {
-                let v: $ty = unsafe { ::std::mem::transmute_copy(&res) };
-                // bump the ref count:
-                ::std::mem::forget(v.clone());
-                v
-            }
         }
     )
 );
@@ -174,6 +159,18 @@ macro_rules! impl_clone_drop_for(
         }
     )
 );
+#[macro_export]
+macro_rules! try_code(
+    ($expr:expr) => ({
+        let code = $expr;
+        if !code.is_ok() { return code.map_err(); }
+        code.unwrap()
+    });
+    ($expr:expr => CC($cc:expr)) => ({
+        let code = $expr;
+        return $cc.drop_with_code(code);
+    })
+);
 
 #[allow(missing_docs)] pub mod ffi;
 pub mod ppp;
@@ -183,7 +180,7 @@ pub mod gles;
 pub mod font;
 pub mod imagedata;
 pub mod input;
-pub mod url;
+pub mod http;
 pub mod fs;
 pub mod media_stream_video_track;
 pub mod video_frame;
@@ -259,6 +256,9 @@ pub enum Code<T = usize> {
 
     /// See PP_ERROR_NOINTERFACE.
     NoInterface,
+    /// The instance handle is no longer valid. This will happen after the
+    /// instance is destroyed.
+    BadInstance,
 }
 impl<T: fmt::Display> fmt::Display for Code<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -288,6 +288,7 @@ impl<T: fmt::Display> fmt::Display for Code<T> {
             &Code::NoMessageLoop =>
                 "this thread doesn't have an attached message loop",
             &Code::NoInterface => "missing PPAPI interface",
+            &Code::BadInstance => "instance destroyed",
         };
         write!(f, "{}", desc)
     }
@@ -355,6 +356,7 @@ impl ::std::error::Error for Code {
             &Code::NoMessageLoop =>
                 "this thread doesn't have an attached message loop",
             &Code::NoInterface => "missing PPAPI interface",
+            &Code::BadInstance => "instance destroyed",
         }
     }
 }
@@ -411,6 +413,8 @@ impl Code {
             Code::TimedOut    => ffi::PP_ERROR_TIMEDOUT,
             Code::NoMessageLoop => ffi::PP_ERROR_NO_MESSAGE_LOOP,
             Code::NoInterface => ffi::PP_ERROR_NOINTERFACE,
+
+            Code::BadInstance => ffi::PP_ERROR_RESOURCE_FAILED,
         }
     }
     pub fn to_empty_result(self) -> Result<()> {
@@ -477,6 +481,7 @@ impl<T> Code<T> {
             Code::TimedOut    => Code::TimedOut,
             Code::NoMessageLoop => Code::NoMessageLoop,
             Code::NoInterface => Code::NoInterface,
+            Code::BadInstance => Code::BadInstance,
         }
     }
     pub fn map_err<U>(self) -> Code<U> {
@@ -501,6 +506,7 @@ impl<T> Code<T> {
             Code::TimedOut    => Code::TimedOut,
             Code::NoMessageLoop => Code::NoMessageLoop,
             Code::NoInterface => Code::NoInterface,
+            Code::BadInstance => Code::BadInstance,
 
             _ => unreachable!(),
         }
@@ -838,29 +844,13 @@ pub trait ContextResource: Resource {
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct View(ffi::PP_Resource);
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct MessageLoop(ffi::PP_Resource);
 
-impl_clone_drop_for!(Context3d);
 impl_resource_for!(Context2d, ResourceType::Graphics2D);
 impl_clone_drop_for!(Context2d);
 impl_resource_for!(View, ResourceType::View);
 impl_clone_drop_for!(View);
 impl_resource_for!(MessageLoop, ResourceType::MessageLoop);
 impl_clone_drop_for!(MessageLoop);
-impl_clone_drop_for!(KeyboardInputEvent);
-impl_clone_drop_for!(MouseInputEvent);
-impl_clone_drop_for!(WheelInputEvent);
-impl_clone_drop_for!(TouchInputEvent);
-impl_clone_drop_for!(Font);
-impl_clone_drop_for!(ImageData);
-impl_clone_drop_for!(IMEInputEvent);
-impl_clone_drop_for!(UrlLoader);
-impl_clone_drop_for!(UrlRequestInfo);
-impl_clone_drop_for!(UrlResponseInfo);
 
-impl ContextResource for Context3d {
-    fn get_device(&self) -> ffi::PP_Resource {
-        self.unwrap()
-    }
-}
 impl ContextResource for Context2d {
     fn get_device(&self) -> ffi::PP_Resource {
         self.unwrap()
@@ -1508,7 +1498,30 @@ impl fmt::Display for StringVar {
 }
 impl cmp::PartialEq<str> for StringVar {
     fn eq(&self, rhs: &str) -> bool {
-        self.as_ref() == rhs
+        &**self == rhs
+    }
+}
+impl<'a> cmp::PartialEq<&'a str> for StringVar {
+    fn eq(&self, rhs: &&'a str) -> bool {
+        &**self == *rhs
+    }
+}
+impl ops::Deref for StringVar {
+    type Target = str;
+    fn deref<'a>(&'a self) -> &'a str {
+        use std::str::from_utf8_unchecked;
+        use std::slice::from_raw_parts;
+        use std::mem::transmute;
+
+        let f = ppb::get_var().VarToUtf8.unwrap();
+
+        unsafe {
+            let mut len: u32 = mem::uninitialized();
+            let buf = f(self.to_var(), &mut len as *mut u32);
+            let len = len as usize;
+            let slice = from_raw_parts(transmute(&buf), len);
+            transmute(from_utf8_unchecked(slice))
+        }
     }
 }
 impl StringVar {
@@ -1530,23 +1543,6 @@ impl StringVar {
 impl From<ffi::PP_Var> for StringVar {
     fn from(v: ffi::PP_Var) -> StringVar {
         StringVar(unsafe { ffi::id_from_var(v) })
-    }
-}
-impl AsRef<str> for StringVar {
-    fn as_ref<'a>(&'a self) -> &'a str {
-        use std::str::from_utf8_unchecked;
-        use std::slice::from_raw_parts;
-        use std::mem::transmute;
-
-        let f = ppb::get_var().VarToUtf8.unwrap();
-
-        unsafe {
-            let mut len: u32 = mem::uninitialized();
-            let buf = f(self.to_var(), &mut len as *mut u32);
-            let len = len as usize;
-            let slice = from_raw_parts(transmute(&buf), len);
-            transmute(from_utf8_unchecked(slice))
-        }
     }
 }
 impl ToVar for ::std::string::String {
@@ -2172,8 +2168,8 @@ impl Instance {
     }
 
     pub fn create_3d_context(&self,
-                             share_with: Option<Context3d>,
-                             attribs: &[gles::Context3dAttrib]) -> result::Result<Context3d, Code> {
+                             share_with: Option<gles::Context3d>,
+                             attribs: &[gles::Context3dAttrib]) -> result::Result<gles::Context3d, Code> {
         let mut a = Vec::with_capacity(attribs.len() + 1);
         let attrs_to_ffi = attribs
             .iter()
@@ -2200,7 +2196,7 @@ impl Instance {
         if raw_cxt == 0i32 {
             result::Result::Err(Code::Failed)
         } else {
-            result::Result::Ok(Context3d::new_bumped(raw_cxt))
+            result::Result::Ok(gles::Context3d::new(raw_cxt))
         }
     }
     pub fn bind_context<T: ContextResource>(&self, cxt: &T) -> Code {
@@ -2235,7 +2231,7 @@ impl Instance {
     pub fn create_image(&self,
                         format: Option<imagedata::Format>, // uses native format if None
                         size: Size,
-                        init_to_zero: bool) -> Option<ImageData> {
+                        init_to_zero: bool) -> Option<imagedata::ImageData> {
         use std::mem::transmute;
         let interface = ppb::get_image_data();
         let format = format.unwrap_or_else(|| {
@@ -2247,16 +2243,16 @@ impl Instance {
                              transmute(size),
                              init_to_zero)
         };
-        res.map(|res| ImageData::new(res) )
+        res.map(|res| imagedata::ImageData::new(res) )
     }
 
     pub fn create_font(&self,
-                       desc: &font::Description) -> Option<Font> {
+                       desc: &font::Description) -> Option<font::Font> {
         let f = ppb::get_font().Create.unwrap();
         let desc = unsafe { desc.to_ffi() };
         let res = f(self.instance, &desc as *const ffi::Struct_PP_FontDescription_Dev);
         if res != 0 {
-            Some(Font::new(res))
+            Some(font::Font::new(res))
         } else {
             None
         }
@@ -2292,12 +2288,6 @@ impl Instance {
         (msg_loop2, join)
     }
 
-    pub fn create_url_loader(&self) -> Option<UrlLoader> {
-        get_url_loader().create(self.unwrap()).map(|loader| UrlLoader::new(loader) )
-    }
-    fn create_url_request_info(&self) -> Option<UrlRequestInfo> {
-        get_url_request().create(self.unwrap()).map(|info| UrlRequestInfo::new(info) )
-    }
     pub fn create_file_system(&self, kind: fs::Kind) -> Option<fs::FileSystem> {
         use ppb::FileSystemIf;
         ppb::get_file_system().create(self.unwrap(),
@@ -2357,14 +2347,14 @@ impl MessageLoop {
                        0)
             .expect("couldn't tell an instance about an on_change_focus event");
     }
-    fn on_document_load(&mut self, loader: UrlLoader) -> bool {
+    fn on_document_load(&mut self, loader: http::Loader) -> bool {
         use std::sync::mpsc::channel;
         let (tx, rx) = channel();
         self.get_ref()
             .post_work(move |_| {
                 unsafe {
                     assert!(!ppapi_on_document_loaded.is_null());
-                    let on_document_loaded: fn(UrlLoader) -> bool =
+                    let on_document_loaded: fn(http::Loader) -> bool =
                         transmute(ppapi_on_document_loaded);
 
                     let handled = on_document_loaded(loader);
@@ -2431,9 +2421,9 @@ fn find_instance<U, Take, F>(instance: Instance,
 #[doc(hidden)]
 pub mod entry {
     use super::{expect_instances, find_instance, CURRENT_INSTANCE};
-    use super::{AnyVar, Code, Instance, View, ToFFIBool};
+    use super::{AnyVar, Code, Instance, View, ToFFIBool, GenericResource,
+                Resource};
     use super::{ffi};
-    use super::url::UrlLoader;
 
     use libc::c_char;
     use std::any::Any;
@@ -2591,8 +2581,8 @@ pub mod entry {
                          find_instance(instance,
                                        view,
                                        |store, view| {
-                                           let view = View::new_bumped(view);
-                                           store.on_change_view(view)
+                                           ::std::mem::forget(View::new(view));
+                                           store.on_change_view(View::new(view))
                                        });
                      });
                  } else {
@@ -2635,9 +2625,11 @@ pub mod entry {
                      debug!("handle_document_load");
 
                      find_instance(instance,
-                                   UrlLoader::new_bumped(url_loader),
-                                   |store, url_loader| {
-                                       store.on_document_load(url_loader)
+                                   From::from(url_loader),
+                                   |store, url_loader: GenericResource| {
+                                       ::std::mem::forget(url_loader.clone());
+                                       let loader = From::from(url_loader.unwrap());
+                                       store.on_document_load(loader)
                                    }).unwrap_or(false)
                  }).ok().unwrap_or(false);
                  handled
