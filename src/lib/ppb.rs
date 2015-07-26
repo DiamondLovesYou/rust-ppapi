@@ -1057,7 +1057,7 @@ pub trait MediaStreamVideoTrackIf {
     fn configure(&self, res: PP_Resource, attrs: &[ffi::PP_MediaStreamVideoTrack_Attrib],
                  callback: ffi::Struct_PP_CompletionCallback) -> Code;
     fn get_attrib(&self, res: PP_Resource, attr: ffi::PP_MediaStreamVideoTrack_Attrib) ->
-        Result<libc::int32_t>;
+        Code<libc::int32_t>;
     fn get_id(&self, res: PP_Resource) -> ffi::PP_Var;
     fn has_ended(&self, res: PP_Resource) -> bool;
     fn get_frame(&self, res: PP_Resource, frame: &mut PP_Resource,
@@ -1083,15 +1083,12 @@ impl MediaStreamVideoTrackIf for ffi::Struct_PPB_MediaStreamVideoTrack_0_1 {
         From::from(code)
     }
     fn get_attrib(&self, res: PP_Resource, attr: ffi::PP_MediaStreamVideoTrack_Attrib) ->
-        Result<libc::int32_t>
+        Code<libc::int32_t>
     {
-        let mut dest: i32 = unsafe { ::std::mem::uninitialized() };
+        let mut dest: libc::int32_t = unsafe { ::std::mem::uninitialized() };
         let code = impl_fun!(self.GetAttrib => (res, attr, &mut dest as *mut _));
-        if code >= 0 {
-            Ok(dest)
-        } else {
-            Err(From::from(code))
-        }
+        let code: Code = From::from(code);
+        code.map_ok(|_| dest)
     }
     fn get_id(&self, res: PP_Resource) -> ffi::PP_Var {
         impl_fun!(self.GetId => (res))

@@ -9,7 +9,7 @@
 use ffi;
 use ppb::{ResourceInterface, MediaStreamVideoTrackIf, get_media_stream_video_track};
 
-use super::{Callback, CallbackArgs, StringVar, Code, Result, Resource};
+use super::{Callback, CallbackArgs, StringVar, Code, Resource};
 use super::video_frame::{self, VideoFrame};
 
 /// Created on the JS side and sent in a message.
@@ -108,16 +108,33 @@ impl VideoTrack {
             .configure(self.unwrap(), nattrs.as_ref(), cc.cc);
         cc.drop_with_code(code)
     }
-    pub fn get_attr(&self, attr: Attr) -> Result<Attr> {
+    pub fn buffer_count(&self) -> Code<u32> {
         get_media_stream_video_track()
-            .get_attrib(self.unwrap(), attr.to_ffi())
-            .map(|i| {
-                match attr {
-                    Attr::Buffers(..) => Attr::Buffers(i as u32),
-                    Attr::Width(..) => Attr::Width(i as u32),
-                    Attr::Height(..) => Attr::Height(i as u32),
-                    Attr::Format(..) => Attr::Format(From::from(i as u32))
-                }
+            .get_attrib(self.unwrap(), Attr::Buffers(0).to_ffi())
+            .map_ok(|i| {
+                i as u32
+            })
+    }
+    pub fn width(&self) -> Code<u32> {
+        get_media_stream_video_track()
+            .get_attrib(self.unwrap(), Attr::Width(0).to_ffi())
+            .map_ok(|i| {
+                i as u32
+            })
+    }
+    pub fn height(&self) -> Code<u32> {
+        get_media_stream_video_track()
+            .get_attrib(self.unwrap(), Attr::Height(0).to_ffi())
+            .map_ok(|i| {
+                i as u32
+            })
+    }
+    pub fn format(&self) -> Code<video_frame::Format> {
+        get_media_stream_video_track()
+            .get_attrib(self.unwrap(),
+                        Attr::Format(video_frame::Format::Unknown).to_ffi())
+            .map_ok(|i| {
+                From::from(i as ffi::PP_VideoFrame_Format)
             })
     }
     pub fn get_id(&self) -> StringVar {
