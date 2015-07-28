@@ -181,8 +181,8 @@ impl VideoDecoder {
             })
             .unwrap_or(Code::NoInterface)
     }
-    pub fn get_picture<F>(&self, callback: F) -> Code<Frame>
-        where F: CallbackArgs<Frame>
+    pub fn get_picture<F>(&self, callback: CallbackArgs<F, Frame>) ->
+        Code<Frame> where F: FnOnce(Code<Frame>)
     {
         impl super::InPlaceInit for ffi::Struct_PP_VideoPicture { }
         fn arg_map(raw: ffi::Struct_PP_VideoPicture, _status: Code) -> Frame {

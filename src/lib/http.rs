@@ -408,8 +408,11 @@ impl Loader {
 
     pub fn finish_streaming_to_file(&self) { unimplemented!() }
 
-    pub fn async_open<F>(instance: Instance, info: UrlRequestInfo, callback: F) -> Code<Loader>
-        where F: super::CallbackArgs<Loader>,
+    pub fn info(&self) -> ResponseInfo { self.info.clone() }
+
+    pub fn async_open<F>(instance: Instance, info: UrlRequestInfo,
+                         callback: super::CallbackArgs<F, Loader>) ->
+        Code<Loader> where F: FnOnce(Code<Loader>)
     {
         let loader = try_code!(instance.create_url_loader());
 

@@ -193,7 +193,7 @@ extern {}
 
 pub type Result<T> = result::Result<T, Code>;
 
-// YOU MUST NULL TERMINATE ALL STRINGS PROVIDED.
+/// You must null terminate all strings provided.
 pub fn mount<'s, 't, 'f, 'd>(source: &'s str,
                              target: &'t str,
                              filesystem_type: &'f str,
@@ -254,6 +254,9 @@ pub enum Code<T = usize> {
     TimedOut,          // = ffi::PP_ERROR_TIMEDOUT,
     NoMessageLoop,     // = ffi::PP_ERROR_NO_MESSAGE_LOOP,
 
+    /// See PP_ERROR_ABORTED.
+    Aborted,
+
     /// See PP_ERROR_NOINTERFACE.
     NoInterface,
     /// The instance handle is no longer valid. This will happen after the
@@ -289,6 +292,7 @@ impl<T: fmt::Display> fmt::Display for Code<T> {
                 "this thread doesn't have an attached message loop",
             &Code::NoInterface => "missing PPAPI interface",
             &Code::BadInstance => "instance destroyed",
+            &Code::Aborted => "callback aborted",
         };
         write!(f, "{}", desc)
     }
@@ -317,6 +321,7 @@ impl From<i32> for Code {
                 Code::TimedOut,
             ffi::PP_ERROR_NO_MESSAGE_LOOP => Code::NoMessageLoop,
             ffi::PP_ERROR_NOINTERFACE => Code::NoInterface,
+            ffi::PP_ERROR_ABORTED => Code::Aborted,
 
             _ => unreachable!("unexpected invalid or unknown code: `{}`", v),
         }
@@ -357,6 +362,7 @@ impl ::std::error::Error for Code {
                 "this thread doesn't have an attached message loop",
             &Code::NoInterface => "missing PPAPI interface",
             &Code::BadInstance => "instance destroyed",
+            &Code::Aborted => "callback aborted",
         }
     }
 }
@@ -413,6 +419,7 @@ impl Code {
             Code::TimedOut    => ffi::PP_ERROR_TIMEDOUT,
             Code::NoMessageLoop => ffi::PP_ERROR_NO_MESSAGE_LOOP,
             Code::NoInterface => ffi::PP_ERROR_NOINTERFACE,
+            Code::Aborted     => ffi::PP_ERROR_ABORTED,
 
             Code::BadInstance => ffi::PP_ERROR_RESOURCE_FAILED,
         }
@@ -482,6 +489,7 @@ impl<T> Code<T> {
             Code::NoMessageLoop => Code::NoMessageLoop,
             Code::NoInterface => Code::NoInterface,
             Code::BadInstance => Code::BadInstance,
+            Code::Aborted => Code::Aborted,
         }
     }
     pub fn map_err<U>(self) -> Code<U> {
@@ -507,6 +515,7 @@ impl<T> Code<T> {
             Code::NoMessageLoop => Code::NoMessageLoop,
             Code::NoInterface => Code::NoInterface,
             Code::BadInstance => Code::BadInstance,
+            Code::Aborted => Code::Aborted,
 
             _ => unreachable!(),
         }
@@ -884,7 +893,7 @@ impl View {
     }
 }
 impl Messaging {
-    pub fn post_message<T: ToVar>(&self, message: T) {
+    pub fn post<T: ToVar>(&self, message: T) {
         use ppb::MessagingIf;
         ppb::get_messaging().post_message(self.unwrap(), message.to_var())
     }
@@ -910,25 +919,37 @@ impl MessageLoop {
     pub fn run_loop(&self) -> Code {
         Code::from_i32((ppb::get_message_loop().Run.unwrap())(self.unwrap()))
     }
-    pub fn post_work<T: Callback>(&self, work: T, delay: u64) -> Code {
-        let cc = work.to_ffi_callback();
-        match ppb::get_message_loop().post_work(&self.unwrap(), cc.cc, delay as i64) {
+    pub fn post_work<F>(&self, work: F, delay: u64) -> Code
+        where F: FnOnce(Code<()>) + Send
+    {
+        let work = CallbackArgs::new(work);
+        let cc = work.to_ffi_callback((), Default::default());
+        match ppb::get_message_loop().post_work(&self.unwrap(), cc.cc(), delay as i64) {
             ffi::PP_ERROR_BADARGUMENT => panic!("internal error: completion callback was null?"),
             c => Code::from_i32(c),
         }
     }
-    pub fn post_to_self<T: Callback>(work: T, delay: u64) -> Code {
+    pub fn post_to_self<F>(work: F, delay: u64) -> Code
+        where F: FnOnce(Code<()>)
+    {
         MessageLoop::current()
-            .map(move |m| m.post_work(work, delay) )
+            .map(move |m| {
+                let work = CallbackArgs::new(work);
+                let cc = work.to_ffi_callback((), Default::default());
+                let code = ppb::get_message_loop().post_work(&m.unwrap(), cc.cc(),
+                                                             delay as i64);
+                From::from(code)
+            })
             .unwrap_or(Code::NoMessageLoop)
     }
-    #[allow(dead_code)]
-    fn pause_loop(&self) -> Code {
+
+    /// Work posted beforehand will still run.
+    pub fn queue_pause(&self) -> Code {
         Code::from_i32((ppb::get_message_loop().PostQuit.unwrap())(self.unwrap(), ffi::PP_FALSE))
     }
 
-    /// Queue loop shutdown.
-    pub fn stop_loop(&self) -> Code {
+    /// Work posted beforehand will still run.
+    pub fn queue_shutdown(&self) -> Code {
         Code::from_i32((ppb::get_message_loop().PostQuit.unwrap())(self.unwrap(), ffi::PP_TRUE))
     }
 }
@@ -1456,21 +1477,40 @@ impl AnyVar {
             self.is_a_resource()
     }
 
-    pub fn get_string(&self) -> Option<&StringVar> {
+    pub fn get_string_ref(&self) -> Option<&StringVar> {
         match self {
             &AnyVar::String(ref s) => Some(s),
             _ => None,
         }
     }
-    pub fn get_dict(&self) -> Option<&DictionaryVar> {
+    pub fn get_string(&self) -> Option<StringVar> {
+        match self {
+            &AnyVar::String(ref s) => Some(s.clone()),
+            _ => None,
+        }
+    }
+    pub fn get_dict_ref(&self) -> Option<&DictionaryVar> {
         match self {
             &AnyVar::Dictionary(ref s) => Some(s),
             _ => None,
         }
     }
-    pub fn get_resource(&self) -> Option<&GenericResource> {
+    pub fn get_dict(&self) -> Option<DictionaryVar> {
+        match self {
+            &AnyVar::Dictionary(ref s) => Some(s.clone()),
+            _ => None,
+        }
+    }
+    pub fn get_resource_ref(&self) -> Option<&GenericResource> {
         if let &AnyVar::Resource(ref r) = self {
             Some(r)
+        } else {
+            None
+        }
+    }
+    pub fn get_resource(&self) -> Option<GenericResource> {
+        if let &AnyVar::Resource(ref r) = self {
+            Some(r.clone())
         } else {
             None
         }
@@ -1740,7 +1780,8 @@ fn parse_args(argc: u32,
 pub trait InPlaceInit {
     fn inplace_init(&mut self) { }
 }
-impl<T> InPlaceInit for Vec<T> {}
+impl<T> InPlaceInit for Vec<T> { }
+impl InPlaceInit for () { }
 
 /// The storage must be in-place (read: can't be moved), or the pointer to
 /// storage will be invalid!
@@ -1899,6 +1940,11 @@ impl<RawArgs, Args> Default for StorageToArgsMapper<RawArgs, Args>
     }
 }
 
+struct CallbackArgsStorage<RawArgs, Args, F> {
+    args: RawArgs,
+    mapper: StorageToArgsMapper<RawArgs, Args>,
+    f: F,
+}
 
 #[must_use]
 pub struct CallbackArgsCompletion<F, Args, RawArgs> {
@@ -1952,61 +1998,72 @@ impl<F, Args, RawArgs> ops::DerefMut for CallbackArgsCompletion<F, Args, RawArgs
 
 /// A completion callback that has arguments which PPAPI writes to before
 /// calling.
-pub trait CallbackArgs<Args>: Send {
-    type Fun;
-    fn to_ffi_callback<RawArgs>(self, args: RawArgs,
-                                args_mapper: StorageToArgsMapper<RawArgs, Args>) ->
-        CallbackArgsCompletion<<Self as CallbackArgs<Args>>::Fun, Args, RawArgs>
-        where RawArgs: Send + InPlaceInit;
-
-    fn call_directly(self, args: Result<Args>);
-}
-
-struct CallbackArgsStorage<RawArgs, Args, F> {
-    args: RawArgs,
-    mapper: StorageToArgsMapper<RawArgs, Args>,
-    f: F,
-}
-
-impl<F: Sized, Args> CallbackArgs<Args> for F
-    where F: FnOnce(Result<Args>) + Send
+pub struct CallbackArgs<F: FnOnce(Code<OutArgs>), OutArgs>
 {
-    type Fun = F;
-    fn to_ffi_callback<RawArgs>(self, args: RawArgs,
-                                args_mapper: StorageToArgsMapper<RawArgs, Args>) ->
-        CallbackArgsCompletion<<Self as CallbackArgs<Args>>::Fun, Args, RawArgs>
-                               where RawArgs: Send + InPlaceInit,
+    pub optional: bool,
+    f: F,
+    _1: PhantomData<OutArgs>,
+}
+impl<F, OutArgs> CallbackArgs<F, OutArgs>
+    where F: FnOnce(Code<OutArgs>),
+{
+    pub fn new(f: F) -> CallbackArgs<F, OutArgs> {
+        CallbackArgs {
+            optional: false,
+            f: f,
+            _1: PhantomData,
+        }
+    }
+    pub fn optional(f: F) -> CallbackArgs<F, OutArgs> {
+        CallbackArgs {
+            optional: true,
+            f: f,
+            _1: PhantomData,
+        }
+    }
+
+    pub fn set_optional(&mut self, opt: bool) {
+        self.optional = opt;
+    }
+
+    pub fn to_ffi_callback<RawArgs>(self, args: RawArgs,
+                                    args_mapper: StorageToArgsMapper<RawArgs, OutArgs>) ->
+        CallbackArgsCompletion<F, OutArgs, RawArgs>
+        where RawArgs: InPlaceInit
     {
-        extern "C" fn work_callback<F: Sized, RawArgs, Args>(user: *mut libc::c_void,
-                                                             status: i32)
-            where F : FnOnce(Result<Args>) + Send
+        extern "C" fn work_callback<F, RawArgs, OutArgs>(user: *mut libc::c_void,
+                                                         status: i32)
+            where F: FnOnce(Code<OutArgs>),
         {
             let box CallbackArgsStorage {
                 args, mapper: StorageToArgsMapper(mapper), f,
-            }: Box<CallbackArgsStorage<RawArgs, Args, F>> = unsafe {
+            }: Box<CallbackArgsStorage<RawArgs, OutArgs, F>> = unsafe {
                 mem::transmute(user)
             };
-
 
             let code = Code::from_i32(status);
             let code = code
                 .map_ok(|status| {
                     mapper(args, Code::Ok(status))
                 });
-            f.call_once((code.into(), ));
+            f.call_once((code, ));
         }
-
+        let optional = self.optional;
         let mut store = box CallbackArgsStorage {
-            args: args, mapper: args_mapper, f: self,
+            args: args, mapper: args_mapper, f: self.f,
         };
         store.args.inplace_init();
 
         let args: *mut RawArgs = &mut store.args as *mut _;
 
-        let cc = unsafe {
-            ffi::make_completion_callback(Some(work_callback::<F, RawArgs, Args>),
+        let mut cc = unsafe {
+            ffi::make_completion_callback(Some(work_callback::<F, RawArgs, OutArgs>),
                                           mem::transmute(store))
         };
+
+        if optional {
+            cc.flags |= ffi::PP_COMPLETIONCALLBACK_FLAG_OPTIONAL as i32;
+        }
 
         CallbackArgsCompletion {
             raw: args,
@@ -2015,8 +2072,8 @@ impl<F: Sized, Args> CallbackArgs<Args> for F
         }
     }
 
-    fn call_directly(self, args: Result<Args>) {
-        self(args)
+    pub fn call_directly(self, args: Code<OutArgs>) {
+        self.f.call_once((args,))
     }
 }
 
@@ -2261,19 +2318,20 @@ impl Instance {
     pub fn create_message_loop(&self) -> MessageLoop {
         MessageLoop(ppb::get_message_loop().create(&self.unwrap()))
     }
+
     /// Creates a new message loop and runs it inside a new thread. Once
     /// instance local data is added, this will ensure the new thread has
-    /// access.
+    /// access. This does not require the message loop to be shutdown until you
+    /// return from `thread_local_setup`. FYI, `MessageLoop::is_attached()` will
+    /// return false only after the queue is shutdown.
     pub fn spawn_message_loop<F>(&self,
                                  thread_local_setup: F) -> (MessageLoop, ::std::thread::JoinHandle<()>)
-        where F: FnOnce(fn()) + Send + 'static,
+        where F: FnOnce(fn() -> Code) + Send + 'static,
     {
-        fn run_loop() {
-            let code = MessageLoop::current()
+        fn run_loop() -> Code {
+            MessageLoop::current()
                 .unwrap()
-                .run_loop();
-            assert!(!code.is_ok() || !MessageLoop::is_attached(),
-                    "please stop (or shutdown) loop");
+                .run_loop()
         }
         let msg_loop = self.create_message_loop();
         let msg_loop2 = msg_loop.clone();
@@ -2283,7 +2341,10 @@ impl Instance {
                 .unwrap();
             CURRENT_INSTANCE.set(&instance, || {
                 thread_local_setup(run_loop)
-            })
+            });
+
+            assert!(!MessageLoop::is_attached(),
+                    "please stop (or shutdown) loop");
         });
         (msg_loop2, join)
     }
@@ -2301,6 +2362,10 @@ impl Instance {
             .and_then(|i| i.create(self.unwrap()) )
             .map(|r| From::from(r) )
     }
+
+    pub fn post_message<T: ToVar>(&self, msg: T) {
+        self.messaging().post(msg);
+    }
 }
 
 impl MessageLoop {
@@ -2309,16 +2374,15 @@ impl MessageLoop {
     }
 
     fn on_destroy(&self) {
-        fn work() {
+        fn work(_: Code<()>) {
             unsafe {
                 ppapi_instance_destroyed();
             }
         }
         self.get_ref()
-            .post_work(InternalCallbacksOperatorFn(work),
-                       0)
+            .post_work(work, 0)
             .expect("couldn't tell an instance to shutdown");
-        self.get_ref().stop_loop().expect("message loop shutdown failed");
+        self.get_ref().queue_shutdown().expect("message loop shutdown failed");
     }
 
     fn on_change_view(&mut self, view: View) {

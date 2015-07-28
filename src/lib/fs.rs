@@ -39,7 +39,7 @@ pub mod common {
     use std::fmt::{Display, Debug};
 
     use ffi;
-    use super::super::{Callback, CallbackArgs, Code, Time, Resource,
+    use super::super::{CallbackArgs, Code, Time, Resource,
                        StringVar};
 
     pub use ffi::Struct_PP_FileInfo as Info;
@@ -163,44 +163,49 @@ pub mod common {
     }
 
     pub trait AsyncRead {
-        fn async_read<'a, F>(&mut self, offset: u64, size: usize, callback: F) -> Code<Cow<'a, [u8]>>
-            where F: CallbackArgs<Cow<'a, [u8]>>;
+        fn async_read<'a, F>(&mut self, offset: u64, size: usize,
+                             callback: CallbackArgs<F, Cow<'a, [u8]>>) ->
+            Code<Cow<'a, [u8]>> where F: FnOnce(Code<Cow<'a, [u8]>>);
     }
     pub trait AsyncWrite {
         fn async_write<'a, F>(&mut self, offset: u64,
                               buffer: Cow<'a, [u8]>,
-                              callback: F) -> Code<(usize, Cow<'a, [u8]>)>
-            where F: CallbackArgs<(usize, Cow<'a, [u8]>)>;
-        fn async_flush<F>(&mut self, callback: F) -> Code
-            where F: Callback;
+                              callback: CallbackArgs<F, (usize, Cow<'a, [u8]>)>) ->
+            Code<(usize, Cow<'a, [u8]>)> where F: FnOnce(Code<(usize, Cow<'a, [u8]>)>);
+        fn async_flush<F>(&mut self, callback: CallbackArgs<F, ()>) -> Code<()>
+            where F: FnOnce(Code<()>);
     }
     pub trait AsyncStream: AsyncRead + AsyncWrite { }
 
 
     // file/dir releated stuffs
     pub trait AsyncCommon {
-        fn async_touch<F>(&self, atime: Time, mtime: Time, callback: F) -> Code
-            where F: Callback;
-        fn async_query<F>(&self, callback: F) -> Code<Info>
-            where F: CallbackArgs<Info>;
+        fn async_touch<F>(&self, atime: Time, mtime: Time,
+                          callback: CallbackArgs<F, ()>) ->
+            Code<()> where F: FnOnce(Code<()>);
+
+        fn async_query<F>(&self, callback: CallbackArgs<F, Info>) -> Code<Info>
+            where F: FnOnce(Code<Info>);
     }
     pub trait AsyncFile: AsyncCommon {
-        fn async_set_len<F>(&mut self, len: u64, callback: F) -> Code
-            where F: Callback;
+        fn async_set_len<F>(&mut self, len: u64,
+                            callback: CallbackArgs<F, ()>) ->
+            Code<()> where F: FnOnce(Code<()>);
     }
     pub trait AsyncPath: AsyncCommon {
-        fn async_mkdir<F>(&self, flags: MkDirFlags, callback: F) -> Code
-            where F: Callback;
-        fn async_delete<F>(&self, callback: F) -> Code
-            where F: Callback;
-        fn async_rename<F>(&self, to: Self, callback: F) -> Code
-            where F: Callback;
-        fn async_read_directory_entries<F>(&self, callback: F) -> Code<Vec<DirectoryEntry>>
-            where F: CallbackArgs<Vec<DirectoryEntry>>;
+        fn async_mkdir<F>(&self, flags: MkDirFlags, callback: CallbackArgs<F, ()>) -> Code<()>
+            where F: FnOnce(Code<()>);
+        fn async_delete<F>(&self, callback: CallbackArgs<F, ()>) -> Code<()>
+            where F: FnOnce(Code<()>);
+        fn async_rename<F>(&self, to: Self, callback: CallbackArgs<F, ()>) -> Code<()>
+            where F: FnOnce(Code<()>);
+        fn async_read_directory_entries<F>(&self, callback: CallbackArgs<F, Vec<DirectoryEntry>>) ->
+            Code<Vec<DirectoryEntry>> where F: FnOnce(Code<Vec<DirectoryEntry>>);
 
         fn async_open_io<F>(&self, instance: super::super::Instance,
-                            flags: OpenFlags, callback: F) -> Code<super::FileIo>
-            where F: CallbackArgs<super::FileIo>;
+                            flags: OpenFlags,
+                            callback: CallbackArgs<F, super::FileIo>) -> Code<super::FileIo>
+            where F: FnOnce(Code<super::FileIo>);
     }
 
     pub trait SyncCommon {
@@ -371,8 +376,9 @@ mod impl_ {
     }
 
     impl AsyncRead for FileIo {
-        fn async_read<'a, F>(&mut self, offset: u64, size: usize, callback: F) -> Code<Cow<'a, [u8]>>
-            where F: CallbackArgs<Cow<'a, [u8]>>
+        fn async_read<'a, F>(&mut self, offset: u64, size: usize,
+                             callback: CallbackArgs<F, Cow<'a, [u8]>>) ->
+            Code<Cow<'a, [u8]>> where F: FnOnce(Code<Cow<'a, [u8]>>)
         {
             fn map_arg<'a>(raw: InPlaceArrayOutputStorage<u8>, _status: Code) -> Cow<'a, [u8]> {
                 let v: Vec<_> = raw.into();
@@ -393,8 +399,8 @@ mod impl_ {
     impl AsyncWrite for FileIo {
         fn async_write<'a, F>(&mut self, offset: u64,
                               buffer: Cow<'a, [u8]>,
-                              callback: F) -> Code<(usize, Cow<'a, [u8]>)>
-            where F: CallbackArgs<(usize, Cow<'a, [u8]>)>
+                              callback: CallbackArgs<F, (usize, Cow<'a, [u8]>)>) ->
+            Code<(usize, Cow<'a, [u8]>)> where F: FnOnce(Code<(usize, Cow<'a, [u8]>)>)
         {
             impl<'a> super::super::InPlaceInit for (bool, usize, Cow<'a, [u8]>) { }
 
@@ -426,10 +432,10 @@ mod impl_ {
                 code => cc.drop_with_code(code),
             }
         }
-        fn async_flush<F>(&mut self, callback: F) -> Code
-            where F: Callback
+        fn async_flush<F>(&mut self, callback: CallbackArgs<F, ()>) -> Code<()>
+            where F: FnOnce(Code<()>)
         {
-            let cc = callback.to_ffi_callback();
+            let cc = callback.to_ffi_callback((), Default::default());
             let code = get_file_io()
                 .flush(self.unwrap(), cc.cc);
             cc.drop_with_code(code)
@@ -437,16 +443,17 @@ mod impl_ {
     }
     impl AsyncStream for FileIo { }
     impl AsyncCommon for FileIo {
-        fn async_touch<F>(&self, atime: Time, mtime: Time, callback: F) -> Code
-            where F: Callback
+        fn async_touch<F>(&self, atime: Time, mtime: Time,
+                          callback: CallbackArgs<F, ()>) ->
+            Code<()> where F: FnOnce(Code<()>)
         {
-            let cc = callback.to_ffi_callback();
+            let cc = callback.to_ffi_callback((), Default::default());
             let code = get_file_io()
                 .touch(self.unwrap(), atime, mtime, cc.cc);
             cc.drop_with_code(code)
         }
-        fn async_query<F>(&self, callback: F) -> Code<Info>
-            where F: CallbackArgs<Info>
+        fn async_query<F>(&self, callback: CallbackArgs<F, Info>) -> Code<Info>
+            where F: FnOnce(Code<Info>)
         {
             impl super::super::InPlaceInit for ffi::Struct_PP_FileInfo { }
             fn map_arg(arg: Info, _status: Code) -> Info { arg }
@@ -460,10 +467,11 @@ mod impl_ {
         }
     }
     impl AsyncFile for FileIo {
-        fn async_set_len<F>(&mut self, len: u64, callback: F) -> Code
-            where F: Callback
+        fn async_set_len<F>(&mut self, len: u64,
+                            callback: CallbackArgs<F, ()>) ->
+            Code<()> where F: FnOnce(Code<()>)
         {
-            let cc = callback.to_ffi_callback();
+            let cc = callback.to_ffi_callback((), Default::default());
             let code = get_file_io()
                 .set_length(self.unwrap(), len, cc.cc);
             cc.drop_with_code(code)
@@ -493,8 +501,9 @@ mod impl_ {
     }
 
     impl<T: FileView> AsyncRead for SliceIo<T> {
-        fn async_read<'a, F>(&mut self, offset: u64, size: usize, callback: F) -> Code<Cow<'a, [u8]>>
-            where F: CallbackArgs<Cow<'a, [u8]>>
+        fn async_read<'a, F>(&mut self, offset: u64, size: usize,
+                             callback: CallbackArgs<F, Cow<'a, [u8]>>) ->
+            Code<Cow<'a, [u8]>> where F: FnOnce(Code<Cow<'a, [u8]>>)
         {
             let slice_start = self.view_start();
             let slice_stop  = self.view_stop().unwrap_or(u64::max_value());
@@ -509,41 +518,52 @@ mod impl_ {
     impl<T: FileView> AsyncWrite for SliceIo<T> {
         fn async_write<'a, F>(&mut self, offset: u64,
                               buffer: Cow<'a, [u8]>,
-                              callback: F) -> Code<(usize, Cow<'a, [u8]>)>
-            where F: CallbackArgs<(usize, Cow<'a, [u8]>)>
+                              callback: CallbackArgs<F, (usize, Cow<'a, [u8]>)>) ->
+            Code<(usize, Cow<'a, [u8]>)> where F: FnOnce(Code<(usize, Cow<'a, [u8]>)>)
         {
             let offset = self.view_start() + offset;
             self.0.async_write(offset, buffer, callback)
         }
-        fn async_flush<F>(&mut self, callback: F) -> Code
-            where F: Callback
+        fn async_flush<F>(&mut self, callback: CallbackArgs<F, ()>) -> Code<()>
+            where F: FnOnce(Code<()>)
         {
             self.0.async_flush(callback)
         }
     }
     impl<T: FileView> AsyncStream for SliceIo<T> { }
     impl<T: FileView> AsyncCommon for SliceIo<T> {
-        fn async_touch<F>(&self, atime: Time, mtime: Time, callback: F) -> Code
-            where F: Callback
+        fn async_touch<F>(&self, atime: Time, mtime: Time,
+                          callback: CallbackArgs<F, ()>) ->
+            Code<()> where F: FnOnce(Code<()>)
         {
             self.0.async_touch(atime, mtime, callback)
         }
-        fn async_query<F>(&self, callback: F) -> Code<Info>
-            where F: CallbackArgs<Info>
+        fn async_query<F>(&self, callback: CallbackArgs<F, Info>) -> Code<Info>
+            where F: FnOnce(Code<Info>)
         {
             let slice_start = self.view_start();
             let slice_stop  = self.view_stop().unwrap_or(u64::max_value());
-            self.0.async_query(move |info: Result<Info>| {
-                let info = info
-                    .map(|info| {
-                        // Alter the file size to the slice's actual size.
-                        ffi::Struct_PP_FileInfo {
-                            size: (::std::cmp::min(info.size as u64, slice_stop) - slice_start) as i64,
-                            .. info
-                        }
-                    });
+
+            fn map(info: Info, slice_start: u64, slice_stop: u64) -> Info {
+                // Alter the file size to the slice's actual size.
+                ffi::Struct_PP_FileInfo {
+                    size: (::std::cmp::min(info.size as u64, slice_stop) - slice_start) as i64,
+                    .. info
+                }
+            }
+            let optional = callback.optional;
+            let mut local = CallbackArgs::new(move |info: Code<Info>| {
+                let info = info.map_ok(|info| map(info, slice_start, slice_stop) );
                 callback.call_directly(info)
-            })
+            });
+            local.set_optional(optional);
+
+            let code = self.0.async_query(local);
+            if let Code::Ok(info) = code {
+                Code::Ok(map(info, slice_start, slice_stop))
+            } else {
+                code
+            }
         }
     }
     impl<T: FileView + SyncCommon> SyncCommon for SliceIo<T> {
@@ -568,16 +588,17 @@ mod impl_ {
 
     // FileRef
     impl AsyncCommon for FileRef {
-        fn async_touch<F>(&self, atime: Time, mtime: Time, callback: F) -> Code
-            where F: Callback
+        fn async_touch<F>(&self, atime: Time, mtime: Time,
+                          callback: CallbackArgs<F, ()>) ->
+            Code<()> where F: FnOnce(Code<()>)
         {
-            let cc = callback.to_ffi_callback();
+            let cc = callback.to_ffi_callback((), Default::default());
             let code = get_file_ref()
                 .touch(self.unwrap(), atime, mtime, cc.cc);
             cc.drop_with_code(code)
         }
-        fn async_query<F>(&self, callback: F) -> Code<Info>
-            where F: CallbackArgs<Info>
+        fn async_query<F>(&self, callback: CallbackArgs<F, Info>) -> Code<Info>
+            where F: FnOnce(Code<Info>)
         {
             fn map_arg(arg: Info, _status: Code) -> Info { arg }
             let mapper = StorageToArgsMapper(map_arg);
@@ -590,32 +611,32 @@ mod impl_ {
         }
     }
     impl AsyncPath for FileRef {
-        fn async_mkdir<F>(&self, flags: MkDirFlags, callback: F) -> Code
-            where F: Callback
+        fn async_mkdir<F>(&self, flags: MkDirFlags, callback: CallbackArgs<F, ()>) -> Code<()>
+            where F: FnOnce(Code<()>)
         {
-            let cc = callback.to_ffi_callback();
+            let cc = callback.to_ffi_callback((), Default::default());
             let code = get_file_ref()
                 .mkdir(self.unwrap(), flags.into(), cc.cc);
             cc.drop_with_code(code)
         }
-        fn async_delete<F>(&self, callback: F) -> Code
-            where F: Callback
+        fn async_delete<F>(&self, callback: CallbackArgs<F, ()>) -> Code<()>
+            where F: FnOnce(Code<()>)
         {
-            let cc = callback.to_ffi_callback();
+            let cc = callback.to_ffi_callback((), Default::default());
             let code = get_file_ref()
                 .delete(self.unwrap(), cc.cc);
             cc.drop_with_code(code)
         }
-        fn async_rename<F>(&self, to: FileRef, callback: F) -> Code
-            where F: Callback
+        fn async_rename<F>(&self, to: Self, callback: CallbackArgs<F, ()>) -> Code<()>
+            where F: FnOnce(Code<()>)
         {
-            let cc = callback.to_ffi_callback();
+            let cc = callback.to_ffi_callback((), Default::default());
             let code = get_file_ref()
                 .rename(self.unwrap(), to.unwrap(), cc.cc);
             cc.drop_with_code(code)
         }
-        fn async_read_directory_entries<F>(&self, callback: F) -> Code<Vec<DirectoryEntry>>
-            where F: CallbackArgs<Vec<DirectoryEntry>>
+        fn async_read_directory_entries<F>(&self, callback: CallbackArgs<F, Vec<DirectoryEntry>>) ->
+            Code<Vec<DirectoryEntry>> where F: FnOnce(Code<Vec<DirectoryEntry>>)
         {
             type StorageTy = StorageToArgsMapper<InPlaceArrayOutputStorage<DirectoryEntry>,
                                                  Vec<DirectoryEntry>>;
@@ -629,8 +650,9 @@ mod impl_ {
         }
 
         fn async_open_io<F>(&self, instance: super::super::Instance,
-                            flags: OpenFlags, callback: F) -> Code<FileIo>
-            where F: CallbackArgs<FileIo>
+                            flags: OpenFlags,
+                            callback: CallbackArgs<F, super::FileIo>) -> Code<super::FileIo>
+            where F: FnOnce(Code<super::FileIo>)
         {
             impl super::super::InPlaceInit for FileIo { }
 
@@ -773,7 +795,9 @@ mod impl_ {
             Ok(write as usize)
         }
         fn flush(&mut self) -> io::Result<()> {
-            self.async_flush(BlockUntilComplete)
+            let cc = BlockUntilComplete::new();
+            get_file_io()
+                .flush(self.unwrap(), cc)
                 .to_valued_result(())
                 .map_err(|code| code.into() )
         }

@@ -144,8 +144,8 @@ impl VideoTrack {
         get_media_stream_video_track()
             .has_ended(self.unwrap())
     }
-    pub fn get_frame<F>(&self, f: F) -> Code<(VideoTrack, VideoFrame)>
-        where F: CallbackArgs<(VideoTrack, VideoFrame)>
+    pub fn get_frame<F>(&self, f: CallbackArgs<F, (VideoTrack, VideoFrame)>) ->
+        Code<(VideoTrack, VideoFrame)> where F: FnOnce(Code<(VideoTrack, VideoFrame)>)
     {
         impl super::InPlaceInit for (VideoTrack, i32) { }
         fn map_args((this, frame): (VideoTrack, i32), _status: Code) ->
