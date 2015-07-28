@@ -136,9 +136,17 @@ impl Into<ffi::Struct_PP_VideoPicture> for Frame {
         }
     }
 }
+impl gles::traits::BindableBuffer for Frame {
+    type Target = gles::BoundTexBuffer;
+    fn bind(&self, ctxt: &mut Context3d) -> gles::BoundTexBuffer {
+        use gles::traits::BindableTargetBuffer;
+        self.texture.bind(ctxt, self.texture_target)
+    }
+}
+
 impl VideoDecoder {
     pub fn initialize<F>(&self, g3d: Context3d, profile: Profile,
-                     accel: Acceleration, callback: F) -> Code
+                         accel: Acceleration, callback: F) -> Code
         where F: Callback,
     {
         get_video_decoder_opt()

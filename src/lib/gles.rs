@@ -6,17 +6,21 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-//! A module to wrap OpenGLES 2.0 functions from the PPAPI
-
 #![allow(missing_docs)]
 
+/// A module to wrap OpenGLES 2.0 functions from the PPAPI.
+/// At some point I'd like to renovate this. For example by using borrowing
+/// semantics to prevent a bound program from being overridden.
+
+use std::borrow::{Cow, ToOwned};
 use std::mem::{size_of, uninitialized};
-use std::{clone, ptr};
+use std::{ptr};
 use std::default::Default;
 use std::fmt;
+
 use libc;
 use libc::c_void;
-use super::{Resource, Callback};
+use super::{Resource, CallbackArgs, Code};
 use super::ppb;
 use super::ppb::get_gles2;
 use ffi;
@@ -382,6 +386,7 @@ pub mod traits {
     use std::clone::Clone;
     use std::borrow::Cow;
     use std::borrow::ToOwned;
+    use std::mem;
     use libc::c_void;
 
     pub trait Buffer {
@@ -397,58 +402,58 @@ pub mod traits {
             let &VertexBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { BufferType::VertexBufferType }
-        fn to_object(&self) -> BufferObject { BufferObject::VertBufObject((*self).clone()) }
+        fn get_type(&self) -> BufferType { BufferType::Vertex }
+        fn to_object(&self) -> BufferObject { BufferObject::Vertex((*self).clone()) }
     }
     impl Buffer for IndexBuffer {
         fn unwrap(&self) -> types::UInt {
             let &IndexBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { BufferType::IndexBufferType }
-        fn to_object(&self) -> BufferObject { BufferObject::IdxBufObject((*self).clone()) }
+        fn get_type(&self) -> BufferType { BufferType::Index }
+        fn to_object(&self) -> BufferObject { BufferObject::Index((*self).clone()) }
     }
     impl Buffer for TextureBuffer {
         fn unwrap(&self) -> types::UInt {
             let &TextureBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { BufferType::TextureBufferType }
-        fn to_object(&self) -> BufferObject { BufferObject::TexBufObject((*self).clone()) }
+        fn get_type(&self) -> BufferType { BufferType::Texture }
+        fn to_object(&self) -> BufferObject { BufferObject::Texture((*self).clone()) }
     }
     impl Buffer for FrameBuffer {
         fn unwrap(&self) -> types::UInt {
             let &FrameBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { BufferType::FrameBufferType }
-        fn to_object(&self) -> BufferObject { BufferObject::FrameBufObject((*self).clone()) }
+        fn get_type(&self) -> BufferType { BufferType::Frame }
+        fn to_object(&self) -> BufferObject { BufferObject::Frame((*self).clone()) }
     }
     impl Buffer for RenderBuffer {
         fn unwrap(&self) -> types::UInt {
             let &RenderBuffer(inner) = self;
             inner
         }
-        fn get_type(&self) -> BufferType { BufferType::RenderBufferType }
-        fn to_object(&self) -> BufferObject { BufferObject::RenderBufObject((*self).clone()) }
+        fn get_type(&self) -> BufferType { BufferType::Render }
+        fn to_object(&self) -> BufferObject { BufferObject::Render((*self).clone()) }
     }
     impl Buffer for BufferObject {
         fn unwrap(&self) -> types::UInt {
             match self {
-                &BufferObject::VertBufObject(ref inner)   => inner.unwrap(),
-                &BufferObject::IdxBufObject(ref inner)    => inner.unwrap(),
-                &BufferObject::TexBufObject(ref inner)    => inner.unwrap(),
-                &BufferObject::FrameBufObject(ref inner)  => inner.unwrap(),
-                &BufferObject::RenderBufObject(ref inner) => inner.unwrap(),
+                &BufferObject::Vertex(ref inner)  => inner.unwrap(),
+                &BufferObject::Index(ref inner)   => inner.unwrap(),
+                &BufferObject::Texture(ref inner) => inner.unwrap(),
+                &BufferObject::Frame(ref inner)   => inner.unwrap(),
+                &BufferObject::Render(ref inner)  => inner.unwrap(),
             }
         }
         fn get_type(&self) -> BufferType {
             match self {
-                &BufferObject::VertBufObject(ref inner)   => inner.get_type(),
-                &BufferObject::IdxBufObject(ref inner)    => inner.get_type(),
-                &BufferObject::TexBufObject(ref inner)    => inner.get_type(),
-                &BufferObject::FrameBufObject(ref inner)  => inner.get_type(),
-                &BufferObject::RenderBufObject(ref inner) => inner.get_type(),
+                &BufferObject::Vertex(ref inner)  => inner.get_type(),
+                &BufferObject::Index(ref inner)   => inner.get_type(),
+                &BufferObject::Texture(ref inner) => inner.get_type(),
+                &BufferObject::Frame(ref inner)   => inner.get_type(),
+                &BufferObject::Render(ref inner)  => inner.get_type(),
             }
         }
         fn to_object(&self) -> BufferObject { (*self).clone() }
@@ -550,11 +555,11 @@ pub mod traits {
     impl DropBuffer for BufferObject {
         unsafe fn drop_buffer(self, ctxt: &Context3d) {
             match self {
-                BufferObject::VertBufObject(inner)   => inner.drop_buffer(ctxt),
-                BufferObject::IdxBufObject(inner)    => inner.drop_buffer(ctxt),
-                BufferObject::TexBufObject(inner)    => inner.drop_buffer(ctxt),
-                BufferObject::FrameBufObject(inner)  => inner.drop_buffer(ctxt),
-                BufferObject::RenderBufObject(inner) => inner.drop_buffer(ctxt),
+                BufferObject::Vertex(inner)   => inner.drop_buffer(ctxt),
+                BufferObject::Index(inner)    => inner.drop_buffer(ctxt),
+                BufferObject::Texture(inner)    => inner.drop_buffer(ctxt),
+                BufferObject::Frame(inner)  => inner.drop_buffer(ctxt),
+                BufferObject::Render(inner) => inner.drop_buffer(ctxt),
             }
         }
     }
@@ -616,7 +621,7 @@ pub mod traits {
         }
     }
     pub trait CompileShader: GenShader + super::ShaderUnwrap + Sized {
-        fn new<'a>(ctxt: &Context3d, src: &Vec<Cow<'a, str>>)
+        fn new<'a>(ctxt: &Context3d, src: &[Cow<'a, str>])
                    -> super::CompilingShader<Self>
         {
             use libc::c_char;
@@ -638,16 +643,25 @@ pub mod traits {
     impl CompileShader for super::VertexShader { }
     impl CompileShader for super::FragmentShader { }
 
-    pub trait GeometryMode {
-        fn get_geo_mode_enum(&self) -> types::Enum;
+    pub trait BufferElementType: Into<types::Enum> + Copy
+        where [Self::Target]: ToOwned,
+    {
+        type Target;
+        fn element_size(&self) -> usize { mem::size_of::<Self::Target>() }
     }
-    pub trait VertexAttribType {
-        fn get_vertex_attrib_type_enum(&self) -> types::Enum;
+
+    pub trait GeometryMode: Into<types::Enum> + Copy { }
+    pub trait VertexAttribType: BufferElementType { }
+    pub trait IndexElementType: BufferElementType
+        where [<Self as BufferElementType>::Target]: ToOwned,
+    {
+        fn ptr_offset(&self, offset: usize) -> *const c_void {
+            (offset * self.element_size()) as *const c_void
+        }
     }
-    pub trait IndexElementType {
-        fn get_index_element_type_enum(&self) -> types::Enum;
-        fn ptr_offset(&self, offset: usize) -> *const c_void;
-    }
+    pub trait FrameBufferReadPixelsType: BufferElementType { }
+
+    pub trait FrameBufferTextureAttachment: Into<types::Enum> + Copy { }
 }
 #[doc(hidden)]
 impl From<types::UInt> for VertexBuffer {
@@ -693,11 +707,11 @@ pub struct RenderBuffer(types::UInt);
 
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub enum BufferObject {
-    VertBufObject(VertexBuffer),
-    IdxBufObject(IndexBuffer),
-    TexBufObject(TextureBuffer),
-    FrameBufObject(FrameBuffer),
-    RenderBufObject(RenderBuffer),
+    Vertex(VertexBuffer),
+    Index(IndexBuffer),
+    Texture(TextureBuffer),
+    Frame(FrameBuffer),
+    Render(RenderBuffer),
 }
 
 macro_rules! impl_default(
@@ -717,36 +731,56 @@ impl_default!(RenderBuffer,    RenderBuffer(0));
 
 #[derive(Eq, PartialEq, Clone, Hash, Copy)]
 pub enum BufferType {
-    VertexBufferType,
-    IndexBufferType,
-    TextureBufferType,
-    FrameBufferType,
-    RenderBufferType,
+    Vertex,
+    Index,
+    Texture,
+    Frame,
+    Render,
 }
-pub enum BufferOption<'a, T: 'a> {
-    BufferSome(&'a Vec<T>),
-    BufferNone(usize),
+#[derive(Clone)]
+pub enum BufferData<'a, T: 'a>
+    where [T]: ToOwned,
+{
+    Fill(Cow<'a, [T]>),
+    /// Empty(element_count)
+    Empty(usize),
 }
-impl<'a, T> clone::Clone for BufferOption<'a, T> {
-    fn clone(&self) -> BufferOption<'a, T> {
+impl<'a, T> BufferData<'a, T>
+    where [T]: ToOwned,
+{
+    fn byte_len(&self) -> usize {
         match self {
-            &BufferOption::BufferSome(vec) => BufferOption::BufferSome(vec),
-            &BufferOption::BufferNone(count) => BufferOption::BufferNone(count),
+            &BufferData::Fill(ref buf) => buf.as_ref().len() * size_of::<T>(),
+            &BufferData::Empty(len) => len * size_of::<T>(),
         }
-    }
-}
-impl<'a, T> BufferOption<'a, T> {
-    fn byte_len(&self) -> types::SizePtr {
-        (match self {
-            &BufferOption::BufferSome(buf) => buf.len() * size_of::<T>(),
-            &BufferOption::BufferNone(len) => len * size_of::<T>(),
-        }) as types::SizePtr
     }
     fn as_void_ptr(&self) -> *const c_void {
         use std::ptr;
         match self {
-            &BufferOption::BufferSome(buf) => buf.as_ptr() as *const c_void,
-            &BufferOption::BufferNone(_)   => ptr::null(),
+            &BufferData::Fill(ref buf) => buf.as_ref().as_ptr() as *const c_void,
+            &BufferData::Empty(_)   => ptr::null(),
+        }
+    }
+
+    fn map_raw_type<U>(&self) -> BufferData<'a, U>
+        where [U]: ToOwned, U: Sized, <[T] as ToOwned>::Owned: AsRef<[T]>,
+    {
+        use std::slice::from_raw_parts;
+        let new_len = self.byte_len() / size_of::<U>();
+        match self {
+            &BufferData::Fill(Cow::Borrowed(slice)) => {
+                let new = unsafe {
+                    from_raw_parts(slice.as_ptr() as *const U, new_len)
+                };
+                BufferData::Fill(Cow::Borrowed(new))
+            },
+            &BufferData::Fill(Cow::Owned(ref vec)) => {
+                let new = unsafe {
+                    from_raw_parts(vec.as_ref().as_ptr() as *const U, new_len)
+                };
+                BufferData::Fill(Cow::Borrowed(new))
+            },
+            &BufferData::Empty(size) => BufferData::Empty(size),
         }
     }
 }
@@ -768,11 +802,22 @@ impl OptPointerOffset for Option<usize> {
         }
     }
 }
+impl OptPointerOffset for usize {
+    fn to_ptr_offset(&self) -> *const libc::c_void {
+        use libc::c_char;
+        let p: *const c_char = ptr::null();
+        unsafe {
+            p.offset(*self as isize) as *const libc::c_void
+        }
+    }
+}
 
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct BoundBuffer<T>(T);
 pub type BoundVertBuffer = BoundBuffer<VertexBuffer>;
 pub type BoundIdxBuffer  = BoundBuffer<IndexBuffer>;
+
+// Geo modes
 #[derive(Copy, Clone)] pub struct PointsGeometryMode;
 #[derive(Copy, Clone)] pub struct LineStripGeometryMode;
 #[derive(Copy, Clone)] pub struct LineLoopGeometryMode;
@@ -791,19 +836,20 @@ pub enum GeometryMode {
     TriangleFan,
     Triangle,
 }
-impl traits::GeometryMode for GeometryMode {
-    fn get_geo_mode_enum(&self) -> types::Enum {
+impl Into<types::Enum> for GeometryMode {
+    fn into(self) -> types::Enum {
         match self {
-            &GeometryMode::Points        => consts::POINTS,
-            &GeometryMode::LineStrip     => consts::LINE_STRIP,
-            &GeometryMode::LineLoop      => consts::LINE_LOOP,
-            &GeometryMode::Lines         => consts::LINES,
-            &GeometryMode::TriangleStrip => consts::TRIANGLE_STRIP,
-            &GeometryMode::TriangleFan   => consts::TRIANGLE_FAN,
-            &GeometryMode::Triangle      => consts::TRIANGLES,
+            GeometryMode::Points        => consts::POINTS,
+            GeometryMode::LineStrip     => consts::LINE_STRIP,
+            GeometryMode::LineLoop      => consts::LINE_LOOP,
+            GeometryMode::Lines         => consts::LINES,
+            GeometryMode::TriangleStrip => consts::TRIANGLE_STRIP,
+            GeometryMode::TriangleFan   => consts::TRIANGLE_FAN,
+            GeometryMode::Triangle      => consts::TRIANGLES,
         }
     }
 }
+impl traits::GeometryMode for GeometryMode { }
 impl Default for GeometryMode {
     fn default() -> GeometryMode {
         GeometryMode::Triangle
@@ -811,8 +857,9 @@ impl Default for GeometryMode {
 }
 macro_rules! impl_geo_mode(
     ($ty:ty, $expr:expr) => {
-        impl traits::GeometryMode for $ty {
-            fn get_geo_mode_enum(&self) -> types::Enum {
+        impl traits::GeometryMode for $ty { }
+        impl Into<types::Enum> for $ty {
+            fn into(self) -> types::Enum {
                 $expr
             }
         }
@@ -825,53 +872,76 @@ impl_geo_mode!(LinesGeometryMode,         consts::LINES);
 impl_geo_mode!(TriangleStripGeometryMode, consts::TRIANGLE_STRIP);
 impl_geo_mode!(TriangleFanGeometryMode,   consts::TRIANGLE_FAN);
 impl_geo_mode!(TrianglesGeometryMode,     consts::TRIANGLES);
+// /Geo modes
 
 impl BoundBuffer<VertexBuffer> {
-    pub fn buffer_vertex_data<'a, TUsage: traits::Usage>(&self,
-                                                         ctxt: &mut Context3d,
-                                                         buf: BufferOption<'a, u8>,
-                                                         usage: TUsage) {
+    pub fn buffer_vertex_data<'a, T>(&self,
+                                     ctxt: &Context3d,
+                                     buf: BufferData<'a, u8>,
+                                     usage: T)
+        where T: traits::Usage,
+    {
         call_gl_fun!(get_gles2() => BufferData => (ctxt,
                                                    consts::ARRAY_BUFFER,
-                                                   buf.byte_len(),
+                                                   buf.byte_len() as types::SizePtr,
                                                    buf.as_void_ptr(),
                                                    usage.get_usage_enum()))
     }
-    pub fn vertex_attribute<T: traits::VertexAttribType>(&self,
-                                                         ctxt: &Context3d,
-                                                         index: usize,
-                                                         size: usize,
-                                                         ty: T,
-                                                         normalized: bool,
-                                                         stride: usize,
-                                                         offset: Option<usize>) {
+    pub fn enable_vertex_attribute_array(&self, ctxt: &Context3d,
+                                         locus: AttrLocus) {
+        call_gl_fun!(get_gles2() => EnableVertexAttribArray => (ctxt, locus.0));
+    }
+    pub fn vertex_attribute<T>(&self, ctxt: &Context3d, locus: AttrLocus,
+                               count: usize, ty: T, normalized: bool,
+                               stride: usize, offset: usize)
+        where T: traits::VertexAttribType + Copy,
+    {
         call_gl_fun!(get_gles2() => VertexAttribPointer => (ctxt,
-                                                            index as types::UInt,
-                                                            size  as types::Int,
-                                                            ty.get_vertex_attrib_type_enum(),
+                                                            locus.0 as types::UInt,
+                                                            count   as types::Int,
+                                                            ty.into(),
                                                             normalized as types::Boolean,
                                                             stride as types::Size,
                                                             offset.to_ptr_offset()))
     }
 
-    pub fn draw_slice<T: traits::GeometryMode>(&self,
-                                               ctxt: &Context3d,
-                                               mode: T,
-                                               slice_start: usize,
-                                               slice_len: usize) {
+    pub fn draw_slice<T>(&self, ctxt: &Context3d, mode: T,
+                         slice_start: usize, slice_len: usize)
+        where T: traits::GeometryMode + Copy,
+    {
         call_gl_fun!(get_gles2() => DrawArrays => (ctxt,
-                                                   mode.get_geo_mode_enum(),
+                                                   mode.into(),
                                                    slice_start as types::Int,
                                                    slice_len as types::Size))
 
     }
 }
+
 #[derive(Copy, Clone)] pub struct ByteType;
 #[derive(Copy, Clone)] pub struct UByteType;
 #[derive(Copy, Clone)] pub struct ShortType;
 #[derive(Copy, Clone)] pub struct UShortType;
 // Omitted: FIXED. Isn't recommended by Chrome.
 #[derive(Copy, Clone)] pub struct FloatType;
+
+impl traits::BufferElementType for ByteType { type Target = i8; }
+impl traits::BufferElementType for UByteType { type Target = u8; }
+impl traits::BufferElementType for ShortType { type Target = i16; }
+impl traits::BufferElementType for UShortType { type Target = u16; }
+impl traits::BufferElementType for FloatType { type Target = f32; }
+
+macro_rules! impl_into_for_type(
+    ($ty:ty, $expr:expr) => {
+        impl Into<types::Enum> for $ty {
+            fn into(self) -> types::Enum { $expr }
+        }
+    }
+);
+impl_into_for_type!(ByteType,   consts::BYTE);
+impl_into_for_type!(UByteType,  consts::UNSIGNED_BYTE);
+impl_into_for_type!(ShortType,  consts::SHORT);
+impl_into_for_type!(UShortType, consts::UNSIGNED_SHORT);
+impl_into_for_type!(FloatType,  consts::FLOAT);
 
 // For use as a value type.
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Copy)]
@@ -882,68 +952,71 @@ pub enum VertexAttribType {
     UShort,
     Float,
 }
-impl traits::VertexAttribType for VertexAttribType {
-    fn get_vertex_attrib_type_enum(&self) -> types::Enum {
+impl Into<types::Enum> for VertexAttribType {
+    fn into(self) -> types::Enum {
         match self {
-            &VertexAttribType::Byte =>   consts::BYTE,
-            &VertexAttribType::UByte =>  consts::UNSIGNED_BYTE,
-            &VertexAttribType::Short =>  consts::SHORT,
-            &VertexAttribType::UShort => consts::UNSIGNED_SHORT,
-            &VertexAttribType::Float =>  consts::FLOAT,
+            VertexAttribType::Byte =>   consts::BYTE,
+            VertexAttribType::UByte =>  consts::UNSIGNED_BYTE,
+            VertexAttribType::Short =>  consts::SHORT,
+            VertexAttribType::UShort => consts::UNSIGNED_SHORT,
+            VertexAttribType::Float =>  consts::FLOAT,
         }
     }
 }
-macro_rules! impl_vert_attrib_type(
-    ($ty:ty, $expr:expr) => {
-        impl traits::VertexAttribType for $ty {
-            fn get_vertex_attrib_type_enum(&self) -> types::Enum {
-                $expr
-            }
+impl traits::BufferElementType for VertexAttribType {
+    type Target = u8;
+    fn element_size(&self) -> usize {
+        match self {
+            &VertexAttribType::Byte =>   {ByteType}.element_size(),
+            &VertexAttribType::UByte =>  {UByteType}.element_size(),
+            &VertexAttribType::Short =>  {ShortType}.element_size(),
+            &VertexAttribType::UShort => {UShortType}.element_size(),
+            &VertexAttribType::Float =>  {FloatType}.element_size(),
         }
     }
+}
+impl traits::VertexAttribType for VertexAttribType { }
+
+macro_rules! impl_vert_attrib_type(
+    ($ty:ty) => {
+        impl traits::VertexAttribType for $ty { }
+    }
 );
-impl_vert_attrib_type!(ByteType,   consts::BYTE);
-impl_vert_attrib_type!(UByteType,  consts::UNSIGNED_BYTE);
-impl_vert_attrib_type!(ShortType,  consts::SHORT);
-impl_vert_attrib_type!(UShortType, consts::UNSIGNED_SHORT);
-impl_vert_attrib_type!(FloatType,  consts::FLOAT);
+impl_vert_attrib_type!(ByteType);
+impl_vert_attrib_type!(UByteType);
+impl_vert_attrib_type!(ShortType);
+impl_vert_attrib_type!(UShortType);
+impl_vert_attrib_type!(FloatType);
 
 macro_rules! impl_idx_elem_type(
-    ($ty:ty, $expr:expr, $bytes:expr) => {
-        impl traits::IndexElementType for $ty {
-            fn get_index_element_type_enum(&self) -> types::Enum {
-                $expr
-            }
-            fn ptr_offset(&self, offset: usize) -> *const c_void {
-                (offset * $bytes) as *const c_void
-            }
-        }
+    ($ty:ty) => {
+        impl traits::IndexElementType for $ty { }
     }
 );
-impl_idx_elem_type!(UByteType,  consts::UNSIGNED_BYTE,  1);
-impl_idx_elem_type!(UShortType, consts::UNSIGNED_SHORT, 2);
+impl_idx_elem_type!(UByteType);
+impl_idx_elem_type!(UShortType);
 
 impl BoundBuffer<IndexBuffer> {
-    pub fn buffer_index_data<'a, TUsage: traits::Usage>(&self,
-                                                        ctxt: &mut Context3d,
-                                                        buf: BufferOption<'a, u16>,
-                                                        usage: TUsage) {
+    pub fn buffer_index_data<'a, U>(&self, ctxt: &Context3d,
+                                    buf: BufferData<'a, u8>,
+                                    usage: U)
+        where U: traits::Usage,
+    {
         call_gl_fun!(get_gles2() => BufferData => (ctxt,
                                                    consts::ELEMENT_ARRAY_BUFFER,
-                                                   buf.byte_len(),
+                                                   buf.byte_len() as types::SizePtr,
                                                    buf.as_void_ptr(),
                                                    usage.get_usage_enum()))
     }
-    pub fn draw_elements<T: traits::GeometryMode, U: traits::IndexElementType>(&self,
-                                                                               ctxt: &Context3d,
-                                                                               mode: T,
-                                                                               ty:   U,
-                                                                               slice_start: usize,
-                                                                               slice_len: usize) {
+    pub fn draw_elements<T, U>(&self, ctxt: &Context3d, mode: T, ty: U,
+                               slice_start: usize, slice_len: usize)
+        where T: traits::GeometryMode, U: traits::IndexElementType,
+              [<U as traits::BufferElementType>::Target]: ToOwned,
+    {
         call_gl_fun!(get_gles2() => DrawElements => (ctxt,
-                                                     mode.get_geo_mode_enum(),
+                                                     mode.into(),
                                                      slice_len as types::Size,
-                                                     ty.get_index_element_type_enum(),
+                                                     ty.into(),
                                                      ty.ptr_offset(slice_start)))
     }
 }
@@ -1003,8 +1076,9 @@ impl BoundTexBuffer {
                     format: TexFormat,
                     size: super::Size,
                     type_: types::UInt,
-                    buf: Option<&Vec<u8>>) {
+                    buf: Option<&[u8]>) {
         use std::ptr::null;
+        let buf_ptr = buf.map_or(null(), |buf| buf.as_ptr() ) as *const c_void;
         call_gl_fun!(get_gles2() => TexImage2D => (ctxt,
                                                    self.target,
                                                    mip_lvl,
@@ -1014,33 +1088,81 @@ impl BoundTexBuffer {
                                                    0i32,
                                                    format.to_ffi(),
                                                    type_,
-                                                   buf.map_or(null(),
-                                                              |buf| buf.as_ptr())
-                                                   as *const c_void))
+                                                   buf_ptr))
     }
 }
 impl traits::Buffer for BoundTexBuffer {
     fn unwrap(&self) -> types::UInt { self.tex.unwrap() }
-    fn get_type(&self) -> BufferType { BufferType::TextureBufferType }
-    fn to_object(&self) -> BufferObject { BufferObject::TexBufObject(self.tex.clone()) }
+    fn get_type(&self) -> BufferType { BufferType::Texture }
+    fn to_object(&self) -> BufferObject { BufferObject::Texture(self.tex.clone()) }
 }
 
-impl FrameBuffer {
-
+#[derive(Clone, PartialEq, Eq, Copy, Debug)]
+pub struct ColorAttachment(pub types::Enum);
+impl Into<types::Enum> for ColorAttachment {
+    fn into(self) -> types::Enum {
+        consts::COLOR_ATTACHMENT0 + self.0
+    }
 }
+impl traits::FrameBufferTextureAttachment for ColorAttachment { }
+
+/*#[derive(Clone, PartialEq, Eq, Copy, Debug)]
+pub struct DepthAttachment;
+impl Into<types::Enum> for DepthAttachment {
+    fn into(self) -> types::Enum {
+        consts::DEPTH_ATTACHMENT
+    }
+}
+impl FrameBufferTextureAttachment for DepthAttachment { }
+
+#[derive(Clone, PartialEq, Eq, Copy, Debug)]
+pub struct StencilAttachment;
+impl Into<types::Enum> for StencilAttachment {
+    fn into(self) -> types::Enum {
+        consts::STENCIL_ATTACHMENT
+    }
+}
+impl FrameBufferTextureAttachment for StencilAttachment { }*/
+
 impl BoundBuffer<FrameBuffer> {
-    pub fn attach_tex2d(&mut self,
-                        ctxt: &Context3d,
-                        attachment: types::Enum,
-                        tex: TextureBuffer,
-                        mip_lvl: types::Int) {
+    pub fn attach_tex2d<T>(&mut self,
+                           ctxt: &Context3d,
+                           attachment: T,
+                           tex: TextureBuffer,
+                           mip_lvl: types::Int)
+        where T: traits::FrameBufferTextureAttachment,
+    {
         use self::traits::Buffer;
         call_gl_fun!(get_gles2() => FramebufferTexture2D => (ctxt,
                                                              consts::FRAMEBUFFER,
-                                                             attachment,
+                                                             attachment.into(),
                                                              consts::TEXTURE_2D,
                                                              tex.unwrap(),
                                                              mip_lvl))
+    }
+
+    pub fn check_status(&self, ctxt: &Context3d) -> types::Enum {
+        call_gl_fun!(get_gles2() => CheckFramebufferStatus => (ctxt, consts::FRAMEBUFFER))
+    }
+
+    /// If there was an error, the contents of the return value are undefined.
+    pub fn read_pixels<T>(&self, ctxt: &Context3d, rect: super::Rect, fmt: TexFormat,
+                          ty: T) -> Vec<<T as traits::BufferElementType>::Target>
+        where T: traits::FrameBufferReadPixelsType
+    {
+        let len = (rect.size.width * rect.size.height) as usize;
+        let mut dest: Vec<<T as traits::BufferElementType>::Target> =
+            Vec::with_capacity(len);
+
+        call_gl_fun!(get_gles2() => ReadPixels => (ctxt, rect.point.x as types::Int,
+                                                   rect.point.y as types::Int,
+                                                   rect.size.width as types::Int,
+                                                   rect.size.height as types::Int,
+                                                   fmt.to_ffi(), ty.into(),
+                                                   dest.as_mut_ptr() as *mut libc::c_void));
+
+        unsafe { dest.set_len(len); }
+        dest
     }
 }
 
@@ -1074,12 +1196,17 @@ pub struct CompileError<'ctxt, T: ShaderUnwrap> {
     shader: CompilingShader<T>,
     ctxt: &'ctxt Context3d,
 }
+impl<'ctxt, T: ShaderUnwrap> fmt::Display for CompileError<'ctxt, T> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.detail())
+    }
+}
 impl<'ctxt, T: ShaderUnwrap> CompileError<'ctxt, T> {
-    fn description(&self) -> &str {
+    pub fn description(&self) -> &str {
         const DESC: &'static str = "OpenGL shader compile error";
         DESC
     }
-    fn detail(&self) -> Option<String> {
+    pub fn detail(&self) -> String {
         let info_len = self.ctxt.get_shader_param(&self.shader, consts::INFO_LOG_LENGTH);
         let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as usize);
         let mut actual_len: types::Size = unsafe { uninitialized() };
@@ -1090,7 +1217,8 @@ impl<'ctxt, T: ShaderUnwrap> CompileError<'ctxt, T> {
                          &mut actual_len as *mut types::Size,
                          info_buf.as_mut_ptr() as *mut i8));
         let actual_len: usize = actual_len as usize;
-        Some(String::from_utf8_lossy(&info_buf[..actual_len]).to_string())
+        String::from_utf8_lossy(&info_buf[..actual_len])
+            .to_string()
     }
 }
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
@@ -1126,76 +1254,83 @@ pub struct FragmentShader(types::UInt);
 #[allow(missing_copy_implementations)] #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
 pub struct ShaderProgram(types::UInt);
 pub struct BoundShaderProgram<'a>(&'a ShaderProgram);
-#[allow(missing_copy_implementations)] #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
-pub struct UnlinkedShaderProgram(ShaderProgram);
-impl UnlinkedShaderProgram {
+
+#[derive(Eq, PartialEq, Hash)]
+pub struct UnlinkedShaderProgram<'a>(ShaderProgram, &'a Context3d);
+impl<'a> UnlinkedShaderProgram<'a> {
     pub unsafe fn get_program(&self) -> ShaderProgram {
-        self.inner().clone()
+        self.0.clone()
+    }
+}
+impl<'a> Drop for UnlinkedShaderProgram<'a> {
+    fn drop(&mut self) {
+        self.1.mark_program_for_drop(&self.0);
     }
 }
 
-pub struct LinkError<'ctxt> {
-    program: LinkingShaderProgram,
-    ctxt: &'ctxt Context3d,
-}
-impl<'ctxt> LinkError<'ctxt> {
-    fn description(&self) -> &str {
+pub struct LinkError<'a, 'b>(&'a LinkingShaderProgram<'b>)
+    where 'b: 'a;
+impl<'a, 'b> LinkError<'a, 'b> {
+    pub fn description(&self) -> &str {
         const DESC: &'static str = "OpenGL shader program linking error";
         DESC
     }
-    fn detail(&self) -> Option<String> {
-        let info_len = self.ctxt.get_program_param(&self.program, consts::INFO_LOG_LENGTH);
+    pub fn detail(&self) -> String {
+        let info_len = (self.0).1.get_program_param(&(self.0).0, consts::INFO_LOG_LENGTH);
         let mut info_buf: Vec<u8> = Vec::with_capacity(info_len as usize);
         let mut actual_len: types::Size = unsafe { uninitialized() };
         call_gl_fun!(get_gles2() => GetProgramInfoLog
-                     => (self.ctxt,
-                         unsafe { self.program.get_program().unwrap() },
+                     => ((self.0).1,
+                         unsafe { self.0.get_program().unwrap() },
                          info_buf.capacity() as types::Size,
                          &mut actual_len as *mut types::Size,
                          info_buf.as_mut_ptr() as *mut i8));
         let actual_len: usize = actual_len as usize;
-        Some(String::from_utf8_lossy(&info_buf[..actual_len]).to_string())
+        String::from_utf8_lossy(&info_buf[..actual_len])
+            .to_string()
     }
 }
 
 // A program that is currently is the process of linking.
 // Note there is no async access to the results (API level deficiency).
-#[allow(missing_copy_implementations)] #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
-pub struct LinkingShaderProgram(ShaderProgram);
-impl LinkingShaderProgram {
+#[derive(Eq, PartialEq, Hash)]
+pub struct LinkingShaderProgram<'a>(ShaderProgram, &'a Context3d);
+impl<'a> LinkingShaderProgram<'a> {
     pub unsafe fn get_program(&self) -> ShaderProgram {
-        self.inner().clone()
+        self.0.clone()
     }
 
-    pub fn results<'ctxt>(&self, ctxt: &'ctxt Context3d) -> Result<ShaderProgram, LinkError<'ctxt>> {
-        let status = ctxt.get_program_param(self, consts::LINK_STATUS);
+    pub fn results<'b>(&'b self) -> Result<ShaderProgram, LinkError<'a, 'b>> {
+        let status = self.1.get_program_param(self, consts::LINK_STATUS);
         if status == consts::TRUE as i32 {
             Ok(self.inner().clone())
         } else {
-            Err(LinkError {
-                program: self.clone(),
-                ctxt: ctxt,
-            })
+            Err(LinkError(self))
         }
+    }
+}
+impl<'a> Drop for LinkingShaderProgram<'a> {
+    fn drop(&mut self) {
+        self.1.mark_program_for_drop(&self.0);
     }
 }
 trait InnerProgram {
     fn inner<'a>(&'a self) -> &'a ShaderProgram;
 }
 impl InnerProgram for ShaderProgram {
-    #[inline(always)] fn inner<'a>(&'a self) -> &'a ShaderProgram {
+    fn inner<'a>(&'a self) -> &'a ShaderProgram {
         self
     }
 }
-impl InnerProgram for UnlinkedShaderProgram {
-    fn inner<'a>(&'a self) -> &'a ShaderProgram {
-        let &UnlinkedShaderProgram(ref inner) = self;
+impl<'a> InnerProgram for UnlinkedShaderProgram<'a> {
+    fn inner<'b>(&'b self) -> &'b ShaderProgram {
+        let &UnlinkedShaderProgram(ref inner, _) = self;
         inner
     }
 }
-impl InnerProgram for LinkingShaderProgram {
-    fn inner<'a>(&'a self) -> &'a ShaderProgram {
-        let &LinkingShaderProgram(ref inner) = self;
+impl<'a> InnerProgram for LinkingShaderProgram<'a> {
+    fn inner<'b>(&'b self) -> &'b ShaderProgram {
+        let &LinkingShaderProgram(ref inner, _) = self;
         inner
     }
 }
@@ -1241,26 +1376,44 @@ impl<'a, T: ShaderUnwrap> ShaderUnwrap for &'a CompilingShader<T> {
     }
 }
 
+#[derive(Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
+pub struct AttrLocus(types::UInt);
+
+/// A shader program object.
 impl ShaderProgram {
     fn unwrap(&self) -> types::UInt {
         let &ShaderProgram(inner) = self;
         inner
     }
 
-    pub fn new(ctxt: &Context3d) -> UnlinkedShaderProgram {
-        UnlinkedShaderProgram(ctxt.gen_shader_program())
+    pub fn new<'a>(ctxt: &'a Context3d) -> UnlinkedShaderProgram<'a> {
+        UnlinkedShaderProgram(ctxt.gen_shader_program(), ctxt)
     }
 
-    pub fn uniform_locale(&mut self,
+    /// TODO: should we force null-termination on the user?
+    pub fn uniform_locale(&self,
                           ctxt: &Context3d,
-                          name: &str) -> Option<types::Int> {
+                          name: &str) -> Option<AttrLocus> {
+        let name = format!("{}\0", name);
         let locus = call_gl_fun!(get_gles2() => GetUniformLocation => (ctxt,
                                                                        self.unwrap(),
                                                                        name.as_ptr() as *const i8));
         if locus == -1 {
             None
         } else {
-            Some(locus)
+            Some(AttrLocus(locus as types::UInt))
+        }
+    }
+    /// TODO: should we force null-termination on the user?
+    pub fn attr_locale(&self, ctxt: &Context3d, name: &str) -> Option<AttrLocus> {
+        let name = format!("{}\0", name);
+        let locus = call_gl_fun!(get_gles2() => GetAttribLocation => (ctxt,
+                                                                      self.unwrap(),
+                                                                      name.as_ptr() as *const i8));
+        if locus == -1 {
+            None
+        } else {
+            Some(AttrLocus(locus as types::UInt))
         }
     }
 
@@ -1269,8 +1422,8 @@ impl ShaderProgram {
         BoundShaderProgram(self)
     }
 
-    pub fn unlink(self) -> UnlinkedShaderProgram {
-        UnlinkedShaderProgram(self)
+    pub fn unlink<'a>(self, ctxt: &'a Context3d) -> UnlinkedShaderProgram<'a> {
+        UnlinkedShaderProgram(self, ctxt)
     }
 }
 
@@ -1313,15 +1466,20 @@ impl<'a> BoundShaderProgram<'a> {
         }
     }
 }
-impl UnlinkedShaderProgram {
+impl<'a> UnlinkedShaderProgram<'a> {
+    /// TODO: should we force null-termination on the user?
     pub fn bind_attrib_locale(&mut self,
                               ctxt: &Context3d,
-                              index: usize,
-                              name: &str) {
+                              index: types::UInt,
+                              name: &str) ->
+        AttrLocus
+    {
+        let name = format!("{}\0", name);
         call_gl_fun!(get_gles2() => BindAttribLocation => (ctxt,
                                                            self.inner().unwrap(),
-                                                           index as types::UInt,
-                                                           name.as_ptr() as *const i8))
+                                                           index,
+                                                           name.as_ptr() as *const i8));
+        AttrLocus(index)
     }
     pub fn attach_shader<T: traits::CompileShader + ShaderUnwrap>(&mut self,
                                                                   ctxt: &Context3d,
@@ -1330,11 +1488,13 @@ impl UnlinkedShaderProgram {
                                                      self.inner().unwrap(),
                                                      shader.unwrap()));
     }
-    pub fn link(self, ctxt: &Context3d) -> LinkingShaderProgram {
-        let UnlinkedShaderProgram(inner) = self;
+    pub fn link(self) -> LinkingShaderProgram<'a> {
+        let ctxt = self.1;
+        let inner = self.0.clone();
         call_gl_fun!(get_gles2() => LinkProgram => (ctxt,
                                                     inner.unwrap()));
-        LinkingShaderProgram(inner)
+        ::std::mem::forget(self);
+        LinkingShaderProgram(inner, ctxt)
     }
 }
 
@@ -1501,6 +1661,10 @@ impl Context3dAttrib {
 impl_resource_for!(Context3d, ResourceType::Graphics3D);
 
 impl Context3d {
+    pub fn mark_program_for_drop(&self, program: &ShaderProgram) {
+        call_gl_fun!(get_gles2() => DeleteProgram => (self, program.unwrap()));
+    }
+
     fn gen_vert_shader(&self) -> VertexShader {
         let handle = call_gl_fun!(get_gles2() => CreateShader => (self, consts::VERTEX_SHADER));
         VertexShader(handle)
@@ -1534,8 +1698,8 @@ impl Context3d {
         enum_.get(self)
     }
 
+    /// `slot` is added to consts::TEXTURE0.
     pub fn activate_tex_slot(&self,
-                             // note this param is added to consts::TEXTURE0
                              slot: types::Enum) {
         call_gl_fun!(get_gles2() => ActiveTexture => (self,
                                                       slot + consts::TEXTURE0))
@@ -1591,12 +1755,14 @@ impl Context3d {
                              width as libc::int32_t,
                              height as libc::int32_t)
     }
-    pub fn swap_buffers<T: Callback>(&self, next_frame: T) -> super::Code {
+    pub fn swap_buffers<F>(&self, next_frame: CallbackArgs<F, ()>) ->
+        Code<()> where F: FnOnce(Code<()>),
+    {
         use ppb::Graphics3DIf;
         let interface = ppb::get_graphics_3d();
 
-        let cc = next_frame.to_ffi_callback();
-        let r = interface.swap_buffers(self.unwrap(), cc.cc);
+        let cc = next_frame.to_ffi_callback((), Default::default());
+        let r = interface.swap_buffers(self.unwrap(), cc.cc());
         cc.drop_with_code(r)
     }
 }
