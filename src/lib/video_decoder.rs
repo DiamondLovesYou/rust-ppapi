@@ -107,8 +107,8 @@ pub struct Frame {
     pub tag: u32,
     texture: TextureBuffer,
     texture_target: gles::types::Enum,
-    texture_size: super::Size,
-    visible_rect: super::Rect,
+    pub texture_size: super::Size,
+    pub visible_rect: super::Rect,
 }
 impl Frame {
     pub fn format(&self) -> TexFormat { TexFormat::Rgba }
