@@ -137,6 +137,23 @@ pub struct RequestInfo {
     pub headers: Headers,
 }
 impl RequestInfo {
+    pub fn new(url: Url, method: Method,
+               body: Option<Body>, headers: Option<Headers>) -> RequestInfo {
+        RequestInfo {
+            url: url,
+            method: method,
+
+            prefetch_buffer: None,
+            properties: EnumSet::new(),
+            set_props: EnumSet::new(),
+
+            bodies: body
+                .map(|b| vec!(b) )
+                .unwrap_or_default(),
+
+            headers: headers.unwrap_or_else(|| Headers::new() ),
+        }
+    }
     fn clear_bit(bitfield: RequestProperties, prop: RequestProperties_) -> RequestProperties {
         let mut new = EnumSet::new();
         for p in bitfield
@@ -167,6 +184,11 @@ impl RequestInfo {
         let was_set = self.properties.contains(&prop);
         self.properties = new;
         was_set
+    }
+
+    pub fn follow_redirects(mut self) -> self {
+        self.set_prop_value(RequestProperties_::FollowRedirects, true);
+        self
     }
 
 }
