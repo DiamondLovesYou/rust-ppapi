@@ -1039,6 +1039,15 @@ impl TexFormat {
             &TexFormat::Rgba => consts::RGBA,
         }
     }
+    pub fn elements_len(&self) -> usize {
+        match self {
+            &TexFormat::Alpha => 1,
+            //&TexFormat::Luminance =>,
+            //&TexFormat::LuminanceAlpha =>,
+            &TexFormat::Rgb => 3,
+            &TexFormat::Rgba => 4,
+        }
+    }
 }
 
 impl traits::BindableTargetBuffer for TextureBuffer {
@@ -1150,7 +1159,7 @@ impl BoundBuffer<FrameBuffer> {
                           ty: T) -> Vec<<T as traits::BufferElementType>::Target>
         where T: traits::FrameBufferReadPixelsType
     {
-        let len = (rect.size.width * rect.size.height) as usize;
+        let len = (rect.size.width * rect.size.height * fmt.elements_len()) as usize;
         let mut dest: Vec<<T as traits::BufferElementType>::Target> =
             Vec::with_capacity(len);
 
