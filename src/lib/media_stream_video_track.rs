@@ -79,8 +79,8 @@ impl Attr {
 }
 
 impl VideoTrack {
-    pub fn configure<'a, T: AsRef<&'a [Attr]>, F>(&self, attrs: T, callback: F) -> Code
-        where F: Callback
+    pub fn configure<'a, T: AsRef<&'a [Attr]>, F>(&self, attrs: T, callback: CallbackArgs<F, ()>) -> Code<()>
+        where F: FnOnce(Code<()>)
     {
         use std::cmp::min;
 
