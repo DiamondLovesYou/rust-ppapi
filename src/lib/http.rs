@@ -8,12 +8,14 @@
 
 use super::{Callback, Resource, Instance, ToStringVar, ToVar, Code,
             StringVar, GenericResource, ResourceType, BlockUntilComplete,
-            Var};
+            Var, CallbackArgs};
 use super::ppb::{get_url_loader, get_url_loader_opt,
                  get_url_request_opt,
                  get_url_response};
 use ppb::{self, URLRequestInfoIf, URLResponseInfoIf, URLLoaderIf};
 
+use std::borrow::Cow;
+use std::io;
 use std::str::FromStr;
 use std::ops::Deref;
 
@@ -27,7 +29,7 @@ use super::ffi;
 use super::ffi::bool_to_var;
 use iurl::Url;
 
-use fs::{SliceIo, FileIo, FileView};
+use fs::{self, SliceIo, FileIo, FileView};
 
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct UrlRequestInfo(ffi::PP_Resource);
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct ResponseInfo(ffi::PP_Resource);
@@ -186,11 +188,18 @@ impl RequestInfo {
         was_set
     }
 
-    pub fn follow_redirects(mut self) -> self {
+    pub fn follow_redirects(mut self) -> RequestInfo {
         self.set_prop_value(RequestProperties_::FollowRedirects, true);
         self
     }
-
+    pub fn record_download_progress(mut self) -> RequestInfo {
+        self.set_prop_value(RequestProperties_::RecordDownloadProgress, true);
+        self
+    }
+    pub fn record_upload_progress(mut self) -> RequestInfo {
+        self.set_prop_value(RequestProperties_::RecordUploadProgress, true);
+        self
+    }
 }
 impl Into<Code<UrlRequestInfo>> for (Instance, RequestInfo) {
     fn into(self) -> Code<UrlRequestInfo> {
@@ -432,6 +441,7 @@ impl Loader {
 
     pub fn info(&self) -> ResponseInfo { self.info.clone() }
 
+    /// Completes when the response headers are received.
     pub fn async_open<F>(instance: Instance, info: UrlRequestInfo,
                          callback: super::CallbackArgs<F, Loader>) ->
         Code<Loader> where F: FnOnce(Code<Loader>)
@@ -455,5 +465,48 @@ impl Loader {
         try_code!(get_url_loader().open(loader, info.unwrap(),
                                         BlockUntilComplete::new()));
         Code::Ok(From::from(loader))
+    }
+}
+
+impl fs::AsyncRead for Loader {
+    fn async_read<'a, F>(&mut self, offset: u64, size: usize,
+                             callback: CallbackArgs<F, Cow<'a, [u8]>>) ->
+        Code<Cow<'a, [u8]>> where F: FnOnce(Code<Cow<'a, [u8]>>)
+    {
+        use super::StorageToArgsMapper;
+        if offset != 0 { return Code::BadArgument; }
+
+        fn map_arg<'a>(raw: Vec<u8>, _status: Code) -> Cow<'a, [u8]> {
+            Cow::Owned(raw)
+        }
+
+        let raw_args: Vec<u8> = Default::default();
+        let mapper = StorageToArgsMapper(map_arg);
+        let mut cc = callback.to_ffi_callback(raw_args, mapper);
+        let fficc = cc.cc();
+        let code = {
+            let dest: &mut [u8] = cc.as_mut();
+            get_url_loader()
+                .read_response_body(self.unwrap(), dest.as_mut_ptr() as *mut _,
+                                    size, fficc)
+        };
+        cc.drop_with_code(code)
+    }
+}
+impl io::Read for Loader {
+    fn read(&mut self, dest: &mut [u8]) -> io::Result<usize> {
+        let cc = BlockUntilComplete;
+        let cc = cc.to_ffi_callback();
+
+        let read = get_url_loader()
+            .read_response_body(self.unwrap(), dest.as_mut_ptr() as *mut _,
+                                dest.len(), cc.cc());
+
+        let read = match read {
+            Code::CompletionPending => unreachable!(),
+            Code::Ok(read) => read,
+            read => { return Err(read.into()); },
+        };
+        Ok(read as usize)
     }
 }

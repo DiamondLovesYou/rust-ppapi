@@ -559,6 +559,8 @@ pub trait URLLoaderIf {
             request: PP_Resource,
             callback: ffi::Struct_PP_CompletionCallback) -> Code;
     fn get_response_info(&self, loader: PP_Resource) -> Option<PP_Resource>;
+    fn read_response_body(&self, loader: PP_Resource, buffer: *mut libc::c_char, bytes: usize,
+                          callback: ffi::Struct_PP_CompletionCallback) -> Code<usize>;
 }
 impl URLLoaderIf for ffi::Struct_PPB_URLLoader_1_0 {
     fn create(&self, instance: PP_Instance) -> Option<PP_Resource> {
@@ -572,6 +574,11 @@ impl URLLoaderIf for ffi::Struct_PPB_URLLoader_1_0 {
     }
     fn get_response_info(&self, loader: PP_Resource) -> Option<PP_Resource> {
         impl_fun!(self.GetResponseInfo => (loader) -> Option<PP_Resource>)
+    }
+    fn read_response_body(&self, loader: PP_Resource, buffer: *mut libc::c_char, bytes: usize,
+                          callback: ffi::Struct_PP_CompletionCallback) -> Code<usize> {
+        impl_fun!(self.ReadResponseBody => (loader, buffer as *mut _,
+                                            bytes as libc::int32_t, callback) -> Code)
     }
 }
 pub trait URLRequestInfoIf {
