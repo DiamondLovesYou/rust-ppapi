@@ -20,7 +20,7 @@ use std::fmt;
 
 use libc;
 use libc::c_void;
-use super::{Resource, CallbackArgs, Code};
+use super::{Resource, CallbackArgs, Code, Rect};
 use super::ppb;
 use super::ppb::get_gles2;
 use ffi;
@@ -748,7 +748,7 @@ pub enum BufferData<'a, T: 'a>
 impl<'a, T> BufferData<'a, T>
     where [T]: ToOwned,
 {
-    fn byte_len(&self) -> usize {
+    pub fn byte_len(&self) -> usize {
         match self {
             &BufferData::Fill(ref buf) => buf.as_ref().len() * size_of::<T>(),
             &BufferData::Empty(len) => len * size_of::<T>(),
@@ -762,7 +762,7 @@ impl<'a, T> BufferData<'a, T>
         }
     }
 
-    fn map_raw_type<U>(&self) -> BufferData<'a, U>
+    pub fn map_raw_type<U>(&self) -> BufferData<'a, U>
         where [U]: ToOwned, U: Sized, <[T] as ToOwned>::Owned: AsRef<[T]>,
     {
         use std::slice::from_raw_parts;
@@ -887,12 +887,12 @@ impl BoundBuffer<VertexBuffer> {
                                                    buf.as_void_ptr(),
                                                    usage.get_usage_enum()))
     }
-    pub fn enable_vertex_attribute_array(&self, ctxt: &Context3d,
-                                         locus: AttrLocus) {
+    pub fn enable_vertex_attrib_array(&self, ctxt: &Context3d,
+                                      locus: AttrLocus) {
         call_gl_fun!(get_gles2() => EnableVertexAttribArray => (ctxt, locus.0));
     }
     pub fn vertex_attribute<T>(&self, ctxt: &Context3d, locus: AttrLocus,
-                               count: usize, ty: T, normalized: bool,
+                               count: usize, ty: T, normalize: bool,
                                stride: usize, offset: usize)
         where T: traits::VertexAttribType + Copy,
     {
@@ -900,7 +900,7 @@ impl BoundBuffer<VertexBuffer> {
                                                             locus.0 as types::UInt,
                                                             count   as types::Int,
                                                             ty.into(),
-                                                            normalized as types::Boolean,
+                                                            normalize as types::Boolean,
                                                             stride as types::Size,
                                                             offset.to_ptr_offset()))
     }
@@ -1378,6 +1378,8 @@ impl<'a, T: ShaderUnwrap> ShaderUnwrap for &'a CompilingShader<T> {
 
 #[derive(Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub struct AttrLocus(types::UInt);
+#[derive(Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
+pub struct UniformLocus(types::UInt);
 
 /// A shader program object.
 impl ShaderProgram {
@@ -1390,10 +1392,8 @@ impl ShaderProgram {
         UnlinkedShaderProgram(ctxt.gen_shader_program(), ctxt)
     }
 
-    /// TODO: should we force null-termination on the user?
-    pub fn uniform_locale(&self,
-                          ctxt: &Context3d,
-                          name: &str) -> Option<AttrLocus> {
+    /// TODO: force null-termination on callers?
+    pub fn uniform_locus(&self, ctxt: &Context3d, name: &str) -> Option<UniformLocus> {
         let name = format!("{}\0", name);
         let locus = call_gl_fun!(get_gles2() => GetUniformLocation => (ctxt,
                                                                        self.unwrap(),
@@ -1401,11 +1401,11 @@ impl ShaderProgram {
         if locus == -1 {
             None
         } else {
-            Some(AttrLocus(locus as types::UInt))
+            Some(UniformLocus(locus as types::UInt))
         }
     }
-    /// TODO: should we force null-termination on the user?
-    pub fn attr_locale(&self, ctxt: &Context3d, name: &str) -> Option<AttrLocus> {
+    /// TODO: force null-termination on callers?
+    pub fn attr_locus(&self, ctxt: &Context3d, name: &str) -> Option<AttrLocus> {
         let name = format!("{}\0", name);
         let locus = call_gl_fun!(get_gles2() => GetAttribLocation => (ctxt,
                                                                       self.unwrap(),
@@ -1427,24 +1427,34 @@ impl ShaderProgram {
     }
 }
 
-/// INTERNEL
-pub trait UniformFun {
-    fn uniform(&self, ctxt: &Context3d, locale: types::Int);
+
+pub trait Uniform {
+    fn uniform(&self, ctxt: &Context3d, locus: types::Int);
 }
 macro_rules! impl_uniform_fun_v(
     (($($ty:ty),*) -> $ident:ident) => {$(
-        impl<'a> UniformFun for &'a [$ty] {
+        impl<'a> Uniform for &'a [$ty] {
             fn uniform(&self,
                        ctxt: &Context3d,
-                       locale: types::Int) {
+                       locus: types::Int) {
                 let ptr = self.as_ptr();
                 call_gl_fun!(get_gles2() => $ident => (ctxt,
-                                                       locale,
+                                                       locus,
                                                        self.len() as types::Int,
                                                        ptr))
             }
         }
-    )*}
+    )*};
+    (impl $gl_name:ident { $($arg:expr),+ }) => {
+        fn uniform(&self,
+                   ctxt: &Context3d,
+                   locus: types::Int) {
+            let this = self;
+            call_gl_fun!(get_gles2() => $gl_name => (ctxt,
+                                                     locus,
+                                                     $($arg),*))
+        }
+    }
 );
 impl_uniform_fun_v!((types::Int)   -> Uniform1iv);
 impl_uniform_fun_v!((types::Float) -> Uniform1fv);
@@ -1454,24 +1464,21 @@ impl<'a> BoundShaderProgram<'a> {
         let &BoundShaderProgram(inner) = self;
         inner
     }
-    pub fn uniform<TP: UniformFun>(&mut self,
-                                   ctxt: &Context3d,
-                                   index: Option<i32>,
-                                   data: TP) {
-        match index {
-            Some(index) => {
-                data.uniform(ctxt, index as types::Int);
-            }
-            None => {}
-        }
+    pub fn uniform<TP: Uniform>(&mut self,
+                                ctxt: &Context3d,
+                                index: Option<UniformLocus>,
+                                data: TP) {
+        let index = index.map(|UniformLocus(index)| index as types::Int );
+        let index = index.unwrap_or(-1);
+        data.uniform(ctxt, index);
     }
 }
 impl<'a> UnlinkedShaderProgram<'a> {
     /// TODO: should we force null-termination on the user?
-    pub fn bind_attrib_locale(&mut self,
-                              ctxt: &Context3d,
-                              index: types::UInt,
-                              name: &str) ->
+    pub fn bind_attrib_locus(&mut self,
+                             ctxt: &Context3d,
+                             index: types::UInt,
+                             name: &str) ->
         AttrLocus
     {
         let name = format!("{}\0", name);
@@ -1698,7 +1705,7 @@ impl Context3d {
         enum_.get(self)
     }
 
-    /// `slot` is added to consts::TEXTURE0.
+    /// `slot` is added to `consts::TEXTURE0`.
     pub fn activate_tex_slot(&self,
                              slot: types::Enum) {
         call_gl_fun!(get_gles2() => ActiveTexture => (self,
@@ -1742,6 +1749,14 @@ impl Context3d {
             None => (),
         }
     }
+
+    pub fn viewport(&self, rect: Rect) {
+        call_gl_fun!(get_gles2() => Viewport => (self, rect.point.x as types::Int,
+                                                 rect.point.y as types::Int,
+                                                 rect.size.width as types::Int,
+                                                 rect.size.height as types::Int));
+    }
+
     pub fn clear(&self, mask: libc::c_uint) {
         call_gl_fun!(get_gles2() => Clear => (self,
                                               mask))
