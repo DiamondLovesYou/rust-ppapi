@@ -244,8 +244,8 @@ pub mod common {
 
         fn io(&self) -> &Self::Io;
 
-        fn view(&self, from: Option<u64>, to: Option<u64>) -> Self::View;
-        fn view_full(&self) -> Self::View { self.view(None, None) }
+        fn view(&self, from: u64, to: Option<u64>) -> Self::View;
+        fn view_full(&self) -> Self::View { self.view(0, None) }
 
         fn view_start(&self) -> u64;
         fn view_stop (&self) -> Option<u64>;
@@ -340,12 +340,12 @@ mod impl_ {
         type Io = FileIo;
         fn io(&self) -> &FileIo { self }
 
-        fn view(&self, from: Option<u64>, to: Option<u64>) -> SliceIo<FileIo> {
+        fn view(&self, from: u64, to: Option<u64>) -> SliceIo<FileIo> {
             match (from, to) {
-                (Some(from), Some(to)) => assert!(from <= to),
+                (from, Some(to)) => assert!(from <= to),
                 _ => (),
             }
-            SliceIo(self.clone(), from.unwrap_or_default(), to)
+            SliceIo(self.clone(), from, to)
         }
 
         fn view_start(&self) -> u64         { 0    }
@@ -359,12 +359,12 @@ mod impl_ {
 
         fn io(&self) -> &T { &self.0 }
 
-        fn view(&self, from: Option<u64>, to: Option<u64>) -> SliceIo<Self> {
+        fn view(&self, from: u64, to: Option<u64>) -> SliceIo<Self> {
             match (from, to) {
-                (Some(from), Some(to)) => assert!(from <= to),
+                (from, Some(to)) => assert!(from <= to),
                 _ => (),
             }
-            SliceIo(self.clone(), from.unwrap_or_default(), to)
+            SliceIo(self.clone(), from, to)
         }
 
         fn view_start(&self) -> u64         { self.1 }
