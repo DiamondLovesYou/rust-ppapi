@@ -571,6 +571,7 @@ impl iter::Iterator for TouchListIterator {
                                        Some(self.list.get(self.current - 1)) }
     }
 }
+#[allow(deprecated)]
 impl iter::RandomAccessIterator for TouchListIterator {
     fn indexable(&self) -> usize {
         self.size
@@ -668,6 +669,7 @@ impl<'a> iter::Iterator for IMESegmentIterator<'a> {
         self.event.segment_str(self.current - 1)
     }
 }
+#[allow(deprecated)]
 impl<'a> iter::RandomAccessIterator for IMESegmentIterator<'a> {
     fn indexable(&self) -> usize {
         self.event.segments_len()
