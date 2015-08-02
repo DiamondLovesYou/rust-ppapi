@@ -541,7 +541,15 @@ impl<T> Code<T> {
     }
     pub fn unwrap_completion_pending(self) {
         if !self.completion_pending() {
-            panic!("unexpected error code `{}`", self.map_err::<usize>())
+            let code: Code = Code::CompletionPending;
+            panic!("unexpected error code `{:?}`; expected `{:?}`",
+                   self.map_err::<usize>(), code)
+        }
+    }
+    pub fn aborted(&self) -> bool {
+        match self {
+            &Code::Aborted => true,
+            _ => false,
         }
     }
     pub fn is_err(&self) -> bool {
@@ -552,7 +560,7 @@ impl<T> Code<T> {
             v
         } else {
             let code: Code<usize> = self.map_err();
-            panic!("unexpected error code `{}`", code)
+            panic!("unexpected error code `{:?}`", code)
         }
     }
 }
