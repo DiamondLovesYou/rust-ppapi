@@ -10,14 +10,14 @@ use std::ptr;
 use libc::{c_char, c_void};
 
 mod consts {
-    pub static INSTANCE: &'static str = "PPP_Instance;1.1";
-    pub static MESSAGING: &'static str = "PPP_Messaging;1.0";
-    pub static INPUTEVENT: &'static str = "PPP_InputEvent;0.1";
-    pub static GRAPHICS: &'static str = "PPP_Graphics_3D;1.0";
+    pub static INSTANCE: &'static [u8] = b"PPP_Instance;1.1\0";
+    pub static MESSAGING: &'static [u8] = b"PPP_Messaging;1.0\0";
+    pub static INPUTEVENT: &'static [u8] = b"PPP_InputEvent;0.1\0";
+    pub static GRAPHICS: &'static [u8] = b"PPP_Graphics_3D;1.0\0";
 }
 mod globals {
-    use super::super::entry;
-    use super::super::ffi;
+    use entry;
+    use ffi;
     pub const INSTANCE: ffi::Struct_PPP_Instance_1_1 = ffi::Struct_PPP_Instance_1_1 {
         DidCreate: Some(entry::did_create as extern "C" fn(i32, u32, *mut *const i8, *mut *const i8) -> u32),
         DidDestroy: Some(entry::did_destroy as extern "C" fn(i32)),
@@ -40,25 +40,22 @@ mod globals {
 #[allow(dead_code)]
 #[doc(hidden)]
 #[allow(non_snake_case)]
-pub extern "C" fn PPP_GetInterface(interface_name: *const c_char) -> *const c_void {
+pub extern "C" fn PPP_GetInterface(name: *const c_char) -> *const c_void {
     use std::mem::transmute;
-    use std::ffi::CStr;
-    use std::str::from_utf8_unchecked;
+    use libc::strcmp;
 
-    let interface_name_buf = unsafe { CStr::from_ptr(interface_name) };
-    let name = unsafe { from_utf8_unchecked(interface_name_buf.to_bytes()) };
+    if name as usize == 0 { return ptr::null(); }
+
     unsafe {
-        if name == consts::INSTANCE {
+        if strcmp(name, consts::INSTANCE.as_ptr() as *const _) == 0 {
             transmute(&globals::INSTANCE)
-        } else if name == consts::MESSAGING {
+        } else if strcmp(name, consts::MESSAGING.as_ptr() as *const _) == 0 {
             transmute(&globals::MESSAGING)
-        } else if name == consts::INPUTEVENT {
+        } else if strcmp(name, consts::INPUTEVENT.as_ptr() as *const _) == 0 {
             transmute(&globals::INPUTEVENT)
-        } else if name == consts::GRAPHICS {
+        } else if strcmp(name, consts::GRAPHICS.as_ptr() as *const _) == 0 {
             transmute(&globals::GRAPHICS)
         } else {
-            warn!("PPAPI requested an unknown interface: `{}`",
-                  name);
             ptr::null()
         }
     }
