@@ -1746,6 +1746,10 @@ impl Console {
         inst
     }
 
+    pub fn print<T: ToVar>(&self, msg: T) {
+        self.log(ffi::PP_LOGLEVEL_TIP, msg)
+    }
+
 
     pub fn err<T: ToVar>(&self, msg: T) {
         self.log(ffi::PP_LOGLEVEL_ERROR, msg)
