@@ -297,8 +297,9 @@ mod impl_ {
     impl_clone_drop_for!(FileIo);
 
     #[derive(Hash, Eq, PartialEq, Debug, Clone)]
-    pub struct SliceIo<T = FileIo>(T, u64, Option<u64>) where T: FileView;
-    impl<T: FileView + Resource> Resource for SliceIo<T> {
+    /// Was `SliceIo<T>`, but rustc has a recursion bug :(
+    pub struct SliceIo(FileIo, u64, Option<u64>);
+    impl Resource for SliceIo {
         fn unwrap(&self) -> ffi::PP_Resource { self.io().unwrap() }
         fn type_of(&self) -> Option<ResourceType> { self.io().type_of() }
     }
@@ -336,16 +337,16 @@ mod impl_ {
     }
 
     impl FileView for FileIo {
-        type View = SliceIo<FileIo>;
+        type View = SliceIo;
         type Io = FileIo;
         fn io(&self) -> &FileIo { self }
 
-        fn view(&self, from: u64, to: Option<u64>) -> SliceIo<FileIo> {
+        fn view(&self, from: u64, to: Option<u64>) -> SliceIo {
             match (from, to) {
                 (from, Some(to)) => assert!(from <= to),
                 _ => (),
             }
-            SliceIo(self.clone(), from, to)
+            SliceIo(self.io().clone(), from, to)
         }
 
         fn view_start(&self) -> u64         { 0    }
@@ -353,18 +354,19 @@ mod impl_ {
 
         fn view_absolute_start(&self) -> u64 { 0 }
     }
-    impl<T: FileView> FileView for SliceIo<T> {
-        type View = SliceIo<Self>;
-        type Io = T;
+    impl FileView for SliceIo {
+        type View = SliceIo;
+        type Io = FileIo;
 
-        fn io(&self) -> &T { &self.0 }
+        fn io(&self) -> &FileIo { &self.0 }
 
-        fn view(&self, from: u64, to: Option<u64>) -> SliceIo<Self> {
+        fn view(&self, from: u64, to: Option<u64>) -> SliceIo {
             match (from, to) {
                 (from, Some(to)) => assert!(from <= to),
                 _ => (),
             }
-            SliceIo(self.clone(), from, to)
+            let to = to.map(|to| self.view_start() + to );
+            SliceIo(self.io().clone(), self.view_start() + from, to)
         }
 
         fn view_start(&self) -> u64         { self.1 }
@@ -500,7 +502,7 @@ mod impl_ {
         }
     }
 
-    impl<T: FileView> AsyncRead for SliceIo<T> {
+    impl AsyncRead for SliceIo {
         fn async_read<'a, F>(&mut self, offset: u64, size: usize,
                              callback: CallbackArgs<F, Cow<'a, [u8]>>) ->
             Code<Cow<'a, [u8]>> where F: FnOnce(Code<Cow<'a, [u8]>>)
@@ -515,7 +517,7 @@ mod impl_ {
             self.0.async_read(offset, size, callback)
         }
     }
-    impl<T: FileView> AsyncWrite for SliceIo<T> {
+    impl AsyncWrite for SliceIo {
         fn async_write<'a, F>(&mut self, offset: u64,
                               buffer: Cow<'a, [u8]>,
                               callback: CallbackArgs<F, (usize, Cow<'a, [u8]>)>) ->
@@ -530,8 +532,8 @@ mod impl_ {
             self.0.async_flush(callback)
         }
     }
-    impl<T: FileView> AsyncStream for SliceIo<T> { }
-    impl<T: FileView> AsyncCommon for SliceIo<T> {
+    impl AsyncStream for SliceIo { }
+    impl AsyncCommon for SliceIo {
         fn async_touch<F>(&self, atime: Time, mtime: Time,
                           callback: CallbackArgs<F, ()>) ->
             Code<()> where F: FnOnce(Code<()>)
@@ -566,7 +568,7 @@ mod impl_ {
             }
         }
     }
-    impl<T: FileView + SyncCommon> SyncCommon for SliceIo<T> {
+    impl SyncCommon for SliceIo {
         fn sync_touch(&self, atime: Time, mtime: Time) -> Code {
             self.io().sync_touch(atime, mtime)
         }
@@ -723,7 +725,7 @@ mod impl_ {
         }
     }
 
-    impl<T: FileView> Read for SliceIo<T> {
+    impl Read for SliceIo {
         fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
             let cc = BlockUntilComplete;
             let cc = cc.to_ffi_callback();
@@ -746,7 +748,7 @@ mod impl_ {
             Ok(read as usize)
         }
     }
-    impl<T: FileView> Seek for SliceIo<T> {
+    impl Seek for SliceIo {
         fn seek(&mut self, from: io::SeekFrom) -> io::Result<u64> {
             match from {
                 io::SeekFrom::Start(v) => {
@@ -772,7 +774,7 @@ mod impl_ {
             Ok(self.1)
         }
     }
-    impl<T: FileView> Write for SliceIo<T> {
+    impl Write for SliceIo {
         fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
             let cc = BlockUntilComplete;
             let cc = cc.to_ffi_callback();

@@ -29,7 +29,7 @@ use super::ffi;
 use super::ffi::bool_to_var;
 use iurl::Url;
 
-use fs::{self, SliceIo, FileIo, FileView};
+use fs::{self, SliceIo, FileView};
 
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct UrlRequestInfo(ffi::PP_Resource);
 #[derive(Hash, Eq, PartialEq, Debug)] pub struct ResponseInfo(ffi::PP_Resource);
@@ -93,7 +93,7 @@ impl Into<ffi::PP_URLRequestProperty> for RequestProperties_ {
 
 #[derive(Clone, Debug)]
 pub enum Body {
-    File(SliceIo<FileIo>, Option<super::Time>),
+    File(SliceIo, Option<super::Time>),
     Blob(Vec<u8>),
 }
 
