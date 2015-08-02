@@ -2757,7 +2757,7 @@ pub mod entry {
             return false.to_ffi_bool();
         }
 
-        let mut handled;
+        let handled;
         unsafe {
             let kbe = ppb::get_keyboard_event().IsKeyboardInputEvent.unwrap();
             let me  = ppb::get_mouse_event().IsMouseInputEvent.unwrap();
