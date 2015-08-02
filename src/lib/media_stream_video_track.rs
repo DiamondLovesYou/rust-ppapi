@@ -79,7 +79,7 @@ impl Attr {
 }
 
 impl VideoTrack {
-    pub fn configure<'a, T: AsRef<&'a [Attr]>, F>(&self, attrs: T, callback: CallbackArgs<F, ()>) -> Code<()>
+    pub fn configure<T: AsRef<[Attr]>, F>(&self, attrs: T, callback: CallbackArgs<F, ()>) -> Code<()>
         where F: FnOnce(Code<()>)
     {
         use std::cmp::min;
@@ -102,7 +102,7 @@ impl VideoTrack {
         }
         nattrs.push(ffi::PP_MEDIASTREAMVIDEOTRACK_ATTRIB_NONE);
 
-        let cc = callback.to_ffi_callback();
+        let cc = callback.to_ffi_callback((), Default::default());
 
         let code = get_media_stream_video_track()
             .configure(self.unwrap(), nattrs.as_ref(), cc.cc);
