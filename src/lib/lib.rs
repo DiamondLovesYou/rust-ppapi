@@ -2856,8 +2856,6 @@ pub extern "C" fn PPP_InitializeModule(modu: ffi::PP_Module,
     use self::entry::try_block;
     use log::set_logger;
 
-    static MAIN_TASK_NAME: &'static str = "main module task";
-
     // We can't fail! before this block!
     let result = try_block(move || {
         pp::initialize_globals(modu);
