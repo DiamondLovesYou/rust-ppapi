@@ -535,9 +535,9 @@ pub mod traits {
     impl_gen_buffer!(RenderBuffer,  GenRenderbuffers);
 
     pub trait DropBuffer {
-        // This is unsafe because there is no way for us to guarantee
-        // with a reasonable level of practicality that a buffer has
-        // no more references or live uses at time of call.
+        /// This is unsafe because there is no way for us to guarantee
+        /// with a reasonable level of practicality that a buffer has
+        /// no more references or live uses at time of call.
         unsafe fn drop_buffer(self, ctxt: &Context3d);
     }
     impl DropBuffer for BufferObject {
