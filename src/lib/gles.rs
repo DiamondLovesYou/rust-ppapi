@@ -1440,33 +1440,72 @@ impl ShaderProgram {
 pub trait Uniform {
     fn uniform(&self, ctxt: &Context3d, locus: types::Int);
 }
-macro_rules! impl_uniform_fun_v(
-    (($($ty:ty),*) -> $ident:ident) => {$(
-        impl<'a> Uniform for &'a [$ty] {
-            fn uniform(&self,
-                       ctxt: &Context3d,
-                       locus: types::Int) {
-                let ptr = self.as_ptr();
-                call_gl_fun!(get_gles2() => $ident => (ctxt,
-                                                       locus,
-                                                       self.len() as types::Int,
-                                                       ptr))
-            }
-        }
-    )*};
-    (impl $gl_name:ident { $($arg:expr),+ }) => {
-        fn uniform(&self,
-                   ctxt: &Context3d,
-                   locus: types::Int) {
-            let this = self;
-            call_gl_fun!(get_gles2() => $gl_name => (ctxt,
-                                                     locus,
-                                                     $($arg),*))
-        }
+impl Uniform for types::Int {
+    fn uniform(&self,
+               ctxt: &Context3d,
+               locus: types::Int) {
+        call_gl_fun!(get_gles2() => Uniform1i => (ctxt,
+                                                  locus,
+                                                  *self))
     }
-);
-impl_uniform_fun_v!((types::Int)   -> Uniform1iv);
-impl_uniform_fun_v!((types::Float) -> Uniform1fv);
+}
+impl Uniform for [types::Int] {
+    fn uniform(&self,
+               ctxt: &Context3d,
+               locus: types::Int) {
+        let this = self.as_ref();
+        let ptr = this.as_ptr();
+        call_gl_fun!(get_gles2() => Uniform1iv => (ctxt,
+                                                   locus,
+                                                   this.len() as types::Int,
+                                                   ptr))
+    }
+}
+impl<'a> Uniform for &'a [types::Int] {
+    fn uniform(&self,
+               ctxt: &Context3d,
+               locus: types::Int) {
+        let this = self.as_ref();
+        let ptr = this.as_ptr();
+        call_gl_fun!(get_gles2() => Uniform1iv => (ctxt,
+                                                   locus,
+                                                   this.len() as types::Int,
+                                                   ptr))
+    }
+}
+impl Uniform for types::Float {
+    fn uniform(&self,
+               ctxt: &Context3d,
+               locus: types::Int) {
+        call_gl_fun!(get_gles2() => Uniform1f => (ctxt,
+                                                  locus,
+                                                  *self))
+    }
+}
+impl Uniform for [types::Float] {
+    fn uniform(&self,
+               ctxt: &Context3d,
+               locus: types::Int) {
+        let this = self.as_ref();
+        let ptr = this.as_ptr();
+        call_gl_fun!(get_gles2() => Uniform1fv => (ctxt,
+                                                   locus,
+                                                   this.len() as types::Int,
+                                                   ptr))
+    }
+}
+impl<'a> Uniform for &'a [types::Float] {
+    fn uniform(&self,
+               ctxt: &Context3d,
+               locus: types::Int) {
+        let this = self.as_ref();
+        let ptr = this.as_ptr();
+        call_gl_fun!(get_gles2() => Uniform1fv => (ctxt,
+                                                   locus,
+                                                   this.len() as types::Int,
+                                                   ptr))
+    }
+}
 
 impl<'a> BoundShaderProgram<'a> {
     fn unwrap(&self) -> &'a ShaderProgram {
