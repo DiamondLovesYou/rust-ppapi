@@ -200,19 +200,16 @@ impl RequestInfo {
         self.set_prop_value(RequestProperties_::RecordUploadProgress, true);
         self
     }
-}
-impl Into<Code<UrlRequestInfo>> for (Instance, RequestInfo) {
-    fn into(self) -> Code<UrlRequestInfo> {
-        let (instance, this) = self;
 
+    pub fn create_resource(self, instance: Instance) -> Code<UrlRequestInfo> {
         let request = get_url_request_opt();
         if request.is_none() { return Code::NoInterface; }
         let request = request.unwrap();
 
         let res = try_code!(instance.create_url_request_info());
 
-        let set_true = this.set_props.intersection(this.properties);
-        let set_false = this.set_props - set_true;
+        let set_true = self.set_props.intersection(self.properties);
+        let set_false = self.set_props - set_true;
 
         let true_var = unsafe { bool_to_var(1) };
         let false_var = unsafe { bool_to_var(0) };
@@ -227,7 +224,7 @@ impl Into<Code<UrlRequestInfo>> for (Instance, RequestInfo) {
         }
         let RequestInfo {
             bodies, headers, url, method, ..
-        } = this;
+        } = self;
         for body in bodies.into_iter() {
             let success = match body {
                 Body::File(ref slice, time) => {
@@ -261,6 +258,12 @@ impl Into<Code<UrlRequestInfo>> for (Instance, RequestInfo) {
                                                   method.to_var());
         if !success { return Code::Failed; }
         Code::Ok(res)
+    }
+}
+impl Into<Code<UrlRequestInfo>> for (Instance, RequestInfo) {
+    fn into(self) -> Code<UrlRequestInfo> {
+        let (instance, this) = self;
+        this.create_resource(instance)
     }
 }
 
