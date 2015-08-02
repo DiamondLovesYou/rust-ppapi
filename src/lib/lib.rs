@@ -1639,16 +1639,26 @@ impl ArrayVar {
     pub fn new() -> ArrayVar {
         ArrayVar::new_from_var(ppb::get_array().create())
     }
+    pub fn from<T>(v: &[T]) -> ArrayVar
+        where T: ToVar,
+    {
+        let mut this = ArrayVar::new();
+        assert!(this.resize(v.len()));
+        for (index, value) in v.iter().enumerate() {
+            this.set(index, value);
+        }
+        this
+    }
     pub fn len(&self) -> usize {
         ppb::get_array().get_len(&self.to_var()) as usize
     }
-    pub fn resize(&self, new_len: usize) -> bool {
+    pub fn resize(&mut self, new_len: usize) -> bool {
         ppb::get_array().set_len(&self.to_var(), new_len as libc::uint32_t)
     }
     pub fn get(&self, index: usize) -> AnyVar {
         AnyVar::new(ppb::get_array().get(&self.to_var(), index as libc::uint32_t))
     }
-    pub fn set<T: ToVar>(&self, index: usize, value: &T) -> bool {
+    pub fn set<T: ToVar>(&mut self, index: usize, value: &T) -> bool {
         ppb::get_array().set(&self.to_var(), index as u32, &value.to_var())
     }
 
