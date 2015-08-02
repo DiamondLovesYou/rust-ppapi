@@ -138,7 +138,7 @@ impl Into<ffi::Struct_PP_VideoPicture> for Frame {
 }
 impl gles::traits::BindableBuffer for Frame {
     type Target = gles::BoundTexBuffer;
-    fn bind(&self, ctxt: &mut Context3d) -> gles::BoundTexBuffer {
+    fn bind(&self, ctxt: &Context3d) -> gles::BoundTexBuffer {
         use gles::traits::BindableTargetBuffer;
         self.texture.bind(ctxt, self.texture_target)
     }

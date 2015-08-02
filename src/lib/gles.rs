@@ -380,9 +380,8 @@ pub mod traits {
     use super::Context3d;
     use super::{types, consts};
     use super::super::ppb::get_gles2;
-    use super::{BufferType, BoundBuffer, BufferObject,
-                VertexBuffer, IndexBuffer, TextureBuffer, FrameBuffer,
-                RenderBuffer};
+    use super::{BufferType, BufferObject, VertexBuffer, IndexBuffer,
+                TextureBuffer, FrameBuffer, RenderBuffer};
     use std::clone::Clone;
     use std::borrow::Cow;
     use std::borrow::ToOwned;
@@ -458,57 +457,46 @@ pub mod traits {
         }
         fn to_object(&self) -> BufferObject { (*self).clone() }
     }
-    impl<T: Buffer> Buffer for BoundBuffer<T> {
-        fn unwrap(&self) -> types::UInt {
-            let &BoundBuffer(ref inner) = self;
-            inner.unwrap()
-        }
-        fn get_type(&self) -> BufferType {
-            let &BoundBuffer(ref inner) = self;
-            inner.get_type()
-        }
-        fn to_object(&self) -> BufferObject {
-            let &BoundBuffer(ref inner) = self;
-            inner.to_object()
-        }
-    }
 
     pub trait BindableTargetBuffer
         where <Self as BindableTargetBuffer>::Target: Buffer,
     {
-        type Target; type TargetArg = types::Enum;
-        fn bind(&self, ctxt: &mut Context3d, target: Self::TargetArg) -> Self::Target;
+        type Target;
+        type TargetArg;
+        fn bind(&self, ctxt: &Context3d, target: Self::TargetArg) -> Self::Target;
     }
 
     pub trait BindableBuffer
         where <Self as BindableBuffer>::Target: Buffer,
     {
-        type Target = BoundBuffer<Self>;
-        fn bind(&self, ctxt: &mut Context3d) -> Self::Target;
+        type Target;
+        fn bind(&self, ctxt: &Context3d) -> Self::Target;
     }
     macro_rules! std_buffer_bind(
-        ($ty:ty => $fun:ident($target:expr)) => {
+        ($ty:ty => $bound_ty:ident => $fun:ident($target:expr)) => {
             impl BindableBuffer for $ty {
-                fn bind(&self, ctxt: &mut Context3d) -> BoundBuffer<$ty> {
+                type Target = super::$bound_ty;
+                fn bind(&self, ctxt: &Context3d) -> super::$bound_ty {
                     call_gl_fun!(get_gles2() => $fun => (ctxt,
                                                          $target,
                                                          self.unwrap()));
-                    BoundBuffer(self.to_owned())
+                    super::$bound_ty(self.to_owned())
                 }
             }
         }
     );
-    std_buffer_bind!(VertexBuffer => BindBuffer(consts::ARRAY_BUFFER));
-    std_buffer_bind!(IndexBuffer  => BindBuffer(consts::ELEMENT_ARRAY_BUFFER));
-    std_buffer_bind!(RenderBuffer => BindFramebuffer(consts::RENDERBUFFER));
+    std_buffer_bind!(VertexBuffer => BoundVtxBuffer => BindBuffer(consts::ARRAY_BUFFER));
+    std_buffer_bind!(IndexBuffer  => BoundIdxBuffer => BindBuffer(consts::ELEMENT_ARRAY_BUFFER));
+    std_buffer_bind!(RenderBuffer => BoundRdrBuffer => BindFramebuffer(consts::RENDERBUFFER));
 
     impl BindableBuffer for FrameBuffer {
-        fn bind(&self, ctxt: &mut Context3d) -> BoundBuffer<FrameBuffer> {
+        type Target = super::BoundFboBuffer;
+        fn bind(&self, ctxt: &Context3d) -> super::BoundFboBuffer {
             call_gl_fun!(get_gles2() => BindFramebuffer => (ctxt,
                                                             consts::FRAMEBUFFER,
                                                             self.unwrap()));
             ctxt.clear(super::consts::COLOR_BUFFER_BIT);
-            BoundBuffer(self.to_owned())
+            super::BoundFboBuffer(self.to_owned())
         }
     }
 
@@ -813,9 +801,34 @@ impl OptPointerOffset for usize {
 }
 
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
-pub struct BoundBuffer<T>(T);
-pub type BoundVertBuffer = BoundBuffer<VertexBuffer>;
-pub type BoundIdxBuffer  = BoundBuffer<IndexBuffer>;
+pub struct BoundVtxBuffer(VertexBuffer);
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+pub struct BoundIdxBuffer(IndexBuffer);
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+pub struct BoundFboBuffer(FrameBuffer);
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Hash)]
+pub struct BoundRdrBuffer(RenderBuffer);
+
+impl traits::Buffer for BoundVtxBuffer {
+    fn unwrap(&self) -> types::UInt { self.0.unwrap() }
+    fn get_type(&self) -> BufferType { self.0.get_type() }
+    fn to_object(&self) -> BufferObject { self.0.to_object() }
+}
+impl traits::Buffer for BoundIdxBuffer {
+    fn unwrap(&self) -> types::UInt { self.0.unwrap() }
+    fn get_type(&self) -> BufferType { self.0.get_type() }
+    fn to_object(&self) -> BufferObject { self.0.to_object() }
+}
+impl traits::Buffer for BoundFboBuffer {
+    fn unwrap(&self) -> types::UInt { self.0.unwrap() }
+    fn get_type(&self) -> BufferType { self.0.get_type() }
+    fn to_object(&self) -> BufferObject { self.0.to_object() }
+}
+impl traits::Buffer for BoundRdrBuffer {
+    fn unwrap(&self) -> types::UInt { self.0.unwrap() }
+    fn get_type(&self) -> BufferType { self.0.get_type() }
+    fn to_object(&self) -> BufferObject { self.0.to_object() }
+}
 
 // Geo modes
 #[derive(Copy, Clone)] pub struct PointsGeometryMode;
@@ -874,7 +887,15 @@ impl_geo_mode!(TriangleFanGeometryMode,   consts::TRIANGLE_FAN);
 impl_geo_mode!(TrianglesGeometryMode,     consts::TRIANGLES);
 // /Geo modes
 
-impl BoundBuffer<VertexBuffer> {
+impl VertexBuffer {
+    /// Convenience function which doesn't require `traits::BindableBuffer` be in scope.
+    pub fn bind_vtx_buf(&self, ctxt: &Context3d) -> BoundVtxBuffer {
+        use self::traits::BindableBuffer;
+        self.bind(ctxt)
+    }
+}
+
+impl BoundVtxBuffer {
     pub fn buffer_vertex_data<'a, T>(&self,
                                      ctxt: &Context3d,
                                      buf: BufferData<'a, u8>,
@@ -996,7 +1017,15 @@ macro_rules! impl_idx_elem_type(
 impl_idx_elem_type!(UByteType);
 impl_idx_elem_type!(UShortType);
 
-impl BoundBuffer<IndexBuffer> {
+impl IndexBuffer {
+    /// Convenience function which doesn't require `traits::BindableBuffer` be in scope.
+    pub fn bind_idx_buf(&self, ctxt: &Context3d) -> BoundIdxBuffer {
+        use self::traits::BindableBuffer;
+        self.bind(ctxt)
+    }
+}
+
+impl BoundIdxBuffer {
     pub fn buffer_index_data<'a, U>(&self, ctxt: &Context3d,
                                     buf: BufferData<'a, u8>,
                                     usage: U)
@@ -1050,9 +1079,18 @@ impl TexFormat {
     }
 }
 
+impl TextureBuffer {
+    /// Convenience function which doesn't require `traits::BindableBuffer` be in scope.
+    pub fn bind_tex_buf(&self, ctxt: &Context3d, target: types::Enum) -> BoundTexBuffer {
+        use self::traits::BindableTargetBuffer;
+        self.bind(ctxt, target)
+    }
+}
+
 impl traits::BindableTargetBuffer for TextureBuffer {
     type Target = BoundTexBuffer;
-    fn bind(&self, ctxt: &mut Context3d, target: types::Enum) -> BoundTexBuffer {
+    type TargetArg = types::Enum;
+    fn bind(&self, ctxt: &Context3d, target: types::Enum) -> BoundTexBuffer {
         let bound = BoundTexBuffer {
             tex: self.clone(),
             target: target,
@@ -1066,7 +1104,7 @@ pub struct BoundTexBuffer {
     target: types::Enum,
 }
 impl BoundTexBuffer {
-    pub fn rebind(&self, ctxt: &mut Context3d) {
+    pub fn rebind(&self, ctxt: &Context3d) {
         use self::traits::Buffer;
         call_gl_fun!(get_gles2() => BindTexture => (ctxt,
                                                     self.target,
@@ -1133,7 +1171,17 @@ impl Into<types::Enum> for StencilAttachment {
 }
 impl FrameBufferTextureAttachment for StencilAttachment { }*/
 
-impl BoundBuffer<FrameBuffer> {
+impl traits::FrameBufferReadPixelsType for UByteType { }
+
+impl FrameBuffer {
+    /// Convenience function which doesn't require `traits::BindableBuffer` be in scope.
+    pub fn bind_fbo_buf(&self, ctxt: &Context3d) -> BoundFboBuffer {
+        use self::traits::BindableBuffer;
+        self.bind(ctxt)
+    }
+}
+
+impl BoundFboBuffer {
     pub fn attach_tex2d<T>(&mut self,
                            ctxt: &Context3d,
                            attachment: T,
@@ -1159,7 +1207,8 @@ impl BoundBuffer<FrameBuffer> {
                           ty: T) -> Vec<<T as traits::BufferElementType>::Target>
         where T: traits::FrameBufferReadPixelsType
     {
-        let len = (rect.size.width * rect.size.height * fmt.elements_len()) as usize;
+        let len = (rect.size.width * rect.size.height) as usize;
+        let len = fmt.elements_len() * len;
         let mut dest: Vec<<T as traits::BufferElementType>::Target> =
             Vec::with_capacity(len);
 
@@ -1205,7 +1254,7 @@ pub struct CompileError<'ctxt, T: ShaderUnwrap> {
     shader: CompilingShader<T>,
     ctxt: &'ctxt Context3d,
 }
-impl<'ctxt, T: ShaderUnwrap> fmt::Display for CompileError<'ctxt, T> {
+impl<'ctxt, T: ShaderUnwrap> fmt::Debug for CompileError<'ctxt, T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.detail())
     }
@@ -1298,6 +1347,15 @@ impl<'a, 'b> LinkError<'a, 'b> {
         String::from_utf8_lossy(&info_buf[..actual_len])
             .to_string()
     }
+}
+impl<'a, 'b> fmt::Debug for LinkError<'a, 'b>
+    where 'b: 'a,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Shader linking error: `{}`",
+               self.detail())
+    }
+
 }
 
 // A program that is currently is the process of linking.
@@ -1426,7 +1484,7 @@ impl ShaderProgram {
         }
     }
 
-    pub fn use_program<'a>(&'a self, ctxt: &mut Context3d) -> BoundShaderProgram<'a> {
+    pub fn use_program<'a>(&'a self, ctxt: &Context3d) -> BoundShaderProgram<'a> {
         call_gl_fun!(get_gles2() => UseProgram => (ctxt, self.unwrap()));
         BoundShaderProgram(self)
     }
