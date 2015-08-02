@@ -19,11 +19,13 @@ doc = true
 
 [dependencies]
 log = "*"
-openssl = "*"
 url = "*"
-hyper = "*"
 httparse = "*"
 libc = "0.1.6"
+
+[dependencies.hyper]
+version = "*"
+default-features = false
 
 [build-dependencies.pnacl-build-helper]
 version = "*"
