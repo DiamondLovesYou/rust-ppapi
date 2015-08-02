@@ -146,12 +146,12 @@ impl gles::traits::BindableBuffer for Frame {
 
 impl VideoDecoder {
     pub fn initialize<F>(&self, g3d: Context3d, profile: Profile,
-                         accel: Acceleration, callback: F) -> Code
-        where F: Callback,
+                         accel: Acceleration, callback: CallbackArgs<F, ()>) -> Code<()>
+        where F: FnOnce(Code<()>),
     {
         get_video_decoder_opt()
             .map(move |i| {
-                let cc = callback.to_ffi_callback();
+                let cc = callback.to_ffi_callback((), Default::default());
                 let code = i.initialize(self.unwrap(), g3d.unwrap(), profile.into(),
                                         accel.into(), cc.cc());
                 cc.drop_with_code(code)
@@ -159,31 +159,36 @@ impl VideoDecoder {
             .unwrap_or(Code::NoInterface)
     }
     /// PPAPI allocates it's own copy of the data before returning.
-    pub fn decode<'a, F>(&self, decode_tag: u32, data: Cow<'a, [u8]>, callback: F) -> Code
-        where F: Callback
+    pub fn decode<'a, F>(&self, decode_tag: u32, data: Cow<'a, [u8]>,
+                         callback: CallbackArgs<F, ()>) -> Code<()>
+        where F: FnOnce(Code<()>)
     {
         get_video_decoder_opt()
             .map(move |i| {
-                let cc = callback.to_ffi_callback();
+                let cc = callback.to_ffi_callback((), Default::default());
                 let code = i.decode(self.unwrap(), decode_tag,
                                     data.as_ref().len(), data.as_ref().as_ptr(), cc.cc());
                 cc.drop_with_code(code)
             })
             .unwrap_or(Code::NoInterface)
     }
-    pub fn flush<F>(&self, callback: F) -> Code where F: Callback {
+    pub fn flush<F>(&self, callback: CallbackArgs<F, ()>) -> Code<()>
+        where F: FnOnce(Code<()>)
+    {
         get_video_decoder_opt()
             .map(move |i| {
-                let cc = callback.to_ffi_callback();
+                let cc = callback.to_ffi_callback((), Default::default());
                 let code = i.flush(self.unwrap(), cc.cc());
                 cc.drop_with_code(code)
             })
             .unwrap_or(Code::NoInterface)
     }
-    pub fn reset<F>(&self, callback: F) -> Code where F: Callback {
+    pub fn reset<F>(&self, callback: CallbackArgs<F, ()>) -> Code<()>
+        where F: FnOnce(Code<()>)
+    {
         get_video_decoder_opt()
             .map(move |i| {
-                let cc = callback.to_ffi_callback();
+                let cc = callback.to_ffi_callback((), Default::default());
                 let code = i.reset(self.unwrap(), cc.cc());
                 cc.drop_with_code(code)
             })
