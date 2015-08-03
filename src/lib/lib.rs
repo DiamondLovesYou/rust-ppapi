@@ -1568,7 +1568,7 @@ impl ops::Deref for StringVar {
             let mut len: u32 = mem::uninitialized();
             let buf = f(self.to_var(), &mut len as *mut u32);
             let len = len as usize;
-            let slice = from_raw_parts(transmute(&buf), len);
+            let slice = from_raw_parts(transmute(buf), len);
             transmute(from_utf8_unchecked(slice))
         }
     }
