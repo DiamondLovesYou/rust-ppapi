@@ -252,7 +252,6 @@ macro_rules! impl_fun(
         #[inline(never)] fn failure() -> ! {
             panic!("Interface function \"{}\" missing!", stringify!($fun))
         }
-        println!("calling `{}`", stringify!($fun));
         let f = if $fun.is_none() { failure() }
                 else { $fun.unwrap() };
         f( $($arg),* )
@@ -270,7 +269,6 @@ macro_rules! impl_fun(
         #[inline(never)] fn failure() -> ! {
             panic!("Interface function \"{}\" missing!", stringify!($fun))
         }
-        println!("calling `{}`", stringify!($fun));
         let f = if $fun.is_none() { failure() }
                 else { $fun.unwrap() };
         f()
