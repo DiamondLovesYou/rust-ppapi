@@ -2408,7 +2408,7 @@ impl MessageLoop {
         self.get_ref().queue_shutdown().expect("message loop shutdown failed");
     }
 
-    fn on_change_view(&mut self, view: View) {
+    fn on_change_view(&self, view: View) {
         self.get_ref()
             .post_work(move |_| {
                 unsafe {
@@ -2421,7 +2421,7 @@ impl MessageLoop {
                        0)
             .expect("couldn't tell an instance about an on_change_view event");
     }
-    fn on_change_focus(&mut self, has_focus: bool) {
+    fn on_change_focus(&self, has_focus: bool) {
         self.get_ref()
             .post_work(move |_| {
                 unsafe {
@@ -2434,7 +2434,7 @@ impl MessageLoop {
                        0)
             .expect("couldn't tell an instance about an on_change_focus event");
     }
-    fn on_document_load(&mut self, loader: http::Loader) -> bool {
+    fn on_document_load(&self, loader: http::Loader) -> bool {
         use std::sync::mpsc::channel;
         let (tx, rx) = channel();
         self.get_ref()
