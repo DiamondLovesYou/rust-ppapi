@@ -11,7 +11,6 @@ use libc::{c_char, c_void};
 
 mod consts {
     pub static INSTANCE: &'static [u8] = b"PPP_Instance;1.1\0";
-    pub static MESSAGING: &'static [u8] = b"PPP_Messaging;1.0\0";
     pub static INPUTEVENT: &'static [u8] = b"PPP_InputEvent;0.1\0";
     pub static GRAPHICS: &'static [u8] = b"PPP_Graphics_3D;1.0\0";
 }
@@ -24,9 +23,6 @@ mod globals {
         DidChangeView: Some(entry::did_change_view as extern "C" fn(i32, i32)),
         DidChangeFocus: Some(entry::did_change_focus as extern "C" fn(i32, u32)),
         HandleDocumentLoad: Some(entry::handle_document_load as extern "C" fn(i32, i32) -> u32),
-    };
-    pub static MESSAGING: ffi::Struct_PPP_Messaging_1_0 = ffi::Struct_PPP_Messaging_1_0 {
-        HandleMessage: Some(entry::handle_message as extern "C" fn(i32, ffi::Struct_PP_Var)),
     };
     pub static INPUTEVENT: ffi::Struct_PPP_InputEvent_0_1 = ffi::Struct_PPP_InputEvent_0_1 {
         HandleInputEvent: Some(entry::handle_input_event as extern "C" fn(i32, i32) -> u32),
@@ -49,8 +45,6 @@ pub extern "C" fn PPP_GetInterface(name: *const c_char) -> *const c_void {
     unsafe {
         if strcmp(name, consts::INSTANCE.as_ptr() as *const _) == 0 {
             transmute(&globals::INSTANCE)
-        } else if strcmp(name, consts::MESSAGING.as_ptr() as *const _) == 0 {
-            transmute(&globals::MESSAGING)
         } else if strcmp(name, consts::INPUTEVENT.as_ptr() as *const _) == 0 {
             transmute(&globals::INPUTEVENT)
         } else if strcmp(name, consts::GRAPHICS.as_ptr() as *const _) == 0 {

@@ -40,9 +40,6 @@ pub extern fn ppapi_on_change_view(view: ppapi::View) {
 pub extern fn ppapi_on_change_focus(has_focus: bool) {
 }
 #[no_mangle]
-pub extern fn ppapi_on_message(msg: ppapi::AnyVar) {
-}
-#[no_mangle]
 pub extern fn ppapi_on_input(event: ppapi::input::Class) -> bool {
 }
 #[no_mangle]
@@ -185,6 +182,7 @@ pub mod fs;
 pub mod media_stream_video_track;
 pub mod video_frame;
 pub mod video_decoder;
+pub mod message_handler;
 
 #[cfg(feature = "pepper")]
 #[link(name = "helper", kind = "static")]
@@ -959,6 +957,7 @@ impl MessageLoop {
 
     /// Work posted beforehand will still run.
     pub fn queue_shutdown(&self) -> Code {
+        message_handler::unregister_handlers(self);
         Code::from_i32((ppb::get_message_loop().PostQuit.unwrap())(self.unwrap(), ffi::PP_TRUE))
     }
 }
@@ -2724,23 +2723,6 @@ pub mod entry {
         return handled.to_ffi_bool();
     }
 
-    pub extern "C" fn handle_message(inst: ffi::PP_Instance, msg: ffi::PP_Var) {
-        let instance = Instance::new(inst);
-        instance.check_current();
-
-        if super::ppapi_on_message.is_null() {
-            warn!("plugin is missing 'ppapi_on_message'");
-            return;
-        }
-
-        debug!("handle_message");
-        unsafe {
-            let on_message: fn(AnyVar) = transmute(super::ppapi_on_message);
-            on_message(AnyVar::new_bumped(msg));
-        }
-    }
-
-
     // this is called from the instance's thread, not from main.
     pub extern "C" fn handle_input_event(inst: ffi::PP_Instance,
                                          event: ffi::PP_Resource) -> ffi::PP_Bool {
@@ -2820,10 +2802,6 @@ extern {
     #[no_mangle]
     #[linkage = "extern_weak"]
     static ppapi_on_change_focus: *const libc::c_void;
-
-    #[no_mangle]
-    #[linkage = "extern_weak"]
-    static ppapi_on_message: *const libc::c_void;
 
     #[no_mangle]
     #[linkage = "extern_weak"]
