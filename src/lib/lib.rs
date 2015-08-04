@@ -14,7 +14,7 @@ To use, you will need to implement at least these two functions:
 #![no_main]
 #[no_managle]
 pub extern fn ppapi_instance_created(instance: Instance,
-                                     args: HashMap<String, String>) {
+                                     args: Vec<(String, String)>) {
 }
 #[no_managle]
 pub extern fn ppapi_instance_destroyed() {
@@ -69,15 +69,11 @@ More info:
 #![feature(unboxed_closures)]
 #![feature(box_syntax)] #![feature(box_patterns)]
 #![feature(collections)]
-#![feature(alloc)]
 #![feature(core)]
 #![feature(scoped_tls)]
 #![feature(map_in_place)]
 #![feature(enumset)]
 #![feature(iter_idx)]
-#![feature(range_inclusive)]
-#![feature(read_and_zero)]
-#![feature(heap_api)]
 #![feature(catch_panic)]
 
 #![allow(dead_code)]
@@ -90,13 +86,10 @@ extern crate hyper;
 extern crate httparse;
 extern crate url as iurl;
 extern crate libc;
-extern crate alloc;
 
 use std::{cmp};
 use std::mem::{self, transmute};
-use std::ptr;
 use std::ops;
-use std::iter;
 use std::clone;
 use std::result;
 use std::collections::HashMap;
@@ -1776,27 +1769,6 @@ impl Console {
     }
 }
 
-fn parse_args(argc: u32,
-              argk: *mut *const libc::c_char,
-              argv: *mut *const libc::c_char) -> HashMap<String, String> {
-    use std::ffi::CStr;
-    use std::str::from_utf8_unchecked;
-    let argc = if argc == 0 { 0 }
-               else { argc as isize - 1 };
-    iter::range_inclusive(0, argc)
-        .map(|i| {
-            let ak = unsafe { *argk.offset(i) };
-            let av = unsafe { *argv.offset(i) };
-            let ak_buf = unsafe { CStr::from_ptr(ak) };
-            let av_buf = unsafe { CStr::from_ptr(av) };
-            let ak_str = unsafe { from_utf8_unchecked(ak_buf.to_bytes()) };
-            let av_str = unsafe { from_utf8_unchecked(av_buf.to_bytes()) };
-
-            (ak_str.to_string(), av_str.to_string())
-        })
-        .collect()
-}
-
 /// Update any internal self referential pointers/refs. This is only called
 /// after the object has been placed into it's final callback-storage location.
 pub trait InPlaceInit {
@@ -2144,13 +2116,13 @@ impl BlockUntilComplete {
 }
 
 struct ConsoleLogger {
-    filter_levels: HashMap<Instance, log::LogLevelFilter>,
+    filter_levels: Option<HashMap<Instance, log::LogLevelFilter>>,
     current_filter: log::MaxLogLevelFilter,
 }
 impl ConsoleLogger {
     fn new(filter: log::MaxLogLevelFilter) -> ConsoleLogger {
         ConsoleLogger {
-            filter_levels: HashMap::new(),
+            filter_levels: None,
             current_filter: filter,
         }
     }
@@ -2161,17 +2133,26 @@ impl ConsoleLogger {
     fn current_instance_filter_level(&self) -> log::LogLevelFilter {
         Instance::opt_current()
             .and_then(|instance| {
-                self.filter_levels.get(&instance)
+                self.filter_levels
+                    .as_ref()
+                    .map(move |l| (l, instance) )
+            })
+            .and_then(|(levels, instance)| {
+                levels.get(&instance)
             })
             .map(|&filter| filter )
-            .unwrap_or(log::LogLevelFilter::Error)
+            .unwrap_or(log::LogLevelFilter::Info)
     }
 }
 impl log::Log for ConsoleLogger {
-    fn enabled(&self, _md: &log::LogMetadata) -> bool {
-        //let filter_level = self.current_instance_filter_level(
-        // TODO
-        true
+    fn enabled(&self, md: &log::LogMetadata) -> bool {
+        let level = self.current_instance_filter_level()
+            .to_log_level();
+        if let Some(level) = level {
+            md.level() >= level
+        } else {
+            false
+        }
     }
     fn log(&self, record: &LogRecord) {
         use self::ppb::ConsoleInterface;
@@ -2455,34 +2436,25 @@ impl MessageLoop {
     }
 }
 
-type InstancesType = HashMap<Instance,
-                             MessageLoop>;
+type InstancesType = Vec<(Instance, MessageLoop)>;
 
 // THIS MAY ONLY BE ACCESSED FROM THE MAIN MODULE THREAD.
 static mut INSTANCES: *mut InstancesType = 0 as *mut InstancesType;
 
+#[allow(deprecated)]
 unsafe fn deinitialize_instances() {
     if !INSTANCES.is_null() {
-        let instances = ptr::read_and_zero(INSTANCES);
-        drop(instances);
+        let _: Box<InstancesType> = mem::transmute(INSTANCES);
+        INSTANCES = 0 as *mut _;
     }
 }
 
 fn expect_instances() -> &'static mut InstancesType {
-    use std::mem;
-    use alloc::heap::allocate;
     unsafe {
         if INSTANCES.is_null() {
-            let instances: InstancesType = HashMap::new();
-            INSTANCES = allocate(mem::size_of::<InstancesType>(),
-                                 mem::align_of::<InstancesType>())
-                as *mut InstancesType;
-            if INSTANCES.is_null() {
-                // PANIC!
-                panic!("couldn't allocate instances map!");
-            }
-            ptr::write(mem::transmute(INSTANCES),
-                       instances);
+            let instances: InstancesType = Default::default();
+            let instances = Box::new(instances);
+            INSTANCES = mem::transmute(instances);
             expect_instances()
         } else {
             mem::transmute(INSTANCES)
@@ -2493,10 +2465,17 @@ fn expect_instances() -> &'static mut InstancesType {
 fn find_instance<U, Take, F>(instance: Instance,
                              take: Take,
                              f: F) -> Option<U>
-    where F: FnOnce(&mut MessageLoop, Take) -> U
+    where F: FnOnce(&MessageLoop, Take) -> U
 {
-    match expect_instances().get_mut(&instance) {
-        Some(inst) => Some(f(inst, take)),
+    let mut v = None;
+    for &(ref inst, ref msg) in expect_instances().iter() {
+        if *inst == instance {
+            v = Some(msg);
+            break;
+        }
+    }
+    match v {
+        Some(msg) => Some(f(msg, take)),
         None => {
             // TODO: better message/moar infos.
             error!("Instance not found");
@@ -2504,10 +2483,39 @@ fn find_instance<U, Take, F>(instance: Instance,
         },
     }
 }
+
+fn remove_instance(instance: Instance) -> Option<MessageLoop> {
+    let mut index = 0;
+    for &(ref inst, _) in expect_instances().iter() {
+        if *inst == instance {
+            let (_, msg) = expect_instances()
+                .remove(index);
+            return Some(msg);
+        }
+        index += 1;
+    }
+    None
+}
+fn insert_instance(instance: Instance, msg: MessageLoop) {
+    debug_assert!({
+        let mut found = false;
+        for &(ref inst, _) in expect_instances().iter() {
+            if *inst == instance {
+                found = true;
+                break;
+            }
+        }
+        !found
+    });
+
+    expect_instances()
+        .push((instance, msg));
+}
 #[doc(hidden)]
 pub mod entry {
-    use super::{expect_instances, find_instance, CURRENT_INSTANCE};
-    use super::{AnyVar, Code, Instance, View, ToFFIBool, GenericResource,
+    use super::{find_instance, insert_instance,
+                remove_instance, CURRENT_INSTANCE};
+    use super::{Code, Instance, View, ToFFIBool, GenericResource,
                 Resource};
     use super::{ffi};
 
@@ -2530,7 +2538,10 @@ pub mod entry {
         // into the global store.
         if result.is_err() {
             match Instance::opt_current() {
-                Some(inst) => { expect_instances().remove(&inst); }
+                Some(inst) => {
+                    let _ = remove_instance(inst)
+                        .map(|msg| msg.queue_shutdown() );
+                }
                 _ => {}
             }
         }
@@ -2545,98 +2556,127 @@ pub mod entry {
         use std::sync::mpsc::channel;
         use super::{MessageLoop};
 
-        let args = super::parse_args(argc, argk, argv);
+        fn parse_args(args: Args, id: &mut Option<String>) -> Vec<(String, String)> {
+            use libc::strlen;
+            use std::slice::from_raw_parts;
+            use std::str::from_utf8_unchecked;
+
+            let Args(argc, argk, argv) = args;
+
+            let mut dest = Vec::with_capacity(argc);
+
+            for i in (0..argc) {
+                unsafe {
+                    let ak = *argk.offset(i as isize);
+                    let av = *argv.offset(i as isize);
+
+                    assert!(ak as usize != 0); assert!(av as usize != 0);
+
+                    let ak_len = strlen(ak);
+                    let av_len = strlen(av);
+                    let ak_slice = from_raw_parts(ak as *const u8, ak_len as usize);
+                    let av_slice = from_raw_parts(av as *const u8, av_len as usize);
+                    let ak_str = from_utf8_unchecked(ak_slice);
+                    let av_str = from_utf8_unchecked(av_slice);
+
+                    if ak_str == "id" {
+                        *id = Some(ak_str.to_string());
+                    }
+
+                    dest.push((ak_str.to_string(), av_str.to_string()));
+                }
+            }
+
+            dest
+        }
+
+        struct Args(usize, *mut *const c_char, *mut *const c_char);
+        unsafe impl Send for Args { }
+
+        let args = Args(argc as usize, argk, argv);
 
         let instance = Instance::new(inst);
         // Dat nesting.
-        let success = CURRENT_INSTANCE.set
-            (&instance.clone(),
-             move || {
-                 let mut success = false;
-                 let _ = try_block(move || {
-                     // TODO: technically `nacl_io` isn't capable of providing
-                     // io functions for multiple instances..
-                     instance.initialize_nacl_io();
+        let success = try_block(move || {
+            let mut id = None;
+            let args = parse_args(args, &mut id);
 
-                     let builder = Builder::new()
-                         .name(args.get("id").cloned().unwrap())
-                         .stack_size(0);
+            let builder = Builder::new()
+                .stack_size(0);
+            let builder = if let Some(id) = id {
+                builder.name(id)
+            } else {
+                builder.name(format!("instance id `{}`", inst))
+            };
 
-                     let (tx, rx) = channel();
+            let (tx, rx) = channel();
 
-                     let _ = builder.spawn(move || {
-                         let mut args = Some(args.clone());
-                         CURRENT_INSTANCE.set
-                             (&instance,
-                              || {
-                                  let ml = instance.create_message_loop();
-                                  match ml.attach_to_current_thread() {
-                                      Code::Ok(_) => {}
-                                      _ => {
-                                          error!("failed to attach the new instance's message loop");
-                                          let _ = tx.send(None);
-                                          return;
-                                      }
-                                  }
-
-                                  fn unwinding() -> bool {
-                                      use std::thread;
-                                      thread::panicking()
-                                  }
-
-
-                                  let res = {
-                                      let i = instance.clone();
-                                      let a = args.take().unwrap();
-                                      catch_panic(move || unsafe {
-                                          super::ppapi_instance_created(i, a)
-                                      })
-                                  };
-
-                                  match res {
-                                      Ok(()) => {
-                                          tx.send(Some(ml.clone())).unwrap();
-                                      },
-                                      Err(..) => {
-                                          error!("failed to initialize instance");
-                                          tx.send(None).unwrap();
-                                      },
-                                  }
-
-                                  // TODO log errors.
-                                  let _ = catch_panic(move || ml.run_loop() );
-
-                                  if MessageLoop::is_attached() {
-                                      panic!("please shutdown the loop; I may add pausing \
-                                              for some sort of pattern later");
-                                  } else {
-                                      let cb = move |_| {
-                                          super::expect_instances()
-                                              .remove(&instance);
-                                      };
-                                      MessageLoop::get_main_loop()
-                                          .post_work(cb, 0)
-                                          .unwrap();
-                                  }
-                              });
-                     });
-
-                     success = rx.recv()
-                         .ok()
-                         .and_then(|ml| ml )
-                         .map(|ml: MessageLoop| {
-                             let last = expect_instances().insert(instance, ml);
-                             if last.is_some() {
-                                 error!("instance already exists; replacing.");
-                                 error!("this is in all likelyhood very leaky.");
-                                 last.unwrap().on_destroy();
+            let _ = builder.spawn(move || {
+                let mut args = Some(args.clone());
+                CURRENT_INSTANCE.set
+                    (&instance,
+                     || {
+                         let ml = instance.create_message_loop();
+                         match ml.attach_to_current_thread() {
+                             Code::Ok(_) => {}
+                             _ => {
+                                 error!("failed to attach the new instance's message loop");
+                                 let _ = tx.send(None);
+                                 return;
                              }
-                             true
-                         })
-                         .unwrap_or(false)
-                 });
-                 success
-             });
+                         }
+
+                         fn unwinding() -> bool {
+                             use std::thread;
+                             thread::panicking()
+                         }
+
+
+                         let res = {
+                             let i = instance.clone();
+                             let a = args.take().unwrap();
+                             catch_panic(move || unsafe {
+                                 super::ppapi_instance_created(i, a)
+                             })
+                         };
+
+                         match res {
+                             Ok(()) => {
+                                 tx.send(Some(ml.clone())).unwrap();
+                             },
+                             Err(..) => {
+                                 error!("failed to initialize instance");
+                                 tx.send(None).unwrap();
+                             },
+                         }
+
+                         // TODO log errors.
+                         let _ = catch_panic(move || ml.run_loop() );
+
+                         if MessageLoop::is_attached() {
+                             panic!("please shutdown the loop; I may add pausing \
+                                     for some sort of pattern later");
+                         } else {
+                             let cb = move |_| {
+                                 remove_instance(instance);
+                             };
+                             MessageLoop::get_main_loop()
+                                 .post_work(cb, 0)
+                                 .unwrap();
+                         }
+                     });
+            });
+
+            rx.recv()
+                .ok()
+                .and_then(|ml| ml )
+                .map(|ml: MessageLoop| {
+                    insert_instance(instance, ml);
+                    true
+                })
+                .unwrap_or(false)
+        }) // try_block
+            .unwrap();
         success.to_ffi_bool()
     }
     pub extern "C" fn did_destroy(inst: ffi::PP_Instance) {
@@ -2648,9 +2688,10 @@ pub mod entry {
                  let _ = try_block(move || {
                      debug!("did_destroy");
 
-                     find_instance(instance, (), |store, ()| store.on_destroy() );
-
-                     expect_instances().remove(&instance);
+                     let store = remove_instance(instance);
+                     if let Some(store) = store {
+                         store.on_destroy();
+                     }
                  });
              });
 
@@ -2787,7 +2828,7 @@ pub mod entry {
 extern {
     #[no_mangle]
     fn ppapi_instance_created(instance: Instance,
-                              args: HashMap<::std::string::String, ::std::string::String>);
+                              args: Vec<(String, String)>);
     #[no_mangle]
     fn ppapi_instance_destroyed();
 
@@ -2819,7 +2860,7 @@ mod test {
     use std::collections::HashMap;
     #[no_mangle]
     extern fn ppapi_instance_created(_instance: Instance,
-                                     _args: HashMap<::std::string::String, ::std::string::String>) {
+                                     _args: Vec<(String, String)>) {
     }
     #[no_mangle]
     extern fn ppapi_instance_destroyed() {
