@@ -1004,7 +1004,7 @@ pub trait ToVar {
     fn to_var(&self) -> ffi::PP_Var;
     #[inline]
     fn to_any(&self) -> AnyVar {
-        AnyVar::new(self.to_var())
+        AnyVar::new_bumped(self.to_var())
     }
 }
 // this is here to help the macros.
@@ -1024,7 +1024,7 @@ impl<T: ToVar> ToVar for Option<T> {
     }
 }
 /// by default all functions return false/None so one doesn't have to impl all of them.
-pub trait Var: Clone {
+pub trait Var {
     #[inline] fn is_null(&self) -> bool { false }
     #[inline] fn is_undefined(&self) -> bool { false }
     #[inline] fn is_a_bool(&self) -> bool { false }
@@ -1122,7 +1122,9 @@ macro_rules! impl_clone_drop_for(
         impl FromVar for $ty {
             fn from_var(var: ffi::PP_Var) -> Option<$ty> {
                 if unsafe { var.$is_true_name() && ffi::id_from_var(var) != 0 } {
-                    Some(VarCtor::ctor(var))
+                    let v: $ty = VarCtor::ctor(var);
+                    mem::forget(v.clone());
+                    Some(v)
                 } else {
                     None
                 }
@@ -1150,7 +1152,9 @@ macro_rules! impl_var_for(
         impl FromVar for $ty {
             fn from_var(var: ffi::PP_Var) -> Option<$ty> {
                 if var.$is_true_name() {
-                    Some(VarCtor::ctor(var))
+                    let v: $ty = VarCtor::ctor(var);
+                    mem::forget(v.clone());
+                    Some(v)
                 } else {
                     None
                 }
@@ -1240,7 +1244,7 @@ impl ToStringVar for StringVar {
 }
 impl<'a> ToStringVar for &'a StringVar {
     fn to_string_var(&self) -> StringVar {
-        StringVar(self.0)
+        (*self).clone()
     }
 }
 impl Var for ::std::string::String {
@@ -1432,7 +1436,6 @@ impl UndefinedVar {
     }
 }
 impl AnyVar {
-    #[inline]
     fn new(var: ffi::PP_Var) -> AnyVar {
         if var.is_null() {
             AnyVar::Null
@@ -1445,15 +1448,15 @@ impl AnyVar {
         } else if var.is_a_f64() {
             AnyVar::F64(unsafe { ffi::f64_from_var(var) })
         } else if var.is_a_string() {
-            AnyVar::String(StringVar::new_from_var(var))
+            AnyVar::String(StringVar(unsafe { ffi::id_from_var(var) }))
         } else if var.is_an_object() {
-            AnyVar::Object(ObjectVar::new_from_var(var))
+            AnyVar::Object(ObjectVar(unsafe { ffi::id_from_var(var) }))
         } else if var.is_an_array() {
-            AnyVar::Array(ArrayVar::new_from_var(var))
+            AnyVar::Array(ArrayVar(unsafe { ffi::id_from_var(var) }))
         } else if var.is_a_dictionary() {
-            AnyVar::Dictionary(DictionaryVar::new_from_var(var))
+            AnyVar::Dictionary(DictionaryVar(unsafe { ffi::id_from_var(var) }))
         } else if var.is_an_array_buffer() {
-            AnyVar::ArrayBuffer(ArrayBufferVar::new_from_var(var))
+            AnyVar::ArrayBuffer(ArrayBufferVar(unsafe { ffi::id_from_var(var) }))
         } else if var.is_a_resource() {
             AnyVar::Undefined
         } else {
@@ -1461,14 +1464,12 @@ impl AnyVar {
             AnyVar::Undefined
         }
     }
-    #[inline]
     fn new_bumped(var: ffi::PP_Var) -> AnyVar {
         let v = AnyVar::new(var);
         // bump the ref count:
         mem::forget(v.clone());
         v
     }
-    #[inline]
     pub fn is_ref_counted(&self) -> bool {
         self.is_a_string() ||
             self.is_an_object() ||
@@ -1576,27 +1577,19 @@ impl StringVar {
                  len as u32);
         return StringVar(unsafe { ffi::id_from_var(var) } );
     }
-    pub fn new_from_var(v: ffi::PP_Var) -> StringVar {
-        From::from(v)
+    fn new_from_var(v: ffi::PP_Var) -> StringVar {
+        let v: StringVar = From::from(v);
+        mem::forget(v.clone());
+        v
     }
+    pub fn as_str(&self) -> &str { &*self }
 }
 #[doc(hidden)]
 impl From<ffi::PP_Var> for StringVar {
     fn from(v: ffi::PP_Var) -> StringVar {
-        StringVar(unsafe { ffi::id_from_var(v) })
-    }
-}
-impl ToVar for ::std::string::String {
-    fn to_var(&self) -> ffi::PP_Var {
-        StringVar::new(self)
-            .to_var()
-    }
-}
-impl<'a> ToVar for &'a str {
-    fn to_var(&self) -> ffi::PP_Var {
-        (ppb::get_var().VarFromUtf8.unwrap())
-            (self.as_ptr() as *const i8,
-             self.len() as u32)
+        let v: StringVar = StringVar(unsafe { ffi::id_from_var(v) });
+        mem::forget(v.clone());
+        v
     }
 }
 impl ObjectVar {
@@ -1648,7 +1641,7 @@ impl ArrayVar {
         ppb::get_array().set_len(&self.to_var(), new_len as libc::uint32_t)
     }
     pub fn get(&self, index: usize) -> AnyVar {
-        AnyVar::new(ppb::get_array().get(&self.to_var(), index as libc::uint32_t))
+        AnyVar::new_bumped(ppb::get_array().get(&self.to_var(), index as libc::uint32_t))
     }
     pub fn set<T: ToVar>(&mut self, index: usize, value: &T) -> bool {
         ppb::get_array().set(&self.to_var(), index as u32, &value.to_var())
@@ -1704,15 +1697,18 @@ impl DictionaryVar {
         ppb::get_dictionary().has_key(&self.to_var(), &key.to_var())
     }
     pub fn get<T: ToStringVar>(&self, key: T) -> AnyVar {
-        let key = key.to_string_var();
-        AnyVar::new(ppb::get_dictionary().get(&self.to_var(), &key.to_var()))
+        let v = ppb::get_dictionary().get(&self.to_var(), &key.to_string_var().to_var());
+        AnyVar::new_bumped(v)
     }
     pub fn set<T: ToStringVar, V: ToVar>(&self, key: T, value: V) -> bool {
         let key = key.to_string_var();
         ppb::get_dictionary().set(&self.to_var(), &key.to_var(), &value.to_var())
     }
     pub fn keys(&self) -> ArrayVar {
-        ArrayVar::new_from_var(ppb::get_dictionary().get_keys(&self.to_var()))
+        let v = ppb::get_dictionary().get_keys(&self.to_var());
+        let v = ArrayVar::new_from_var(v);
+        mem::forget(v.clone());
+        v
     }
     pub fn entries<'a>(&'a self) -> DictEntries<'a> {
         let keys = self.keys();
@@ -1757,14 +1753,16 @@ impl Console {
         self.log(ffi::PP_LOGLEVEL_ERROR, msg)
     }
     pub fn err_with_file<T: ToVar, U: Display, V: Display>(&self, msg: T, file: U, line: V) {
-        let source = format!("{}:{}", file, line);
+        let source = format!("{}:{}", file, line)
+            .to_string_var();
         self.log_with_source(ffi::PP_LOGLEVEL_ERROR, source, msg)
     }
     pub fn warn<T: ToVar>(&self, msg: T) {
         self.log(ffi::PP_LOGLEVEL_WARNING, msg)
     }
     pub fn warn_with_file<T: ToVar, U: Display, V: Display>(&self, msg: T, file: U, line: V) {
-        let source = format!("{}:{}", file, line);
+        let source = format!("{}:{}", file, line)
+            .to_string_var();
         self.log_with_source(ffi::PP_LOGLEVEL_WARNING, source, msg)
     }
 }
