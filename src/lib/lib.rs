@@ -1605,10 +1605,10 @@ pub struct ArrayVarIter<'a> {
 impl<'a> Iterator for ArrayVarIter<'a> {
     type Item = AnyVar;
     fn next(&mut self) -> Option<AnyVar> {
-        if self.index > self.len { None }
+        if self.index >= self.len { None }
         else {
             let v = self.var.get(self.index);
-            self.index = self.index + 1;
+            self.index += 1;
             Some(v)
         }
     }
@@ -1664,7 +1664,7 @@ pub struct DictEntries<'a> {
 impl<'a> Iterator for DictEntries<'a> {
     type Item = (StringVar, AnyVar);
     fn next(&mut self) -> Option<(StringVar, AnyVar)> {
-        if self.key_index > self.len { None }
+        if self.key_index >= self.len { None }
         else {
             let k = self.keys.get(self.key_index);
             let k = match k {
