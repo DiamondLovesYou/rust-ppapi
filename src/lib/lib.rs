@@ -2210,7 +2210,7 @@ impl Instance {
         self.instance
     }
 
-    fn initialize_nacl_io(&self) {
+    pub fn initialize_nacl_io(&self) {
         unsafe {
             ffi::nacl_io_init_ppapi(self.instance,
                                     Some(ppb::get_actual_browser()));
